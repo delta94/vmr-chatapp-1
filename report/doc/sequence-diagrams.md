@@ -9,6 +9,7 @@
   - [6. View user online/offline](#6-view-user-onlineoffline)
   - [7. Add - remove friend](#7-add---remove-friend)
   - [8. Notify when user online - offline](#8-notify-when-user-online---offline)
+  - [9. Logout](#9-logout)
 
 ## 1. Login
 
@@ -41,3 +42,7 @@
 ## 8. Notify when user online - offline
 
 ![Notify](../../report/img/sequence-diagrams/online-offline-status.png)
+
+## 9. Logout
+
+![Logout](../../report/img/sequence-diagrams/logout.png)
