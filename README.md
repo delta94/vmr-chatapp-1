@@ -14,6 +14,7 @@
 
 ## 7. References
 
+- [API design](https://app.swaggerhub.com/apis-docs/anhvan1999/vmr-chat/1.0.0)
 - [Sequence diagrams](report/doc/sequence-diagrams.md)
 - [Database schema](report/doc/database-diagrams.md)
 - [Cache design](report/doc/cache-design.md)
