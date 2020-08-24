@@ -1,0 +1,7 @@
+.idea/**
+vmr-backend.iml
+target
+.classpath
+.factorypath
+.project
+.settings
