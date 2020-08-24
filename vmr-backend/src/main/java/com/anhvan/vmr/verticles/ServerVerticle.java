@@ -9,7 +9,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ServerVerticle extends AbstractVerticle {
-  private static final Logger logger = LogManager.getLogger(ServerVerticle.class);
+  private static final Logger LOGGER = LogManager.getLogger(ServerVerticle.class);
+
   private final JsonObject conf;
 
   public ServerVerticle(JsonObject conf) {
@@ -32,7 +33,11 @@ public class ServerVerticle extends AbstractVerticle {
                 })
             .rxListen(port, host);
 
-    httpServerSingle.subscribe();
+    httpServerSingle
+        .subscribe(
+            server -> LOGGER.info("Server start at {}:{}", host, port),
+            failue -> LOGGER.error("Error when create http server", failue))
+        .isDisposed();
   }
 
   @Override
