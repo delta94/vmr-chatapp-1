@@ -6,7 +6,7 @@
     </Console>
   </Appenders>
   <Loggers>
-    <Logger name="com.anhvan.vmr" level="debug" additivity="false">
+    <Logger name="com.anhvan.vmr" level="all" additivity="false">
       <AppenderRef ref="Console"/>
     </Logger>
     <Root level="warn">
