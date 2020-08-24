@@ -8,24 +8,28 @@ import io.vertx.reactivex.core.Vertx;
 
 public class ConfigLoader {
   public static ConfigRetriever load(Vertx vertx) {
-    ConfigStoreOptions externalStoreOptions =
-        new ConfigStoreOptions()
-            .setType("file")
-            .setOptional(true)
-            .setFormat("yaml")
-            .setConfig(
-                new JsonObject().put("path", System.getProperty("vmr-config-file", "conf.yml")));
-
+    // Default config
     ConfigStoreOptions fileStoreOptions =
         new ConfigStoreOptions()
             .setType("file")
             .setOptional(true)
             .setFormat("yaml")
-            .setConfig(new JsonObject().put("path", "conf.yml"));
+            .setConfig(new JsonObject().put("path", ""));
 
+    // External config
+    String externalConfigFile = System.getProperty("vmr-config-file", "conf.yml");
+    ConfigStoreOptions externalStoreOptions =
+        new ConfigStoreOptions()
+            .setType("file")
+            .setOptional(true)
+            .setFormat("yaml")
+            .setConfig(new JsonObject().put("path", externalConfigFile));
+
+    // Load config
     ConfigRetrieverOptions retrieverOptions =
         new ConfigRetrieverOptions().addStore(fileStoreOptions).addStore(externalStoreOptions);
 
+    // Return
     return ConfigRetriever.create(vertx, retrieverOptions);
   }
 }

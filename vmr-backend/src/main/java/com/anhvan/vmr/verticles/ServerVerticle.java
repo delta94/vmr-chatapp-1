@@ -1,7 +1,9 @@
 package com.anhvan.vmr.verticles;
 
+import io.reactivex.Single;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.AbstractVerticle;
+import io.vertx.reactivex.core.http.HttpServer;
 import io.vertx.reactivex.core.http.HttpServerResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,21 +19,20 @@ public class ServerVerticle extends AbstractVerticle {
 
   @Override
   public void start() {
-    vertx
-        .createHttpServer()
-        .requestHandler(
-            request -> {
-              HttpServerResponse response = request.response();
-              response.end("Hello world");
-            })
-        .listen(
-            conf.getInteger("port"),
-            conf.getString("host"),
-            httpServerAsyncResult -> {
-              if (httpServerAsyncResult.succeeded()) {
-                logger.info("Webserver start at port {}", conf.getInteger("port"));
-              }
-            });
+    String host = conf.getString("host");
+    int port = conf.getInteger("port");
+
+    Single<HttpServer> httpServerSingle =
+        vertx
+            .createHttpServer()
+            .requestHandler(
+                request -> {
+                  HttpServerResponse response = request.response();
+                  response.end("Hello world");
+                })
+            .rxListen(port, host);
+
+    httpServerSingle.subscribe();
   }
 
   @Override
