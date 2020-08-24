@@ -1,7 +1,7 @@
 package com.anhvan.vmr;
 
 import com.anhvan.vmr.utils.ConfigLoader;
-import com.anhvan.vmr.verticles.MainVerticles;
+import com.anhvan.vmr.verticles.ServerVerticle;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.config.ConfigRetriever;
 import io.vertx.reactivex.core.Vertx;
@@ -13,20 +13,26 @@ public class VmrProgram {
 
   public static void main(String[] args) {
     LOGGER.info("Start apllication");
+
+    // Create vertx instance
     Vertx vertx = Vertx.vertx();
+
+    // Load config
     ConfigRetriever configRetriever = ConfigLoader.load(vertx);
+
+    // Pass config to verticles
     configRetriever.getConfig(
         jsonResult -> {
           if (jsonResult.succeeded()) {
-            LOGGER.trace("Load configuration successfully");
+            LOGGER.info("Load configuration successfully");
             registerVerticle(vertx, jsonResult.result());
           } else {
-            LOGGER.trace("Error when load configuration");
+            LOGGER.error("Error when load configuration", jsonResult.cause());
           }
         });
   }
 
   public static void registerVerticle(Vertx vertx, JsonObject configuration) {
-    vertx.deployVerticle(new MainVerticles(configuration));
+    vertx.deployVerticle(new ServerVerticle(configuration.getJsonObject("webserver")));
   }
 }

@@ -62,6 +62,11 @@
       <artifactId>vertx-config-yaml</artifactId>
       <version>3.9.2</version>
     </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-auth-jwt</artifactId>
+      <version>3.9.2</version>
+    </dependency>
   </dependencies>
 
   <build>
