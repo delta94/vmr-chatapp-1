@@ -35,6 +35,22 @@ public class ServerVerticle extends AbstractVerticle {
                   HttpServerResponse response = request.response();
                   response.end("Hello world");
                 })
+            .webSocketHandler(
+                ws -> {
+                  System.out.println(ws.path());
+                  ws.accept();
+                  long periodicId =
+                      vertx.setPeriodic(
+                          1000,
+                          id -> {
+                            ws.writeTextMessage("Hello world");
+                          });
+                  ws.closeHandler(
+                      unused -> {
+                        LOGGER.info("CONNECTION CLOSED");
+                        vertx.cancelTimer(periodicId);
+                      });
+                })
             .rxListen(port, host);
 
     Disposable disposable =

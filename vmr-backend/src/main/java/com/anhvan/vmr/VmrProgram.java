@@ -4,6 +4,7 @@ import com.anhvan.vmr.utils.ConfigLoader;
 import com.anhvan.vmr.verticles.DatabaseVerticle;
 import com.anhvan.vmr.verticles.RedisVerticle;
 import com.anhvan.vmr.verticles.ServerVerticle;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.config.ConfigRetriever;
 import io.vertx.reactivex.core.Vertx;
@@ -23,16 +24,19 @@ public class VmrProgram {
     ConfigRetriever configRetriever = ConfigLoader.load(vertx);
 
     // Pass config to verticles
-    configRetriever.getConfig(
-        jsonResult -> {
-          if (jsonResult.succeeded()) {
-            LOGGER.info("Load configuration successfully");
-            registerVerticle(vertx, jsonResult.result());
-          } else {
-            LOGGER.error("Error when load configuration", jsonResult.cause());
-            vertx.close();
-          }
-        });
+    configRetriever.getConfig(jsonAsyncResult -> handleConfig(vertx, jsonAsyncResult));
+  }
+
+  public static void handleConfig(Vertx vertx, AsyncResult<JsonObject> jsonResult) {
+    if (jsonResult.succeeded()) {
+      // Create verticles
+      LOGGER.info("Load configuration successfully");
+      registerVerticle(vertx, jsonResult.result());
+    } else {
+      // Close application
+      LOGGER.error("Error when load configuration", jsonResult.cause());
+      vertx.close();
+    }
   }
 
   public static void registerVerticle(Vertx vertx, JsonObject configuration) {
