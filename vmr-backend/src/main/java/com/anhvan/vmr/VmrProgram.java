@@ -1,6 +1,8 @@
 package com.anhvan.vmr;
 
 import com.anhvan.vmr.utils.ConfigLoader;
+import com.anhvan.vmr.verticles.DatabaseVerticle;
+import com.anhvan.vmr.verticles.RedisVerticle;
 import com.anhvan.vmr.verticles.ServerVerticle;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.config.ConfigRetriever;
@@ -12,7 +14,7 @@ public class VmrProgram {
   private static final Logger LOGGER = LogManager.getLogger(VmrProgram.class);
 
   public static void main(String[] args) {
-    LOGGER.info("Start apllication");
+    LOGGER.info("Start application");
 
     // Create vertx instance
     Vertx vertx = Vertx.vertx();
@@ -28,11 +30,14 @@ public class VmrProgram {
             registerVerticle(vertx, jsonResult.result());
           } else {
             LOGGER.error("Error when load configuration", jsonResult.cause());
+            vertx.close();
           }
         });
   }
 
   public static void registerVerticle(Vertx vertx, JsonObject configuration) {
     vertx.deployVerticle(new ServerVerticle(configuration.getJsonObject("webserver")));
+    vertx.deployVerticle(new RedisVerticle(configuration.getJsonObject("redis")));
+    vertx.deployVerticle(new DatabaseVerticle(configuration.getJsonObject("mysql")));
   }
 }

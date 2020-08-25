@@ -36,12 +36,15 @@ public class ServerVerticle extends AbstractVerticle {
     httpServerSingle
         .subscribe(
             server -> LOGGER.info("Server start at {}:{}", host, port),
-            failue -> LOGGER.error("Error when create http server", failue))
+            failue -> {
+              LOGGER.error("Error when create http server", failue);
+              vertx.close();
+            })
         .isDisposed();
   }
 
   @Override
   public void stop() {
-    System.out.println("Stop");
+    LOGGER.info("Server is stopped");
   }
 }
