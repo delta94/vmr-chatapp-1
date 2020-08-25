@@ -1,5 +1,7 @@
 package com.anhvan.vmr.verticles;
 
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.redis.client.Redis;
@@ -14,34 +16,42 @@ public class RedisVerticle extends AbstractVerticle {
   private static final Logger LOGGER = LogManager.getLogger(RedisVerticle.class);
 
   private final JsonObject conf;
+  private final CompositeDisposable compositeDisposable;
 
   public RedisVerticle(JsonObject conf) {
     this.conf = conf;
+    compositeDisposable = new CompositeDisposable();
   }
 
   @Override
   public void start() {
-    String connectionString =
-        String.format("redis://%s:%d", conf.getString("host"), conf.getInteger("port"));
+    // Get host and port
+    String host = conf.getString("host", "127.0.0.1");
+    int port = conf.getInteger("port", 6379);
+
+    // Connect to redis
+    String connectionString = String.format("redis://%s:%d", host, port);
     RedisOptions redisOptions = new RedisOptions().setConnectionString(connectionString);
-    Redis.createClient(vertx, redisOptions)
-        .rxConnect()
-        .subscribe(
-            connection -> {
-              LOGGER.info("Connect to redis server successfully");
-              RedisAPI redis = RedisAPI.api(connection);
-              handle(redis);
-            },
-            error -> {
-              LOGGER.error("Cannot connect to redis", error);
-              vertx.close();
-            })
-        .isDisposed();
+    Disposable redisDisposable =
+        Redis.createClient(vertx, redisOptions)
+            .rxConnect()
+            .subscribe(
+                connection -> {
+                  LOGGER.info("Connect to redis server successfully");
+                  RedisAPI redis = RedisAPI.api(connection);
+                  handle(redis);
+                },
+                error -> {
+                  LOGGER.error("Cannot connect to redis", error);
+                  vertx.close();
+                });
+    compositeDisposable.add(redisDisposable);
   }
 
   @Override
   public void stop() {
     LOGGER.info("Stop redis verticle");
+    compositeDisposable.dispose();
   }
 
   public void handle(RedisAPI redis) {

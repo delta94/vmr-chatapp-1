@@ -6,6 +6,8 @@ mysql:
   port: 3306
   username: root
   password: password
+  database: vmrchat
+  poolSize: 15
 redis:
   host: 127.0.0.1
   port: 6379
