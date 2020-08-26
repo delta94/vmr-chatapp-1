@@ -1,12 +1,12 @@
 package com.anhvan.vmr.verticles;
 
+import com.anhvan.vmr.api.http.HandlerSet;
 import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.http.HttpServer;
-import io.vertx.reactivex.core.http.HttpServerResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,21 +30,13 @@ public class ServerVerticle extends AbstractVerticle {
     Single<HttpServer> httpServerSingle =
         vertx
             .createHttpServer()
-            .requestHandler(
-                request -> {
-                  HttpServerResponse response = request.response();
-                  response.end("Hello world");
-                })
+            .requestHandler(HandlerSet.getRouter(vertx))
             .webSocketHandler(
                 ws -> {
                   System.out.println(ws.path());
                   ws.accept();
                   long periodicId =
-                      vertx.setPeriodic(
-                          1000,
-                          id -> {
-                            ws.writeTextMessage("Hello world");
-                          });
+                      vertx.setPeriodic(1000, id -> ws.writeTextMessage("Hello world"));
                   ws.closeHandler(
                       unused -> {
                         LOGGER.info("CONNECTION CLOSED");
