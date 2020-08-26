@@ -1,4 +1,4 @@
-package com.anhvan.vmr.api.http;
+package com.anhvan.vmr.server;
 
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.ext.web.Router;
@@ -16,6 +16,7 @@ public class HandlerSet implements HttpApiHandler {
     router.mountSubRouter(path, handler.getRouter());
   }
 
+  // Register all http handler
   public void registerHandler() {
     registerHandler("/register", new RegisterHandler(vertx));
   }

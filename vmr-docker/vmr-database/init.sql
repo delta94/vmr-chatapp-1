@@ -4,7 +4,7 @@ use vmrchat;
 
 create table users
 (
-    id        integer primary key,
+    id        integer primary key auto_increment,
     username  varchar(20) not null unique,
     password  varchar(60) not null,
     name      varchar(45) not null,
@@ -13,7 +13,7 @@ create table users
 
 create table friends
 (
-    id       integer primary key,
+    id       integer primary key auto_increment,
     user_id  integer not null,
     user2_id integer not null,
     constraint friends_user_fk foreign key (user_id) references users (id),
@@ -22,7 +22,7 @@ create table friends
 
 create table conservations
 (
-    id                integer primary key,
+    id                integer primary key auto_increment,
     conservation_name varchar(45),
     conservation_type enum ('NORMAL', 'GROUP') not null,
     owner_id          integer,
@@ -31,7 +31,7 @@ create table conservations
 
 create table user_conservations
 (
-    id              integer primary key,
+    id              integer primary key auto_increment,
     user_id         integer not null,
     conservation_id integer not null,
     constraint user_conservations_user_id foreign key (user_id) references users (id),
@@ -40,7 +40,7 @@ create table user_conservations
 
 create table messages
 (
-    id              integer primary key,
+    id              integer primary key auto_increment,
     user_id         integer   not null,
     conservation_id integer   not null,
     send_time       timestamp not null,

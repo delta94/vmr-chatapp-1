@@ -1,4 +1,4 @@
-package com.anhvan.vmr.utils;
+package com.anhvan.vmr.util;
 
 import io.vertx.config.ConfigRetrieverOptions;
 import io.vertx.config.ConfigStoreOptions;
@@ -6,7 +6,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.config.ConfigRetriever;
 import io.vertx.reactivex.core.Vertx;
 
-public class ConfigLoader {
+public class ConfigLoaderUtil {
   public static ConfigRetriever load(Vertx vertx) {
     // Default config
     ConfigStoreOptions fileStoreOptions =

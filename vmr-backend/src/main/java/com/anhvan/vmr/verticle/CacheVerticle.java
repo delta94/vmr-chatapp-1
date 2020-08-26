@@ -1,4 +1,4 @@
-package com.anhvan.vmr.verticles;
+package com.anhvan.vmr.verticle;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -12,13 +12,13 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 
-public class RedisVerticle extends AbstractVerticle {
-  private static final Logger LOGGER = LogManager.getLogger(RedisVerticle.class);
+public class CacheVerticle extends AbstractVerticle {
+  private static final Logger LOGGER = LogManager.getLogger(CacheVerticle.class);
 
   private final JsonObject conf;
   private final CompositeDisposable compositeDisposable;
 
-  public RedisVerticle(JsonObject conf) {
+  public CacheVerticle(JsonObject conf) {
     this.conf = conf;
     compositeDisposable = new CompositeDisposable();
   }

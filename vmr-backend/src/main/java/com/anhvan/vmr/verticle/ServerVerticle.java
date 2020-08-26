@@ -1,6 +1,6 @@
-package com.anhvan.vmr.verticles;
+package com.anhvan.vmr.verticle;
 
-import com.anhvan.vmr.api.http.HandlerSet;
+import com.anhvan.vmr.server.HandlerSet;
 import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;

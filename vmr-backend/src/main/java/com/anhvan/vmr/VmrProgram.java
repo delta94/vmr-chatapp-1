@@ -1,9 +1,10 @@
 package com.anhvan.vmr;
 
-import com.anhvan.vmr.utils.ConfigLoader;
-import com.anhvan.vmr.verticles.DatabaseVerticle;
-import com.anhvan.vmr.verticles.RedisVerticle;
-import com.anhvan.vmr.verticles.ServerVerticle;
+import com.anhvan.vmr.util.ConfigLoaderUtil;
+import com.anhvan.vmr.verticle.DatabaseVerticle;
+import com.anhvan.vmr.verticle.CacheVerticle;
+import com.anhvan.vmr.verticle.ServerVerticle;
+import com.anhvan.vmr.verticle.ServiceVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.config.ConfigRetriever;
@@ -21,7 +22,7 @@ public class VmrProgram {
     Vertx vertx = Vertx.vertx();
 
     // Load config
-    ConfigRetriever configRetriever = ConfigLoader.load(vertx);
+    ConfigRetriever configRetriever = ConfigLoaderUtil.load(vertx);
 
     // Pass config to verticles
     configRetriever.getConfig(jsonAsyncResult -> handleConfig(vertx, jsonAsyncResult));
@@ -41,7 +42,8 @@ public class VmrProgram {
 
   public static void registerVerticle(Vertx vertx, JsonObject configuration) {
     vertx.deployVerticle(new ServerVerticle(configuration.getJsonObject("webserver")));
-    vertx.deployVerticle(new RedisVerticle(configuration.getJsonObject("redis")));
+    vertx.deployVerticle(new CacheVerticle(configuration.getJsonObject("redis")));
     vertx.deployVerticle(new DatabaseVerticle(configuration.getJsonObject("mysql")));
+    vertx.deployVerticle(new ServiceVerticle(configuration.getJsonObject("service")));
   }
 }

@@ -1,4 +1,4 @@
-package com.anhvan.vmr.api.http;
+package com.anhvan.vmr.server;
 
 import io.vertx.reactivex.ext.web.Router;
 
