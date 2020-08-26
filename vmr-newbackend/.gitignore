@@ -1,0 +1,9 @@
+.idea/**
+vmr-newbackend.iml
+target/
+.classpath
+.factorypath
+.project
+.settings
+dependency-reduced-pom.xml
+vmr.iml
