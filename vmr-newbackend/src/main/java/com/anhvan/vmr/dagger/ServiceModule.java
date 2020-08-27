@@ -3,7 +3,7 @@ package com.anhvan.vmr.dagger;
 import com.anhvan.vmr.config.AuthConfig;
 import com.anhvan.vmr.config.DatabaseConfig;
 import com.anhvan.vmr.config.ServerConfig;
-import com.anhvan.vmr.database.DatabaseService;
+import com.anhvan.vmr.server.RouterFactory;
 import com.anhvan.vmr.server.WebServer;
 import dagger.Module;
 import dagger.Provides;
@@ -25,14 +25,9 @@ public class ServiceModule {
 
   @Provides
   @Singleton
-  public DatabaseService provideDatabaseService(DatabaseConfig conf) {
-    return new DatabaseService(conf);
-  }
-
-  @Provides
-  @Singleton
-  public WebServer provideRestfulAPI(ServerConfig config, Vertx vertx, JWTAuth jwtAuth) {
-    return new WebServer(vertx, config, jwtAuth);
+  public WebServer provideRestfulAPI(
+      ServerConfig config, Vertx vertx, RouterFactory routerFactory) {
+    return new WebServer(vertx, config, routerFactory);
   }
 
   @Provides

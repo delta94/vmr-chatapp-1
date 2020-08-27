@@ -17,13 +17,13 @@ public class WebServer {
 
   private Vertx vertx;
   private ServerConfig config;
-  private JWTAuth jwtAuth;
+  private RouterFactory routerFactory;
 
   public void start() {
     LOGGER.info("Create web server at port {}", config.getPort());
     vertx
         .createHttpServer()
-        .requestHandler(RouterFactory.route(vertx, jwtAuth))
+        .requestHandler(routerFactory.route())
         .listen(config.getPort(), config.getHost());
   }
 }
