@@ -1,18 +1,17 @@
 package com.anhvan.vmr.dagger;
 
-import com.anhvan.vmr.server.RestfulAPI;
-import dagger.BindsInstance;
+import com.anhvan.vmr.server.WebServer;
+import com.anhvan.vmr.server.WebSocketServer;
 import dagger.Component;
-import io.vertx.core.Vertx;
 
 import javax.inject.Singleton;
 
 @Component(modules = {ServiceModule.class})
 @Singleton
 public interface ServiceComponent {
-  Vertx getVertx();
+  WebServer getRestfulAPI();
 
-  RestfulAPI getRestfulAPI();
+  WebSocketServer getWebSocketServer();
 
   @Component.Builder
   interface Builder {

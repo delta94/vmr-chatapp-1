@@ -11,16 +11,29 @@
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <mainClass>com.anhvan.vmr.VmrProgram</mainClass>
+        <mainClass>com.anhvan.vmr.Runner</mainClass>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <vertx.version>3.9.2</vertx.version>
         <dagger.version>2.28.3</dagger.version>
         <lombok.version>1.18.12</lombok.version>
         <micrometer.version>1.1.4</micrometer.version>
+        <protobuf.version>3.7.1</protobuf.version>
+        <snakeyaml.version>1.21</snakeyaml.version>
+        <protobufjavaformat.version>1.4</protobufjavaformat.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.7</version>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-auth-common</artifactId>
+            <version>${vertx.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-auth-jwt</artifactId>
@@ -96,6 +109,16 @@
             <groupId>io.vertx</groupId>
             <artifactId>vertx-micrometer-metrics</artifactId>
             <version>${vertx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.13.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.13.3</version>
         </dependency>
     </dependencies>
 

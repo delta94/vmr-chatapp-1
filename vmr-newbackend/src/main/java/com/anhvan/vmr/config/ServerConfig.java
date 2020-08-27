@@ -6,7 +6,7 @@ import lombok.*;
 @Getter
 @Setter
 @AllArgsConstructor
-public class RestfulAPIConfig {
+public class ServerConfig {
   private String host;
   private int port;
 }

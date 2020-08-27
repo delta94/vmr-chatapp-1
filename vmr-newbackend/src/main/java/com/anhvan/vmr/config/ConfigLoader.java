@@ -37,6 +37,7 @@ public class ConfigLoader {
     ConfigRetrieverOptions retrieverOptions =
         new ConfigRetrieverOptions().addStore(fileStoreOptions).addStore(externalStoreOptions);
 
+    // Handler
     ConfigRetriever.create(vertx, retrieverOptions)
         .getConfig(
             configHandler -> {
