@@ -1,5 +1,6 @@
 package com.anhvan.vmr.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 @Builder
@@ -9,7 +10,8 @@ import lombok.*;
 @Getter
 public class User {
   private String username;
-  private String password;
   private String name;
-  private boolean isActive;
+  @JsonIgnore private int id;
+  @JsonIgnore private String password;
+  @JsonIgnore private boolean active;
 }

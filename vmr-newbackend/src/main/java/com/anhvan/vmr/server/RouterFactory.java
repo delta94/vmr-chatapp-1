@@ -31,6 +31,7 @@ public class RouterFactory {
     router.route().handler(BodyHandler.create());
     router.route("/api/protected/*").handler(JWTAuthHandler.create(auth));
     controllerFactory.registerController(router);
+    router.route("/api/protected/foo").handler(h -> h.response().end("OK"));
     return router;
   }
 

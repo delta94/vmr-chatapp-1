@@ -16,12 +16,7 @@ public class IndexController implements Controller {
   @Override
   public Router getRouter() {
     Router router = Router.router(vertx);
-    router
-        .get("/")
-        .handler(
-            routingContext -> {
-              routingContext.response().end("Hello world");
-            });
+    router.get("/").handler(routingContext -> routingContext.response().end("Hello world"));
     return router;
   }
 }

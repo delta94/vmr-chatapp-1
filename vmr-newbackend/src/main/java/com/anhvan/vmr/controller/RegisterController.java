@@ -1,39 +1,40 @@
 package com.anhvan.vmr.controller;
 
-import com.anhvan.vmr.cache.RedisCache;
-import com.anhvan.vmr.database.DatabaseService;
+import com.anhvan.vmr.cache.UserCacheService;
+import com.anhvan.vmr.database.UserDBService;
+import com.anhvan.vmr.model.User;
+import com.anhvan.vmr.util.ControllerUtil;
+import com.anhvan.vmr.util.JwtUtil;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
-import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.mysqlclient.MySQLClient;
-import io.vertx.mysqlclient.MySQLPool;
-import io.vertx.sqlclient.Row;
-import io.vertx.sqlclient.RowSet;
-import io.vertx.sqlclient.Tuple;
-import jodd.crypt.BCrypt;
-import org.redisson.api.RMap;
-import org.redisson.api.RedissonClient;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 
 public class RegisterController implements Controller {
+  private static final Logger logger = LogManager.getLogger(RegisterController.class);
+
   private Vertx vertx;
-  private DatabaseService database;
-  private RedisCache cache;
-  private JWTAuth auth;
+  private UserDBService userDBService;
+  private JwtUtil jwtUtil;
+  private UserCacheService userCacheService;
 
   @Inject
-  public RegisterController(Vertx vertx, DatabaseService database, RedisCache cache, JWTAuth auth) {
+  public RegisterController(
+      Vertx vertx,
+      UserDBService userDBService,
+      JwtUtil jwtUtil,
+      UserCacheService userCacheService) {
     this.vertx = vertx;
-    this.database = database;
-    this.cache = cache;
-    this.auth = auth;
+    this.userDBService = userDBService;
+    this.jwtUtil = jwtUtil;
+    this.userCacheService = userCacheService;
   }
 
   @Override
@@ -47,60 +48,35 @@ public class RegisterController implements Controller {
     JsonObject requestBody = context.getBodyAsJson();
     HttpServerResponse response = context.response();
 
-    // Get user info
-    String username = requestBody.getString("username");
-    String password = requestBody.getString("password");
-    String name = requestBody.getString("name");
-
-    // Insert into database
-    Tuple info = Tuple.of(username, BCrypt.hashpw(password, BCrypt.gensalt()), name);
+    // Create user object
+    User user = requestBody.mapTo(User.class);
 
     // Add user
-    Future<Integer> userIdFuture = addUser(info);
-    userIdFuture.onFailure(throwable -> response.setStatusCode(409).end());
+    Future<Integer> userIdFuture = userDBService.addUser(user);
+    userIdFuture.onFailure(
+        throwable -> {
+          response.setStatusCode(409).end();
+          logger.debug("Fail when add user", throwable);
+        });
 
     // Generate token
-    Future<String> tokenFuture = userIdFuture.compose(this::genToken);
+    Future<String> tokenFuture = userIdFuture.compose(jwtUtil::generate);
+
+    // Response to user
     CompositeFuture.all(userIdFuture, tokenFuture)
         .onComplete(
             result -> {
               int userId = result.result().resultAt(0);
               String token = result.result().resultAt(1);
-              response.setStatusCode(201);
-              response.end(new JsonObject().put("token", token).put("userId", userId).toBuffer());
+              JsonObject jsonResponse = new JsonObject().put("token", token).put("userId", userId);
+              ControllerUtil.jsonResponse(response, jsonResponse, 201);
             });
 
     // Set cache
     userIdFuture.onSuccess(
         id -> {
-          RedissonClient client = cache.getRedissonClient();
-          String key = "chatapp:user:" + id.toString() + ":info";
-          RMap<String, String> infoMap = client.getMap(key);
-          infoMap.put("username", username);
-          infoMap.put("name", name);
+          user.setId(id);
+          userCacheService.setUserCache(user);
         });
-  }
-
-  private Future<Integer> addUser(Tuple info) {
-    Promise<Integer> result = Promise.promise();
-    MySQLPool pool = database.getPool();
-    pool.preparedQuery("insert into users(username, password, name) values (?,?,?)")
-        .execute(
-            info,
-            rowSetRs -> {
-              if (rowSetRs.succeeded()) {
-                RowSet<Row> rs = rowSetRs.result();
-                result.complete(rs.property(MySQLClient.LAST_INSERTED_ID).intValue());
-              } else {
-                result.fail(rowSetRs.cause());
-              }
-            });
-    return result.future();
-  }
-
-  private Future<String> genToken(int userId) {
-    Promise<String> tokenPromise = Promise.promise();
-    tokenPromise.complete(auth.generateToken(new JsonObject().put("userId", userId)));
-    return tokenPromise.future();
   }
 }
