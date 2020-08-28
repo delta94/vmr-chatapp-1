@@ -12,26 +12,16 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import jodd.crypt.BCrypt;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
-import javax.inject.Inject;
-
+@Builder
+@AllArgsConstructor
 public class LoginController implements Controller {
   private Vertx vertx;
   private UserDBService userDBService;
   private JwtUtil jwtUtil;
   private UserCacheService userCacheService;
-
-  @Inject
-  public LoginController(
-      Vertx vertx,
-      UserDBService userDBService,
-      JwtUtil jwtUtil,
-      UserCacheService userCacheService) {
-    this.vertx = vertx;
-    this.userDBService = userDBService;
-    this.jwtUtil = jwtUtil;
-    this.userCacheService = userCacheService;
-  }
 
   @Override
   public Router getRouter() {

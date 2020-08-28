@@ -1,6 +1,7 @@
 package com.anhvan.vmr;
 
 import com.anhvan.vmr.config.ConfigLoader;
+import com.anhvan.vmr.config.ConfigModule;
 import com.anhvan.vmr.dagger.DaggerServiceComponent;
 import com.anhvan.vmr.dagger.ServiceComponent;
 import com.anhvan.vmr.dagger.ServiceModule;
@@ -13,6 +14,9 @@ import io.vertx.core.json.JsonObject;
 
 public class Runner {
   public static void main(String[] args) {
+    System.setProperty(
+        "vertx.logger-delegate-factory-class-name",
+        "io.vertx.core.logging.Log4j2LogDelegateFactory");
     // Create vertx instance
     Vertx vertx = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true));
 
@@ -24,8 +28,13 @@ public class Runner {
 
   // Load dagger modules
   public static void onLoadConfig(JsonObject config, Vertx vertx) {
-    ServiceModule module = new ServiceModule(config, vertx);
-    ServiceComponent component = DaggerServiceComponent.builder().serviceModule(module).build();
+    ServiceModule serviceModule = new ServiceModule(vertx);
+    ConfigModule configModule = new ConfigModule(config);
+    ServiceComponent component =
+        DaggerServiceComponent.builder()
+            .serviceModule(serviceModule)
+            .configModule(configModule)
+            .build();
     WebServer restfulAPI = component.getRestfulAPI();
     restfulAPI.start();
     WebSocketServer ws = component.getWebSocketServer();

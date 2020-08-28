@@ -12,11 +12,13 @@ import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.inject.Inject;
-
+@AllArgsConstructor
+@Builder
 public class RegisterController implements Controller {
   private static final Logger logger = LogManager.getLogger(RegisterController.class);
 
@@ -24,18 +26,6 @@ public class RegisterController implements Controller {
   private UserDBService userDBService;
   private JwtUtil jwtUtil;
   private UserCacheService userCacheService;
-
-  @Inject
-  public RegisterController(
-      Vertx vertx,
-      UserDBService userDBService,
-      JwtUtil jwtUtil,
-      UserCacheService userCacheService) {
-    this.vertx = vertx;
-    this.userDBService = userDBService;
-    this.jwtUtil = jwtUtil;
-    this.userCacheService = userCacheService;
-  }
 
   @Override
   public Router getRouter() {

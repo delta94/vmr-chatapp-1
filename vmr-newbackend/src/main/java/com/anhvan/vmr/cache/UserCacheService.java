@@ -3,6 +3,8 @@ package com.anhvan.vmr.cache;
 import com.anhvan.vmr.model.User;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 
@@ -12,6 +14,8 @@ import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
 public class UserCacheService {
+  private static final Logger logger = LogManager.getLogger(UserCacheService.class);
+
   private RedissonClient client;
 
   @Inject
@@ -43,10 +47,13 @@ public class UserCacheService {
                 userPromise.fail(throwable);
                 return;
               }
+              if (infoMap.entrySet().size() == 0) {
+                userPromise.fail("User not exist in cache");
+              }
               User user =
                   User.builder()
                       .username(infoMap.get("username"))
-                      .name(userInfo.getName())
+                      .name(infoMap.get("name"))
                       .id(userId)
                       .build();
               userPromise.complete(user);

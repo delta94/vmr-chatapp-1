@@ -47,12 +47,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4a4c554b-0f70-4b4f-bee7-1a13df5068fc" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/cache/TokenCacheService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/config/ConfigModule.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/LogoutController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/UserInfoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/Runner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/Runner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/cache/RedisCache.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/cache/RedisCache.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/cache/UserCacheService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/cache/UserCacheService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/config/CacheConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/config/CacheConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/ControllerModule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/ControllerModule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/dagger/ServiceComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/dagger/ServiceComponent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/dagger/ServiceModule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/dagger/ServiceModule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/database/UserDBService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/database/UserDBService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/WebSocketServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/WebSocketServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/util/ConversionUtil.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -74,7 +96,7 @@
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
-    <property name="settings.editor.selected.configurable" value="reference.projectsettings.compiler.annotationProcessors" />
+    <property name="settings.editor.selected.configurable" value="Errors" />
   </component>
   <component name="RunManager">
     <configuration name="Runner" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
@@ -117,11 +139,52 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="482" y="188" width="1024" height="841" key="SettingsEditor" timestamp="1598581082859">
+    <state width="1807" height="310" key="GridCell.Tab.0.bottom" timestamp="1598610203258">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state x="482" y="188" width="1024" height="841" key="SettingsEditor/67.27.1853.1053@67.27.1853.1053" timestamp="1598581082859" />
+    <state width="1807" height="310" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1598610203258" />
+    <state width="1807" height="310" key="GridCell.Tab.0.center" timestamp="1598610203258">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state width="1807" height="310" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1598610203258" />
+    <state width="1807" height="310" key="GridCell.Tab.0.left" timestamp="1598610203257">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state width="1807" height="310" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1598610203257" />
+    <state width="1807" height="310" key="GridCell.Tab.0.right" timestamp="1598610203258">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state width="1807" height="310" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1598610203258" />
+    <state width="1807" height="344" key="GridCell.Tab.1.bottom" timestamp="1598602621732">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state width="1807" height="344" key="GridCell.Tab.1.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1598602621732" />
+    <state width="1807" height="344" key="GridCell.Tab.1.center" timestamp="1598602621732">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state width="1807" height="344" key="GridCell.Tab.1.center/67.27.1853.1053@67.27.1853.1053" timestamp="1598602621732" />
+    <state width="1807" height="344" key="GridCell.Tab.1.left" timestamp="1598602621732">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state width="1807" height="344" key="GridCell.Tab.1.left/67.27.1853.1053@67.27.1853.1053" timestamp="1598602621732" />
+    <state width="1807" height="344" key="GridCell.Tab.1.right" timestamp="1598602621732">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state width="1807" height="344" key="GridCell.Tab.1.right/67.27.1853.1053@67.27.1853.1053" timestamp="1598602621732" />
+    <state x="769" y="203" width="1024" height="841" key="SettingsEditor" timestamp="1598582080116">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="769" y="203" width="1024" height="841" key="SettingsEditor/67.27.1853.1053@67.27.1853.1053" timestamp="1598582080116" />
+    <state x="657" y="255" key="run.anything.popup" timestamp="1598601423721">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="657" y="255" key="run.anything.popup/67.27.1853.1053@67.27.1853.1053" timestamp="1598601423721" />
+    <state x="656" y="259" width="672" height="678" key="search.everywhere.popup" timestamp="1598601914263">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="656" y="259" width="672" height="678" key="search.everywhere.popup/67.27.1853.1053@67.27.1853.1053" timestamp="1598601914263" />
   </component>
 </project>

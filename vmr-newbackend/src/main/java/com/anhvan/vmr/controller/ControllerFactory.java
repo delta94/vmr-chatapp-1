@@ -3,29 +3,19 @@ package com.anhvan.vmr.controller;
 import io.vertx.ext.web.Router;
 
 import javax.inject.Inject;
+import java.util.Map;
 
 public class ControllerFactory {
-  private IndexController indexController;
-  private RegisterController registerController;
-  private LoginController loginController;
-  private UserController userController;
+  private Map<String, Controller> controllerMap;
 
   @Inject
-  public ControllerFactory(
-      IndexController indexController,
-      RegisterController registerController,
-      LoginController loginController,
-      UserController userController) {
-    this.indexController = indexController;
-    this.registerController = registerController;
-    this.loginController = loginController;
-    this.userController = userController;
+  public ControllerFactory(Map<String, Controller> controllerMap) {
+    this.controllerMap = controllerMap;
   }
 
   public void registerController(Router router) {
-    router.mountSubRouter("/", indexController.getRouter());
-    router.mountSubRouter("/api/public/register", registerController.getRouter());
-    router.mountSubRouter("/api/public/login", loginController.getRouter());
-    router.mountSubRouter("/api/protected/users", userController.getRouter());
+    for (Map.Entry<String, Controller> controllerEntry : controllerMap.entrySet()) {
+      router.mountSubRouter(controllerEntry.getKey(), controllerEntry.getValue().getRouter());
+    }
   }
 }

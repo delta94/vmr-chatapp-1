@@ -2,6 +2,7 @@ package com.anhvan.vmr.server;
 
 import com.anhvan.vmr.config.ServerConfig;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.ServerWebSocket;
 
 import javax.inject.Inject;
 
@@ -18,7 +19,12 @@ public class WebSocketServer {
   public void start() {
     vertx
         .createHttpServer()
-        .webSocketHandler(ws -> System.out.println("Connect"))
+        .webSocketHandler(this::websocketHandler)
         .listen(config.getPort(), config.getHost());
+  }
+
+  private void websocketHandler(ServerWebSocket webSocket) {
+    System.out.println(webSocket.headers());
+    webSocket.accept();
   }
 }

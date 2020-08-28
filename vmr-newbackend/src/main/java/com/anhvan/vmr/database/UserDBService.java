@@ -63,6 +63,26 @@ public class UserDBService {
     return userPromise.future();
   }
 
+  public Future<User> getUserById(int id) {
+    Promise<User> userPromise = Promise.promise();
+    pool.preparedQuery("select * from users where id=?")
+        .execute(
+            Tuple.of(id),
+            rowSetRs -> {
+              if (rowSetRs.succeeded()) {
+                RowSet<Row> result = rowSetRs.result();
+                if (result.size() == 1) {
+                  result.forEach(row -> userPromise.complete(rowToUser(row)));
+                } else {
+                  userPromise.fail("User not exist");
+                }
+              } else {
+                logger.debug("Fail when get user", rowSetRs.cause());
+              }
+            });
+    return userPromise.future();
+  }
+
   public Future<List<User>> getListUser() {
     Promise<List<User>> listUserPromise = Promise.promise();
     List<User> userList = new ArrayList<>();
@@ -72,6 +92,8 @@ public class UserDBService {
               if (rowSetRs.succeeded()) {
                 RowSet<Row> result = rowSetRs.result();
                 result.forEach(row -> userList.add(rowToUser(row)));
+              } else {
+                logger.debug("Fail when get user list", rowSetRs.cause());
               }
               listUserPromise.complete(userList);
             });

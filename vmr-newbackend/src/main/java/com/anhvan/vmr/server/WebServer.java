@@ -2,7 +2,6 @@ package com.anhvan.vmr.server;
 
 import com.anhvan.vmr.config.ServerConfig;
 import io.vertx.core.Vertx;
-import io.vertx.ext.auth.jwt.JWTAuth;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -24,6 +23,7 @@ public class WebServer {
     vertx
         .createHttpServer()
         .requestHandler(routerFactory.route())
+        .exceptionHandler(throwable -> LOGGER.error("An exception occur", throwable))
         .listen(config.getPort(), config.getHost());
   }
 }
