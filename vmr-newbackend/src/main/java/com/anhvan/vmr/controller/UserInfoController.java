@@ -12,14 +12,12 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 @AllArgsConstructor
 @Builder
+@Log4j2
 public class UserInfoController implements Controller {
-  private static final Logger LOGGER = LogManager.getLogger(UserInfoController.class);
-
   private Vertx vertx;
   private UserDBService userDBService;
   private UserCacheService userCacheService;
@@ -35,16 +33,16 @@ public class UserInfoController implements Controller {
     HttpServerResponse response = routingContext.response();
     JsonObject principal = routingContext.user().principal();
     int userId = principal.getInteger("userId");
-    LOGGER.debug(principal);
+    log.debug(principal);
     Future<User> userInfo = userCacheService.getUserCache(userId);
     userInfo.onSuccess(
         user -> {
-          LOGGER.debug("Cache hit");
+          log.debug("Cache hit");
           ControllerUtil.jsonResponse(response, JsonObject.mapFrom(user), 200);
         });
     userInfo.onFailure(
         failue -> {
-          LOGGER.debug("Cache miss");
+          log.debug("Cache miss");
           userDBService
               .getUserById(userId)
               .onSuccess(
@@ -54,7 +52,7 @@ public class UserInfoController implements Controller {
                   })
               .onFailure(
                   throwable -> {
-                    LOGGER.info("Cannot get authenticated user", throwable);
+                    log.info("Cannot get authenticated user", throwable);
                     response.setStatusCode(404).end();
                   });
         });

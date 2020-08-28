@@ -3,7 +3,6 @@ package com.anhvan.vmr.controller;
 import com.anhvan.vmr.cache.UserCacheService;
 import com.anhvan.vmr.database.UserDBService;
 import com.anhvan.vmr.model.User;
-import com.anhvan.vmr.util.ControllerUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerResponse;
@@ -12,16 +11,14 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 
 @AllArgsConstructor
 @Builder
+@Log4j2
 public class UserController implements Controller {
-  private final Logger LOGGER = LogManager.getLogger(UserController.class);
-
   private Vertx vertx;
   private UserDBService userDBService;
   private UserCacheService userCacheService;
@@ -45,5 +42,4 @@ public class UserController implements Controller {
           res.end(jsonResponse.toBuffer());
         });
   }
-
 }

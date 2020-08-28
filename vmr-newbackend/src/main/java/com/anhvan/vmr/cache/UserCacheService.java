@@ -3,8 +3,7 @@ package com.anhvan.vmr.cache;
 import com.anhvan.vmr.model.User;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 
@@ -13,9 +12,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
+@Log4j2
 public class UserCacheService {
-  private static final Logger logger = LogManager.getLogger(UserCacheService.class);
-
   private RedissonClient client;
 
   @Inject

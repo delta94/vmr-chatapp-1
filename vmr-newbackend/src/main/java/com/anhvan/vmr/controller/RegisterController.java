@@ -14,14 +14,12 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 @AllArgsConstructor
 @Builder
+@Log4j2
 public class RegisterController implements Controller {
-  private static final Logger logger = LogManager.getLogger(RegisterController.class);
-
   private Vertx vertx;
   private UserDBService userDBService;
   private JwtUtil jwtUtil;
@@ -46,7 +44,7 @@ public class RegisterController implements Controller {
     userIdFuture.onFailure(
         throwable -> {
           response.setStatusCode(409).end();
-          logger.debug("Fail when add user", throwable);
+          log.debug("Fail when add user", throwable);
         });
 
     // Generate token
@@ -60,7 +58,8 @@ public class RegisterController implements Controller {
               String token = result.result().resultAt(1);
               JsonObject jsonResponse = new JsonObject().put("token", token).put("userId", userId);
               ControllerUtil.jsonResponse(response, jsonResponse, 201);
-            });
+            })
+        .onFailure(err -> log.error("Error", err));
 
     // Set cache
     userIdFuture.onSuccess(

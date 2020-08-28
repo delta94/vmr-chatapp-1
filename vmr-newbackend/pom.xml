@@ -120,6 +120,11 @@
       <artifactId>redisson</artifactId>
       <version>3.13.3</version>
     </dependency>
+    <dependency>
+      <groupId>com.lmax</groupId>
+      <artifactId>disruptor</artifactId>
+      <version>3.3.7</version>
+    </dependency>
   </dependencies>
 
   <build>

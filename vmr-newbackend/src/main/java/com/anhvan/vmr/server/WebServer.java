@@ -5,25 +5,23 @@ import io.vertx.core.Vertx;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Log4j2
 public class WebServer {
-  private static final Logger LOGGER = LogManager.getLogger(WebServer.class);
-
   private Vertx vertx;
   private ServerConfig config;
   private RouterFactory routerFactory;
 
   public void start() {
-    LOGGER.info("Create web server at port {}", config.getPort());
+    log.info("Create web server at port {}", config.getPort());
     vertx
         .createHttpServer()
         .requestHandler(routerFactory.route())
-        .exceptionHandler(throwable -> LOGGER.error("An exception occur", throwable))
+        .exceptionHandler(throwable -> log.error("An exception occur", throwable))
         .listen(config.getPort(), config.getHost());
   }
 }

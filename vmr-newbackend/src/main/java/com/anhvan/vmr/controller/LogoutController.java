@@ -5,9 +5,11 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.extern.log4j.Log4j2;
 
 @Builder
 @AllArgsConstructor
+@Log4j2
 public class LogoutController implements Controller {
   private Vertx vertx;
   private TokenCacheService tokenCacheService;

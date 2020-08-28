@@ -3,6 +3,7 @@ package com.anhvan.vmr.controller;
 import com.anhvan.vmr.cache.TokenCacheService;
 import com.anhvan.vmr.cache.UserCacheService;
 import com.anhvan.vmr.database.UserDBService;
+import com.anhvan.vmr.util.AsyncWorkerUtil;
 import com.anhvan.vmr.util.JwtUtil;
 import dagger.Module;
 import dagger.Provides;
@@ -26,12 +27,14 @@ public class ControllerModule {
       Vertx vertx,
       UserDBService userDBService,
       UserCacheService userCacheService,
-      JwtUtil jwtUtil) {
+      JwtUtil jwtUtil,
+      AsyncWorkerUtil asyncWorkerUtil) {
     return LoginController.builder()
         .vertx(vertx)
         .userDBService(userDBService)
         .userCacheService(userCacheService)
         .jwtUtil(jwtUtil)
+        .workerUtil(asyncWorkerUtil)
         .build();
   }
 

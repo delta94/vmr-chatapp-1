@@ -2,8 +2,7 @@ package com.anhvan.vmr.cache;
 
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 
@@ -11,9 +10,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
+@Log4j2
 public class TokenCacheService {
-  private final Logger LOGGER = LogManager.getLogger(TokenCacheService.class);
-
   private RedissonClient redis;
 
   @Inject
@@ -40,7 +38,7 @@ public class TokenCacheService {
         .onComplete(
             (exist, throwable) -> {
               if (throwable != null) {
-                LOGGER.warn("Error when get result from redis", throwable);
+                log.warn("Error when get result from redis", throwable);
                 existPromise.fail(throwable);
               } else {
                 existPromise.complete(exist);

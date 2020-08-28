@@ -18,7 +18,8 @@ public class Runner {
         "vertx.logger-delegate-factory-class-name",
         "io.vertx.core.logging.Log4j2LogDelegateFactory");
     // Create vertx instance
-    Vertx vertx = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true));
+    Vertx vertx =
+        Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setWorkerPoolSize(20));
 
     // Load config
     ConfigLoader configLoader = new ConfigLoader(vertx);

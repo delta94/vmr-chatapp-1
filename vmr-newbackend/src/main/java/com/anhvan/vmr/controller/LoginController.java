@@ -3,6 +3,7 @@ package com.anhvan.vmr.controller;
 import com.anhvan.vmr.cache.UserCacheService;
 import com.anhvan.vmr.database.UserDBService;
 import com.anhvan.vmr.model.User;
+import com.anhvan.vmr.util.AsyncWorkerUtil;
 import com.anhvan.vmr.util.ControllerUtil;
 import com.anhvan.vmr.util.JwtUtil;
 import io.vertx.core.Future;
@@ -14,14 +15,17 @@ import io.vertx.ext.web.RoutingContext;
 import jodd.crypt.BCrypt;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.extern.log4j.Log4j2;
 
 @Builder
 @AllArgsConstructor
+@Log4j2
 public class LoginController implements Controller {
   private Vertx vertx;
   private UserDBService userDBService;
   private JwtUtil jwtUtil;
   private UserCacheService userCacheService;
+  private AsyncWorkerUtil workerUtil;
 
   @Override
   public Router getRouter() {
@@ -39,19 +43,24 @@ public class LoginController implements Controller {
     userFuture
         .onSuccess(
             dbUser -> {
-              if (BCrypt.checkpw(user.getPassword(), dbUser.getPassword())) {
-                jwtUtil
-                    .generate(dbUser.getId())
-                    .onSuccess(
-                        token -> {
-                          JsonObject res =
-                              new JsonObject().put("jwtToken", token).put("userId", dbUser.getId());
-                          ControllerUtil.jsonResponse(response, res);
-                        });
-                userCacheService.setUserCache(dbUser);
-              } else {
-                response.setStatusCode(401).end();
-              }
+              workerUtil.execute(
+                  () -> {
+                    if (BCrypt.checkpw(user.getPassword(), dbUser.getPassword())) {
+                      jwtUtil
+                          .generate(dbUser.getId())
+                          .onSuccess(
+                              token -> {
+                                JsonObject res =
+                                    new JsonObject()
+                                        .put("jwtToken", token)
+                                        .put("userId", dbUser.getId());
+                                ControllerUtil.jsonResponse(response, res);
+                              });
+                      userCacheService.setUserCache(dbUser);
+                    } else {
+                      response.setStatusCode(401).end();
+                    }
+                  });
             })
         .onFailure(throwable -> response.setStatusCode(401).end());
   }

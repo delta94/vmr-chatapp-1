@@ -1,16 +1,14 @@
 package com.anhvan.vmr.cache;
 
 import lombok.Getter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 
 @Getter
+@Log4j2
 public class RedisCache {
-  private static final Logger LOGGER = LogManager.getLogger(RedisCache.class);
-
   private RedissonClient redissonClient;
 
   public RedisCache() {
@@ -18,9 +16,9 @@ public class RedisCache {
       Config config =
           Config.fromYAML(RedisCache.class.getClassLoader().getResourceAsStream("redis.yml"));
       redissonClient = Redisson.create(config);
-      LOGGER.info("Connected to redis");
+      log.info("Connected to redis");
     } catch (Exception e) {
-      LOGGER.error("Error when create redisson instance", e);
+      log.error("Error when create redisson instance", e);
     }
   }
 }
