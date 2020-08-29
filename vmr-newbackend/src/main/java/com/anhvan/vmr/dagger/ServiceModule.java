@@ -5,6 +5,7 @@ import com.anhvan.vmr.config.AuthConfig;
 import com.anhvan.vmr.config.ServerConfig;
 import com.anhvan.vmr.server.RouterFactory;
 import com.anhvan.vmr.server.WebServer;
+import com.anhvan.vmr.websocket.WebSocketService;
 import dagger.Module;
 import dagger.Provides;
 import io.vertx.core.Vertx;
@@ -31,8 +32,11 @@ public class ServiceModule {
   @Provides
   @Singleton
   public WebServer provideRestfulAPI(
-      ServerConfig config, Vertx vertx, RouterFactory routerFactory) {
-    return new WebServer(vertx, config, routerFactory);
+      ServerConfig config,
+      Vertx vertx,
+      RouterFactory routerFactory,
+      WebSocketService webSocketService) {
+    return new WebServer(vertx, config, routerFactory, webSocketService);
   }
 
   @Provides
