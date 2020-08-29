@@ -45,7 +45,7 @@ public class ServiceModule {
                 .setAlgorithm("HS256")
                 .setPublicKey(config.getToken())
                 .setSymmetric(true))
-        .setJWTOptions(new JWTOptions().setExpiresInSeconds(3600 * 24));
+        .setJWTOptions(new JWTOptions().setExpiresInSeconds(config.getExpire()));
   }
 
   @Provides

@@ -3,7 +3,7 @@ rest:
   host: 127.0.0.1
 auth:
   token: dsjkshd8y2387yuhfsghduhgf673tfsgfjhg76tg3yugfshjg
-  expire: 10000000
+  expire: 86400
 mysql:
   host: 127.0.0.1
   port: 3306
@@ -11,5 +11,3 @@ mysql:
   password: password
   database: vmrchat
   poolSize: 15
-service:
-  jwtSecret: iuwiuy87y4387y4ugfsudgf3766tu43g

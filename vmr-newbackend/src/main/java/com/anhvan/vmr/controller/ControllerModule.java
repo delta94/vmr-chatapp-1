@@ -81,7 +81,19 @@ public class ControllerModule {
   @Provides
   @IntoMap
   @StringKey("/api/protected/logout")
-  public Controller provideLogoutController(Vertx vertx, TokenCacheService tokenCacheService) {
-    return LogoutController.builder().vertx(vertx).tokenCacheService(tokenCacheService).build();
+  public Controller provideLogoutController(
+      Vertx vertx, TokenCacheService tokenCacheService, JwtUtil jwtUtil) {
+    return LogoutController.builder()
+        .vertx(vertx)
+        .tokenCacheService(tokenCacheService)
+        .jwtUtil(jwtUtil)
+        .build();
+  }
+
+  @Provides
+  @IntoMap
+  @StringKey("/api/protected/sockettoken")
+  public Controller provideSocketTokenController(Vertx vertx, JwtUtil jwtUtil) {
+    return SocketTokenController.builder().vertx(vertx).jwtUtil(jwtUtil).build();
   }
 }

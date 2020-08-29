@@ -17,4 +17,4 @@ singleServerConfig:
 threads: 16
 nettyThreads: 32
 transportMode: "NIO"
-codec: !<org.redisson.client.codec.StringCodec> {}
+codec: !<org.redisson.codec.JsonJacksonCodec> {}

@@ -11,7 +11,7 @@ import lombok.*;
 public class User {
   private String username;
   private String name;
-  @JsonIgnore private int id;
+  private int id;
   @JsonIgnore private String password;
   @JsonIgnore private boolean active;
 }

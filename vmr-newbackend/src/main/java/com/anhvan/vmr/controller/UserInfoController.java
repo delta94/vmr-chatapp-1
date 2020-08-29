@@ -37,12 +37,12 @@ public class UserInfoController implements Controller {
     Future<User> userInfo = userCacheService.getUserCache(userId);
     userInfo.onSuccess(
         user -> {
-          log.debug("Cache hit");
+          log.info("Cache hit");
           ControllerUtil.jsonResponse(response, JsonObject.mapFrom(user), 200);
         });
     userInfo.onFailure(
         failue -> {
-          log.debug("Cache miss");
+          log.info("Cache miss");
           userDBService
               .getUserById(userId)
               .onSuccess(
@@ -52,7 +52,7 @@ public class UserInfoController implements Controller {
                   })
               .onFailure(
                   throwable -> {
-                    log.info("Cannot get authenticated user", throwable);
+                    log.error("Cannot get authenticated user", throwable);
                     response.setStatusCode(404).end();
                   });
         });

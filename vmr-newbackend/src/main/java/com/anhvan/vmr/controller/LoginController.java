@@ -40,28 +40,27 @@ public class LoginController implements Controller {
     User user = body.mapTo(User.class);
 
     Future<User> userFuture = userDBService.getUserByUsername(user.getUsername());
-    userFuture
-        .onSuccess(
-            dbUser -> {
-              workerUtil.execute(
-                  () -> {
-                    if (BCrypt.checkpw(user.getPassword(), dbUser.getPassword())) {
-                      jwtUtil
-                          .generate(dbUser.getId())
-                          .onSuccess(
-                              token -> {
-                                JsonObject res =
-                                    new JsonObject()
-                                        .put("jwtToken", token)
-                                        .put("userId", dbUser.getId());
-                                ControllerUtil.jsonResponse(response, res);
-                              });
-                      userCacheService.setUserCache(dbUser);
-                    } else {
-                      response.setStatusCode(401).end();
-                    }
-                  });
-            })
-        .onFailure(throwable -> response.setStatusCode(401).end());
+    userFuture.onSuccess(
+        dbUser ->
+            workerUtil.execute(
+                () -> {
+                  if (BCrypt.checkpw(user.getPassword(), dbUser.getPassword())) {
+                    jwtUtil
+                        .generate(dbUser.getId())
+                        .onSuccess(
+                            token -> {
+                              JsonObject res =
+                                  new JsonObject()
+                                      .put("jwtToken", token)
+                                      .put("userId", dbUser.getId());
+                              ControllerUtil.jsonResponse(response, res);
+                            });
+                    userCacheService.setUserCache(dbUser);
+                  } else {
+                    response.setStatusCode(401).end();
+                  }
+                }));
+
+    userFuture.onFailure(throwable -> response.setStatusCode(401).end());
   }
 }

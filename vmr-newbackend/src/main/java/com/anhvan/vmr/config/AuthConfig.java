@@ -11,5 +11,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AuthConfig {
   private String token;
-  private long expire;
+  private int expire;
 }

@@ -29,7 +29,7 @@ public class UserDBService {
 
   public Future<Integer> addUser(User user) {
     log.trace("Add user");
-    Promise<Integer> result = Promise.promise();
+    Promise<Integer> idPromise = Promise.promise();
     workerUtil.execute(
         () -> {
           log.trace("Add user to database");
@@ -41,14 +41,14 @@ public class UserDBService {
                   rowSetRs -> {
                     if (rowSetRs.succeeded()) {
                       RowSet<Row> rs = rowSetRs.result();
-                      result.complete(rs.property(MySQLClient.LAST_INSERTED_ID).intValue());
+                      idPromise.complete(rs.property(MySQLClient.LAST_INSERTED_ID).intValue());
                     } else {
                       log.debug("Error when create user", rowSetRs.cause());
-                      result.fail(rowSetRs.cause());
+                      idPromise.fail(rowSetRs.cause());
                     }
                   });
         });
-    return result.future();
+    return idPromise.future();
   }
 
   public Future<User> getUserByUsername(String username) {
@@ -64,6 +64,9 @@ public class UserDBService {
                 } else {
                   userPromise.fail("User not exist");
                 }
+              } else {
+                log.error("Error when get user by username", rowSetRs.cause());
+                userPromise.fail(rowSetRs.cause());
               }
             });
     return userPromise.future();
@@ -83,7 +86,8 @@ public class UserDBService {
                   userPromise.fail("User not exist");
                 }
               } else {
-                log.debug("Fail when get user", rowSetRs.cause());
+                log.error("Fail when get user", rowSetRs.cause());
+                userPromise.fail(rowSetRs.cause());
               }
             });
     return userPromise.future();
@@ -100,6 +104,7 @@ public class UserDBService {
                 result.forEach(row -> userList.add(rowToUser(row)));
               } else {
                 log.debug("Fail when get user list", rowSetRs.cause());
+                listUserPromise.fail(rowSetRs.cause());
               }
               listUserPromise.complete(userList);
             });

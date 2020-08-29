@@ -21,7 +21,7 @@ public class WebServer {
     vertx
         .createHttpServer()
         .requestHandler(routerFactory.route())
-        .exceptionHandler(throwable -> log.error("An exception occur", throwable))
+        .exceptionHandler(throwable -> log.error("An exception occur when start server", throwable))
         .listen(config.getPort(), config.getHost());
   }
 }

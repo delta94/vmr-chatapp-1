@@ -3,6 +3,7 @@ package com.anhvan.vmr.controller;
 import com.anhvan.vmr.cache.UserCacheService;
 import com.anhvan.vmr.database.UserDBService;
 import com.anhvan.vmr.model.User;
+import com.anhvan.vmr.util.ControllerUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerResponse;
@@ -33,13 +34,26 @@ public class UserController implements Controller {
   }
 
   private void userList(RoutingContext routingContext) {
-    Future<List<User>> userListFuture = userDBService.getListUser();
-    userListFuture.onSuccess(
-        users -> {
-          JsonObject jsonResponse = new JsonObject().put("userList", users);
-          HttpServerResponse res = routingContext.response();
-          res.putHeader("Content-Type", "application/json");
-          res.end(jsonResponse.toBuffer());
+    HttpServerResponse res = routingContext.response();
+    res.putHeader("Content-Type", "application/json");
+    JsonObject result = new JsonObject();
+
+    Future<List<User>> cachedList = userCacheService.getUserList();
+    cachedList.onComplete(
+        listAsyncResult -> {
+          if (listAsyncResult.succeeded()) {
+            log.trace("Cache hit");
+            ControllerUtil.jsonResponse(res, result.put("userList", listAsyncResult.result()));
+          } else {
+            log.trace("Cache miss");
+            Future<List<User>> userListFuture = userDBService.getListUser();
+            userListFuture.onSuccess(
+                users -> {
+                  JsonObject jsonResponse = new JsonObject().put("userList", users);
+                  userCacheService.setUserList(users);
+                  res.end(jsonResponse.toBuffer());
+                });
+          }
         });
   }
 }
