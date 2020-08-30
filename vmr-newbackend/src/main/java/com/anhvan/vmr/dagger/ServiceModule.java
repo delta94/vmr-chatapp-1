@@ -5,7 +5,7 @@ import com.anhvan.vmr.config.AuthConfig;
 import com.anhvan.vmr.config.ServerConfig;
 import com.anhvan.vmr.server.RouterFactory;
 import com.anhvan.vmr.server.WebServer;
-import com.anhvan.vmr.websocket.WebSocketService;
+import com.anhvan.vmr.server.WebSocketFactory;
 import dagger.Module;
 import dagger.Provides;
 import io.vertx.core.Vertx;
@@ -35,8 +35,8 @@ public class ServiceModule {
       ServerConfig config,
       Vertx vertx,
       RouterFactory routerFactory,
-      WebSocketService webSocketService) {
-    return new WebServer(vertx, config, routerFactory, webSocketService);
+      WebSocketFactory webSocketFactory) {
+    return new WebServer(vertx, config, routerFactory, webSocketFactory);
   }
 
   @Provides

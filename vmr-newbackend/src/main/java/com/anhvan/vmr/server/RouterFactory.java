@@ -52,7 +52,7 @@ public class RouterFactory {
     router
         .route("/api/protected/*")
         .handler(JWTAuthHandler.create(jwtAuth))
-        .handler(this::jwtLogoutHandler);
+        .handler(this::jwtBlackListHandler);
 
     // Register controller
     controllerFactory.registerController(router);
@@ -69,7 +69,7 @@ public class RouterFactory {
     return router;
   }
 
-  private void jwtLogoutHandler(RoutingContext routingContext) {
+  private void jwtBlackListHandler(RoutingContext routingContext) {
     String jwtToken = jwtUtil.getTokenFromHeader(routingContext);
 
     Future<Boolean> existFuture = tokenCacheService.checkExistInBacklist(jwtToken);

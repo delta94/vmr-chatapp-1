@@ -47,17 +47,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4a4c554b-0f70-4b4f-bee7-1a13df5068fc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/websocket/WebSocketHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/websocket/WebSocketModule.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/websocket/WebSocketService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/database/ChatDBService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/Runner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/Runner.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/dagger/ServiceComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/dagger/ServiceComponent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/dagger/ServiceModule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/dagger/ServiceModule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/RouterFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/RouterFactory.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/WebServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/WebServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/WebSocketServer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/util/JwtUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/util/JwtUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/websocket/WebSocketHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/websocket/WebSocketHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/websocket/WebSocketService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/websocket/WebSocketService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/websocket/WsMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/model/WsMessage.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -138,33 +135,37 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="460" y="260" width="445" height="207" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1598703543912">
+    <state x="491" y="82" width="374" height="556" key="#com.intellij.ide.util.MemberChooser" timestamp="1598757232393">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="460" y="260" width="445" height="207" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1366.728@0.0.1366.728" timestamp="1598703543912" />
+    <state x="491" y="82" width="374" height="556" key="#com.intellij.ide.util.MemberChooser/0.0.1366.728@0.0.1366.728" timestamp="1598757232393" />
+    <state x="460" y="260" width="445" height="207" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1598752291057">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="460" y="260" width="445" height="207" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1366.728@0.0.1366.728" timestamp="1598752291057" />
     <state x="416" y="113" width="524" height="494" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1598706455081">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="416" y="113" width="524" height="494" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1366.728@0.0.1366.728" timestamp="1598706455081" />
-    <state width="1324" height="196" key="GridCell.Tab.0.bottom" timestamp="1598711805306">
+    <state width="1324" height="158" key="GridCell.Tab.0.bottom" timestamp="1598758075195">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1324" height="196" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1598711805306" />
+    <state width="1324" height="158" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1598758075195" />
     <state width="1807" height="310" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1598610203258" />
-    <state width="1324" height="196" key="GridCell.Tab.0.center" timestamp="1598711805304">
+    <state width="1324" height="158" key="GridCell.Tab.0.center" timestamp="1598758075194">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1324" height="196" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1598711805304" />
+    <state width="1324" height="158" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1598758075194" />
     <state width="1807" height="310" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1598610203258" />
-    <state width="1324" height="196" key="GridCell.Tab.0.left" timestamp="1598711805303">
+    <state width="1324" height="158" key="GridCell.Tab.0.left" timestamp="1598758075193">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1324" height="196" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1598711805303" />
+    <state width="1324" height="158" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1598758075193" />
     <state width="1807" height="310" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1598610203257" />
-    <state width="1324" height="196" key="GridCell.Tab.0.right" timestamp="1598711805305">
+    <state width="1324" height="158" key="GridCell.Tab.0.right" timestamp="1598758075194">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1324" height="196" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1598711805305" />
+    <state width="1324" height="158" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1598758075194" />
     <state width="1807" height="310" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1598610203258" />
     <state width="1324" height="217" key="GridCell.Tab.1.bottom" timestamp="1598631892823">
       <screen x="0" y="0" width="1366" height="728" />
@@ -194,9 +195,10 @@
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state x="657" y="255" key="run.anything.popup/67.27.1853.1053@67.27.1853.1053" timestamp="1598601423721" />
-    <state x="656" y="259" width="672" height="678" key="search.everywhere.popup" timestamp="1598601914263">
-      <screen x="67" y="27" width="1853" height="1053" />
+    <state x="434" y="160" width="672" height="469" key="search.everywhere.popup" timestamp="1598753154361">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
+    <state x="434" y="160" width="672" height="469" key="search.everywhere.popup/0.0.1366.728@0.0.1366.728" timestamp="1598753154361" />
     <state x="656" y="259" width="672" height="678" key="search.everywhere.popup/67.27.1853.1053@67.27.1853.1053" timestamp="1598601914263" />
   </component>
 </project>

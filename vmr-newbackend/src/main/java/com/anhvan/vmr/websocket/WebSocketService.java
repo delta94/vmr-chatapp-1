@@ -1,5 +1,6 @@
 package com.anhvan.vmr.websocket;
 
+import com.anhvan.vmr.model.WsMessage;
 import com.anhvan.vmr.util.JwtUtil;
 import io.vertx.core.Future;
 import io.vertx.core.http.ServerWebSocket;
