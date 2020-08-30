@@ -13,7 +13,13 @@ public class IndexController implements Controller {
   @Override
   public Router getRouter() {
     Router router = Router.router(vertx);
-    router.get("/").handler(routingContext -> routingContext.response().end("Hello world"));
+    router
+        .get("/")
+        .handler(
+            routingContext -> {
+              routingContext.response().putHeader("Content-Type","text/html; charset=utf-8");
+              routingContext.response().end("Hello world");
+            });
     return router;
   }
 }

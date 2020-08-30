@@ -3,9 +3,11 @@ package com.anhvan.vmr.server;
 import com.anhvan.vmr.config.ServerConfig;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.ServerWebSocket;
+import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
 
+@Log4j2
 public class WebSocketServer {
   private Vertx vertx;
   private ServerConfig config;
@@ -17,10 +19,18 @@ public class WebSocketServer {
   }
 
   public void start() {
+    int port = config.getPort() + 1;
     vertx
         .createHttpServer()
         .webSocketHandler(this::websocketHandler)
-        .listen(config.getPort(), config.getHost());
+        .listen(
+            port,
+            config.getHost(),
+            result -> {
+              if (result.succeeded()) {
+                log.info("Start websocket server at port {}", port);
+              }
+            });
   }
 
   private void websocketHandler(ServerWebSocket webSocket) {

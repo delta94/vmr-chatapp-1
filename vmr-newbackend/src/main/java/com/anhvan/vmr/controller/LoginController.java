@@ -35,6 +35,7 @@ public class LoginController implements Controller {
   }
 
   public void handleLogin(RoutingContext context) {
+    log.trace("Login");
     JsonObject body = context.getBodyAsJson();
     HttpServerResponse response = context.response();
     User user = body.mapTo(User.class);

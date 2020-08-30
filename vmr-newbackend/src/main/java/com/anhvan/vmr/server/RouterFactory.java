@@ -43,6 +43,7 @@ public class RouterFactory {
   public Router route() {
     Router router = Router.router(vertx);
 
+    // Set allowed headers, cors...
     setHeaderAllowances(router);
 
     // Parse body to json
@@ -108,9 +109,8 @@ public class RouterFactory {
     allowedMethods.add(HttpMethod.PUT);
 
     router
-        .route("/*")
+        .route()
         .handler(
-            CorsHandler.create("*").allowedHeaders(allowedHeaders).allowedMethods(allowedMethods))
-        .handler(BodyHandler.create());
+            CorsHandler.create("*").allowedHeaders(allowedHeaders).allowedMethods(allowedMethods));
   }
 }
