@@ -68,6 +68,7 @@ function RegisterPage() {
             initialValues={{remember: true}}
             onFinish={submitForm}
             onFieldsChange={clearMsg}
+            form={form}
           >
             <Form.Item
               label="Username"

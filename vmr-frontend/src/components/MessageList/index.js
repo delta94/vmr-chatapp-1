@@ -10,92 +10,33 @@ import {connect} from 'react-redux';
 
 import './MessageList.css';
 
-const MY_USER_ID = 'apple';
-
-
 let MessageList = (props) => {
-  if (props.userMap.size === 0) {
+  // MyId
+  let senderId = Number(localStorage.getItem("userId"));
+
+  // Check if userMap is loaded
+  if (props.userMapHolder.userMap.size === 0 || props.chatMessagesHolder.chatMessages.size === 0) {
     return <div></div>;
   }
 
-  let userId = props.match.params.receiverId;
-  console.log(props.userMap);
-  console.log(userId);
-  let user = props.userMap.get(Number(userId));
-  console.log(user);
+  let receiverId = Number(props.match.params.receiverId);
+  let receiver = props.userMapHolder.userMap.get(receiverId);
+  let messageList = props.chatMessagesHolder.chatMessages.get(receiverId);
+  let webSocket = props.webSocket;
+  console.log(receiver, messageList);
 
-  const [messages, setMessages] = useState([]);
+  // Messages list
+  let messages = messageList.map(x => {
+    return {
+      id: x.timestamp,
+      message: x.message,
+      author: x.senderId,
+      timestamp: x.timestamp * 1000,
+      isMine: x.isMine
+    };
+  });
 
-  useEffect(() => {
-    getMessages();
-  }, []);
-
-  const getMessages = () => {
-    let tempMessages = [
-      {
-        id: 1,
-        author: 'apple',
-        message: 'Hello world! This is a long message that will hopefully get wrapped by our message bubble component! We will see how well it works.',
-        timestamp: new Date().getTime()
-      },
-      {
-        id: 2,
-        author: 'orange',
-        message: 'It looks like it wraps exactly as it is supposed to. Lets see what a reply looks like!',
-        timestamp: new Date().getTime()
-      },
-      {
-        id: 3,
-        author: 'orange',
-        message: 'Hello world! This is a long message that will hopefully get wrapped by our message bubble component! We will see how well it works.',
-        timestamp: new Date().getTime()
-      },
-      {
-        id: 4,
-        author: 'apple',
-        message: 'It looks like it wraps exactly as it is supposed to. Lets see what a reply looks like!',
-        timestamp: new Date().getTime()
-      },
-      {
-        id: 5,
-        author: 'apple',
-        message: 'Hello world! This is a long message that will hopefully get wrapped by our message bubble component! We will see how well it works.',
-        timestamp: new Date().getTime()
-      },
-      {
-        id: 6,
-        author: 'apple',
-        message: 'It looks like it wraps exactly as it is supposed to. Lets see what a reply looks like!',
-        timestamp: new Date().getTime()
-      },
-      {
-        id: 7,
-        author: 'orange',
-        message: 'Hello world! This is a long message that will hopefully get wrapped by our message bubble component! We will see how well it works.',
-        timestamp: new Date().getTime()
-      },
-      {
-        id: 8,
-        author: 'orange',
-        message: 'It looks like it wraps exactly as it is supposed to. Lets see what a reply looks like!',
-        timestamp: new Date().getTime()
-      },
-      {
-        id: 9,
-        author: 'apple',
-        message: 'Hello world! This is a long message that will hopefully get wrapped by our message bubble component! We will see how well it works.',
-        timestamp: new Date().getTime()
-      },
-      {
-        id: 10,
-        author: 'orange',
-        message: 'It looks like it wraps exactly as it is supposed to. Lets see what a reply looks like!',
-        timestamp: new Date().getTime()
-      },
-    ]
-    setMessages([...messages, ...tempMessages])
-  }
-
+  // Display message
   const renderMessages = () => {
     let i = 0;
     let messageCount = messages.length;
@@ -105,7 +46,8 @@ let MessageList = (props) => {
       let previous = messages[i - 1];
       let current = messages[i];
       let next = messages[i + 1];
-      let isMine = current.author === MY_USER_ID;
+      console.log(current.author);
+      let isMine = current.isMine
       let currentMoment = moment(current.timestamp);
       let prevBySameAuthor = false;
       let nextBySameAuthor = false;
@@ -155,10 +97,17 @@ let MessageList = (props) => {
     return tempMessages;
   }
 
+  let onChangeText = (event) => {
+    if (event.keyCode === 13) {
+      console.log(event.target.value);
+      webSocket.send(receiverId, event.target.value);
+    }
+  }
+
   return (
     <div className="message-list">
       <Toolbar
-        title={user.name}
+        title={receiver.name}
         rightItems={[
           <ToolbarButton key="signout" icon="ion-ios-log-out" onClick={() => logout()}/>,
           <ToolbarButton key="info" icon="ion-ios-information-circle-outline"/>,
@@ -176,14 +125,17 @@ let MessageList = (props) => {
         <ToolbarButton key="money" icon="ion-ios-card"/>,
         <ToolbarButton key="games" icon="ion-logo-game-controller-b"/>,
         <ToolbarButton key="emoji" icon="ion-ios-happy"/>
-      ]}/>
+      ]}
+               onKeyUp={onChangeText}/>
     </div>
   );
 }
 
 let mapStateToPropsMessageList = (state) => {
   return {
-    userMap: state.userMap
+    userMapHolder: state.userMapHolder,
+    chatMessagesHolder: state.chatMessagesHolder,
+    webSocket: state.webSocket
   }
 }
 

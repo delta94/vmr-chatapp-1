@@ -3,7 +3,7 @@ package com.anhvan.vmr.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter

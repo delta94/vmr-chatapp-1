@@ -37,5 +37,6 @@ public class Runner {
             .build();
     WebServer restfulAPI = component.getRestfulAPI();
     restfulAPI.start();
+    component.getWebSocketServer().start();
   }
 }

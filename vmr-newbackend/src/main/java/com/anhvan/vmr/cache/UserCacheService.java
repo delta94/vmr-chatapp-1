@@ -65,6 +65,17 @@ public class UserCacheService {
         });
   }
 
+  public void addUserList(User user) {
+    workerUtil.execute(
+        () -> {
+          RQueue<User> userQueue = redis.getQueue("vmr:users");
+          if (userQueue.isExists()) {
+            userQueue.add(user);
+            userQueue.expire(1, TimeUnit.MINUTES);
+          }
+        });
+  }
+
   public Future<List<User>> getUserList() {
     Promise<List<User>> listUserPromise = Promise.promise();
     workerUtil.execute(

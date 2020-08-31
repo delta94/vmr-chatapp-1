@@ -2,7 +2,6 @@ package com.anhvan.vmr.server;
 
 import com.anhvan.vmr.config.ServerConfig;
 import io.vertx.core.Vertx;
-import io.vertx.core.http.ServerWebSocket;
 import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
@@ -11,18 +10,20 @@ import javax.inject.Inject;
 public class WebSocketServer {
   private Vertx vertx;
   private ServerConfig config;
+  private WebSocketFactory webSocketFactory;
 
   @Inject
-  public WebSocketServer(Vertx vertx, ServerConfig config) {
+  public WebSocketServer(Vertx vertx, ServerConfig config, WebSocketFactory webSocketFactory) {
     this.vertx = vertx;
     this.config = config;
+    this.webSocketFactory = webSocketFactory;
   }
 
   public void start() {
     int port = config.getPort() + 1;
     vertx
         .createHttpServer()
-        .webSocketHandler(this::websocketHandler)
+        .webSocketHandler(webSocketFactory::webSocketHandler)
         .listen(
             port,
             config.getHost(),
@@ -31,10 +32,5 @@ public class WebSocketServer {
                 log.info("Start websocket server at port {}", port);
               }
             });
-  }
-
-  private void websocketHandler(ServerWebSocket webSocket) {
-    System.out.println(webSocket.headers());
-    webSocket.accept();
   }
 }

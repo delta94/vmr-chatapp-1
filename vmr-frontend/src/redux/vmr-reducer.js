@@ -4,8 +4,17 @@ let initialState = {
     userId: localStorage.getItem("userId")
   },
   userList: [],
-  userMap: new Map(),
-  currentConversationId: null
+  userMapHolder: {
+    userMap: new Map()
+  },
+  currentConversationId: null,
+  webSocket: {
+    webSocket: null,
+    send: null
+  },
+  chatMessagesHolder: {
+    chatMessages: new Map()
+  }
 };
 
 export default function appReducer(state = initialState, action) {
@@ -22,6 +31,12 @@ export default function appReducer(state = initialState, action) {
       break;
     case 'LOGOUT':
       state = handleLogout(state)
+      break;
+    case 'WS_CONNECTED':
+      state = handleWsConnected(state, data);
+      break;
+    case 'CHAT_RECEIVE':
+      state = handleChatReceive(state, data);
       break;
   }
   return state;
@@ -46,14 +61,20 @@ function handleLogout(state, data) {
 }
 
 function updateUserList(state, userList) {
-  console.log(userList);
   let userMap = new Map();
+  let chatMessages = state.chatMessagesHolder.chatMessages;
   for (let user of userList) {
     userMap.set(user.id, user);
+    if (!chatMessages.has(user.id)) {
+      chatMessages.set(user.id, []);
+    }
   }
   return Object.assign({}, state, {
     userList,
-    userMap
+    userMapHolder: {
+      userMap
+    },
+    chatMessages
   });
 }
 
@@ -61,4 +82,28 @@ function setCurrentConservationId(state, id) {
   return Object.assign({}, state, {
     currentConversationId: id
   });
+}
+
+function handleWsConnected(state, data) {
+  console.log('ws connect', data);
+  let newState = Object.assign({}, state, {
+    webSocket: {
+      webSocket: data.webSocket,
+      send: data.send
+    }
+  });
+  console.log(newState);
+  return newState;
+}
+
+function handleChatReceive(state, data) {
+  console.log('handle chat receive', data);
+  let chatMessages = state.chatMessagesHolder.chatMessages;
+  let listMsg = chatMessages.get(Number(data.senderId));
+  listMsg.push(data);
+  return Object.assign({}, state, {
+    chatMessagesHolder: {
+      chatMessages
+    }
+  })
 }

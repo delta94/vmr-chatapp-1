@@ -8,8 +8,8 @@ export default function Compose(props) {
           type="text"
           className="compose-input"
           placeholder="Type a message, @name"
+          onKeyUp={props.onKeyUp}
         />
-
         {
           props.rightItems
         }

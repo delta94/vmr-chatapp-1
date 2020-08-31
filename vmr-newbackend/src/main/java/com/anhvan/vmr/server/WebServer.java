@@ -23,7 +23,6 @@ public class WebServer {
     vertx
         .createHttpServer(new HttpServerOptions().setTcpKeepAlive(true).setMaxHeaderSize(32 * 1024).setLogActivity(true))
         .requestHandler(routerFactory.route())
-        .webSocketHandler(webSocketFactory::webSocketHandler)
         .exceptionHandler(throwable -> log.error("An exception occur when start server", throwable))
         .listen(config.getPort(), config.getHost());
   }

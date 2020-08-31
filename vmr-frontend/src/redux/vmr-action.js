@@ -26,3 +26,20 @@ export function logout() {
     type: 'LOGOUT'
   }
 }
+
+export function webSocketConnected(webSocket, send) {
+  return {
+    type: 'WS_CONNECTED',
+    data: {
+      webSocket,
+      send
+    }
+  }
+}
+
+export function receiveMessage(message) {
+  return {
+    type: 'CHAT_RECEIVE',
+    data: message
+  }
+}

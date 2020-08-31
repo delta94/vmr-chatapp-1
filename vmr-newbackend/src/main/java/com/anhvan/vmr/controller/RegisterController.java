@@ -66,6 +66,7 @@ public class RegisterController implements Controller {
         id -> {
           user.setId(id);
           userCacheService.setUserCache(user);
+          userCacheService.addUserList(user);
         });
   }
 }

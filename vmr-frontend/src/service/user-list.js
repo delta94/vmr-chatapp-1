@@ -6,7 +6,6 @@ export function getUsers() {
   return new Promise((resolve, reject) => {
     protectedGet('/users').then(response => {
       let userList = response.data.userList;
-      console.log(userList);
       store.dispatch(updateUserList(userList));
       store.dispatch(updateConservationId(userList[0].id));
       resolve(userList);

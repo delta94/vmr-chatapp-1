@@ -44,8 +44,6 @@ function ConversationList(props) {
 }
 
 function mapStateToProps(state) {
-  console.log(state);
-  console.log(state.userList);
   return {
     userList: state.userList
   }
