@@ -6,7 +6,6 @@ import com.anhvan.vmr.dagger.DaggerServiceComponent;
 import com.anhvan.vmr.dagger.ServiceComponent;
 import com.anhvan.vmr.dagger.ServiceModule;
 import com.anhvan.vmr.server.WebServer;
-import com.anhvan.vmr.server.WebSocketServer;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
@@ -38,7 +37,5 @@ public class Runner {
             .build();
     WebServer restfulAPI = component.getRestfulAPI();
     restfulAPI.start();
-    WebSocketServer ws = component.getWebSocketServer();
-    ws.start();
   }
 }

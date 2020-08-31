@@ -16,12 +16,14 @@ public class WebServer {
   private Vertx vertx;
   private ServerConfig config;
   private RouterFactory routerFactory;
+  private WebSocketFactory webSocketFactory;
 
   public void start() {
     log.info("Create web server at port {}", config.getPort());
     vertx
         .createHttpServer(new HttpServerOptions().setTcpKeepAlive(true).setMaxHeaderSize(32 * 1024).setLogActivity(true))
         .requestHandler(routerFactory.route())
+        .webSocketHandler(webSocketFactory::webSocketHandler)
         .exceptionHandler(throwable -> log.error("An exception occur when start server", throwable))
         .listen(config.getPort(), config.getHost());
   }

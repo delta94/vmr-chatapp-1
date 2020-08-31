@@ -47,4 +47,22 @@ public class JwtUtil {
         });
     return tokenPromise.future();
   }
+
+  public Future<Integer> authenticate(String token) {
+    Promise<Integer> userIdPromise = Promise.promise();
+
+    jwtAuth.authenticate(
+        new JsonObject().put("jwt", token),
+        userAsyncResult -> {
+          if (userAsyncResult.succeeded()) {
+            int userId = userAsyncResult.result().principal().getInteger("userId");
+            userIdPromise.complete(userId);
+          } else {
+            log.error("Parse jwt fail", userAsyncResult.cause());
+            userIdPromise.fail(userAsyncResult.cause());
+          }
+        });
+
+    return userIdPromise.future();
+  }
 }
