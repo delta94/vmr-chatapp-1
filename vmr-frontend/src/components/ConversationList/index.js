@@ -4,17 +4,13 @@ import ConversationListItem from '../ConversationListItem';
 import Toolbar from '../Toolbar';
 import ToolbarButton from '../ToolbarButton';
 import {connect} from 'react-redux';
-
-import './ConversationList.css';
 import {getUsers} from "../../service/user-list";
 
+import './ConversationList.css';
+
+getUsers();
+
 function ConversationList(props) {
-  useEffect(() => {
-    getUsers();
-  }, []);
-
-  console.log('COnservation list', props);
-
   let conversations = props.userList.map(item => {
     return {
       name: item.name,
@@ -22,10 +18,6 @@ function ConversationList(props) {
       id: item.id
     }
   });
-
-  let handleClick = (event) => {
-
-  };
 
   return (
     <div className="conversation-list">

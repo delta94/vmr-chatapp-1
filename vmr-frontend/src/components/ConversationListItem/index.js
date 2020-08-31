@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {Avatar} from 'antd';
 import shave from 'shave';
+import {useHistory} from 'react-router-dom';
 
 import './ConversationListItem.css';
 
@@ -12,6 +13,7 @@ function getFirstLetter(name) {
 }
 
 export default function ConversationListItem(props) {
+  let history = useHistory();
 
   let avatarStyle = {
     backgroundColor: colorList[Math.round(Math.random() * 10) % colorList.length]
@@ -21,10 +23,14 @@ export default function ConversationListItem(props) {
     shave('.conversation-snippet', 20);
   })
 
-  const {name, text} = props.data;
+  const {name, text, id} = props.data;
+
+  let clickHandle = () => {
+    history.push('/t/' + id);
+  }
 
   return (
-    <div className="conversation-list-item">
+    <div className="conversation-list-item" onClick={clickHandle}>
       {/*<img className="conversation-photo" src={photo} alt="conversation" />*/}
       <Avatar style={avatarStyle} size={50}>
         {getFirstLetter(name)}

@@ -20,3 +20,9 @@ export function updateConservationId(id) {
     data: id
   }
 }
+
+export function logout() {
+  return {
+    type: 'LOGOUT'
+  }
+}

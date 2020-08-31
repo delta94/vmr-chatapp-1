@@ -47,12 +47,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4a4c554b-0f70-4b4f-bee7-1a13df5068fc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../vmr-frontend/src/service/user-list.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../vmr-frontend/src/service/chat-ws.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../vmr-frontend/src/service/logout.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vmr-frontend/.env" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/components/App/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/components/App/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/components/ConversationList/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/components/ConversationList/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/components/Messenger/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/components/Messenger/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/components/ConversationListItem/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/components/ConversationListItem/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/components/MessageList/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/components/MessageList/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/components/ToolbarButton/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/components/ToolbarButton/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/redux/vmr-action.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/redux/vmr-action.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/redux/vmr-reducer.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/redux/vmr-reducer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/service/axios-wrapper.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/service/axios-wrapper.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
