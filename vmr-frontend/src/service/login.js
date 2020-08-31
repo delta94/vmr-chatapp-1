@@ -14,9 +14,10 @@ export function usernamePasswordLogin(username, password) {
       store.dispatch(login(data.jwtToken, data.userId));
 
       // Save to local storage
-      localStorage.setItem("jwtToken", data.jwt);
+      localStorage.setItem("jwtToken", data.jwtToken);
       localStorage.setItem("userId", data.userId);
 
+      console.log(localStorage);
       // Send to login page
       resolve(data);
     }).catch(reason => {

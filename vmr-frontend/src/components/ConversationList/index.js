@@ -1,51 +1,62 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import ConversationSearch from '../ConversationSearch';
 import ConversationListItem from '../ConversationListItem';
 import Toolbar from '../Toolbar';
 import ToolbarButton from '../ToolbarButton';
-import axios from 'axios';
+import {connect} from 'react-redux';
 
 import './ConversationList.css';
+import {getUsers} from "../../service/user-list";
 
-export default function ConversationList(props) {
-  const [conversations, setConversations] = useState([]);
+function ConversationList(props) {
   useEffect(() => {
-    getConversations()
-  },[])
+    getUsers();
+  }, []);
 
- const getConversations = () => {
-    axios.get('https://randomuser.me/api/?results=20').then(response => {
-        let newConversations = response.data.results.map(result => {
-          return {
-            photo: result.picture.large,
-            name: `${result.name.first} ${result.name.last}`,
-            text: 'Hello world! This is a long message that needs to be truncated.'
-          };
-        });
-        setConversations([...conversations, ...newConversations])
-    });
-  }
+  console.log('COnservation list', props);
 
-    return (
-      <div className="conversation-list">
-        <Toolbar
-          title="Messenger"
-          leftItems={[
-            <ToolbarButton key="cog" icon="ion-ios-cog" />
-          ]}
-          rightItems={[
-            <ToolbarButton key="add" icon="ion-ios-add-circle-outline" />
-          ]}
-        />
-        <ConversationSearch />
-        {
-          conversations.map(conversation =>
-            <ConversationListItem
-              key={conversation.name}
-              data={conversation}
-            />
-          )
-        }
-      </div>
-    );
+  let conversations = props.userList.map(item => {
+    return {
+      name: item.name,
+      text: `@${item.username}`,
+      id: item.id
+    }
+  });
+
+  let handleClick = (event) => {
+
+  };
+
+  return (
+    <div className="conversation-list">
+      <Toolbar
+        title="Messenger"
+        leftItems={[
+          <ToolbarButton key="cog" icon="ion-ios-cog"/>
+        ]}
+        rightItems={[
+          <ToolbarButton key="add" icon="ion-ios-add-circle-outline"/>
+        ]}
+      />
+      <ConversationSearch/>
+      {
+        conversations.map(conversation =>
+          <ConversationListItem
+            key={conversation.id}
+            data={conversation}
+          />
+        )
+      }
+    </div>
+  );
 }
+
+function mapStateToProps(state) {
+  console.log(state);
+  console.log(state.userList);
+  return {
+    userList: state.userList
+  }
+}
+
+export default connect(mapStateToProps, null)(ConversationList);

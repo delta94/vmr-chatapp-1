@@ -3,13 +3,27 @@ import Compose from '../Compose';
 import Toolbar from '../Toolbar';
 import ToolbarButton from '../ToolbarButton';
 import Message from '../Message';
+import {Switch, Route} from 'react-router-dom';
 import moment from 'moment';
 
 import './MessageList.css';
 
 const MY_USER_ID = 'apple';
 
-export default function MessageList(props) {
+export default function MessageListWrapper(props) {
+  return (
+    <Switch>
+      <Route path="/t/:conservationId">
+        <MessageList></MessageList>
+      </Route>
+      <Route exact path="/">
+        <MessageList></MessageList>
+      </Route>
+    </Switch>
+  );
+}
+
+function MessageList(props) {
   const [messages, setMessages] = useState([])
 
   useEffect(() => {
