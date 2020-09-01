@@ -50,10 +50,9 @@ public class LoginController implements Controller {
                         .generate(dbUser.getId())
                         .onSuccess(
                             token -> {
-                              JsonObject res =
-                                  new JsonObject()
-                                      .put("jwtToken", token)
-                                      .put("userId", dbUser.getId());
+                              JsonObject res = new JsonObject();
+                              res.put("jwtToken", token);
+                              res.put("userId", dbUser.getId());
                               ControllerUtil.jsonResponse(response, res);
                             });
                     userCacheService.setUserCache(dbUser);

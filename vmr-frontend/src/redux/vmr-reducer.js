@@ -41,6 +41,9 @@ export default function appReducer(state = initialState, action) {
     case 'CHAT_SENDBACK':
       state = handleChatSendback(state, data);
       break;
+    case 'GET_MSG_FROM_API':
+      state = handleGetMsgFromAPI(state, data);
+      break;
   }
   return state;
 }
@@ -59,6 +62,18 @@ function handleLogout(state, data) {
     user: {
       jwt: null,
       userId: null
+    },
+    userList: [],
+    userMapHolder: {
+      userMap: new Map()
+    },
+    currentConversationId: null,
+    webSocket: {
+      webSocket: null,
+      send: null
+    },
+    chatMessagesHolder: {
+      chatMessages: new Map()
     }
   });
 }
@@ -77,7 +92,9 @@ function updateUserList(state, userList) {
     userMapHolder: {
       userMap
     },
-    chatMessages
+    chatMessagesHolder: {
+      chatMessages
+    }
   });
 }
 
@@ -120,5 +137,17 @@ function handleChatSendback(state, data) {
     chatMessagesHolder: {
       chatMessages
     }
-  })
+  });
+}
+
+function handleGetMsgFromAPI(state, data) {
+  console.log('Handle chat mesg from db');
+  let chatMessages = state.chatMessagesHolder.chatMessages;
+  let listMsg = chatMessages.get(data.friendId);
+  chatMessages.set(data.friendId, [...data.messages, ...listMsg]);
+  return Object.assign({}, state, {
+    chatMessagesHolder: {
+      chatMessages
+    }
+  });
 }

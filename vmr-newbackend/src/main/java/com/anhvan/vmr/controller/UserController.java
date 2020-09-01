@@ -36,22 +36,24 @@ public class UserController implements Controller {
   private void userList(RoutingContext routingContext) {
     HttpServerResponse res = routingContext.response();
     res.putHeader("Content-Type", "application/json");
-    JsonObject result = new JsonObject();
 
     Future<List<User>> cachedList = userCacheService.getUserList();
     cachedList.onComplete(
         listAsyncResult -> {
           if (listAsyncResult.succeeded()) {
+            JsonObject result = new JsonObject();
             log.trace("Cache hit");
-            ControllerUtil.jsonResponse(res, result.put("userList", listAsyncResult.result()));
+            result.put("userList", listAsyncResult.result());
+            ControllerUtil.jsonResponse(res, result);
           } else {
             log.trace("Cache miss");
             Future<List<User>> userListFuture = userDBService.getListUser();
             userListFuture.onSuccess(
                 users -> {
-                  JsonObject jsonResponse = new JsonObject().put("userList", users);
+                  JsonObject jsonResponse = new JsonObject();
+                  jsonResponse.put("userList", users);
                   userCacheService.setUserList(users);
-                  res.end(jsonResponse.toBuffer());
+                  ControllerUtil.jsonResponse(res, jsonResponse);
                 });
           }
         });

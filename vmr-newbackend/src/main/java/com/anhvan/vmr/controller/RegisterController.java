@@ -54,9 +54,18 @@ public class RegisterController implements Controller {
     CompositeFuture.all(userIdFuture, tokenFuture)
         .onComplete(
             result -> {
-              int userId = result.result().resultAt(0);
-              String token = result.result().resultAt(1);
-              JsonObject jsonResponse = new JsonObject().put("token", token).put("userId", userId);
+              CompositeFuture compResult = result.result();
+
+              // Get userId from db future and token from jwt future
+              int userId = compResult.resultAt(0);
+              String token = compResult.resultAt(1);
+
+              // Create resposne
+              JsonObject jsonResponse = new JsonObject();
+              jsonResponse.put("token", token);
+              jsonResponse.put("userId", userId);
+
+              // Send result
               ControllerUtil.jsonResponse(response, jsonResponse, 201);
             })
         .onFailure(err -> log.error("Error", err));

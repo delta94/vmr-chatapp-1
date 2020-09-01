@@ -28,9 +28,6 @@ export function wsConnect() {
               webSocket.send(JSON.stringify(msg));
             };
 
-            // Test message
-            send(senderId, "Hello world");
-
             // Notify to redux
             store.dispatch(webSocketConnected(webSocket, send));
 
@@ -38,13 +35,12 @@ export function wsConnect() {
             webSocket.onmessage = messageEvent => {
               let jsonMessage = JSON.parse(messageEvent.data);
               if (jsonMessage.type === 'CHAT') {
-                jsonMessage.isMine = jsonMessage.senderId === senderId;
+                console.log("Get chat");
                 store.dispatch(receiveMessage(jsonMessage));
               } else if (jsonMessage.type === 'SEND_BACK') {
                 if (jsonMessage.receiverId === senderId) {
                   return;
                 }
-                jsonMessage.isMine = true;
                 store.dispatch(sendbackMessage(jsonMessage));
               }
             };

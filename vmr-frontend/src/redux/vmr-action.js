@@ -50,3 +50,11 @@ export function sendbackMessage(message) {
     data: message
   }
 }
+
+export function getMessageFromAPI(data, friendId) {
+  data.friendId = friendId;
+  return {
+    type: 'GET_MSG_FROM_API',
+    data
+  }
+}

@@ -1,6 +1,7 @@
 package com.anhvan.vmr.controller;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.Router;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,8 +18,9 @@ public class IndexController implements Controller {
         .get("/")
         .handler(
             routingContext -> {
-              routingContext.response().putHeader("Content-Type","text/html; charset=utf-8");
-              routingContext.response().end("Hello world");
+              HttpServerResponse response = routingContext.response();
+              response.putHeader("Content-Type", "text/html; charset=utf-8");
+              response.end("Hello world");
             });
     return router;
   }
