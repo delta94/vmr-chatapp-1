@@ -10,6 +10,7 @@ import lombok.*;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class WsMessage {
+  private long id;
   private String type;
   private Integer senderId;
   private Integer receiverId;

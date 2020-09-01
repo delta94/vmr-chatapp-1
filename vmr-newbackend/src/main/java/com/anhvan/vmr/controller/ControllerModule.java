@@ -1,7 +1,9 @@
 package com.anhvan.vmr.controller;
 
+import com.anhvan.vmr.cache.ChatCacheService;
 import com.anhvan.vmr.cache.TokenCacheService;
 import com.anhvan.vmr.cache.UserCacheService;
+import com.anhvan.vmr.database.ChatDBService;
 import com.anhvan.vmr.database.UserDBService;
 import com.anhvan.vmr.util.AsyncWorkerUtil;
 import com.anhvan.vmr.util.JwtUtil;
@@ -10,8 +12,10 @@ import dagger.Provides;
 import dagger.multibindings.IntoMap;
 import dagger.multibindings.StringKey;
 import io.vertx.core.Vertx;
+import lombok.extern.log4j.Log4j2;
 
 @Module
+@Log4j2
 public class ControllerModule {
   @Provides
   @IntoMap
@@ -95,5 +99,14 @@ public class ControllerModule {
   @StringKey("/api/protected/sockettoken")
   public Controller provideSocketTokenController(Vertx vertx, JwtUtil jwtUtil) {
     return SocketTokenController.builder().vertx(vertx).jwtUtil(jwtUtil).build();
+  }
+
+  @Provides
+  @IntoMap
+  @StringKey("/api/protected/chat")
+  public Controller provideMessageListController(
+      Vertx vertx, ChatDBService chatDBService, ChatCacheService chatCacheService) {
+    log.trace("Provide chat api");
+    return new MessageListController(chatCacheService, chatDBService, vertx);
   }
 }

@@ -38,6 +38,9 @@ export default function appReducer(state = initialState, action) {
     case 'CHAT_RECEIVE':
       state = handleChatReceive(state, data);
       break;
+    case 'CHAT_SENDBACK':
+      state = handleChatSendback(state, data);
+      break;
   }
   return state;
 }
@@ -97,9 +100,21 @@ function handleWsConnected(state, data) {
 }
 
 function handleChatReceive(state, data) {
-  console.log('handle chat receive', data);
+  console.log("Handle receive", data);
   let chatMessages = state.chatMessagesHolder.chatMessages;
-  let listMsg = chatMessages.get(Number(data.senderId));
+  let listMsg = chatMessages.get(data.senderId);
+  listMsg.push(data);
+  return Object.assign({}, state, {
+    chatMessagesHolder: {
+      chatMessages
+    }
+  });
+}
+
+function handleChatSendback(state, data) {
+  console.log('Handle sendback', data);
+  let chatMessages = state.chatMessagesHolder.chatMessages;
+  let listMsg = chatMessages.get(data.receiverId);
   listMsg.push(data);
   return Object.assign({}, state, {
     chatMessagesHolder: {

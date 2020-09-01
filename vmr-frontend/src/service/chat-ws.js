@@ -1,6 +1,6 @@
 import {protectedGet} from "./axios-wrapper";
 import store from '../redux/vmr-store';
-import {webSocketConnected, receiveMessage} from "../redux/vmr-action";
+import {webSocketConnected, receiveMessage, sendbackMessage} from "../redux/vmr-action";
 
 const wsRoot = process.env.REACT_APP_WS_ROOT;
 let ws = null;
@@ -10,7 +10,7 @@ export function wsConnect() {
   let senderId = Number(localStorage.getItem("userId"));
 
   // Return websocket promise
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
       if (ws === null) {
         protectedGet("/sockettoken").then(response => {
           let token = response.data.token;
@@ -25,15 +25,6 @@ export function wsConnect() {
               let msg = {
                 receiverId, message, type: 'CHAT'
               };
-              if (receiverId !== senderId) {
-                store.dispatch(receiveMessage({
-                  senderId: receiverId,
-                  receiverId: receiverId,
-                  message: message,
-                  timestamp: new Date().getTime() / 1000,
-                  isMine: true
-                }));
-              }
               webSocket.send(JSON.stringify(msg));
             };
 
@@ -46,15 +37,22 @@ export function wsConnect() {
             // Handle chat message
             webSocket.onmessage = messageEvent => {
               let jsonMessage = JSON.parse(messageEvent.data);
-              jsonMessage.isMine = jsonMessage.senderId === senderId;
-              store.dispatch(receiveMessage(jsonMessage));
+              if (jsonMessage.type === 'CHAT') {
+                jsonMessage.isMine = jsonMessage.senderId === senderId;
+                store.dispatch(receiveMessage(jsonMessage));
+              } else if (jsonMessage.type === 'SEND_BACK') {
+                if (jsonMessage.receiverId === senderId) {
+                  return;
+                }
+                jsonMessage.isMine = true;
+                store.dispatch(sendbackMessage(jsonMessage));
+              }
             };
-          };
 
-          resolve(webSocket);
+            resolve(webSocket);
+          };
         }).catch(error => {
           console.log(error);
-          reject(error);
         });
       }
     }

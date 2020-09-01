@@ -14,7 +14,7 @@ export function updateUserList(userList) {
   }
 }
 
-export function updateConservationId(id) {
+export function updateActiveConservationId(id) {
   return {
     type: 'SET_CURRENT_CONVERSATION_ID',
     data: id
@@ -40,6 +40,13 @@ export function webSocketConnected(webSocket, send) {
 export function receiveMessage(message) {
   return {
     type: 'CHAT_RECEIVE',
+    data: message
+  }
+}
+
+export function sendbackMessage(message) {
+  return {
+    type: 'CHAT_SENDBACK',
     data: message
   }
 }

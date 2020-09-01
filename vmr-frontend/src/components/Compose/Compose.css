@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   background: white;
-  border-top: 1px solid #eeeef1;
+  border-top: 1px solid #eeeef1 !important;
   position: fixed;
   /*width: calc(100% - 20px);*/
   right: 0;

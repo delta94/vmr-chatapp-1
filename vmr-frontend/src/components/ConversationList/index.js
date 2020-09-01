@@ -4,13 +4,19 @@ import ConversationListItem from '../ConversationListItem';
 import Toolbar from '../Toolbar';
 import ToolbarButton from '../ToolbarButton';
 import {connect} from 'react-redux';
+
 import {getUsers} from "../../service/user-list";
+import {wsConnect} from "../../service/chat-ws";
 
 import './ConversationList.css';
 
-getUsers();
-
 function ConversationList(props) {
+  useEffect(() => {
+    getUsers().then(() => {
+      wsConnect();
+    });
+  }, []);
+
   let conversations = props.userList.map(item => {
     return {
       name: item.name,

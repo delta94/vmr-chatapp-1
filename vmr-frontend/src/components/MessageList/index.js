@@ -23,7 +23,6 @@ let MessageList = (props) => {
   let receiver = props.userMapHolder.userMap.get(receiverId);
   let messageList = props.chatMessagesHolder.chatMessages.get(receiverId);
   let webSocket = props.webSocket;
-  console.log(receiver, messageList);
 
   // Messages list
   let messages = messageList.map(x => {
@@ -101,6 +100,7 @@ let MessageList = (props) => {
     if (event.keyCode === 13) {
       console.log(event.target.value);
       webSocket.send(receiverId, event.target.value);
+      event.target.value = '';
     }
   }
 
@@ -118,7 +118,7 @@ let MessageList = (props) => {
 
       <div className="message-list-container">{renderMessages()}</div>
 
-      <Compose rightItems={[
+      <Comopose rightItems={[
         <ToolbarButton key="photo" icon="ion-ios-camera"/>,
         <ToolbarButton key="image" icon="ion-ios-image"/>,
         <ToolbarButton key="audio" icon="ion-ios-mic"/>,

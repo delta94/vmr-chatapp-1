@@ -7,12 +7,10 @@ import RegisterPage from "../RegisterPage";
 import 'antd/dist/antd.css';
 import LoginPage from "../LoginPage";
 import {connect} from "react-redux";
-import {wsConnect} from "../../service/chat-ws";
 
 let AuthFragment = (props) => {
   if (props.authStatus) {
-    wsConnect();
-    return <Messenger />;
+    return <Messenger/>;
   }
   return <Redirect to={"/login"}/>;
 };

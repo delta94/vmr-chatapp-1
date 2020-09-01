@@ -47,27 +47,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4a4c554b-0f70-4b4f-bee7-1a13df5068fc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/database/ChatDBService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/components/App/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/components/App/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/components/Compose/Compose.css" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/components/Compose/Compose.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/components/ConversationList/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/components/ConversationList/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/components/ConversationListItem/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/components/ConversationListItem/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/components/MessageList/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/components/MessageList/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/components/RegisterPage/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/components/RegisterPage/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/components/Toolbar/Toolbar.css" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/components/Toolbar/Toolbar.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/redux/vmr-action.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/redux/vmr-action.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/redux/vmr-reducer.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/redux/vmr-reducer.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/service/chat-ws.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/service/chat-ws.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../vmr-frontend/src/service/user-list.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vmr-frontend/src/service/user-list.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/Runner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/Runner.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/cache/UserCacheService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/cache/UserCacheService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/RegisterController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/RegisterController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/dagger/ServiceComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/dagger/ServiceComponent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/dagger/ServiceModule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/dagger/ServiceModule.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/model/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/RouterFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/RouterFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/WebServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/WebServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/WebSocketServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/WebSocketServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/ControllerModule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/ControllerModule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/MessageListController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/MessageListController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/database/ChatDBService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/database/ChatDBService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/model/WsMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/model/WsMessage.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/websocket/WebSocketHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/websocket/WebSocketHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/websocket/WebSocketService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/websocket/WebSocketService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/websocket/WsMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/model/WsMessage.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -148,21 +143,25 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1807" height="433" key="GridCell.Tab.0.bottom" timestamp="1598869192832">
-      <screen x="67" y="27" width="1853" height="1053" />
+    <state width="1324" height="168" key="GridCell.Tab.0.bottom" timestamp="1598890007749">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
+    <state width="1324" height="168" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1598890007749" />
     <state width="1807" height="433" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1598869192832" />
-    <state width="1807" height="433" key="GridCell.Tab.0.center" timestamp="1598869192831">
-      <screen x="67" y="27" width="1853" height="1053" />
+    <state width="1324" height="168" key="GridCell.Tab.0.center" timestamp="1598890007749">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
+    <state width="1324" height="168" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1598890007749" />
     <state width="1807" height="433" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1598869192831" />
-    <state width="1807" height="433" key="GridCell.Tab.0.left" timestamp="1598869192831">
-      <screen x="67" y="27" width="1853" height="1053" />
+    <state width="1324" height="168" key="GridCell.Tab.0.left" timestamp="1598890007748">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
+    <state width="1324" height="168" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1598890007748" />
     <state width="1807" height="433" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1598869192831" />
-    <state width="1807" height="433" key="GridCell.Tab.0.right" timestamp="1598869192831">
-      <screen x="67" y="27" width="1853" height="1053" />
+    <state width="1324" height="168" key="GridCell.Tab.0.right" timestamp="1598890007749">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
+    <state width="1324" height="168" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1598890007749" />
     <state width="1807" height="433" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1598869192831" />
   </component>
 </project>
