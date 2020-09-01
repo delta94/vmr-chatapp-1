@@ -4,7 +4,6 @@ import shave from 'shave';
 import {useHistory} from 'react-router-dom';
 import {connect} from 'react-redux';
 import './ConversationListItem.css';
-import {updateActiveConservationId} from "../../redux/vmr-action";
 
 const colorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae', '#007aff'];
 
@@ -38,7 +37,6 @@ function ConversationListItem(props) {
 
   let clickHandle = () => {
     history.push('/t/' + id);
-    props.setActive(id);
   }
 
   return (
@@ -61,10 +59,5 @@ function mapStateToProps(state) {
   }
 }
 
-function mapDispathToProps(dispatch) {
-  return {
-    setActive: (id) => dispatch(updateActiveConservationId(id))
-  }
-}
 
-export default connect(mapStateToProps, mapDispathToProps)(ConversationListItem);
+export default connect(mapStateToProps, null)(ConversationListItem);

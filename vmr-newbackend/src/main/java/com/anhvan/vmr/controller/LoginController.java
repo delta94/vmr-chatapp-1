@@ -39,13 +39,16 @@ public class LoginController implements Controller {
     JsonObject body = context.getBodyAsJson();
     HttpServerResponse response = context.response();
     User user = body.mapTo(User.class);
+    log.info(user.getPassword());
 
     Future<User> userFuture = userDBService.getUserByUsername(user.getUsername());
     userFuture.onSuccess(
         dbUser ->
             workerUtil.execute(
                 () -> {
-                  if (BCrypt.checkpw(user.getPassword(), dbUser.getPassword())) {
+                  log.trace("Check password");
+                  if (user.getPassword() != null
+                      && BCrypt.checkpw(user.getPassword(), dbUser.getPassword())) {
                     jwtUtil
                         .generate(dbUser.getId())
                         .onSuccess(

@@ -5,9 +5,8 @@ import ToolbarButton from '../ToolbarButton';
 import Message from '../Message';
 import {Switch, Route} from 'react-router-dom';
 import moment from 'moment';
-import logout from "../../service/logout";
 import {connect} from 'react-redux';
-import {getMessageFromAPI} from '../../redux/vmr-action';
+import {getMessageFromAPI, updateActiveConservationId} from '../../redux/vmr-action';
 import {getMessageList} from "../../service/message-list";
 
 import './MessageList.css';
@@ -18,19 +17,17 @@ let MessageList = (props) => {
 
   // Check if userMap is loaded
   if (props.userMapHolder.userMap.size === 0 || props.chatMessagesHolder.chatMessages.size === 0) {
-    return <div></div>;
+    return <div/>;
   }
 
   // Get receiver
   let receiverId = Number(props.match.params.receiverId);
   let receiver = props.userMapHolder.userMap.get(receiverId);
 
-  console.log('render-------------', receiverId);
-
   // Get message list from redux
   let messageList = props.chatMessagesHolder.chatMessages.get(receiverId);
 
-  // Get websocket service
+  // Get websocket service from redux
   let webSocket = props.webSocket;
 
   // Messages list
@@ -43,15 +40,6 @@ let MessageList = (props) => {
       isMine: x.isMine
     };
   });
-
-  useEffect(() => {
-    if (messageList.length === 0) {
-      getMessageList(receiverId, messageList.length).then(data => {
-        props.updateMessageList(data, receiverId);
-      });
-    }
-  }, [receiverId]);
-
 
   // Display message
   const renderMessages = () => {
@@ -105,54 +93,73 @@ let MessageList = (props) => {
           data={current}
         />
       );
-
-      // Proceed to the next message.
       i += 1;
     }
 
     return tempMessages;
   }
 
+  // Use to scroll message
+  let endOfMsgList = useRef(null);
+  let msgList = useRef(null);
+
+  // Load message
+  useEffect(() => {
+    props.updateConversationId(receiverId);
+    if (messageList.length === 0) {
+      getMessageList(receiverId, messageList.length).then(data => {
+        props.updateMessageList(data, receiverId);
+        endOfMsgList.current.scrollIntoView({behavior: 'smooth'});
+      });
+    }
+  }, [receiverId]);
+
+  useEffect(() => {
+    endOfMsgList.current.scrollIntoView({behavior: 'smooth'});
+  }, [props.scrollFlag, props.currentConversationId]);
+
+  let msgScrollHandle = (event) => {
+    let msgList = event.target;
+    let offset = msgList.scrollTop;
+    if (offset === 0) {
+      getMessageList(receiverId, messageList.length).then(data => {
+        let oldHeight = msgList.scrollHeight;
+        props.updateMessageList(data, receiverId);
+        let newHeight = msgList.scrollHeight;
+        console.log(oldHeight, newHeight);
+        msgList.scrollTo(0, newHeight - oldHeight);
+      });
+    }
+  };
+
   let onChangeText = (event) => {
     if (event.keyCode === 13) {
-      console.log(event.target.value);
       webSocket.send(receiverId, event.target.value);
       event.target.value = '';
     }
   }
-
-  let endOfMsgList = useRef(null);
-
-  useEffect(() => {
-    endOfMsgList.current.scrollIntoView({behavior: 'smooth'});
-  });
 
   return (
     <div className="message-list">
       <Toolbar
         title={receiver.name}
         rightItems={[
-          <ToolbarButton key="signout" icon="ion-ios-log-out" onClick={() => logout()}/>,
           <ToolbarButton key="info" icon="ion-ios-information-circle-outline"/>,
           <ToolbarButton key="video" icon="ion-ios-videocam"/>,
           <ToolbarButton key="phone" icon="ion-ios-call"/>,
         ]}
       />
 
-      <div className="message-list-container">
+      <div className="message-list-container" ref={msgList} onScroll={msgScrollHandle}>
         {renderMessages()}
-        <div ref={endOfMsgList}/>
+        <div ref={endOfMsgList} style={{height: "0px"}}/>
       </div>
 
       <Compose rightItems={[
         <ToolbarButton key="photo" icon="ion-ios-camera"/>,
-        <ToolbarButton key="image" icon="ion-ios-image"/>,
         <ToolbarButton key="audio" icon="ion-ios-mic"/>,
-        <ToolbarButton key="money" icon="ion-ios-card"/>,
-        <ToolbarButton key="games" icon="ion-logo-game-controller-b"/>,
         <ToolbarButton key="emoji" icon="ion-ios-happy"/>
-      ]}
-               onKeyUp={onChangeText}/>
+      ]} onKeyUp={onChangeText}/>
     </div>
   );
 }
@@ -162,7 +169,9 @@ let mapStateToPropsMessageList = (state) => {
   return {
     userMapHolder: state.userMapHolder,
     chatMessagesHolder: state.chatMessagesHolder,
-    webSocket: state.webSocket
+    webSocket: state.webSocket,
+    scrollFlag: state.scrollFlag,
+    currentConversationId: state.currentConversationId
   }
 }
 
@@ -170,6 +179,9 @@ let mapDispatchToPropsMessageList = (dispatch) => {
   return {
     updateMessageList: (data, friendId) => {
       dispatch(getMessageFromAPI(data, friendId))
+    },
+    updateConversationId: (id) => {
+      dispatch(updateActiveConservationId(id));
     }
   }
 };
@@ -181,7 +193,7 @@ export default function MessageListWrapper() {
     <Switch>
       <Route path="/t/:receiverId" component={MessageList}/>
       <Route exact path="/">
-        <div></div>
+        <div/>
       </Route>
     </Switch>
   );

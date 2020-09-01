@@ -58,6 +58,7 @@ public class UserDBService {
             Tuple.of(username),
             rowSetRs -> {
               if (rowSetRs.succeeded()) {
+                log.trace("Here");
                 RowSet<Row> result = rowSetRs.result();
                 if (result.size() == 1) {
                   result.forEach(row -> userPromise.complete(rowToUser(row)));

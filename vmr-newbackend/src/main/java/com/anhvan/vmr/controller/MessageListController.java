@@ -48,13 +48,14 @@ public class MessageListController implements Controller {
             jsonResponse.put("newOffset", offset + wsMessages.size());
             ControllerUtil.jsonResponse(response, jsonResponse);
           });
-      chatMessages.onFailure(throwable -> getFromDB(userId, friendId, offset, response));
+      chatMessages.onFailure(throwable -> getFromDB(userId, friendId, offset, response, true));
     } else {
-      getFromDB(userId, friendId, offset, response);
+      getFromDB(userId, friendId, offset, response, false);
     }
   }
 
-  private void getFromDB(int userId, int friendId, int offset, HttpServerResponse response) {
+  private void getFromDB(
+      int userId, int friendId, int offset, HttpServerResponse response, boolean isCached) {
     chatDBService
         .getChatMessages(userId, friendId, offset)
         .onComplete(
@@ -67,6 +68,11 @@ public class MessageListController implements Controller {
                 jsonResponse.put("newOffset", offset + listMessage.size());
 
                 ControllerUtil.jsonResponse(response, jsonResponse);
+
+                // Cache
+                if (isCached) {
+                  chatCacheService.cacheListMessage(listMessage, userId, friendId);
+                }
               } else {
                 log.error("Error when get chat messages", result.cause());
                 response.setStatusCode(500).end();

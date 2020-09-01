@@ -4,13 +4,15 @@ import ConversationListItem from '../ConversationListItem';
 import Toolbar from '../Toolbar';
 import ToolbarButton from '../ToolbarButton';
 import {connect} from 'react-redux';
-
+import logout from "../../service/logout";
 import {getUsers} from "../../service/user-list";
 import {wsConnect} from "../../service/chat-ws";
 
 import './ConversationList.css';
 
 function ConversationList(props) {
+  let currentUserId = Number(localStorage.getItem("userId"));
+
   useEffect(() => {
     getUsers().then(() => {
       wsConnect();
@@ -19,7 +21,7 @@ function ConversationList(props) {
 
   let conversations = props.userList.map(item => {
     return {
-      name: item.name,
+      name: (currentUserId!=item.id)?item.name: `Bạn: ${item.name}`,
       text: `@${item.username}`,
       id: item.id
     }
@@ -33,18 +35,20 @@ function ConversationList(props) {
           <ToolbarButton key="cog" icon="ion-ios-cog"/>
         ]}
         rightItems={[
-          <ToolbarButton key="add" icon="ion-ios-add-circle-outline"/>
+          <ToolbarButton key="add" icon="ion-ios-log-out" onClick={logout}/>
         ]}
       />
-      <ConversationSearch/>
-      {
-        conversations.map(conversation =>
-          <ConversationListItem
-            key={conversation.id}
-            data={conversation}
-          />
-        )
-      }
+      <div className="conversation-list-scroll">
+        <ConversationSearch/>
+        {
+          conversations.map(conversation =>
+            <ConversationListItem
+              key={conversation.id}
+              data={conversation}
+            />
+          )
+        }
+      </div>
     </div>
   );
 }

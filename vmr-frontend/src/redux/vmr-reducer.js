@@ -14,7 +14,8 @@ let initialState = {
   },
   chatMessagesHolder: {
     chatMessages: new Map()
-  }
+  },
+  scrollFlag: true,
 };
 
 export default function appReducer(state = initialState, action) {
@@ -124,7 +125,8 @@ function handleChatReceive(state, data) {
   return Object.assign({}, state, {
     chatMessagesHolder: {
       chatMessages
-    }
+    },
+    scrollFlag: !state.scrollFlag
   });
 }
 
@@ -136,7 +138,8 @@ function handleChatSendback(state, data) {
   return Object.assign({}, state, {
     chatMessagesHolder: {
       chatMessages
-    }
+    },
+    scrollFlag: !state.scrollFlag
   });
 }
 

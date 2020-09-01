@@ -43,6 +43,18 @@ public class ChatCacheService {
         });
   }
 
+  public void cacheListMessage(List<WsMessage> messages, int user1, int user2) {
+    workerUtil.execute(
+        () -> {
+          RList<WsMessage> chatMessages = redis.getList(getKey(user1, user2));
+          chatMessages.addAll(messages);
+          while (chatMessages.size() > 20) {
+            chatMessages.remove(0);
+          }
+          chatMessages.expire(10, TimeUnit.MINUTES);
+        });
+  }
+
   public Future<List<WsMessage>> getCacheMessage(int userId1, int userId2) {
     Promise<List<WsMessage>> messageCache = Promise.promise();
 

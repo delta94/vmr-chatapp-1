@@ -1,6 +1,7 @@
 package com.anhvan.vmr.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Builder(toBuilder = true)
@@ -14,4 +15,9 @@ public class User {
   private int id;
   @JsonIgnore private String password;
   @JsonIgnore private boolean active;
+
+  @JsonProperty
+  public void setPassword(String password) {
+    this.password = password;
+  }
 }

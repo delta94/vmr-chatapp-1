@@ -10,11 +10,11 @@ function mapStateToProps(state) {
   }
 }
 
-function Messenger(props) {
+function Messenger() {
   return (
-    <div className="messenger">
+    <div className="scrollable messenger">
 
-      <div className="scrollable sidebar">
+      <div className="sidebar">
         <ConversationList/>
       </div>
 

@@ -24,6 +24,7 @@ function LoginPage(props) {
   let [error, setError] = useState(false);
 
   let hanldeLoginForm = (event) => {
+    console.log(event);
     usernamePasswordLogin(event.username, event.password).then(() => {
       props.history.push('/');
     }).catch(() => {
@@ -61,7 +62,6 @@ function LoginPage(props) {
             <Form.Item
               name="username"
               rules={[{ required: true, message: 'Please input your Username!' }]}
-
             >
               <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
             </Form.Item>
