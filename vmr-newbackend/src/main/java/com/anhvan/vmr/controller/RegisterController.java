@@ -62,7 +62,7 @@ public class RegisterController implements Controller {
 
               // Create resposne
               JsonObject jsonResponse = new JsonObject();
-              jsonResponse.put("token", token);
+              jsonResponse.put("jwtToken", token);
               jsonResponse.put("userId", userId);
 
               // Send result

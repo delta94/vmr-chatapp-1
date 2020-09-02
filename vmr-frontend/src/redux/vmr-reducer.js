@@ -106,19 +106,16 @@ function setCurrentConservationId(state, id) {
 }
 
 function handleWsConnected(state, data) {
-  console.log('ws connect', data);
   let newState = Object.assign({}, state, {
     webSocket: {
       webSocket: data.webSocket,
       send: data.send
     }
   });
-  console.log(newState);
   return newState;
 }
 
 function handleChatReceive(state, data) {
-  console.log("Handle receive", data);
   let chatMessages = state.chatMessagesHolder.chatMessages;
   let listMsg = chatMessages.get(data.senderId);
   listMsg.push(data);
@@ -131,7 +128,6 @@ function handleChatReceive(state, data) {
 }
 
 function handleChatSendback(state, data) {
-  console.log('Handle sendback', data);
   let chatMessages = state.chatMessagesHolder.chatMessages;
   let listMsg = chatMessages.get(data.receiverId);
   listMsg.push(data);
@@ -144,7 +140,6 @@ function handleChatSendback(state, data) {
 }
 
 function handleGetMsgFromAPI(state, data) {
-  console.log('Handle chat mesg from db');
   let chatMessages = state.chatMessagesHolder.chatMessages;
   let listMsg = chatMessages.get(data.friendId);
   chatMessages.set(data.friendId, [...data.messages, ...listMsg]);

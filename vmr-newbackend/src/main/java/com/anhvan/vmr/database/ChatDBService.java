@@ -11,9 +11,6 @@ import io.vertx.sqlclient.Tuple;
 import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +34,7 @@ public class ChatDBService {
                 msg.getSenderId(),
                 msg.getReceiverId(),
                 msg.getMessage(),
-                Timestamp.from(Instant.ofEpochSecond(msg.getTimestamp()))),
+                msg.getTimestamp()),
             rowSetAsyncResult -> {
               if (!rowSetAsyncResult.succeeded()) {
                 log.error("Error when add chat", rowSetAsyncResult.cause());
@@ -72,13 +69,11 @@ public class ChatDBService {
   }
 
   public WsMessage rowToWsMessage(Row row) {
-    long timeStamp =
-        row.getLocalDateTime("send_time").atZone(ZoneId.systemDefault()).toEpochSecond();
     return WsMessage.builder()
         .id(row.getLong("id"))
         .senderId(row.getInteger("sender"))
         .receiverId(row.getInteger("receiver"))
-        .timestamp(timeStamp)
+        .timestamp(row.getLong("send_time"))
         .message(row.getString("message"))
         .build();
   }

@@ -3,7 +3,8 @@ import store from '../redux/vmr-store';
 import {webSocketConnected, receiveMessage, sendbackMessage} from "../redux/vmr-action";
 
 const wsRoot = process.env.REACT_APP_WS_ROOT;
-let ws = null;
+
+let oldWs = null;
 
 export function wsConnect() {
   // Current user id
@@ -11,46 +12,48 @@ export function wsConnect() {
 
   // Return websocket promise
   return new Promise((resolve) => {
-      if (ws === null) {
-        protectedGet("/sockettoken").then(response => {
-          let token = response.data.token;
-          let webSocket = new WebSocket(wsRoot + `?token=${token}`);
+      console.log('connect');
+      protectedGet("/sockettoken").then(response => {
+        let token = response.data.token;
+        let webSocket = new WebSocket(wsRoot + `?token=${token}`);
 
-          // When connect successful
-          webSocket.onopen = event => {
-            ws = webSocket;
+        // When connect successful
+        webSocket.onopen = () => {
+          // Set old
+          if (oldWs !== null) {
+            oldWs.close();
+          }
+          oldWs = webSocket;
 
-            // Function to send chat message
-            let send = function (receiverId, message) {
-              let msg = {
-                receiverId, message, type: 'CHAT'
-              };
-              webSocket.send(JSON.stringify(msg));
+          // Function to send chat message
+          let send = function (receiverId, message) {
+            let msg = {
+              receiverId, message, type: 'CHAT'
             };
-
-            // Notify to redux
-            store.dispatch(webSocketConnected(webSocket, send));
-
-            // Handle chat message
-            webSocket.onmessage = messageEvent => {
-              let jsonMessage = JSON.parse(messageEvent.data);
-              if (jsonMessage.type === 'CHAT') {
-                console.log("Get chat");
-                store.dispatch(receiveMessage(jsonMessage));
-              } else if (jsonMessage.type === 'SEND_BACK') {
-                if (jsonMessage.receiverId === senderId) {
-                  return;
-                }
-                store.dispatch(sendbackMessage(jsonMessage));
-              }
-            };
-
-            resolve(webSocket);
+            webSocket.send(JSON.stringify(msg));
           };
-        }).catch(error => {
-          console.log(error);
-        });
-      }
+
+          // Notify to redux
+          store.dispatch(webSocketConnected(webSocket, send));
+
+          // Handle chat message
+          webSocket.onmessage = messageEvent => {
+            let jsonMessage = JSON.parse(messageEvent.data);
+            if (jsonMessage.type === 'CHAT') {
+              store.dispatch(receiveMessage(jsonMessage));
+            } else if (jsonMessage.type === 'SEND_BACK') {
+              if (jsonMessage.receiverId === senderId) {
+                return;
+              }
+              store.dispatch(sendbackMessage(jsonMessage));
+            }
+          };
+
+          resolve(webSocket);
+        };
+      }).catch(error => {
+        console.error(error);
+      });
     }
   );
 }

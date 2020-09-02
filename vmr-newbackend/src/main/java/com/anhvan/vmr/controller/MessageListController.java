@@ -39,6 +39,7 @@ public class MessageListController implements Controller {
     int offset = Integer.parseInt(request.getParam("offset"));
 
     if (offset == 0) {
+      // First load
       Future<List<WsMessage>> chatMessages = chatCacheService.getCacheMessage(userId, friendId);
       chatMessages.onSuccess(
           wsMessages -> {
@@ -50,6 +51,7 @@ public class MessageListController implements Controller {
           });
       chatMessages.onFailure(throwable -> getFromDB(userId, friendId, offset, response, true));
     } else {
+      // Load more
       getFromDB(userId, friendId, offset, response, false);
     }
   }

@@ -7,6 +7,7 @@ import io.vertx.core.Promise;
 import lombok.extern.log4j.Log4j2;
 import org.redisson.api.RMap;
 import org.redisson.api.RQueue;
+import org.redisson.api.RSet;
 import org.redisson.api.RedissonClient;
 
 import javax.inject.Inject;
@@ -58,20 +59,20 @@ public class UserCacheService {
   public void setUserList(List<User> userList) {
     workerUtil.execute(
         () -> {
-          RQueue<User> userQueue = redis.getQueue("vmr:users");
-          userQueue.clear();
-          userQueue.addAll(userList);
-          userQueue.expire(1, TimeUnit.MINUTES);
+          RQueue<User> userSet = redis.getQueue("vmr:users");
+          userSet.clear();
+          userSet.addAll(userList);
+          userSet.expire(1, TimeUnit.MINUTES);
         });
   }
 
   public void addUserList(User user) {
     workerUtil.execute(
         () -> {
-          RQueue<User> userQueue = redis.getQueue("vmr:users");
-          if (userQueue.isExists()) {
-            userQueue.add(user);
-            userQueue.expire(1, TimeUnit.MINUTES);
+          RQueue<User> userSet = redis.getQueue("vmr:users");
+          if (userSet.isExists()) {
+            userSet.add(user);
+            userSet.expire(1, TimeUnit.MINUTES);
           }
         });
   }

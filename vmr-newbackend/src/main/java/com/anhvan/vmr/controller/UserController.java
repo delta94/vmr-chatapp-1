@@ -4,6 +4,7 @@ import com.anhvan.vmr.cache.UserCacheService;
 import com.anhvan.vmr.database.UserDBService;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.util.ControllerUtil;
+import com.anhvan.vmr.websocket.WebSocketService;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerResponse;
@@ -15,6 +16,7 @@ import lombok.Builder;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @Builder
@@ -23,6 +25,7 @@ public class UserController implements Controller {
   private Vertx vertx;
   private UserDBService userDBService;
   private UserCacheService userCacheService;
+  private WebSocketService webSocketService;
 
   @Override
   public Router getRouter() {
@@ -37,25 +40,37 @@ public class UserController implements Controller {
     HttpServerResponse res = routingContext.response();
     res.putHeader("Content-Type", "application/json");
 
+    // Get users from cache
     Future<List<User>> cachedList = userCacheService.getUserList();
     cachedList.onComplete(
         listAsyncResult -> {
+          JsonObject result = new JsonObject();
           if (listAsyncResult.succeeded()) {
-            JsonObject result = new JsonObject();
+            // Cache hit
             log.trace("Cache hit");
-            result.put("userList", listAsyncResult.result());
+            List<User> userList = listAsyncResult.result();
+            setOnline(userList);
+            result.put("userList", userList);
             ControllerUtil.jsonResponse(res, result);
           } else {
+            // Cache miss
             log.trace("Cache miss");
+
+            // Load user form database
             Future<List<User>> userListFuture = userDBService.getListUser();
             userListFuture.onSuccess(
                 users -> {
-                  JsonObject jsonResponse = new JsonObject();
-                  jsonResponse.put("userList", users);
+                  setOnline(users);
+                  result.put("userList", users);
                   userCacheService.setUserList(users);
-                  ControllerUtil.jsonResponse(res, jsonResponse);
+                  ControllerUtil.jsonResponse(res, result);
                 });
           }
         });
+  }
+
+  public void setOnline(List<User> userList) {
+    Set<Integer> onlineSet = webSocketService.getOnlineIds();
+    userList.forEach(user -> user.setOnline(onlineSet.contains(user.getId())));
   }
 }

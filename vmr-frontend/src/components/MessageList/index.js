@@ -16,7 +16,9 @@ let MessageList = (props) => {
   let userId = Number(localStorage.getItem("userId"));
 
   // Check if userMap is loaded
-  if (props.userMapHolder.userMap.size === 0 || props.chatMessagesHolder.chatMessages.size === 0) {
+  if (props.userMapHolder.userMap.size === 0
+    || props.chatMessagesHolder.chatMessages.size === 0
+    || props.webSocket.send === null) {
     return <div/>;
   }
 
@@ -114,10 +116,12 @@ let MessageList = (props) => {
     }
   }, [receiverId]);
 
+  // Scroll to bottom of message list
   useEffect(() => {
     endOfMsgList.current.scrollIntoView({behavior: 'smooth'});
   }, [props.scrollFlag, props.currentConversationId]);
 
+  // Load more message
   let msgScrollHandle = (event) => {
     let msgList = event.target;
     let offset = msgList.scrollTop;
@@ -126,14 +130,13 @@ let MessageList = (props) => {
         let oldHeight = msgList.scrollHeight;
         props.updateMessageList(data, receiverId);
         let newHeight = msgList.scrollHeight;
-        console.log(oldHeight, newHeight);
         msgList.scrollTo(0, newHeight - oldHeight);
       });
     }
   };
 
   let onChangeText = (event) => {
-    if (event.keyCode === 13) {
+    if (event.keyCode === 13 && event.target.value !== '') {
       webSocket.send(receiverId, event.target.value);
       event.target.value = '';
     }

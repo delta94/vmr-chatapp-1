@@ -13,11 +13,10 @@ public class User {
   private String username;
   private String name;
   private int id;
-  @JsonIgnore private String password;
-  @JsonIgnore private boolean active;
+  private boolean online;
 
-  @JsonProperty
-  public void setPassword(String password) {
-    this.password = password;
-  }
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+  private String password;
+
+  @JsonIgnore private boolean active;
 }

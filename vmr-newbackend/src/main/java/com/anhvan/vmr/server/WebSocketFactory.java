@@ -30,7 +30,7 @@ public class WebSocketFactory {
   }
 
   public void webSocketHandler(ServerWebSocket conn) {
-    log.trace("Get connection");
+    log.trace("Get websocket connection");
     webSocketService
         .authenticate(conn)
         .onComplete(

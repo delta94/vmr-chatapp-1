@@ -2,17 +2,17 @@ import React from 'react';
 import './Compose.css';
 
 export default function Compose(props) {
-    return (
-      <div className="compose">
-        <input
-          type="text"
-          className="compose-input"
-          placeholder="Type a message, @name"
-          onKeyUp={props.onKeyUp}
-        />
-        {
-          props.rightItems
-        }
-      </div>
-    );
+  return (
+    <div className="compose">
+      <input
+        type="text"
+        className="compose-input"
+        placeholder="Type a message, @name"
+        onKeyUp={props.onKeyUp}
+      />
+      {
+        props.rightItems
+      }
+    </div>
+  );
 }

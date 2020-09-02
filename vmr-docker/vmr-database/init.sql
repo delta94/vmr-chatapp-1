@@ -16,6 +16,6 @@ create table messages
     id        bigint primary key auto_increment,
     sender    integer   not null,
     receiver  integer   not null,
-    send_time timestamp not null,
+    send_time bigint    not null,
     message   text      not null
 );

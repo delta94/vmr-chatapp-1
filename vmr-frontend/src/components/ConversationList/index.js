@@ -15,13 +15,14 @@ function ConversationList(props) {
 
   useEffect(() => {
     getUsers().then(() => {
+      console.log('Ws connect');
       wsConnect();
     });
   }, []);
 
   let conversations = props.userList.map(item => {
     return {
-      name: (currentUserId!=item.id)?item.name: `Bạn: ${item.name}`,
+      name: (currentUserId !== item.id) ? item.name : `Bạn: ${item.name}`,
       text: `@${item.username}`,
       id: item.id
     }

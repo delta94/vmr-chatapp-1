@@ -6,22 +6,19 @@ export function usernamePasswordLogin(username, password) {
   return new Promise((resolve, reject) => {
     post('/login', {username, password}).then(response => {
       // Debug status
-      console.log('Login success');
       let data = response.data;
-      console.log(data);
-
-      // Dispatch to store
-      store.dispatch(login(data.jwtToken, data.userId));
 
       // Save to local storage
       localStorage.setItem("jwtToken", data.jwtToken);
       localStorage.setItem("userId", data.userId);
 
-      console.log(localStorage);
+      // Dispatch to store
+      store.dispatch(login(data.jwtToken, data.userId));
+
       // Send to login page
       resolve(data);
     }).catch(reason => {
-      console.log(reason);
+      console.error(reason);
       reject('Login failed');
     });
   });

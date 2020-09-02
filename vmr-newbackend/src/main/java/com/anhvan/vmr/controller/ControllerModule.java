@@ -7,6 +7,7 @@ import com.anhvan.vmr.database.ChatDBService;
 import com.anhvan.vmr.database.UserDBService;
 import com.anhvan.vmr.util.AsyncWorkerUtil;
 import com.anhvan.vmr.util.JwtUtil;
+import com.anhvan.vmr.websocket.WebSocketService;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
@@ -62,11 +63,15 @@ public class ControllerModule {
   @IntoMap
   @StringKey("/api/protected/users")
   public Controller provideUserController(
-      Vertx vertx, UserDBService userDBService, UserCacheService userCacheService) {
+      Vertx vertx,
+      UserDBService userDBService,
+      UserCacheService userCacheService,
+      WebSocketService webSocketService) {
     return UserController.builder()
         .vertx(vertx)
         .userDBService(userDBService)
         .userCacheService(userCacheService)
+        .webSocketService(webSocketService)
         .build();
   }
 

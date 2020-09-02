@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-import {Avatar} from 'antd';
+import React, {useEffect, useState} from 'react';
+import {Avatar, Badge} from 'antd';
 import shave from 'shave';
 import {useHistory} from 'react-router-dom';
 import {connect} from 'react-redux';
@@ -15,9 +15,7 @@ function getFirstLetter(name) {
 function ConversationListItem(props) {
   let history = useHistory();
 
-  let avatarStyle = {
-    backgroundColor: colorList[Math.round(Math.random() * 10) % colorList.length]
-  }
+  let [avatarStyle, setAvatarStyle] = useState({});
 
   let itemStyle = {
     borderRadius: "10px",
@@ -27,7 +25,10 @@ function ConversationListItem(props) {
 
   useEffect(() => {
     shave('.conversation-snippet', 20);
-  })
+    setAvatarStyle({
+      backgroundColor: colorList[Math.round(Math.random() * 10) % colorList.length]
+    });
+  }, []);
 
   const {name, text, id} = props.data;
 
