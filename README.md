@@ -34,15 +34,15 @@ docker-compise up -d
 
 ### 3.1 Register
 
-![Register](../vmr-chatapp/report/img/demo/register.png)
+![Register](report/img/demo/register.png)
 
 ### 3.2 Login
 
-![Login](../vmr-chatapp/report/img/demo/login.png)
+![Login](report/img/demo/login.png)
 
 ### 3.3 Hiện danh sách user, chat 1-1
 
-![Chat](../vmr-chatapp/report/img/demo/chat.png)
+![Chat](report/img/demo/chat.png)
 
 ## 4. Thiết kế
 
