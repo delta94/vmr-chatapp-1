@@ -39,6 +39,7 @@ public class UserDBService {
               .execute(
                   info,
                   rowSetRs -> {
+                    log.info("execute query");
                     if (rowSetRs.succeeded()) {
                       RowSet<Row> rs = rowSetRs.result();
                       idPromise.complete(rs.property(MySQLClient.LAST_INSERTED_ID).intValue());

@@ -14,6 +14,9 @@ services:
     ports:
       - "6379:6379"
   vertx:
+    depends_on:
+      - database
+      - cache
     build: 
       context: .
       dockerfile: ./vmr-docker/vmr-backend/dockerfile

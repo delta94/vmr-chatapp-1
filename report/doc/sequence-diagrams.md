@@ -7,7 +7,6 @@
   - [3. View list user in system](#3-view-list-user-in-system)
   - [4. Chat](#4-chat)
 
-
 ## 1. Register
 
 ![Register](../../report/img/sequence-diagrams/register.png)
