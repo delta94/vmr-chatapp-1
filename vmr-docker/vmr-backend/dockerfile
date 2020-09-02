@@ -1,0 +1,9 @@
+FROM openjdk:8
+
+ADD vmr-docker/vmr-backend/configs /vmr-chat
+ADD vmr-newbackend/target/vmr-newbackend-1.0-SNAPSHOT.jar /vmr-chat
+
+WORKDIR /vmr-chat
+EXPOSE 8080
+EXPOSE 8081
+ENTRYPOINT java -jar -Dvmr-config-file=./configuration.yml -Dvmr-redis-config-file=redis.yml -Dlog4j2.configurationFile=./log4j2.xml vmr-newbackend-1.0-SNAPSHOT.jar

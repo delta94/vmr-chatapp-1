@@ -39,6 +39,11 @@ public class RegisterController implements Controller {
     // Create user object
     User user = requestBody.mapTo(User.class);
 
+    if (!validate(user)) {
+      response.setStatusCode(400).end();
+      return;
+    }
+
     // Add user
     Future<Integer> userIdFuture = userDBService.addUser(user);
     userIdFuture.onFailure(
@@ -77,5 +82,15 @@ public class RegisterController implements Controller {
           userCacheService.setUserCache(user);
           userCacheService.addUserList(user);
         });
+  }
+
+  public boolean validate(User user) {
+    if (!user.getUsername().matches("^[a-zA-Z]\\w{7,}$")) {
+      return false;
+    }
+    if (user.getPassword().length() < 8) {
+      return false;
+    }
+    return user.getName().length() != 0;
   }
 }

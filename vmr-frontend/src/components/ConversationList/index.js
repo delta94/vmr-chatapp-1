@@ -24,7 +24,9 @@ function ConversationList(props) {
     return {
       name: (currentUserId !== item.id) ? item.name : `Bạn: ${item.name}`,
       text: `@${item.username}`,
-      id: item.id
+      id: item.id,
+      online: item.online,
+      isCurrentUser: currentUserId === item.id
     }
   });
 

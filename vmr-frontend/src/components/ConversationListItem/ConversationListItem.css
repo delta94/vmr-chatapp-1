@@ -29,3 +29,21 @@ p.conversation-text {
   color: #888;
   margin: 0;
 }
+
+span.dot {
+  height: 9px;
+  width: 9px;
+  margin-bottom: 1px;
+  margin-right: 3px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+span.online {
+  background-color: #25f522 !important;
+}
+
+span.current-user {
+  background-color: #007aff !important;
+}

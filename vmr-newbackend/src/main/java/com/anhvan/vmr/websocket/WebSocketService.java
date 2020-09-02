@@ -65,6 +65,10 @@ public class WebSocketService {
     }
   }
 
+  public boolean checkOnline(int id) {
+    return connections.containsKey(id);
+  }
+
   public Set<Integer> getOnlineIds() {
     return connections.keySet();
   }

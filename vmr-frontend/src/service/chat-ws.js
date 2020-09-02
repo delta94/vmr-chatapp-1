@@ -1,6 +1,6 @@
 import {protectedGet} from "./axios-wrapper";
 import store from '../redux/vmr-store';
-import {webSocketConnected, receiveMessage, sendbackMessage} from "../redux/vmr-action";
+import {webSocketConnected, receiveMessage, sendbackMessage, onOffline} from "../redux/vmr-action";
 
 const wsRoot = process.env.REACT_APP_WS_ROOT;
 
@@ -40,12 +40,20 @@ export function wsConnect() {
           webSocket.onmessage = messageEvent => {
             let jsonMessage = JSON.parse(messageEvent.data);
             if (jsonMessage.type === 'CHAT') {
+              // Handle chat
               store.dispatch(receiveMessage(jsonMessage));
             } else if (jsonMessage.type === 'SEND_BACK') {
+              // Handle sendback
               if (jsonMessage.receiverId === senderId) {
                 return;
               }
               store.dispatch(sendbackMessage(jsonMessage));
+            } else if (jsonMessage.type === 'ONLINE') {
+              console.log("User is online");
+              store.dispatch(onOffline(jsonMessage.senderId, true));
+            } else if (jsonMessage.type === 'OFFLINE') {
+              console.log("User is offline");
+              store.dispatch(onOffline(jsonMessage.senderId, false));
             }
           };
 

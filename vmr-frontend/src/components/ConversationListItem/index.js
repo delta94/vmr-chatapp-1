@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Avatar, Badge} from 'antd';
+import {Avatar} from 'antd';
 import shave from 'shave';
 import {useHistory} from 'react-router-dom';
 import {connect} from 'react-redux';
@@ -30,7 +30,15 @@ function ConversationListItem(props) {
     });
   }, []);
 
-  const {name, text, id} = props.data;
+  const {name, text, id, isCurrentUser} = props.data;
+  let online = props.userMapHolder.userMap.get(id).online;
+
+  let onlineStyle = "dot";
+  if (isCurrentUser) {
+    onlineStyle = "dot current-user"
+  } else if (online) {
+    onlineStyle = "dot online";
+  }
 
   if (props.currentConversationId === id) {
     itemStyle.backgroundColor = 'rgba(0, 0, 0, .05)';
@@ -47,7 +55,7 @@ function ConversationListItem(props) {
         {getFirstLetter(name)}
       </Avatar>
       <div className="conversation-info" style={{paddingLeft: "10px"}}>
-        <h1 className="conversation-title">{name}</h1>
+        <h1 className="conversation-title"><span className={onlineStyle}/>{name}</h1>
         <p className="conservation-text" style={{marginBottom: 0, color: '#888'}}>{text}</p>
       </div>
     </div>
@@ -56,7 +64,8 @@ function ConversationListItem(props) {
 
 function mapStateToProps(state) {
   return {
-    currentConversationId: state.currentConversationId
+    currentConversationId: state.currentConversationId,
+    userMapHolder: state.userMapHolder
   }
 }
 

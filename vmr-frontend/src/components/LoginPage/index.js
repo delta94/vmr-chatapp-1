@@ -3,6 +3,7 @@ import {Form, Input, Button, Row, Col, Card, Alert, Checkbox} from "antd";
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import bg from '../resource/registerbg.jpg';
 import {usernamePasswordLogin} from "../../service/login";
+import {Link} from 'react-router-dom';
 
 const rowStyle = {
   minHeight: "100vh",
@@ -89,7 +90,7 @@ function LoginPage(props) {
               <Button type="primary" htmlType="submit" style={{width: "100%"}}>
                 Log in
               </Button>
-              Or <a href="">register now!</a>
+              Or <Link to="/register">register now!</Link>
             </Form.Item>
           </Form>
           {msg}

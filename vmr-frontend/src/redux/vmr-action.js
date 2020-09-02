@@ -58,3 +58,12 @@ export function getMessageFromAPI(data, friendId) {
     data
   }
 }
+
+export function onOffline(userId, status) {
+  return {
+    type: 'ONOFF',
+    data: {
+      userId, status
+    }
+  }
+}

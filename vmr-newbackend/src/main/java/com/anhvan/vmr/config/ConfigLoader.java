@@ -24,18 +24,21 @@ public class ConfigLoader {
             .setFormat("yaml")
             .setConfig(new JsonObject().put("path", "configuration.yml"));
 
-    // External config
-    String externalConfigFile = System.getProperty("vmr-config-file", "configuration.yml");
-    ConfigStoreOptions externalStoreOptions =
-        new ConfigStoreOptions()
-            .setType("file")
-            .setOptional(true)
-            .setFormat("yaml")
-            .setConfig(new JsonObject().put("path", externalConfigFile));
-
     // Load config
     ConfigRetrieverOptions retrieverOptions =
-        new ConfigRetrieverOptions().addStore(fileStoreOptions).addStore(externalStoreOptions);
+        new ConfigRetrieverOptions().addStore(fileStoreOptions);
+
+    // External config
+    String externalConfigFile = System.getProperty("vmr-config-file");
+    if (externalConfigFile != null) {
+      ConfigStoreOptions externalStoreOptions =
+          new ConfigStoreOptions()
+              .setType("file")
+              .setOptional(true)
+              .setFormat("yaml")
+              .setConfig(new JsonObject().put("path", externalConfigFile));
+      retrieverOptions.addStore(externalStoreOptions);
+    }
 
     // Handler
     ConfigRetriever.create(vertx, retrieverOptions)

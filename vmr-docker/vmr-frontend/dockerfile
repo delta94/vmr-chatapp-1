@@ -1,0 +1,7 @@
+FROM node:12.18
+ADD /vmr-frontend/build /vmr-frontend/build
+ADD /vmr-frontend/server.js /vmr-frontend/server.js
+WORKDIR /vmr-frontend
+EXPOSE 3000
+RUN yarn add express
+ENTRYPOINT node server.js
