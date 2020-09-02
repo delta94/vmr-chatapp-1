@@ -1,9 +1,17 @@
-FROM openjdk:8
+FROM maven:3.6.3-openjdk-8-slim
 
-ADD vmr-docker/vmr-backend/configs /vmr-chat
-ADD vmr-newbackend/target/vmr-newbackend-1.0-SNAPSHOT.jar /vmr-chat
-
+ADD vmr-newbackend/pom.xml /vmr-chat/
 WORKDIR /vmr-chat
+RUN mvn dependency:go-offline
+
+ADD vmr-newbackend/ /vmr-chat
+ADD vmr-docker/vmr-backend/configs /vmr-chat/target
+
+RUN mvn package
+
+WORKDIR /vmr-chat/target
+
 EXPOSE 8080
 EXPOSE 8081
+
 ENTRYPOINT java -jar -Dvmr-config-file=./configuration.yml -Dvmr-redis-config-file=redis.yml -Dlog4j2.configurationFile=./log4j2.xml vmr-newbackend-1.0-SNAPSHOT.jar

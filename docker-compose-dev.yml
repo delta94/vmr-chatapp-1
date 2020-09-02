@@ -13,13 +13,3 @@ services:
     image: "redis:6.0.6"
     ports:
       - "6379:6379"
-  vertx:
-    build: 
-      context: .
-      dockerfile: ./vmr-docker/vmr-backend/dockerfile
-    network_mode: host
-  react:
-    build:
-      context: .
-      dockerfile: ./vmr-docker/vmr-frontend/dockerfile
-    network_mode: host

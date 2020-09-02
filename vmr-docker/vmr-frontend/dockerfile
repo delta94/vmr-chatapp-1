@@ -1,7 +1,14 @@
 FROM node:12.18
-ADD /vmr-frontend/build /vmr-frontend/build
-ADD /vmr-frontend/server.js /vmr-frontend/server.js
+
+ADD /vmr-frontend/package.json /vmr-frontend/
 WORKDIR /vmr-frontend
+RUN yarn install
+
+ADD /vmr-frontend /vmr-frontend/
+ADD /vmr-docker/vmr-frontend/configs /vmr-frontend/
+
 EXPOSE 3000
-RUN yarn add express
+
+RUN yarn build
+
 ENTRYPOINT node server.js
