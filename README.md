@@ -27,7 +27,7 @@ Các công nghệ sử dụng:
 Chạy lệnh docker compose (yêu cầu quyền root) tại thư mục `vmr-chatapp`. Cấu hình cần thiết để chạy ứng dụng nằm trong thư mục `vmr-docker`.
 
 ```bash
-docker-compise up -d
+docker-compose up -d
 ```
 
 ## 3. Demo
