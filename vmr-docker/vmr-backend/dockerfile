@@ -5,8 +5,9 @@ WORKDIR /vmr-chat
 RUN mvn dependency:go-offline
 
 ADD vmr-newbackend/ /vmr-chat
-ADD vmr-docker/vmr-backend/configs /vmr-chat/target
 
+RUN mvn clean
+ADD vmr-docker/vmr-backend/configs /vmr-chat/target
 RUN mvn package
 
 WORKDIR /vmr-chat/target

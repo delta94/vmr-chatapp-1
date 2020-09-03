@@ -17,5 +17,6 @@ create table messages
     sender    integer   not null,
     receiver  integer   not null,
     send_time bigint    not null,
-    message   text      not null
+    message   text      not null,
+    index sender_receiver(sender, receiver)
 );
