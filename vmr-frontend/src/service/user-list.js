@@ -6,7 +6,7 @@ export function getUsers() {
   return new Promise((resolve) => {
     console.log("Get user list");
     protectedGet('/users').then(response => {
-      let userList = response.data.userList;
+      let userList = response.data.data.userList;
       console.log(userList);
       store.dispatch(updateUserList(userList));
       resolve(userList);

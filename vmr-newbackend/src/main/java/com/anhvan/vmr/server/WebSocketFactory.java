@@ -30,22 +30,30 @@ public class WebSocketFactory {
   }
 
   public void webSocketHandler(ServerWebSocket conn) {
-    log.trace("Get websocket connection");
+    log.info("Get websocket connection {}", conn.path());
+
     webSocketService
         .authenticate(conn)
         .onComplete(
             userIdRs -> {
               log.trace("Auth status: {}", userIdRs.succeeded());
+
               if (userIdRs.succeeded()) {
+                // Accept
                 conn.accept();
-                new WebSocketHandler(
+
+                // Create new handler
+                WebSocketHandler handler =
+                    new WebSocketHandler(
                         vertx,
                         conn,
                         userIdRs.result(),
                         webSocketService,
                         chatDBService,
-                        chatCacheService)
-                    .handle();
+                        chatCacheService);
+
+                // Handle
+                handler.handle();
               } else {
                 conn.reject();
               }

@@ -3,6 +3,7 @@ package com.anhvan.vmr.controller;
 import com.anhvan.vmr.cache.TokenCacheService;
 import com.anhvan.vmr.entity.BaseRequest;
 import com.anhvan.vmr.entity.BaseResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import lombok.AllArgsConstructor;
@@ -18,10 +19,15 @@ public class LogoutController extends BaseController {
   @Override
   protected Future<BaseResponse> handlePost(BaseRequest baseRequest) {
     Promise<BaseResponse> logoutPromise = Promise.promise();
+
     String jwtToken = baseRequest.getRequest().getHeader("Authorization").substring(7);
     tokenCacheService.addToBlackList(jwtToken);
     logoutPromise.complete(
-        BaseResponse.builder().statusCode(200).message("Logout successfully").build());
+        BaseResponse.builder()
+            .statusCode(HttpResponseStatus.OK.code())
+            .message("Logout successfully")
+            .build());
+
     return logoutPromise.future();
   }
 }

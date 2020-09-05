@@ -26,8 +26,8 @@ public class ConfigModule {
 
   @Provides
   @Singleton
-  public ServerConfig provideRestConfig() {
-    JsonObject restConfig = config.getJsonObject("rest");
+  public ServerConfig provideServerConfig() {
+    JsonObject restConfig = config.getJsonObject("server");
     return restConfig.mapTo(ServerConfig.class);
   }
 

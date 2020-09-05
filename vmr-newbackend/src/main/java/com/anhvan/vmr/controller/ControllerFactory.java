@@ -1,24 +1,7 @@
 package com.anhvan.vmr.controller;
 
-import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 
-import javax.inject.Inject;
-import java.util.Map;
-
-public class ControllerFactory {
-  private Map<String, Controller> controllerMap;
-  private Vertx vertx;
-
-  @Inject
-  public ControllerFactory(Map<String, Controller> controllerMap, Vertx vertx) {
-    this.controllerMap = controllerMap;
-    this.vertx = vertx;
-  }
-
-  public void registerController(Router router) {
-    for (Map.Entry<String, Controller> controllerEntry : controllerMap.entrySet()) {
-      router.mountSubRouter(controllerEntry.getKey(), controllerEntry.getValue().getRouter(vertx));
-    }
-  }
+public interface ControllerFactory {
+  void registerController(Router router);
 }

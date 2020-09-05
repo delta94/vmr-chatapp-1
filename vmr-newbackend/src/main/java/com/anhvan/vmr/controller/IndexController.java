@@ -10,8 +10,7 @@ public class IndexController extends BaseController {
   public Future<BaseResponse> handleGet(BaseRequest baseRequest) {
     Promise<BaseResponse> responsePromise = Promise.promise();
 
-    BaseResponse response = BaseResponse.builder().statusCode(200).message("Hello world").build();
-    responsePromise.complete(response);
+    responsePromise.complete(BaseResponse.builder().statusCode(200).message("Hello world").build());
 
     return responsePromise.future();
   }

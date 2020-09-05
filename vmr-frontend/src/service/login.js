@@ -6,7 +6,7 @@ export function usernamePasswordLogin(username, password) {
   return new Promise((resolve, reject) => {
     post('/login', {username, password}).then(response => {
       // Debug status
-      let data = response.data;
+      let data = response.data.data;
 
       // Save to local storage
       localStorage.setItem("jwtToken", data.jwtToken);

@@ -11,8 +11,9 @@ import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
 import dagger.multibindings.StringKey;
-import io.vertx.core.Vertx;
 import lombok.extern.log4j.Log4j2;
+
+import javax.inject.Singleton;
 
 @Module
 @Log4j2
@@ -21,6 +22,7 @@ public class ControllerModule {
   @IntoMap
   @StringKey("/")
   public Controller provideIndexController() {
+    log.info("Register index controller");
     return new IndexController();
   }
 
@@ -29,6 +31,7 @@ public class ControllerModule {
   @StringKey("/api/public/login")
   public Controller provideLoginController(
       UserDBService userDBService, UserCacheService userCacheService, JwtUtil jwtUtil) {
+    log.info("Register login controller");
     return LoginController.builder()
         .userDBService(userDBService)
         .userCacheService(userCacheService)
@@ -41,6 +44,7 @@ public class ControllerModule {
   @StringKey("/api/public/register")
   public Controller provideRegisterController(
       UserDBService userDBService, JwtUtil jwtUtil, UserCacheService userCacheService) {
+    log.info("Register registration controller");
     return RegisterController.builder()
         .userCacheService(userCacheService)
         .jwtUtil(jwtUtil)
@@ -55,7 +59,8 @@ public class ControllerModule {
       UserDBService userDBService,
       UserCacheService userCacheService,
       WebSocketService webSocketService) {
-    return UserController.builder()
+    log.info("Register user list controller");
+    return UserListController.builder()
         .userDBService(userDBService)
         .userCacheService(userCacheService)
         .webSocketService(webSocketService)
@@ -64,36 +69,32 @@ public class ControllerModule {
 
   @Provides
   @IntoMap
-  @StringKey("/api/protected/info")
-  public Controller provideUserInfoController(
-      Vertx vertx, UserDBService userDBService, UserCacheService userCacheService) {
-    return UserInfoController.builder()
-        .vertx(vertx)
-        .userDBService(userDBService)
-        .userCacheService(userCacheService)
-        .build();
-  }
-
-  @Provides
-  @IntoMap
   @StringKey("/api/protected/logout")
   public Controller provideLogoutController(TokenCacheService tokenCacheService) {
+    log.info("Register logout controller");
     return LogoutController.builder().tokenCacheService(tokenCacheService).build();
   }
 
   @Provides
   @IntoMap
   @StringKey("/api/protected/sockettoken")
-  public Controller provideSocketTokenController(Vertx vertx, JwtUtil jwtUtil) {
-    return SocketTokenController.builder().vertx(vertx).jwtUtil(jwtUtil).build();
+  public Controller provideSocketTokenController(JwtUtil jwtUtil) {
+    log.info("Register socket token controller");
+    return SocketTokenController.builder().jwtUtil(jwtUtil).build();
   }
 
   @Provides
   @IntoMap
   @StringKey("/api/protected/chat")
   public Controller provideMessageListController(
-      Vertx vertx, ChatDBService chatDBService, ChatCacheService chatCacheService) {
-    log.trace("Provide chat api");
-    return new MessageListController(chatCacheService, chatDBService, vertx);
+      ChatDBService chatDBService, ChatCacheService chatCacheService) {
+    log.info("Register message list controller");
+    return new MessageListController(chatCacheService, chatDBService);
+  }
+
+  @Provides
+  @Singleton
+  public ControllerFactory ControllerFactory(ControllerFactoryImpl impl) {
+    return impl;
   }
 }

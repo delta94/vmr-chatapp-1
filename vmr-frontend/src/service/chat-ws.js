@@ -14,7 +14,7 @@ export function wsConnect() {
   return new Promise((resolve) => {
       console.log('connect');
       protectedGet("/sockettoken").then(response => {
-        let token = response.data.token;
+        let token = response.data.data.token;
         let webSocket = new WebSocket(wsRoot + `?token=${token}`);
 
         // When connect successful

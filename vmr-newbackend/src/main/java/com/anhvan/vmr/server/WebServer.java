@@ -20,8 +20,13 @@ public class WebServer {
 
   public void start() {
     log.info("Create web server at port {}", config.getPort());
+
     vertx
-        .createHttpServer(new HttpServerOptions().setTcpKeepAlive(true).setMaxHeaderSize(32 * 1024).setLogActivity(true))
+        .createHttpServer(
+            new HttpServerOptions()
+                .setTcpKeepAlive(true)
+                .setMaxHeaderSize(32 * 1024)
+                .setLogActivity(true))
         .requestHandler(routerFactory.route())
         .exceptionHandler(throwable -> log.error("An exception occur when start server", throwable))
         .listen(config.getPort(), config.getHost());

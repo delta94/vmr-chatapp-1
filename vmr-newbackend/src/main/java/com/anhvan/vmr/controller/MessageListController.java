@@ -2,15 +2,14 @@ package com.anhvan.vmr.controller;
 
 import com.anhvan.vmr.cache.ChatCacheService;
 import com.anhvan.vmr.database.ChatDBService;
+import com.anhvan.vmr.entity.BaseRequest;
+import com.anhvan.vmr.entity.BaseResponse;
 import com.anhvan.vmr.model.WsMessage;
-import com.anhvan.vmr.util.ControllerUtil;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Future;
-import io.vertx.core.Vertx;
+import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServerRequest;
-import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -18,46 +17,66 @@ import java.util.List;
 
 @AllArgsConstructor
 @Log4j2
-public class MessageListController implements Controller {
+public class MessageListController extends BaseController {
   private ChatCacheService chatCacheService;
   private ChatDBService chatDBService;
-  private Vertx vertx;
 
   @Override
-  public Router getRouter(Vertx temp) {
-    Router router = Router.router(vertx);
-    router.get("/:friendId/:offset").handler(this::getChatMessages);
-    return router;
-  }
+  @RoutePath("/:friendId/:offset")
+  public Future<BaseResponse> handleGet(BaseRequest baseRequest) {
+    Promise<BaseResponse> responsePromise = Promise.promise();
 
-  public void getChatMessages(RoutingContext routingContext) {
-    HttpServerResponse response = routingContext.response();
-    HttpServerRequest request = routingContext.request();
+    HttpServerRequest request = baseRequest.getRequest();
 
-    int userId = routingContext.user().principal().getInteger("userId");
+    int userId = baseRequest.getPrincipal().getInteger("userId");
     int friendId = Integer.parseInt(request.getParam("friendId"));
     int offset = Integer.parseInt(request.getParam("offset"));
 
     if (offset == 0) {
       // First load
       Future<List<WsMessage>> chatMessages = chatCacheService.getCacheMessage(userId, friendId);
+
+      // Cache hit
       chatMessages.onSuccess(
           wsMessages -> {
-            log.trace("Cache hit");
+            log.debug("Cache hit {}-{}-{}", userId, friendId, offset);
             JsonObject jsonResponse = new JsonObject();
             jsonResponse.put("messages", wsMessages);
             jsonResponse.put("newOffset", offset + wsMessages.size());
-            ControllerUtil.jsonResponse(response, jsonResponse);
+            responsePromise.complete(
+                BaseResponse.builder()
+                    .message("Get chat messages successfully")
+                    .statusCode(HttpResponseStatus.OK.code())
+                    .data(jsonResponse)
+                    .build());
           });
-      chatMessages.onFailure(throwable -> getFromDB(userId, friendId, offset, response, true));
+
+      // Cache miss
+      chatMessages.onFailure(
+          throwable -> {
+            log.debug(
+                "Fail to load chat messages from cache {}-{}-{}",
+                userId,
+                friendId,
+                offset,
+                throwable);
+            getFromDB(userId, friendId, offset, responsePromise, true);
+          });
     } else {
       // Load more
-      getFromDB(userId, friendId, offset, response, false);
+      getFromDB(userId, friendId, offset, responsePromise, false);
     }
+
+    return responsePromise.future();
   }
 
   private void getFromDB(
-      int userId, int friendId, int offset, HttpServerResponse response, boolean isCached) {
+      int userId,
+      int friendId,
+      int offset,
+      Promise<BaseResponse> responsePromise,
+      boolean isCached) {
+
     chatDBService
         .getChatMessages(userId, friendId, offset)
         .onComplete(
@@ -69,7 +88,12 @@ public class MessageListController implements Controller {
                 jsonResponse.put("messages", listMessage);
                 jsonResponse.put("newOffset", offset + listMessage.size());
 
-                ControllerUtil.jsonResponse(response, jsonResponse);
+                responsePromise.complete(
+                    BaseResponse.builder()
+                        .statusCode(HttpResponseStatus.OK.code())
+                        .data(jsonResponse)
+                        .message("Get chat mesages successfully")
+                        .build());
 
                 // Cache
                 if (isCached) {
@@ -77,7 +101,7 @@ public class MessageListController implements Controller {
                 }
               } else {
                 log.error("Error when get chat messages", result.cause());
-                response.setStatusCode(500).end();
+                responsePromise.fail(result.cause());
               }
             });
   }

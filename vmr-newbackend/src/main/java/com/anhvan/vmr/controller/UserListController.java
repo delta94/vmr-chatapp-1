@@ -5,7 +5,6 @@ import com.anhvan.vmr.database.UserDBService;
 import com.anhvan.vmr.entity.BaseRequest;
 import com.anhvan.vmr.entity.BaseResponse;
 import com.anhvan.vmr.model.User;
-import com.anhvan.vmr.util.ControllerUtil;
 import com.anhvan.vmr.websocket.WebSocketService;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -20,7 +19,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Log4j2
-public class UserController extends BaseController {
+public class UserListController extends BaseController {
   private UserDBService userDBService;
   private UserCacheService userCacheService;
   private WebSocketService webSocketService;

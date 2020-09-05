@@ -6,6 +6,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.Json;
@@ -15,16 +16,28 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.function.Function;
+
 @Log4j2
 public abstract class BaseController implements Controller {
   @Override
   public Router getRouter(Vertx vertx) {
+    // Create router object
     Router router = Router.router(vertx);
-    router.route("/").handler(this::handle);
+
+    // Map handlers
+    router.get(getPath(HttpMethod.GET)).handler(rc -> handle(rc, this::handleGet));
+    router.post(getPath(HttpMethod.POST)).handler(rc -> handle(rc, this::handlePost));
+    router.put(getPath(HttpMethod.PUT)).handler(rc -> handle(rc, this::handlePut));
+    router.patch(getPath(HttpMethod.PATCH)).handler(rc -> handle(rc, this::handlePatch));
+    router.delete(getPath(HttpMethod.DELETE)).handler(rc -> handle(rc, this::handleDelete));
+
+    // Return
     return router;
   }
 
-  protected void handle(RoutingContext routingContext) {
+  protected void handle(
+      RoutingContext routingContext, Function<BaseRequest, Future<BaseResponse>> handleFunc) {
     // Get info from routing context
     HttpServerRequest request = routingContext.request();
     HttpServerResponse response = routingContext.response();
@@ -51,29 +64,8 @@ public abstract class BaseController implements Controller {
             .routingContext(routingContext)
             .build();
 
-    // Create request handler
-    Future<BaseResponse> requestHandler;
-
-    // Choose handler
-    switch (request.method()) {
-      case GET:
-        requestHandler = handleGet(baseRequest);
-        break;
-      case POST:
-        requestHandler = handlePost(baseRequest);
-        break;
-      case PUT:
-        requestHandler = handlePut(baseRequest);
-        break;
-      case DELETE:
-        requestHandler = handleDelete(baseRequest);
-        break;
-      case PATCH:
-        requestHandler = handlePatch(baseRequest);
-        break;
-      default:
-        requestHandler = handleNotSupported();
-    }
+    // Handle
+    Future<BaseResponse> requestHandler = handleFunc.apply(baseRequest);
 
     // If request handler is not implemented
     if (requestHandler == null) {
@@ -84,12 +76,14 @@ public abstract class BaseController implements Controller {
     requestHandler.onComplete(
         rs -> {
           if (rs.succeeded()) {
+            // Handle success
             BaseResponse handlerResponse = rs.result();
             response
                 .putHeader("Content-Type", "application/json; charset=utf-8")
                 .setStatusCode(handlerResponse.getStatusCode())
                 .end(Json.encodeToBuffer(handlerResponse));
           } else {
+            // Error
             log.error("Error when handle request {}", request, rs.cause());
             response.setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code()).end();
           }
@@ -128,5 +122,23 @@ public abstract class BaseController implements Controller {
     responsePromise.complete(response);
 
     return responsePromise.future();
+  }
+
+  public String getPath(HttpMethod type) {
+    String method = type.toString();
+    String methodName = "handle" + method.charAt(0) + method.substring(1).toLowerCase();
+
+    try {
+      RoutePath ann =
+          this.getClass().getMethod(methodName, BaseRequest.class).getAnnotation(RoutePath.class);
+
+      if (ann != null) {
+        return ann.value();
+      }
+    } catch (NoSuchMethodException e) {
+      log.debug("Class {} not override {}", this.getClass(), methodName);
+    }
+
+    return "/";
   }
 }

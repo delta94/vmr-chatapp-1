@@ -1,34 +1,38 @@
 package com.anhvan.vmr.controller;
 
-import com.anhvan.vmr.util.ControllerUtil;
+import com.anhvan.vmr.entity.BaseRequest;
+import com.anhvan.vmr.entity.BaseResponse;
 import com.anhvan.vmr.util.JwtUtil;
-import io.vertx.core.Vertx;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 @AllArgsConstructor
 @Builder
-public class SocketTokenController implements Controller {
+public class SocketTokenController extends BaseController {
   private JwtUtil jwtUtil;
-  private Vertx vertx;
 
   @Override
-  public Router getRouter(Vertx temp) {
-    Router router = Router.router(vertx);
-    router.get("/").handler(this::handleGenToken);
-    return router;
-  }
+  protected Future<BaseResponse> handleGet(BaseRequest baseRequest) {
+    Promise<BaseResponse> responsePromise = Promise.promise();
 
-  public void handleGenToken(RoutingContext routingContext) {
-    int userId = routingContext.user().principal().getInteger("userId");
+    int userId = baseRequest.getPrincipal().getInteger("userId");
     jwtUtil
         .generate(userId, 90)
         .onSuccess(
-            token ->
-                ControllerUtil.jsonResponse(
-                    routingContext.response(), new JsonObject().put("token", token)));
+            token -> {
+              JsonObject data = new JsonObject().put("token", token);
+              responsePromise.complete(
+                  BaseResponse.builder()
+                      .message("Get token successfully")
+                      .data(data)
+                      .statusCode(HttpResponseStatus.OK.code())
+                      .build());
+            });
+
+    return responsePromise.future();
   }
 }

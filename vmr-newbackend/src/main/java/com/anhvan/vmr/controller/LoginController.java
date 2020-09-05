@@ -74,6 +74,7 @@ public class LoginController extends BaseController {
           }
         });
 
+    // Get user from db failed
     userFuture.onFailure(
         throwable -> {
           log.info("Login failed, user = {}, user not existed", user.getUsername(), throwable);

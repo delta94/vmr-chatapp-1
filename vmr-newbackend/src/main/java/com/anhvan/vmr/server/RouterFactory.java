@@ -63,7 +63,10 @@ public class RouterFactory {
         .route()
         .failureHandler(
             routingContext -> {
-              log.error("An exception occur when handing request", routingContext.failure());
+              log.error(
+                  "An exception occur when handing request {}",
+                  routingContext.request(),
+                  routingContext.failure());
               routingContext.next();
             });
 
@@ -71,10 +74,13 @@ public class RouterFactory {
   }
 
   private void jwtBlackListHandler(RoutingContext routingContext) {
+    // Get token
     String jwtToken = jwtUtil.getTokenFromHeader(routingContext);
 
+    // Check if token in blacklist
     Future<Boolean> existFuture = tokenCacheService.checkExistInBacklist(jwtToken);
 
+    // Check the result
     existFuture.onSuccess(
         exist -> {
           if (exist) {
@@ -84,6 +90,7 @@ public class RouterFactory {
           }
         });
 
+    // On error
     existFuture.onFailure(
         throwable -> {
           log.error("Error when check if token in blacklist", throwable);
@@ -108,9 +115,10 @@ public class RouterFactory {
     allowedMethods.add(HttpMethod.PATCH);
     allowedMethods.add(HttpMethod.PUT);
 
-    router
-        .route()
-        .handler(
-            CorsHandler.create("*").allowedHeaders(allowedHeaders).allowedMethods(allowedMethods));
+    // Set cors handler
+    CorsHandler corsHandler =
+        CorsHandler.create("*").allowedHeaders(allowedHeaders).allowedMethods(allowedMethods);
+
+    router.route().handler(corsHandler);
   }
 }

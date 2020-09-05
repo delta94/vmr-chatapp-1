@@ -20,16 +20,15 @@ public class WebSocketServer {
   }
 
   public void start() {
-    int port = config.getPort() + 1;
     vertx
         .createHttpServer()
         .webSocketHandler(webSocketFactory::webSocketHandler)
         .listen(
-            port,
+            config.getWsPort(),
             config.getHost(),
             result -> {
               if (result.succeeded()) {
-                log.info("Start websocket server at port {}", port);
+                log.info("Start websocket server at port {}", config.getWsPort());
               }
             });
   }
