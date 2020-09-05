@@ -47,7 +47,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4a4c554b-0f70-4b4f-bee7-1a13df5068fc" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/BaseController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/entity/BaseRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/entity/BaseResponse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/Controller.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/ControllerFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/ControllerFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/ControllerModule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/ControllerModule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/IndexController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/IndexController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/LoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/LogoutController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/LogoutController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/MessageListController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/MessageListController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/RegisterController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/RegisterController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/SocketTokenController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/SocketTokenController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/UserInfoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/UserInfoController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -128,29 +142,37 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="491" y="72" width="374" height="575" key="#com.intellij.ide.util.MemberChooser" timestamp="1599269326681">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="491" y="72" width="374" height="575" key="#com.intellij.ide.util.MemberChooser/0.0.1366.728@0.0.1366.728" timestamp="1599269326681" />
+    <state x="460" y="260" width="445" height="207" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1599269934617">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="460" y="260" width="445" height="207" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1366.728@0.0.1366.728" timestamp="1599269934617" />
     <state x="466" y="107" width="424" height="505" key="FileChooserDialogImpl" timestamp="1599019074198">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="466" y="107" width="424" height="505" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1599019074198" />
-    <state width="1807" height="310" key="GridCell.Tab.0.bottom" timestamp="1599100393334">
-      <screen x="67" y="27" width="1853" height="1053" />
+    <state width="1324" height="384" key="GridCell.Tab.0.bottom" timestamp="1599279416840">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1324" height="204" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1599057638226" />
+    <state width="1324" height="384" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1599279416840" />
     <state width="1807" height="310" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1599100393334" />
-    <state width="1807" height="310" key="GridCell.Tab.0.center" timestamp="1599100393334">
-      <screen x="67" y="27" width="1853" height="1053" />
+    <state width="1324" height="384" key="GridCell.Tab.0.center" timestamp="1599279416839">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1324" height="204" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1599057638220" />
+    <state width="1324" height="384" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1599279416839" />
     <state width="1807" height="310" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1599100393334" />
-    <state width="1807" height="310" key="GridCell.Tab.0.left" timestamp="1599100393334">
-      <screen x="67" y="27" width="1853" height="1053" />
+    <state width="1324" height="384" key="GridCell.Tab.0.left" timestamp="1599279416838">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1324" height="204" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1599057638220" />
+    <state width="1324" height="384" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1599279416838" />
     <state width="1807" height="310" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1599100393334" />
-    <state width="1807" height="310" key="GridCell.Tab.0.right" timestamp="1599100393334">
-      <screen x="67" y="27" width="1853" height="1053" />
+    <state width="1324" height="384" key="GridCell.Tab.0.right" timestamp="1599279416840">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1324" height="204" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1599057638225" />
+    <state width="1324" height="384" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1599279416840" />
     <state width="1807" height="310" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1599100393334" />
   </component>
 </project>

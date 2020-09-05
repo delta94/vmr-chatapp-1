@@ -24,7 +24,7 @@ public class MessageListController implements Controller {
   private Vertx vertx;
 
   @Override
-  public Router getRouter() {
+  public Router getRouter(Vertx temp) {
     Router router = Router.router(vertx);
     router.get("/:friendId/:offset").handler(this::getChatMessages);
     return router;

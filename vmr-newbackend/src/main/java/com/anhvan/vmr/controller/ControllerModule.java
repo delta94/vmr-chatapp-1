@@ -5,7 +5,6 @@ import com.anhvan.vmr.cache.TokenCacheService;
 import com.anhvan.vmr.cache.UserCacheService;
 import com.anhvan.vmr.database.ChatDBService;
 import com.anhvan.vmr.database.UserDBService;
-import com.anhvan.vmr.util.AsyncWorkerUtil;
 import com.anhvan.vmr.util.JwtUtil;
 import com.anhvan.vmr.websocket.WebSocketService;
 import dagger.Module;
@@ -21,25 +20,19 @@ public class ControllerModule {
   @Provides
   @IntoMap
   @StringKey("/")
-  public Controller provideIndexController(Vertx vertx) {
-    return IndexController.builder().vertx(vertx).build();
+  public Controller provideIndexController() {
+    return new IndexController();
   }
 
   @Provides
   @IntoMap
   @StringKey("/api/public/login")
   public Controller provideLoginController(
-      Vertx vertx,
-      UserDBService userDBService,
-      UserCacheService userCacheService,
-      JwtUtil jwtUtil,
-      AsyncWorkerUtil asyncWorkerUtil) {
+      UserDBService userDBService, UserCacheService userCacheService, JwtUtil jwtUtil) {
     return LoginController.builder()
-        .vertx(vertx)
         .userDBService(userDBService)
         .userCacheService(userCacheService)
         .jwtUtil(jwtUtil)
-        .workerUtil(asyncWorkerUtil)
         .build();
   }
 
@@ -47,12 +40,8 @@ public class ControllerModule {
   @IntoMap
   @StringKey("/api/public/register")
   public Controller provideRegisterController(
-      Vertx vertx,
-      UserDBService userDBService,
-      JwtUtil jwtUtil,
-      UserCacheService userCacheService) {
+      UserDBService userDBService, JwtUtil jwtUtil, UserCacheService userCacheService) {
     return RegisterController.builder()
-        .vertx(vertx)
         .userCacheService(userCacheService)
         .jwtUtil(jwtUtil)
         .userDBService(userDBService)
@@ -63,12 +52,10 @@ public class ControllerModule {
   @IntoMap
   @StringKey("/api/protected/users")
   public Controller provideUserController(
-      Vertx vertx,
       UserDBService userDBService,
       UserCacheService userCacheService,
       WebSocketService webSocketService) {
     return UserController.builder()
-        .vertx(vertx)
         .userDBService(userDBService)
         .userCacheService(userCacheService)
         .webSocketService(webSocketService)
@@ -90,13 +77,8 @@ public class ControllerModule {
   @Provides
   @IntoMap
   @StringKey("/api/protected/logout")
-  public Controller provideLogoutController(
-      Vertx vertx, TokenCacheService tokenCacheService, JwtUtil jwtUtil) {
-    return LogoutController.builder()
-        .vertx(vertx)
-        .tokenCacheService(tokenCacheService)
-        .jwtUtil(jwtUtil)
-        .build();
+  public Controller provideLogoutController(TokenCacheService tokenCacheService) {
+    return LogoutController.builder().tokenCacheService(tokenCacheService).build();
   }
 
   @Provides

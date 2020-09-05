@@ -2,16 +2,15 @@ package com.anhvan.vmr.controller;
 
 import com.anhvan.vmr.cache.UserCacheService;
 import com.anhvan.vmr.database.UserDBService;
+import com.anhvan.vmr.entity.BaseRequest;
+import com.anhvan.vmr.entity.BaseResponse;
 import com.anhvan.vmr.model.User;
-import com.anhvan.vmr.util.ControllerUtil;
 import com.anhvan.vmr.util.JwtUtil;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
-import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.log4j.Log4j2;
@@ -19,38 +18,38 @@ import lombok.extern.log4j.Log4j2;
 @AllArgsConstructor
 @Builder
 @Log4j2
-public class RegisterController implements Controller {
-  private Vertx vertx;
+public class RegisterController extends BaseController {
   private UserDBService userDBService;
   private JwtUtil jwtUtil;
   private UserCacheService userCacheService;
 
   @Override
-  public Router getRouter() {
-    Router router = Router.router(vertx);
-    router.post("/").handler(this::registerUser);
-    return router;
-  }
+  public Future<BaseResponse> handlePost(BaseRequest baseRequest) {
+    Promise<BaseResponse> registerPromise = Promise.promise();
 
-  private void registerUser(RoutingContext context) {
-    JsonObject requestBody = context.getBodyAsJson();
-    HttpServerResponse response = context.response();
+    // Get request body
+    JsonObject requestBody = baseRequest.getBody();
 
     // Create user object
     User user = requestBody.mapTo(User.class);
 
     if (!validate(user)) {
-      response.setStatusCode(400).end();
-      return;
+      registerPromise.complete(
+          BaseResponse.builder()
+              .statusCode(HttpResponseStatus.BAD_REQUEST.code())
+              .message("Username or password not valid")
+              .build());
     }
 
     // Add user
     Future<Integer> userIdFuture = userDBService.addUser(user);
     userIdFuture.onFailure(
-        throwable -> {
-          response.setStatusCode(409).end();
-          log.debug("Fail when add user", throwable);
-        });
+        throwable ->
+            registerPromise.complete(
+                BaseResponse.builder()
+                    .statusCode(HttpResponseStatus.CONFLICT.code())
+                    .message("Username existed")
+                    .build()));
 
     // Generate token
     Future<String> tokenFuture = userIdFuture.compose(jwtUtil::generate);
@@ -70,8 +69,12 @@ public class RegisterController implements Controller {
               jsonResponse.put("jwtToken", token);
               jsonResponse.put("userId", userId);
 
-              // Send result
-              ControllerUtil.jsonResponse(response, jsonResponse, 201);
+              registerPromise.complete(
+                  BaseResponse.builder()
+                      .statusCode(HttpResponseStatus.CREATED.code())
+                      .message("Create success")
+                      .data(jsonResponse)
+                      .build());
             })
         .onFailure(err -> log.error("Error", err));
 
@@ -82,6 +85,8 @@ public class RegisterController implements Controller {
           userCacheService.setUserCache(user);
           userCacheService.addUserList(user);
         });
+
+    return registerPromise.future();
   }
 
   public boolean validate(User user) {

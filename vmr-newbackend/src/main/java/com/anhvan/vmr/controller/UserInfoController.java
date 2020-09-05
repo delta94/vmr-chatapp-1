@@ -23,7 +23,7 @@ public class UserInfoController implements Controller {
   private UserCacheService userCacheService;
 
   @Override
-  public Router getRouter() {
+  public Router getRouter(Vertx temp) {
     Router router = Router.router(vertx);
     router.get("/").handler(this::getUserInfoHandler);
     return router;

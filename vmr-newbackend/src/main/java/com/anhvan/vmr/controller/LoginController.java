@@ -2,68 +2,88 @@ package com.anhvan.vmr.controller;
 
 import com.anhvan.vmr.cache.UserCacheService;
 import com.anhvan.vmr.database.UserDBService;
+import com.anhvan.vmr.entity.BaseRequest;
+import com.anhvan.vmr.entity.BaseResponse;
 import com.anhvan.vmr.model.User;
-import com.anhvan.vmr.util.AsyncWorkerUtil;
-import com.anhvan.vmr.util.ControllerUtil;
 import com.anhvan.vmr.util.JwtUtil;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Future;
-import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
 import jodd.crypt.BCrypt;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Builder
-@AllArgsConstructor
 @Log4j2
-public class LoginController implements Controller {
-  private Vertx vertx;
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class LoginController extends BaseController {
   private UserDBService userDBService;
   private JwtUtil jwtUtil;
   private UserCacheService userCacheService;
-  private AsyncWorkerUtil workerUtil;
 
   @Override
-  public Router getRouter() {
-    Router result = Router.router(vertx);
-    result.post("/").handler(this::handleLogin);
-    return result;
-  }
+  protected Future<BaseResponse> handlePost(BaseRequest baseRequest) {
+    // Get response promise
+    Promise<BaseResponse> responsePromise = Promise.promise();
 
-  public void handleLogin(RoutingContext context) {
-    log.trace("Login");
-    JsonObject body = context.getBodyAsJson();
-    HttpServerResponse response = context.response();
-    User user = body.mapTo(User.class);
-    log.info(user.getPassword());
+    // Get user submitted data
+    User user = baseRequest.getBody().mapTo(User.class);
+    log.info("Handle login for user {}", user.getUsername());
 
+    // Get user from database
     Future<User> userFuture = userDBService.getUserByUsername(user.getUsername());
-    userFuture.onSuccess(
-        dbUser ->
-            workerUtil.execute(
-                () -> {
-                  log.trace("Check password");
-                  if (user.getPassword() != null
-                      && BCrypt.checkpw(user.getPassword(), dbUser.getPassword())) {
-                    jwtUtil
-                        .generate(dbUser.getId())
-                        .onSuccess(
-                            token -> {
-                              JsonObject res = new JsonObject();
-                              res.put("jwtToken", token);
-                              res.put("userId", dbUser.getId());
-                              ControllerUtil.jsonResponse(response, res);
-                            });
-                    userCacheService.setUserCache(dbUser);
-                  } else {
-                    response.setStatusCode(401).end();
-                  }
-                }));
 
-    userFuture.onFailure(throwable -> response.setStatusCode(401).end());
+    // On get success
+    userFuture.onSuccess(
+        dbUser -> {
+          // Check password
+          if (user.getPassword() != null
+              && BCrypt.checkpw(user.getPassword(), dbUser.getPassword())) {
+            // Generate token
+            jwtUtil
+                .generate(dbUser.getId())
+                .onSuccess(
+                    token -> {
+                      JsonObject data = new JsonObject();
+                      data.put("jwtToken", token);
+                      data.put("userId", dbUser.getId());
+
+                      responsePromise.complete(
+                          BaseResponse.builder()
+                              .statusCode(HttpResponseStatus.OK.code())
+                              .message("Login successfully")
+                              .data(data)
+                              .build());
+
+                      log.info("User {} login successfully", user.getUsername());
+                    });
+
+            // Save user to cache
+            userCacheService.setUserCache(dbUser);
+          } else {
+            log.info("Login failed, user = {}, password not valid", user.getUsername());
+            responsePromise.complete(
+                BaseResponse.builder()
+                    .statusCode(HttpResponseStatus.UNAUTHORIZED.code())
+                    .message("Password not valid")
+                    .build());
+          }
+        });
+
+    userFuture.onFailure(
+        throwable -> {
+          log.info("Login failed, user = {}, user not existed", user.getUsername(), throwable);
+          responsePromise.complete(
+              BaseResponse.builder()
+                  .statusCode(HttpResponseStatus.UNAUTHORIZED.code())
+                  .message("Username not existed")
+                  .build());
+        });
+
+    return responsePromise.future();
   }
 }

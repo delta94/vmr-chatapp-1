@@ -1,9 +1,10 @@
 package com.anhvan.vmr.controller;
 
 import com.anhvan.vmr.cache.TokenCacheService;
-import com.anhvan.vmr.util.JwtUtil;
-import io.vertx.core.Vertx;
-import io.vertx.ext.web.Router;
+import com.anhvan.vmr.entity.BaseRequest;
+import com.anhvan.vmr.entity.BaseResponse;
+import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.log4j.Log4j2;
@@ -11,22 +12,16 @@ import lombok.extern.log4j.Log4j2;
 @Builder
 @AllArgsConstructor
 @Log4j2
-public class LogoutController implements Controller {
-  private Vertx vertx;
+public class LogoutController extends BaseController {
   private TokenCacheService tokenCacheService;
-  private JwtUtil jwtUtil;
 
   @Override
-  public Router getRouter() {
-    Router router = Router.router(vertx);
-    router
-        .post("/")
-        .handler(
-            routingContext -> {
-              String token = routingContext.request().getHeader("Authorization").substring(7);
-              tokenCacheService.addToBlackList(token);
-              routingContext.response().end();
-            });
-    return router;
+  protected Future<BaseResponse> handlePost(BaseRequest baseRequest) {
+    Promise<BaseResponse> logoutPromise = Promise.promise();
+    String jwtToken = baseRequest.getRequest().getHeader("Authorization").substring(7);
+    tokenCacheService.addToBlackList(jwtToken);
+    logoutPromise.complete(
+        BaseResponse.builder().statusCode(200).message("Logout successfully").build());
+    return logoutPromise.future();
   }
 }

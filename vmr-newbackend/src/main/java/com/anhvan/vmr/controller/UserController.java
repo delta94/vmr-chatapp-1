@@ -2,15 +2,14 @@ package com.anhvan.vmr.controller;
 
 import com.anhvan.vmr.cache.UserCacheService;
 import com.anhvan.vmr.database.UserDBService;
+import com.anhvan.vmr.entity.BaseRequest;
+import com.anhvan.vmr.entity.BaseResponse;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.util.ControllerUtil;
 import com.anhvan.vmr.websocket.WebSocketService;
 import io.vertx.core.Future;
-import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.log4j.Log4j2;
@@ -21,37 +20,37 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Log4j2
-public class UserController implements Controller {
-  private Vertx vertx;
+public class UserController extends BaseController {
   private UserDBService userDBService;
   private UserCacheService userCacheService;
   private WebSocketService webSocketService;
 
   @Override
-  public Router getRouter() {
-    Router router = Router.router(vertx);
-
-    router.get("/").handler(this::userList);
-
-    return router;
-  }
-
-  private void userList(RoutingContext routingContext) {
-    HttpServerResponse res = routingContext.response();
-    res.putHeader("Content-Type", "application/json");
+  public Future<BaseResponse> handleGet(BaseRequest request) {
+    Promise<BaseResponse> userListPromise = Promise.promise();
 
     // Get users from cache
     Future<List<User>> cachedList = userCacheService.getUserList();
+
     cachedList.onComplete(
         listAsyncResult -> {
-          JsonObject result = new JsonObject();
+          JsonObject data = new JsonObject();
+
           if (listAsyncResult.succeeded()) {
             // Cache hit
-            log.trace("Cache hit");
+            log.debug("Get user list, cache hit");
+
             List<User> userList = listAsyncResult.result();
             setOnline(userList);
-            result.put("userList", userList);
-            ControllerUtil.jsonResponse(res, result);
+            data.put("userList", userList);
+
+            // Response to user
+            userListPromise.complete(
+                BaseResponse.builder()
+                    .statusCode(200)
+                    .data(data)
+                    .message("Get user list successfully")
+                    .build());
           } else {
             // Cache miss
             log.trace("Cache miss");
@@ -61,12 +60,21 @@ public class UserController implements Controller {
             userListFuture.onSuccess(
                 users -> {
                   setOnline(users);
-                  result.put("userList", users);
+                  data.put("userList", users);
                   userCacheService.setUserList(users);
-                  ControllerUtil.jsonResponse(res, result);
+
+                  // Response to user
+                  userListPromise.complete(
+                      BaseResponse.builder()
+                          .statusCode(200)
+                          .data(data)
+                          .message("Get user list successfully")
+                          .build());
                 });
           }
         });
+
+    return userListPromise.future();
   }
 
   public void setOnline(List<User> userList) {

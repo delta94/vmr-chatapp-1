@@ -16,7 +16,7 @@ public class SocketTokenController implements Controller {
   private Vertx vertx;
 
   @Override
-  public Router getRouter() {
+  public Router getRouter(Vertx temp) {
     Router router = Router.router(vertx);
     router.get("/").handler(this::handleGenToken);
     return router;
