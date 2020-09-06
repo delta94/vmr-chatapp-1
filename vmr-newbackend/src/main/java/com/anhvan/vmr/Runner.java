@@ -29,16 +29,19 @@ public class Runner {
 
   // Load dagger modules
   public static void onLoadConfig(JsonObject config, Vertx vertx) {
+    // Service module
     ServiceModule serviceModule = new ServiceModule(vertx);
     ConfigModule configModule = new ConfigModule(config);
 
+    // Service component
     ServiceComponent component =
         DaggerServiceComponent.builder()
             .serviceModule(serviceModule)
             .configModule(configModule)
             .build();
 
-    component.getRestfulAPI().start();
+    // Start webserver and websocket server
+    component.getWebServer().start();
     component.getWebSocketServer().start();
   }
 }

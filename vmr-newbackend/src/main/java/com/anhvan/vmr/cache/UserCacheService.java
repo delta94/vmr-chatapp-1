@@ -1,93 +1,20 @@
 package com.anhvan.vmr.cache;
 
 import com.anhvan.vmr.model.User;
-import com.anhvan.vmr.util.AsyncWorkerUtil;
 import io.vertx.core.Future;
-import io.vertx.core.Promise;
-import lombok.extern.log4j.Log4j2;
-import org.redisson.api.RMap;
-import org.redisson.api.RQueue;
-import org.redisson.api.RSet;
-import org.redisson.api.RedissonClient;
 
-import javax.inject.Inject;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-@Log4j2
-public class UserCacheService {
-  private RedissonClient redis;
-  private AsyncWorkerUtil workerUtil;
+public interface UserCacheService {
+  String getUserKey(int userId);
 
-  @Inject
-  public UserCacheService(RedisCache redisCache, AsyncWorkerUtil workerUtil) {
-    redis = redisCache.getRedissonClient();
-    this.workerUtil = workerUtil;
-  }
+  void setUserCache(User user);
 
-  public String getUserKey(int userId) {
-    String keyPattern = "vmr:user:%d:info";
-    return String.format(keyPattern, userId);
-  }
+  Future<User> getUserCache(int userId);
 
-  public void setUserCache(User user) {
-    String key = getUserKey(user.getId());
-    RMap<String, String> userInfo = redis.getMap(key);
-    userInfo.putAsync("name", user.getName());
-    userInfo.putAsync("username", user.getUsername());
-    userInfo.expireAsync(10, TimeUnit.MINUTES);
-  }
+  void setUserList(List<User> userList);
 
-  public Future<User> getUserCache(int userId) {
-    Promise<User> userPromise = Promise.promise();
-    RMap<String, String> userInfo = redis.getMap(getUserKey(userId));
-    workerUtil.execute(
-        () -> {
-          if (!userInfo.isExists()) {
-            userPromise.fail("User not exist in cache");
-            return;
-          }
-          String name = userInfo.get("name");
-          String username = userInfo.get("username");
-          userInfo.expire(10, TimeUnit.MINUTES);
-          User user = User.builder().id(userId).username(username).name(name).build();
-          userPromise.complete(user);
-        });
-    return userPromise.future();
-  }
+  void addUserList(User user);
 
-  public void setUserList(List<User> userList) {
-    workerUtil.execute(
-        () -> {
-          RQueue<User> userSet = redis.getQueue("vmr:users");
-          userSet.clear();
-          userSet.addAll(userList);
-          userSet.expire(1, TimeUnit.MINUTES);
-        });
-  }
-
-  public void addUserList(User user) {
-    workerUtil.execute(
-        () -> {
-          RQueue<User> userSet = redis.getQueue("vmr:users");
-          if (userSet.isExists()) {
-            userSet.add(user);
-            userSet.expire(1, TimeUnit.MINUTES);
-          }
-        });
-  }
-
-  public Future<List<User>> getUserList() {
-    Promise<List<User>> listUserPromise = Promise.promise();
-    workerUtil.execute(
-        () -> {
-          RQueue<User> userQueue = redis.getQueue("vmr:users");
-          if (!userQueue.isExists()) {
-            listUserPromise.fail("List user not exist in cache");
-            return;
-          }
-          listUserPromise.complete(userQueue.readAll());
-        });
-    return listUserPromise.future();
-  }
+  Future<List<User>> getUserList();
 }

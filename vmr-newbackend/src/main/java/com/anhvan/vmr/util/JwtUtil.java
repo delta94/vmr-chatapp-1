@@ -27,24 +27,28 @@ public class JwtUtil {
 
   public Future<String> generate(int userId) {
     Promise<String> tokenPromise = Promise.promise();
+
     workerUtil.execute(
         () -> {
           tokenPromise.complete(jwtAuth.generateToken(new JsonObject().put("userId", userId)));
-          log.trace("GEN TOKEN");
+          log.debug("Generate token for user {}", userId);
         });
+
     return tokenPromise.future();
   }
 
   public Future<String> generate(int userId, int timeToLive) {
     Promise<String> tokenPromise = Promise.promise();
+
     workerUtil.execute(
         () -> {
           tokenPromise.complete(
               jwtAuth.generateToken(
                   new JsonObject().put("userId", userId),
                   new JWTOptions().setExpiresInSeconds(timeToLive)));
-          log.trace("GEN WS TOKEN");
+          log.debug("Generate token for user {} with ttl {}", userId, timeToLive);
         });
+
     return tokenPromise.future();
   }
 
@@ -57,8 +61,9 @@ public class JwtUtil {
           if (userAsyncResult.succeeded()) {
             int userId = userAsyncResult.result().principal().getInteger("userId");
             userIdPromise.complete(userId);
+            log.info("Parse jwt for user {} successfully", userId);
           } else {
-            log.error("Parse jwt fail", userAsyncResult.cause());
+            log.info("Parse jwt fail", userAsyncResult.cause());
             userIdPromise.fail(userAsyncResult.cause());
           }
         });

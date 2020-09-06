@@ -34,6 +34,12 @@ public class RegisterController extends BaseController {
     User user = requestBody.mapTo(User.class);
 
     if (!validate(user)) {
+      log.info(
+          "Validate user info not valid uname {} - name {} - pwlen {}",
+          user.getUsername(),
+          user.getName(),
+          user.getPassword().length());
+
       registerPromise.complete(
           BaseResponse.builder()
               .statusCode(HttpResponseStatus.BAD_REQUEST.code())

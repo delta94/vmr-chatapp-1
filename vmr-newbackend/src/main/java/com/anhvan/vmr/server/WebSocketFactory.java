@@ -1,6 +1,6 @@
 package com.anhvan.vmr.server;
 
-import com.anhvan.vmr.cache.ChatCacheService;
+import com.anhvan.vmr.cache.ChatCacheServiceImpl;
 import com.anhvan.vmr.database.ChatDBService;
 import com.anhvan.vmr.websocket.WebSocketHandler;
 import com.anhvan.vmr.websocket.WebSocketService;
@@ -15,14 +15,14 @@ public class WebSocketFactory {
   private Vertx vertx;
   private WebSocketService webSocketService;
   private ChatDBService chatDBService;
-  private ChatCacheService chatCacheService;
+  private ChatCacheServiceImpl chatCacheService;
 
   @Inject
   public WebSocketFactory(
       Vertx vertx,
       WebSocketService webSocketService,
       ChatDBService chatDBService,
-      ChatCacheService chatCacheService) {
+      ChatCacheServiceImpl chatCacheService) {
     this.vertx = vertx;
     this.webSocketService = webSocketService;
     this.chatDBService = chatDBService;

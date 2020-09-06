@@ -5,9 +5,13 @@ import io.vertx.core.Vertx;
 import io.vertx.mysqlclient.MySQLConnectOptions;
 import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.PoolOptions;
+import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Log4j2
+@Singleton
 public class DatabaseService {
   private MySQLPool pool;
 
@@ -30,6 +34,18 @@ public class DatabaseService {
 
     // Create connection pool
     pool = MySQLPool.pool(vertx, connectOptions, poolOptions);
+
+    // Test connection
+    pool.query("show tables")
+        .execute(
+            rowSet -> {
+              if (rowSet.failed()) {
+                log.fatal("Cannot connect to mysql", rowSet.cause());
+                vertx.close();
+              } else {
+                log.info("Connect to mysql successfully");
+              }
+            });
   }
 
   public MySQLPool getPool() {

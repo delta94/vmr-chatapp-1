@@ -40,7 +40,7 @@ public class UserListController extends BaseController {
             log.debug("Get user list, cache hit");
 
             List<User> userList = listAsyncResult.result();
-            setOnline(userList);
+            setOnlineStatus(userList);
             data.put("userList", userList);
 
             // Response to user
@@ -57,10 +57,10 @@ public class UserListController extends BaseController {
             // Load user form database
             Future<List<User>> userListFuture = userDBService.getListUser();
             userListFuture.onSuccess(
-                users -> {
-                  setOnline(users);
-                  data.put("userList", users);
-                  userCacheService.setUserList(users);
+                userList -> {
+                  setOnlineStatus(userList);
+                  data.put("userList", userList);
+                  userCacheService.setUserList(userList);
 
                   // Response to user
                   userListPromise.complete(
@@ -76,7 +76,7 @@ public class UserListController extends BaseController {
     return userListPromise.future();
   }
 
-  public void setOnline(List<User> userList) {
+  public void setOnlineStatus(List<User> userList) {
     Set<Integer> onlineSet = webSocketService.getOnlineIds();
     userList.forEach(user -> user.setOnline(onlineSet.contains(user.getId())));
   }

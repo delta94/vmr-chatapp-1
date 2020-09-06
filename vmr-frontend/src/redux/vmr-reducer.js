@@ -165,8 +165,10 @@ function handleOnOffLine(state, data) {
   }
 
   let user = userMap.get(data.userId);
-  user.online = data.status
-  userMap.set(data.userId, user);
+  if (user) {
+    user.online = data.status
+    userMap.set(data.userId, user);
+  }
 
   return Object.assign({}, state, {
     userMapHolder: {

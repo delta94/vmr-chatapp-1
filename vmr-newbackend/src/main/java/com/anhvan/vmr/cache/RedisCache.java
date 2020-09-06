@@ -1,24 +1,29 @@
 package com.anhvan.vmr.cache;
 
+import com.anhvan.vmr.config.CacheConfig;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
-import org.redisson.config.Config;
+
+import javax.inject.Inject;
 
 @Getter
 @Log4j2
 public class RedisCache {
   private RedissonClient redissonClient;
 
-  public RedisCache() {
+  @Inject
+  public RedisCache(CacheConfig cacheConfig) {
     try {
-      Config config =
-          Config.fromYAML(RedisCache.class.getClassLoader().getResourceAsStream("redis.yml"));
-      redissonClient = Redisson.create(config);
+      redissonClient = Redisson.create(cacheConfig.getRedisConfig());
       log.info("Connected to redis");
     } catch (Exception e) {
-      log.error("Error when create redisson instance", e);
+      log.fatal("Error when create redisson instance", e);
     }
+  }
+
+  public void shutdown() {
+    redissonClient.shutdown();
   }
 }

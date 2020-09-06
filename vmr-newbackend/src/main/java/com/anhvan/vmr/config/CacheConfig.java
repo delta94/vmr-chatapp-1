@@ -1,5 +1,6 @@
 package com.anhvan.vmr.config;
 
+import io.vertx.core.json.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,4 +13,6 @@ import org.redisson.config.Config;
 @NoArgsConstructor
 public class CacheConfig {
   private Config redisConfig;
+  private int timeToLive;
+  private int numMessagesCached;
 }

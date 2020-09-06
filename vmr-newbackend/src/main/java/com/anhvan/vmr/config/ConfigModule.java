@@ -42,8 +42,11 @@ public class ConfigModule {
   @Singleton
   public CacheConfig provideCacheConfig() {
     CacheConfig cacheConfig = new CacheConfig();
+
     try {
+      // Redisson config
       String filePath = System.getenv("vmr-redis-config-file");
+
       if (filePath == null) {
         cacheConfig.setRedisConfig(
             Config.fromYAML(RedisCache.class.getClassLoader().getResourceAsStream("redis.yml")));
@@ -51,9 +54,14 @@ public class ConfigModule {
         cacheConfig.setRedisConfig(Config.fromYAML(new File(filePath)));
       }
 
+      // Application config
+      JsonObject cacheObejct = config.getJsonObject("cache");
+      cacheConfig.setTimeToLive(cacheObejct.getInteger("timeToLive"));
+      cacheConfig.setNumMessagesCached(cacheObejct.getInteger("numMessagesCached"));
     } catch (Exception e) {
       log.error("Error when load cache config", e);
     }
+
     return cacheConfig;
   }
 }

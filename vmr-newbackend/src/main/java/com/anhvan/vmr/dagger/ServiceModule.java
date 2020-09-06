@@ -25,12 +25,6 @@ public class ServiceModule {
 
   @Provides
   @Singleton
-  public RedisCache provideRedisCache() {
-    return new RedisCache();
-  }
-
-  @Provides
-  @Singleton
   public WebServer provideRestfulAPI(
       ServerConfig config,
       Vertx vertx,

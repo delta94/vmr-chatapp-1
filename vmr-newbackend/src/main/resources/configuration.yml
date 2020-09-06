@@ -12,3 +12,6 @@ mysql:
   password: password
   database: vmrchat
   poolSize: 15
+cache:
+  timeToLive: 600
+  numMessagesCached: 20
