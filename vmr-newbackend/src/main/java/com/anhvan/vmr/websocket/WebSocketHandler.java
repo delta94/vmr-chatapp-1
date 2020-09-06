@@ -55,10 +55,14 @@ public class WebSocketHandler {
 
   public void handleMessage(WsMessage message) {
     if (message.getType().equals("CHAT")) {
-      chatDBService.addChat(message);
-      chatCacheService.cacheMessage(message);
-      webSocketService.sendTo(userId, message.toBuilder().type("SEND_BACK").build());
-      webSocketService.sendTo(message.getReceiverId(), message);
+      chatDBService
+          .addChat(message)
+          .onSuccess(
+              id -> {
+                chatCacheService.cacheMessage(message);
+                webSocketService.sendTo(userId, message.toBuilder().type("SEND_BACK").build());
+                webSocketService.sendTo(message.getReceiverId(), message);
+              });
     }
   }
 }

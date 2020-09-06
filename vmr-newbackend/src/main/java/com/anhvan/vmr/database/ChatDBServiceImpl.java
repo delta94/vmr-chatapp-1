@@ -1,9 +1,9 @@
 package com.anhvan.vmr.database;
 
 import com.anhvan.vmr.model.WsMessage;
-import com.anhvan.vmr.util.AsyncWorkerUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
+import io.vertx.mysqlclient.MySQLClient;
 import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.RowSet;
@@ -18,8 +18,9 @@ import java.util.List;
 @Log4j2
 public class ChatDBServiceImpl implements ChatDBService {
   public static final String GET_MESSAGES_QUERY =
-      "select * from messages "
-          + "where (sender=? and receiver=?) or (sender=? and receiver=?) "
+      "select * from  "
+          + "(select * from messages where sender=? and receiver=? "
+          + "union select * from messages where sender=? and receiver=?) msgs "
           + "order by id desc "
           + "limit ?, 20";
 
@@ -27,25 +28,30 @@ public class ChatDBServiceImpl implements ChatDBService {
       "insert into messages (sender, receiver, message, send_time) values (?, ?, ?, ?)";
 
   private MySQLPool pool;
-  private AsyncWorkerUtil workerUtil;
 
   @Inject
-  public ChatDBServiceImpl(DatabaseService databaseService, AsyncWorkerUtil workerUtil) {
+  public ChatDBServiceImpl(DatabaseService databaseService) {
     pool = databaseService.getPool();
-    this.workerUtil = workerUtil;
   }
 
-  public void addChat(WsMessage msg) {
+  public Future<Long> addChat(WsMessage msg) {
     log.debug("Add chat message {} to database", msg);
+
+    Promise<Long> idPromise = Promise.promise();
 
     pool.preparedQuery(INSERT_MESSAGE)
         .execute(
             Tuple.of(msg.getSenderId(), msg.getReceiverId(), msg.getMessage(), msg.getTimestamp()),
-            rowSetAsyncResult -> {
-              if (!rowSetAsyncResult.succeeded()) {
-                log.error("Error when add chat {}", msg.toString(), rowSetAsyncResult.cause());
+            rs -> {
+              if (!rs.succeeded()) {
+                log.error("Error when add chat {}", msg.toString(), rs.cause());
+                idPromise.fail(rs.cause());
+                return;
               }
+              idPromise.complete(rs.result().property(MySQLClient.LAST_INSERTED_ID));
             });
+
+    return idPromise.future();
   }
 
   public Future<List<WsMessage>> getChatMessages(int user1, int user2, int offset) {
@@ -58,26 +64,24 @@ public class ChatDBServiceImpl implements ChatDBService {
     Promise<List<WsMessage>> listMsgPromise = Promise.promise();
 
     List<WsMessage> messages = new ArrayList<>();
-    workerUtil.execute(
-        () ->
-            pool.preparedQuery(GET_MESSAGES_QUERY)
-                .execute(
-                    Tuple.of(user1, user2, user2, user1, offset),
-                    rowSet -> {
-                      if (rowSet.succeeded()) {
-                        RowSet<Row> result = rowSet.result();
-                        result.forEach(row -> messages.add(rowToWsMessage(row)));
-                      } else {
-                        log.error(
-                            "Get chat message between user {} and {} from database with offset {}",
-                            user1,
-                            user2,
-                            offset,
-                            rowSet.cause());
-                      }
-                      Collections.reverse(messages);
-                      listMsgPromise.complete(messages);
-                    }));
+    pool.preparedQuery(GET_MESSAGES_QUERY)
+        .execute(
+            Tuple.of(user1, user2, user2, user1, offset),
+            rowSet -> {
+              if (rowSet.succeeded()) {
+                RowSet<Row> result = rowSet.result();
+                result.forEach(row -> messages.add(rowToWsMessage(row)));
+              } else {
+                log.error(
+                    "Get chat message between user {} and {} from database with offset {}",
+                    user1,
+                    user2,
+                    offset,
+                    rowSet.cause());
+              }
+              Collections.reverse(messages);
+              listMsgPromise.complete(messages);
+            });
 
     return listMsgPromise.future();
   }

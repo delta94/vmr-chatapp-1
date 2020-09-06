@@ -73,7 +73,8 @@ public class ChatCacheServiceImpl implements ChatCacheService {
           if (chatMessages.isExists()) {
             messageCache.complete(chatMessages.readAll());
           } else {
-            messageCache.fail("Cache chat message miss");
+            messageCache.fail(
+                "Cache miss - when get cache message for user " + userId1 + " : " + userId2);
           }
         });
 

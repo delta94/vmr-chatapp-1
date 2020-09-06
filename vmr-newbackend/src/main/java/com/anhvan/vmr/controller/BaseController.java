@@ -82,6 +82,12 @@ public abstract class BaseController implements Controller {
                 .putHeader("Content-Type", "application/json; charset=utf-8")
                 .setStatusCode(handlerResponse.getStatusCode())
                 .end(Json.encodeToBuffer(handlerResponse));
+
+            // Log the response
+            log.info(
+                "Response to request {} with status {}",
+                request.path(),
+                handlerResponse.getStatusCode());
           } else {
             // Error
             log.error("Error when handle request {}", request, rs.cause());

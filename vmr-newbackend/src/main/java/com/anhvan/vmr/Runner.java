@@ -19,7 +19,7 @@ public class Runner {
 
     // Create vertx instance
     Vertx vertx =
-        Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setWorkerPoolSize(20));
+        Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setWorkerPoolSize(40));
 
     // Load config
     ConfigLoader configLoader = new ConfigLoader(vertx);

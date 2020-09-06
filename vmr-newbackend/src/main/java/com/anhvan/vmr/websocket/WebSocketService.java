@@ -25,8 +25,6 @@ public class WebSocketService {
 
   public Future<Integer> authenticate(ServerWebSocket conn) {
     String token = conn.query().substring(6);
-    log.trace("Authenticate token");
-    log.trace(jwtUtil);
     return jwtUtil.authenticate(token);
   }
 
