@@ -81,9 +81,9 @@ function LoginPage(props) {
                 <Checkbox>Remember me</Checkbox>
               </Form.Item>
 
-              <a style={{float: "right"}} href="">
+              <Link style={{float: "right"}} to="/login">
                 Forgot password
-              </a>
+              </Link>
             </Form.Item>
 
             <Form.Item>

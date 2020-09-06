@@ -15,7 +15,6 @@ function ConversationList(props) {
 
   useEffect(() => {
     getUsers().then(() => {
-      console.log('Ws connect');
       wsConnect();
     });
   }, []);
@@ -58,7 +57,7 @@ function ConversationList(props) {
 
 function mapStateToProps(state) {
   return {
-    userList: state.userList
+    userList: state.users.userList
   }
 }
 

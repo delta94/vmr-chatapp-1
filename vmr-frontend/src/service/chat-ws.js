@@ -12,7 +12,6 @@ export function wsConnect() {
 
   // Return websocket promise
   return new Promise((resolve) => {
-      console.log('connect');
       protectedGet("/sockettoken").then(response => {
         let token = response.data.data.token;
         let webSocket = new WebSocket(wsRoot + `?token=${token}`);
@@ -49,10 +48,8 @@ export function wsConnect() {
               }
               store.dispatch(sendbackMessage(jsonMessage));
             } else if (jsonMessage.type === 'ONLINE') {
-              console.log("User is online");
               store.dispatch(onOffline(jsonMessage.senderId, true));
             } else if (jsonMessage.type === 'OFFLINE') {
-              console.log("User is offline");
               store.dispatch(onOffline(jsonMessage.senderId, false));
             }
           };

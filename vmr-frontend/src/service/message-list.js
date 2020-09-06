@@ -5,7 +5,6 @@ export function getMessageList(friendId, offset) {
     let path = `/chat/${friendId}/${offset}`
     protectedGet(path).then(result => {
       let data = result.data.data;
-      console.log(data);
       resolve(data);
     });
   });

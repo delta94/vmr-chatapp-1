@@ -170,11 +170,11 @@ let MessageList = (props) => {
 // Map from redux to props
 let mapStateToPropsMessageList = (state) => {
   return {
-    userMapHolder: state.userMapHolder,
-    chatMessagesHolder: state.chatMessagesHolder,
-    webSocket: state.webSocket,
-    scrollFlag: state.scrollFlag,
-    currentConversationId: state.currentConversationId
+    userMapHolder: state.users.userMapHolder,
+    chatMessagesHolder: state.chat.chatMessagesHolder,
+    webSocket: state.app.webSocket,
+    scrollFlag: state.chat.scrollFlag,
+    currentConversationId: state.users.currentConversationId
   }
 }
 

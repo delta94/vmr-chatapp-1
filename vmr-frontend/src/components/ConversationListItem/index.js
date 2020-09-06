@@ -64,8 +64,8 @@ function ConversationListItem(props) {
 
 function mapStateToProps(state) {
   return {
-    currentConversationId: state.currentConversationId,
-    userMapHolder: state.userMapHolder
+    currentConversationId: state.users.currentConversationId,
+    userMapHolder: state.users.userMapHolder
   }
 }
 
