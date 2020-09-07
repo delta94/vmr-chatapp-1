@@ -6,34 +6,45 @@ import io.vertx.core.http.HttpServerOptions;
 import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Log4j2
+@Singleton
 public class WebServer {
   private Vertx vertx;
   private ServerConfig config;
   private RouterFactory routerFactory;
 
   @Inject
-  public WebServer(
-      Vertx vertx,
-      ServerConfig config,
-      RouterFactory routerFactory) {
+  public WebServer(Vertx vertx, ServerConfig config, RouterFactory routerFactory) {
     this.vertx = vertx;
     this.config = config;
     this.routerFactory = routerFactory;
   }
 
   public void start() {
-    log.info("Create web server at port {}", config.getPort());
+    String host = config.getHost();
+    int port = config.getPort();
+
+    HttpServerOptions httpServerOptions =
+        new HttpServerOptions()
+            .setTcpKeepAlive(true)
+            .setMaxHeaderSize(32 * 1024)
+            .setLogActivity(true);
 
     vertx
-        .createHttpServer(
-            new HttpServerOptions()
-                .setTcpKeepAlive(true)
-                .setMaxHeaderSize(32 * 1024)
-                .setLogActivity(true))
+        .createHttpServer(httpServerOptions)
         .requestHandler(routerFactory.route())
         .exceptionHandler(throwable -> log.error("An exception occur when start server", throwable))
-        .listen(config.getPort(), config.getHost());
+        .listen(
+            port,
+            host,
+            serverAsyncResult -> {
+              if (serverAsyncResult.succeeded()) {
+                log.info("Server start at {}:{}", host, port);
+              } else {
+                log.error("Fails to start web server at {}:{}", host, port);
+              }
+            });
   }
 }

@@ -1,6 +1,7 @@
-rest:
+server:
   port: 8080
-  host: 127.0.0.1
+  wsPort: 8081
+  host: 0.0.0.0
 auth:
   token: dsjkshd8y2387yuhfsghduhgf673tfsgfjhg76tg3yugfshjg
   expire: 86400
@@ -11,3 +12,6 @@ mysql:
   password: password
   database: vmrchat
   poolSize: 15
+cache:
+  timeToLive: 600
+  numMessagesCached: 20

@@ -22,15 +22,24 @@ public class WebSocketServer {
   }
 
   public void start() {
+    String wsHost = config.getHost();
+    int wsPort = config.getWsPort();
+
     vertx
         .createHttpServer()
         .webSocketHandler(webSocketFactory::webSocketHandler)
         .listen(
-            config.getWsPort(),
-            config.getHost(),
-            result -> {
-              if (result.succeeded()) {
-                log.info("Start websocket server at port {}", config.getWsPort());
+            wsPort,
+            wsHost,
+            serverAsyncResult -> {
+              if (serverAsyncResult.succeeded()) {
+                log.info("Start websocket server at  {}:{}", wsHost, wsPort);
+              } else {
+                log.error(
+                    "Fails to start websocket server at {}:{}",
+                    wsHost,
+                    wsPort,
+                    serverAsyncResult.cause());
               }
             });
   }

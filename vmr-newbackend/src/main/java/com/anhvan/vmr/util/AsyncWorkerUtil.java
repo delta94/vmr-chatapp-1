@@ -3,7 +3,9 @@ package com.anhvan.vmr.util;
 import io.vertx.core.Vertx;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class AsyncWorkerUtil {
   private Vertx vertx;
 
