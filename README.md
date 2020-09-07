@@ -1,5 +1,14 @@
 # VMR Chat
 
+- [VMR Chat](#vmr-chat)
+  - [1. Tổng quan](#1-tổng-quan)
+  - [2. Hướng dẫn chạy](#2-hướng-dẫn-chạy)
+  - [3. Demo](#3-demo)
+    - [3.1 Register](#31-register)
+    - [3.2 Login](#32-login)
+    - [3.3 Hiện danh sách user, chat 1-1](#33-hiện-danh-sách-user-chat-1-1)
+  - [4. Thiết kế](#4-thiết-kế)
+
 ## 1. Tổng quan
 
 __VMR Chat__ là ứng dụng chat realtime với tính năng cơ bản. Là project thuộc module-10 trong chương trình training fresher của Zalopay.
