@@ -3,20 +3,25 @@ package com.anhvan.vmr.server;
 import com.anhvan.vmr.config.ServerConfig;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerOptions;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+import javax.inject.Inject;
+
 @Log4j2
 public class WebServer {
   private Vertx vertx;
   private ServerConfig config;
   private RouterFactory routerFactory;
-  private WebSocketFactory webSocketFactory;
+
+  @Inject
+  public WebServer(
+      Vertx vertx,
+      ServerConfig config,
+      RouterFactory routerFactory) {
+    this.vertx = vertx;
+    this.config = config;
+    this.routerFactory = routerFactory;
+  }
 
   public void start() {
     log.info("Create web server at port {}", config.getPort());

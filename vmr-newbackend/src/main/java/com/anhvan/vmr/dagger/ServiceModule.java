@@ -25,16 +25,6 @@ public class ServiceModule {
 
   @Provides
   @Singleton
-  public WebServer provideRestfulAPI(
-      ServerConfig config,
-      Vertx vertx,
-      RouterFactory routerFactory,
-      WebSocketFactory webSocketFactory) {
-    return new WebServer(vertx, config, routerFactory, webSocketFactory);
-  }
-
-  @Provides
-  @Singleton
   @SuppressWarnings("deprecation")
   JWTAuthOptions provideJWTAuthOptions(AuthConfig config) {
     return new JWTAuthOptions()

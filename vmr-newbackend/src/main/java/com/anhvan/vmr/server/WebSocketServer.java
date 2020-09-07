@@ -5,8 +5,10 @@ import io.vertx.core.Vertx;
 import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Log4j2
+@Singleton
 public class WebSocketServer {
   private Vertx vertx;
   private ServerConfig config;
