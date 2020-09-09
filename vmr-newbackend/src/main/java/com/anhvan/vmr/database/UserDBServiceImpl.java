@@ -78,7 +78,6 @@ public class UserDBServiceImpl implements UserDBService {
             Tuple.of(username),
             rowSetRs -> {
               if (rowSetRs.succeeded()) {
-                log.trace("Here");
                 RowSet<Row> result = rowSetRs.result();
                 if (result.size() == 1) {
                   result.forEach(row -> userPromise.complete(rowToUser(row)));
@@ -86,7 +85,7 @@ public class UserDBServiceImpl implements UserDBService {
                   userPromise.fail("User not exist");
                 }
               } else {
-                log.error("Error when get user by username", rowSetRs.cause());
+                log.error("Error when get user by username: {}", username, rowSetRs.cause());
                 userPromise.fail(rowSetRs.cause());
               }
             });

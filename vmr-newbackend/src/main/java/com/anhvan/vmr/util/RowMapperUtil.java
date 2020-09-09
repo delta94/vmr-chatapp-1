@@ -38,7 +38,6 @@ public class RowMapperUtil {
           }
         }
       }
-
     } catch (Exception exception) {
       log.error("Error when create instance of class {}", classType, exception);
     }
