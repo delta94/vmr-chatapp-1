@@ -2,6 +2,7 @@ package com.anhvan.vmr.database;
 
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.util.AsyncWorkerUtil;
+import com.anhvan.vmr.util.RowMapperUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.mysqlclient.MySQLClient;
@@ -140,16 +141,6 @@ public class UserDBServiceImpl implements UserDBService {
   }
 
   private User rowToUser(Row row) {
-    String password = row.getString("password");
-    int id = row.getInteger("id");
-    String name = row.getString("name");
-    String username = row.getString("username");
-    return User.builder()
-        .username(username)
-        .password(password)
-        .id(id)
-        .name(name)
-        .active(true)
-        .build();
+    return RowMapperUtil.mapRow(row, User.class);
   }
 }

@@ -1,6 +1,7 @@
 package com.anhvan.vmr.database;
 
 import com.anhvan.vmr.model.WsMessage;
+import com.anhvan.vmr.util.RowMapperUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.mysqlclient.MySQLClient;
@@ -87,12 +88,6 @@ public class ChatDBServiceImpl implements ChatDBService {
   }
 
   public WsMessage rowToWsMessage(Row row) {
-    return WsMessage.builder()
-        .id(row.getLong("id"))
-        .senderId(row.getInteger("sender"))
-        .receiverId(row.getInteger("receiver"))
-        .timestamp(row.getLong("send_time"))
-        .message(row.getString("message"))
-        .build();
+    return RowMapperUtil.mapRow(row, WsMessage.class);
   }
 }

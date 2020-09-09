@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
+@ToString
 public class User {
   private String username;
   private String name;
@@ -18,5 +19,7 @@ public class User {
   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   private String password;
 
-  @JsonIgnore private boolean active;
+  @ColName("is_active")
+  @JsonIgnore
+  private boolean active;
 }
