@@ -31,11 +31,14 @@ public class RowMapperUtil {
         Object value = row.getValue(getColName(field));
 
         if (value != null) {
-          if (isBoolean(field.getType()) && value instanceof Byte) {
+          // Get field type and value type
+          Class<?> fieldClass = field.getType();
+          Class<?> valueClass = value.getClass();
+
+          if (isBoolean(fieldClass) && value instanceof Byte) {
             // Get boolean value
             field.set(instance, byteToBoolean(value));
-          } else {
-            // Get values
+          } else if (fieldClass.equals(valueClass) || getWrapper(fieldClass).equals(valueClass)) {
             field.set(instance, value);
           }
         }
@@ -46,6 +49,28 @@ public class RowMapperUtil {
     }
 
     return instance;
+  }
+
+  private static Class<?> getWrapper(Class<?> type) {
+    if (!type.isPrimitive()) return type;
+
+    if (int.class.equals(type)) {
+      return Integer.class;
+    } else if (float.class.equals(type)) {
+      return Float.class;
+    } else if (long.class.equals(type)) {
+      return Long.class;
+    } else if (double.class.equals(type)) {
+      return Double.class;
+    } else if (char.class.equals(type)) {
+      return Character.class;
+    } else if (boolean.class.equals(type)) {
+      return Boolean.class;
+    } else if (short.class.equals(type)) {
+      return Short.class;
+    }
+
+    return type;
   }
 
   private static <T> List<Field> getAllFields(Class<T> classType) {
