@@ -8,6 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/annotations" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-test-sources/test-annotations" isTestSource="true" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
@@ -75,9 +76,9 @@
     <orderEntry type="library" name="Maven: io.reactivex.rxjava2:rxjava:2.2.19" level="project" />
     <orderEntry type="library" name="Maven: org.jboss.marshalling:jboss-marshalling-river:2.0.9.Final" level="project" />
     <orderEntry type="library" name="Maven: org.jboss.marshalling:jboss-marshalling:2.0.9.Final" level="project" />
-    <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.26" level="project" />
     <orderEntry type="library" name="Maven: org.jodd:jodd-bean:5.0.13" level="project" />
     <orderEntry type="library" name="Maven: org.jodd:jodd-core:5.0.13" level="project" />
     <orderEntry type="library" name="Maven: com.lmax:disruptor:3.3.7" level="project" />
+    <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.26" level="project" />
   </component>
 </module>

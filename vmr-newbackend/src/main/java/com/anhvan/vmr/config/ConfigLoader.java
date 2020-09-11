@@ -1,56 +1,37 @@
 package com.anhvan.vmr.config;
 
-import io.vertx.config.ConfigRetriever;
-import io.vertx.config.ConfigRetrieverOptions;
-import io.vertx.config.ConfigStoreOptions;
-import io.vertx.core.Future;
-import io.vertx.core.Promise;
-import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.yaml.snakeyaml.Yaml;
 
-@AllArgsConstructor
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Map;
+
+@Log4j2
 public class ConfigLoader {
-  private final Vertx vertx;
+  public static JsonObject loadConfig() {
+    Yaml yaml = new Yaml();
 
-  public Future<JsonObject> load() {
-    Promise<JsonObject> configurations = Promise.promise();
+    InputStream inputStream =
+        ConfigLoader.class.getClassLoader().getResourceAsStream("configuration.yml");
 
-    // Default config
-    ConfigStoreOptions fileStoreOptions =
-        new ConfigStoreOptions()
-            .setType("file")
-            .setOptional(true)
-            .setFormat("yaml")
-            .setConfig(new JsonObject().put("path", "configuration.yml"));
-
-    // Load config
-    ConfigRetrieverOptions retrieverOptions =
-        new ConfigRetrieverOptions().addStore(fileStoreOptions);
-
-    // External config
-    String externalConfigFile = System.getProperty("vmr-config-file");
-    if (externalConfigFile != null) {
-      ConfigStoreOptions externalStoreOptions =
-          new ConfigStoreOptions()
-              .setType("file")
-              .setOptional(true)
-              .setFormat("yaml")
-              .setConfig(new JsonObject().put("path", externalConfigFile));
-      retrieverOptions.addStore(externalStoreOptions);
+    try {
+      String configPath = System.getProperty("vmr-config-file");
+      if (configPath != null) {
+        inputStream = Files.newInputStream(Paths.get(configPath));
+      }
+    } catch (IOException e) {
+      log.error("Error when load configuration file, use default config", e);
     }
 
-    // Handler
-    ConfigRetriever.create(vertx, retrieverOptions)
-        .getConfig(
-            configHandler -> {
-              if (configHandler.succeeded()) {
-                configurations.complete(configHandler.result());
-              } else {
-                configurations.fail("Cannot load configuration");
-              }
-            });
+    Map<String, Object> config = yaml.load(inputStream);
+    JsonObject jsonConfig = JsonObject.mapFrom(config);
 
-    return configurations.future();
+    log.debug("Load configuration successfully {}", jsonConfig);
+
+    return jsonConfig;
   }
 }

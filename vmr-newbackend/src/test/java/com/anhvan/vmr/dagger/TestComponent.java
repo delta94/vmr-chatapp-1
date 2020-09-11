@@ -4,8 +4,6 @@ import com.anhvan.vmr.cache.CacheModule;
 import com.anhvan.vmr.config.ConfigModule;
 import com.anhvan.vmr.controller.ControllerModule;
 import com.anhvan.vmr.database.DatabaseModule;
-import com.anhvan.vmr.server.WebServer;
-import com.anhvan.vmr.server.WebSocketServer;
 import com.anhvan.vmr.websocket.WebSocketModule;
 import dagger.Component;
 
@@ -21,15 +19,10 @@ import javax.inject.Singleton;
       CacheModule.class
     })
 @Singleton
-public interface ServiceComponent {
-  WebServer getWebServer();
-
-  WebSocketServer getWebSocketServer();
-
-  @Component.Builder
+public abstract class TestComponent {
   interface Builder {
-    ServiceComponent build();
+    TestComponent build();
 
-    Builder configModule(ConfigModule module);
+    Builder configModule(ConfigModule configModule);
   }
 }

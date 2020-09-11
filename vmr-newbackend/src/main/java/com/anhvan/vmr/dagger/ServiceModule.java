@@ -9,6 +9,7 @@ import com.anhvan.vmr.server.WebSocketFactory;
 import dagger.Module;
 import dagger.Provides;
 import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
 import io.vertx.core.WorkerExecutor;
 import io.vertx.ext.auth.JWTOptions;
 import io.vertx.ext.auth.PubSecKeyOptions;
@@ -21,8 +22,6 @@ import javax.inject.Singleton;
 @Module
 @AllArgsConstructor
 public class ServiceModule {
-  private Vertx vertx;
-
   @Provides
   @Singleton
   @SuppressWarnings("deprecation")
@@ -51,6 +50,6 @@ public class ServiceModule {
   @Provides
   @Singleton
   public Vertx provideVertx() {
-    return vertx;
+    return Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setWorkerPoolSize(40));
   }
 }

@@ -68,6 +68,8 @@ public class RowMapperUtil {
       return Boolean.class;
     } else if (short.class.equals(type)) {
       return Short.class;
+    } else if (byte.class.equals(type)) {
+      return Byte.class;
     }
 
     return type;
