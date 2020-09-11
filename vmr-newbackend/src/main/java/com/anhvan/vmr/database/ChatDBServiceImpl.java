@@ -1,6 +1,6 @@
 package com.anhvan.vmr.database;
 
-import com.anhvan.vmr.model.WsMessage;
+import com.anhvan.vmr.model.Message;
 import com.anhvan.vmr.util.RowMapperUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -35,7 +35,7 @@ public class ChatDBServiceImpl implements ChatDBService {
     pool = databaseService.getPool();
   }
 
-  public Future<Long> addChat(WsMessage msg) {
+  public Future<Long> addChat(Message msg) {
     log.debug("Add chat message {} to database", msg);
 
     Promise<Long> idPromise = Promise.promise();
@@ -55,16 +55,16 @@ public class ChatDBServiceImpl implements ChatDBService {
     return idPromise.future();
   }
 
-  public Future<List<WsMessage>> getChatMessages(int user1, int user2, int offset) {
+  public Future<List<Message>> getChatMessages(int user1, int user2, int offset) {
     log.debug(
         "Get chat message between user {} and {} from database with offset {}",
         user1,
         user2,
         offset);
 
-    Promise<List<WsMessage>> listMsgPromise = Promise.promise();
+    Promise<List<Message>> listMsgPromise = Promise.promise();
 
-    List<WsMessage> messages = new ArrayList<>();
+    List<Message> messages = new ArrayList<>();
     pool.preparedQuery(GET_MESSAGES_QUERY)
         .execute(
             Tuple.of(user1, user2, user2, user1, offset),
@@ -87,7 +87,7 @@ public class ChatDBServiceImpl implements ChatDBService {
     return listMsgPromise.future();
   }
 
-  public WsMessage rowToWsMessage(Row row) {
-    return RowMapperUtil.mapRow(row, WsMessage.class);
+  public Message rowToWsMessage(Row row) {
+    return RowMapperUtil.mapRow(row, Message.class);
   }
 }

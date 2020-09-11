@@ -1,7 +1,7 @@
 package com.anhvan.vmr.cache;
 
 import com.anhvan.vmr.config.CacheConfig;
-import com.anhvan.vmr.model.WsMessage;
+import com.anhvan.vmr.model.Message;
 import com.anhvan.vmr.util.AsyncWorkerUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -37,10 +37,10 @@ public class ChatCacheServiceImpl implements ChatCacheService {
   }
 
   @Override
-  public void cacheMessage(WsMessage message) {
+  public void cacheMessage(Message message) {
     workerUtil.execute(
         () -> {
-          RList<WsMessage> chatMessages =
+          RList<Message> chatMessages =
               redis.getList(getKey(message.getSenderId(), message.getReceiverId()));
           chatMessages.add(message);
           if (chatMessages.size() > cacheConfig.getNumMessagesCached()) {
@@ -51,10 +51,10 @@ public class ChatCacheServiceImpl implements ChatCacheService {
   }
 
   @Override
-  public void cacheListMessage(List<WsMessage> messages, int user1, int user2) {
+  public void cacheListMessage(List<Message> messages, int user1, int user2) {
     workerUtil.execute(
         () -> {
-          RList<WsMessage> chatMessages = redis.getList(getKey(user1, user2));
+          RList<Message> chatMessages = redis.getList(getKey(user1, user2));
           chatMessages.addAll(messages);
           while (chatMessages.size() > cacheConfig.getNumMessagesCached()) {
             chatMessages.remove(0);
@@ -64,12 +64,12 @@ public class ChatCacheServiceImpl implements ChatCacheService {
   }
 
   @Override
-  public Future<List<WsMessage>> getCacheMessage(int userId1, int userId2) {
-    Promise<List<WsMessage>> messageCache = Promise.promise();
+  public Future<List<Message>> getCacheMessage(int userId1, int userId2) {
+    Promise<List<Message>> messageCache = Promise.promise();
 
     workerUtil.execute(
         () -> {
-          RList<WsMessage> chatMessages = redis.getList(getKey(userId1, userId2));
+          RList<Message> chatMessages = redis.getList(getKey(userId1, userId2));
           if (chatMessages.isExists()) {
             messageCache.complete(chatMessages.readAll());
           } else {

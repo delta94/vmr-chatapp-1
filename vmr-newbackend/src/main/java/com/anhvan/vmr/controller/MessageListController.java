@@ -4,7 +4,7 @@ import com.anhvan.vmr.cache.ChatCacheService;
 import com.anhvan.vmr.database.ChatDBService;
 import com.anhvan.vmr.entity.BaseRequest;
 import com.anhvan.vmr.entity.BaseResponse;
-import com.anhvan.vmr.model.WsMessage;
+import com.anhvan.vmr.model.Message;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -34,7 +34,7 @@ public class MessageListController extends BaseController {
 
     if (offset == 0) {
       // First load
-      Future<List<WsMessage>> chatMessages = chatCacheService.getCacheMessage(userId, friendId);
+      Future<List<Message>> chatMessages = chatCacheService.getCacheMessage(userId, friendId);
 
       // Cache hit
       chatMessages.onSuccess(
@@ -77,7 +77,7 @@ public class MessageListController extends BaseController {
         .onComplete(
             result -> {
               if (result.succeeded()) {
-                List<WsMessage> listMessage = result.result();
+                List<Message> listMessage = result.result();
 
                 JsonObject jsonResponse = new JsonObject();
                 jsonResponse.put("messages", listMessage);

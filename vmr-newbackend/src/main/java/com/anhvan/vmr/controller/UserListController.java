@@ -4,6 +4,7 @@ import com.anhvan.vmr.cache.UserCacheService;
 import com.anhvan.vmr.database.UserDBService;
 import com.anhvan.vmr.entity.BaseRequest;
 import com.anhvan.vmr.entity.BaseResponse;
+import com.anhvan.vmr.entity.UserResponse;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.websocket.WebSocketService;
 import io.vertx.core.Future;
@@ -15,6 +16,7 @@ import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Builder
@@ -38,10 +40,8 @@ public class UserListController extends BaseController {
           if (listAsyncResult.succeeded()) {
             // Cache hit
             log.debug("Get user list, cache hit");
-
-            List<User> userList = listAsyncResult.result();
-            setOnlineStatus(userList);
-            data.put("userList", userList);
+            List<UserResponse> userResponseList = getUserResponseList(listAsyncResult.result());
+            data.put("userList", userResponseList);
 
             // Response to user
             userListPromise.complete(
@@ -58,8 +58,11 @@ public class UserListController extends BaseController {
             Future<List<User>> userListFuture = userDBService.getListUser();
             userListFuture.onSuccess(
                 userList -> {
-                  setOnlineStatus(userList);
-                  data.put("userList", userList);
+                  List<UserResponse> userResponseList = getUserResponseList(userList);
+
+                  data.put("userList", userResponseList);
+
+                  // Update cache
                   userCacheService.setUserList(userList);
 
                   // Response to user
@@ -76,8 +79,15 @@ public class UserListController extends BaseController {
     return userListPromise.future();
   }
 
-  public void setOnlineStatus(List<User> userList) {
+  public List<UserResponse> getUserResponseList(List<User> userList) {
     Set<Integer> onlineSet = webSocketService.getOnlineIds();
-    userList.forEach(user -> user.setOnline(onlineSet.contains(user.getId())));
+    return userList.stream()
+        .map(
+            user -> {
+              UserResponse userResponse = UserResponse.fromUser(user);
+              userResponse.setOnline(onlineSet.contains(user.getId()));
+              return userResponse;
+            })
+        .collect(Collectors.toList());
   }
 }

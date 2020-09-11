@@ -48,6 +48,7 @@ public class UserCacheServiceImpl implements UserCacheService {
   @Override
   public Future<User> getUserCache(int userId) {
     Promise<User> userPromise = Promise.promise();
+
     RMap<String, String> userInfo = redis.getMap(getUserKey(userId));
     workerUtil.execute(
         () -> {
@@ -61,6 +62,7 @@ public class UserCacheServiceImpl implements UserCacheService {
           User user = User.builder().id(userId).username(username).name(name).build();
           userPromise.complete(user);
         });
+
     return userPromise.future();
   }
 

@@ -1,6 +1,6 @@
 package com.anhvan.vmr.websocket;
 
-import com.anhvan.vmr.model.WsMessage;
+import com.anhvan.vmr.model.Message;
 import com.anhvan.vmr.util.JwtUtil;
 import io.vertx.core.Future;
 import io.vertx.core.http.ServerWebSocket;
@@ -46,7 +46,7 @@ public class WebSocketService {
     }
   }
 
-  public void sendTo(int userId, WsMessage msg) {
+  public void sendTo(int userId, Message msg) {
     String msgString = Json.encode(msg);
     Set<ServerWebSocket> receiverConn = connections.get(userId);
     for (ServerWebSocket conn : receiverConn) {
@@ -54,7 +54,7 @@ public class WebSocketService {
     }
   }
 
-  public void broadCast(WsMessage msg) {
+  public void broadCast(Message msg) {
     String msgString = Json.encode(msg);
     for (Set<ServerWebSocket> wsSet : connections.values()) {
       for (ServerWebSocket ws : wsSet) {

@@ -2,7 +2,7 @@ package com.anhvan.vmr.websocket;
 
 import com.anhvan.vmr.cache.ChatCacheService;
 import com.anhvan.vmr.database.ChatDBService;
-import com.anhvan.vmr.model.WsMessage;
+import com.anhvan.vmr.model.Message;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.json.Json;
@@ -29,7 +29,7 @@ public class WebSocketHandler {
     // Add connection to hash map
     webSocketService.addConnection(userId, conn);
 
-    webSocketService.broadCast(WsMessage.builder().type("ONLINE").senderId(userId).build());
+    webSocketService.broadCast(Message.builder().type("ONLINE").senderId(userId).build());
 
     // Remove on close
     conn.closeHandler(
@@ -37,14 +37,14 @@ public class WebSocketHandler {
           webSocketService.removeConnection(userId, conn);
           if (!webSocketService.checkOnline(userId)) {
             webSocketService.broadCast(
-                WsMessage.builder().type("OFFLINE").senderId(userId).build());
+                Message.builder().type("OFFLINE").senderId(userId).build());
           }
         });
 
     // On message
     conn.textMessageHandler(
         msg -> {
-          WsMessage message = Json.decodeValue(msg, WsMessage.class);
+          Message message = Json.decodeValue(msg, Message.class);
           handleMessage(
               message.toBuilder()
                   .senderId(userId)
@@ -53,7 +53,7 @@ public class WebSocketHandler {
         });
   }
 
-  public void handleMessage(WsMessage message) {
+  public void handleMessage(Message message) {
     if (message.getType().equals("CHAT")) {
       chatDBService
           .addChat(message)

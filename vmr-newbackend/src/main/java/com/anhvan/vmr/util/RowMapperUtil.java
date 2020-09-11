@@ -14,7 +14,7 @@ public class RowMapperUtil {
   private static final Byte TRUE_BYTE = new Byte("1");
 
   public static <T> T mapRow(Row row, Class<T> classType) {
-    T instance = null;
+    T instance;
 
     try {
       // Create new instance
@@ -31,15 +31,18 @@ public class RowMapperUtil {
         Object value = row.getValue(getColName(field));
 
         if (value != null) {
-          if (isBoolean(field.getType())) {
-            field.set(instance, value.equals(TRUE_BYTE));
+          if (isBoolean(field.getType()) && value instanceof Byte) {
+            // Get boolean value
+            field.set(instance, byteToBoolean(value));
           } else {
+            // Get values
             field.set(instance, value);
           }
         }
       }
     } catch (Exception exception) {
       log.error("Error when create instance of class {}", classType, exception);
+      instance = null;
     }
 
     return instance;
@@ -68,5 +71,12 @@ public class RowMapperUtil {
 
   private static <T> boolean isBoolean(Class<T> classType) {
     return classType == boolean.class || classType == Boolean.class;
+  }
+
+  private static Boolean byteToBoolean(Object object) {
+    if (!(object instanceof Byte)) {
+      return null;
+    }
+    return object.equals(TRUE_BYTE);
   }
 }
