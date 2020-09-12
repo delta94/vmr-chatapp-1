@@ -1,7 +1,9 @@
 package com.anhvan.vmr.server;
 
 import com.anhvan.vmr.config.ServerConfig;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpServer;
 import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
@@ -24,23 +26,22 @@ public class WebSocketServer {
   public void start() {
     String wsHost = config.getHost();
     int wsPort = config.getWsPort();
-
     vertx
         .createHttpServer()
         .webSocketHandler(webSocketFactory::webSocketHandler)
         .listen(
             wsPort,
             wsHost,
-            serverAsyncResult -> {
-              if (serverAsyncResult.succeeded()) {
-                log.info("Start websocket server at  {}:{}", wsHost, wsPort);
-              } else {
-                log.error(
-                    "Fails to start websocket server at {}:{}",
-                    wsHost,
-                    wsPort,
-                    serverAsyncResult.cause());
-              }
-            });
+            serverAsyncResult -> handleServerListen(serverAsyncResult, wsHost, wsPort));
+  }
+
+  private void handleServerListen(
+      AsyncResult<HttpServer> serverAsyncResult, String wsHost, int wsPort) {
+    if (serverAsyncResult.succeeded()) {
+      log.info("Start websocket server at  {}:{}", wsHost, wsPort);
+    } else {
+      log.error(
+          "Fails to start websocket server at {}:{}", wsHost, wsPort, serverAsyncResult.cause());
+    }
   }
 }

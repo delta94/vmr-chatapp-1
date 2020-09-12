@@ -52,8 +52,6 @@ public class RowMapperUtil {
   }
 
   private static Class<?> getWrapper(Class<?> type) {
-    if (!type.isPrimitive()) return type;
-
     if (int.class.equals(type)) {
       return Integer.class;
     } else if (float.class.equals(type)) {

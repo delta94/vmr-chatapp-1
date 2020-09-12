@@ -65,7 +65,12 @@ public abstract class BaseController implements Controller {
             .build();
 
     // Handle
-    Future<BaseResponse> requestHandler = handleFunc.apply(baseRequest);
+    Future<BaseResponse> requestHandler = null;
+    try {
+      requestHandler = handleFunc.apply(baseRequest);
+    } catch (RuntimeException e) {
+      log.error("Uncached exception when hanle request {}", request.path(), e);
+    }
 
     // If request handler is not implemented
     if (requestHandler == null) {
@@ -74,45 +79,45 @@ public abstract class BaseController implements Controller {
 
     // Handle request
     requestHandler.onComplete(
-        rs -> {
-          if (rs.succeeded()) {
+        handlerResponse -> {
+          if (handlerResponse.succeeded()) {
             // Handle success
-            BaseResponse handlerResponse = rs.result();
+            BaseResponse handlerResponseResult = handlerResponse.result();
             response
                 .putHeader("Content-Type", "application/json; charset=utf-8")
-                .setStatusCode(handlerResponse.getStatusCode())
-                .end(Json.encodeToBuffer(handlerResponse));
+                .setStatusCode(handlerResponseResult.getStatusCode())
+                .end(Json.encodeToBuffer(handlerResponseResult));
 
             // Log the response
             log.info(
                 "Response to request {} with status {}",
                 request.path(),
-                handlerResponse.getStatusCode());
+                handlerResponseResult.getStatusCode());
           } else {
             // Error
-            log.error("Error when handle request {}", request, rs.cause());
+            log.error("Error when handle request {}", request, handlerResponse.cause());
             response.setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code()).end();
           }
         });
   }
 
-  protected Future<BaseResponse> handleGet(BaseRequest baseRequest) {
+  protected Future<BaseResponse> handleGet(BaseRequest baseRequest) throws RuntimeException {
     return null;
   }
 
-  protected Future<BaseResponse> handlePost(BaseRequest baseRequest) {
+  protected Future<BaseResponse> handlePost(BaseRequest baseRequest) throws RuntimeException {
     return null;
   }
 
-  protected Future<BaseResponse> handlePut(BaseRequest baseRequest) {
+  protected Future<BaseResponse> handlePut(BaseRequest baseRequest) throws RuntimeException {
     return null;
   }
 
-  protected Future<BaseResponse> handleDelete(BaseRequest baseRequest) {
+  protected Future<BaseResponse> handleDelete(BaseRequest baseRequest) throws RuntimeException {
     return null;
   }
 
-  protected Future<BaseResponse> handlePatch(BaseRequest baseRequest) {
+  protected Future<BaseResponse> handlePatch(BaseRequest baseRequest) throws RuntimeException {
     return null;
   }
 
@@ -130,7 +135,7 @@ public abstract class BaseController implements Controller {
     return responsePromise.future();
   }
 
-  public String getPath(HttpMethod type) {
+  private String getPath(HttpMethod type) {
     String method = type.toString();
     String methodName = "handle" + method.charAt(0) + method.substring(1).toLowerCase();
 

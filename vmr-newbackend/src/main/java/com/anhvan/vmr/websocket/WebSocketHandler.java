@@ -29,6 +29,7 @@ public class WebSocketHandler {
     // Add connection to hash map
     webSocketService.addConnection(userId, conn);
 
+    // Broadcast online status
     webSocketService.broadCast(Message.builder().type("ONLINE").senderId(userId).build());
 
     // Remove on close

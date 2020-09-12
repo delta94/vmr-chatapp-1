@@ -6,6 +6,7 @@ import com.anhvan.vmr.websocket.WebSocketHandler;
 import com.anhvan.vmr.websocket.WebSocketService;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.ServerWebSocket;
+import io.vertx.core.json.JsonObject;
 import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
@@ -36,27 +37,28 @@ public class WebSocketFactory {
         .authenticate(conn)
         .onComplete(
             userIdRs -> {
-              log.trace("Auth status: {}", userIdRs.succeeded());
-
+              log.debug("Auth status: {}", userIdRs.succeeded());
               if (userIdRs.succeeded()) {
-                // Accept
-                conn.accept();
-
-                // Create new handler
-                WebSocketHandler handler =
-                    new WebSocketHandler(
-                        vertx,
-                        conn,
-                        userIdRs.result(),
-                        webSocketService,
-                        chatDBService,
-                        chatCacheService);
-
-                // Handle
-                handler.handle();
+                hanleAuthenticated(conn, userIdRs.result());
               } else {
+                log.error(
+                    "Reject to connecto user to websocket {}",
+                    JsonObject.mapFrom(conn.path()),
+                    userIdRs.cause());
                 conn.reject();
               }
             });
+  }
+
+  private void hanleAuthenticated(ServerWebSocket conn, int userId) {
+    conn.accept();
+
+    // Create new handler
+    WebSocketHandler handler =
+        new WebSocketHandler(
+            vertx, conn, userId, webSocketService, chatDBService, chatCacheService);
+
+    // Handle
+    handler.handle();
   }
 }

@@ -47,16 +47,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4a4c554b-0f70-4b4f-bee7-1a13df5068fc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/anhvan/vmr/dagger/TestComponent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/Runner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/Runner.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/config/ConfigLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/config/ConfigLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/dagger/ServiceComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/dagger/ServiceComponent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/dagger/ServiceModule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/dagger/ServiceModule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/BaseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/controller/BaseController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/RouterFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/RouterFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/WebServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/WebServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/WebSocketFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/WebSocketFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/WebSocketServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/server/WebSocketServer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/util/RowMapperUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/util/RowMapperUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/websocket/WebSocketHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/anhvan/vmr/websocket/WebSocketHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/com/anhvan/vmr/util/JwtUtilTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/anhvan/vmr/util/JwtUtilTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vmr-newbackend.iml" beforeDir="false" afterPath="$PROJECT_DIR$/vmr-newbackend.iml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,7 +93,7 @@
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+    <property name="settings.editor.selected.configurable" value="google-java-format.settings" />
   </component>
   <component name="RecentsManager">
     <key name="ExtractSuperBase.RECENT_KEYS">
@@ -105,7 +104,7 @@
       <recent name="com.anhvan.vmr.dagger" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.All in vmr-newbackend">
+  <component name="RunManager" selected="Application.Runner">
     <configuration name="Runner" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.anhvan.vmr.Runner" />
       <module name="vmr-newbackend" />
@@ -176,8 +175,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.All in vmr-newbackend" />
         <item itemvalue="Application.Runner" />
+        <item itemvalue="JUnit.All in vmr-newbackend" />
         <item itemvalue="JUnit.JwtUtilTest.testVerifyTokenFailed" />
         <item itemvalue="JUnit.JwtUtilTest" />
         <item itemvalue="JUnit.JwtUtilTest.testVerifyToken (1)" />
@@ -234,33 +233,34 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="466" y="107" width="424" height="505" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1599019074198" />
-    <state width="1807" height="309" key="GridCell.Tab.0.bottom" timestamp="1599819168857">
-      <screen x="67" y="27" width="1853" height="1053" />
+    <state width="1324" height="305" key="GridCell.Tab.0.bottom" timestamp="1599880320424">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1324" height="277" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1599382810931" />
+    <state width="1324" height="305" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1599880320424" />
     <state width="1807" height="309" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1599819168857" />
-    <state width="1807" height="309" key="GridCell.Tab.0.center" timestamp="1599819168857">
-      <screen x="67" y="27" width="1853" height="1053" />
+    <state width="1324" height="305" key="GridCell.Tab.0.center" timestamp="1599880320421">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1324" height="277" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1599382810930" />
+    <state width="1324" height="305" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1599880320421" />
     <state width="1807" height="309" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1599819168857" />
-    <state width="1807" height="309" key="GridCell.Tab.0.left" timestamp="1599819168855">
-      <screen x="67" y="27" width="1853" height="1053" />
+    <state width="1324" height="305" key="GridCell.Tab.0.left" timestamp="1599880320421">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1324" height="277" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1599382810929" />
+    <state width="1324" height="305" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1599880320421" />
     <state width="1807" height="309" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1599819168855" />
-    <state width="1807" height="309" key="GridCell.Tab.0.right" timestamp="1599819168857">
-      <screen x="67" y="27" width="1853" height="1053" />
+    <state width="1324" height="305" key="GridCell.Tab.0.right" timestamp="1599880320422">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1324" height="277" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1599382810930" />
+    <state width="1324" height="305" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1599880320422" />
     <state width="1807" height="309" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1599819168857" />
     <state x="266" y="101" width="824" height="518" key="IDE.errors.dialog" timestamp="1599381660551">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="266" y="101" width="824" height="518" key="IDE.errors.dialog/0.0.1366.728@0.0.1366.728" timestamp="1599381660551" />
-    <state x="482" y="188" key="SettingsEditor" timestamp="1599620716720">
-      <screen x="67" y="27" width="1853" height="1053" />
+    <state x="306" y="0" key="SettingsEditor" timestamp="1599877114179">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
+    <state x="306" y="0" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1599877114179" />
     <state x="482" y="188" key="SettingsEditor/67.27.1853.1053@67.27.1853.1053" timestamp="1599620716720" />
   </component>
 </project>

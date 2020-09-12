@@ -59,18 +59,17 @@ public class RouterFactory {
     controllerFactory.registerController(router);
 
     // Exception handling
-    router
-        .route()
-        .failureHandler(
-            routingContext -> {
-              log.error(
-                  "An exception occur when handing request {}",
-                  routingContext.request(),
-                  routingContext.failure());
-              routingContext.next();
-            });
+    router.route().failureHandler(this::failueHandler);
 
     return router;
+  }
+
+  private void failueHandler(RoutingContext routingContext) {
+    log.error(
+        "An exception occur when handing request {}",
+        routingContext.request(),
+        routingContext.failure());
+    routingContext.next();
   }
 
   private void jwtBlackListHandler(RoutingContext routingContext) {

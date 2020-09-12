@@ -30,7 +30,7 @@ public class JwtUtilTest {
     workerUtil = Mockito.mock(AsyncWorkerUtil.class);
     jwtUtil = new JwtUtil(workerUtil, jwtAuth);
 
-    // Fake woker util object
+    // Fake worker util object
     Mockito.doAnswer(
             invocationOnMock -> {
               Runnable r = invocationOnMock.getArgument(0);
