@@ -6,6 +6,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.JWTOptions;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.web.RoutingContext;
+import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
@@ -23,7 +24,7 @@ public class JwtUtil {
     this.workerUtil = workerUtil;
   }
 
-  public String getTokenFromHeader(RoutingContext routingContext) {
+  public String getTokenFromHeader(@NonNull RoutingContext routingContext) {
     return routingContext.request().getHeader("Authorization").substring(7);
   }
 
@@ -54,7 +55,7 @@ public class JwtUtil {
     return tokenPromise.future();
   }
 
-  public Future<Integer> authenticate(String token) {
+  public Future<Integer> authenticate(@NonNull String token) {
     Promise<Integer> userIdPromise = Promise.promise();
 
     jwtAuth.authenticate(

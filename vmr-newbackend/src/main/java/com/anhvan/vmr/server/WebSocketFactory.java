@@ -4,7 +4,7 @@ import com.anhvan.vmr.cache.ChatCacheServiceImpl;
 import com.anhvan.vmr.database.ChatDBService;
 import com.anhvan.vmr.websocket.WebSocketHandler;
 import com.anhvan.vmr.websocket.WebSocketService;
-import io.vertx.core.Vertx;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.json.JsonObject;
 import lombok.extern.log4j.Log4j2;
@@ -13,18 +13,15 @@ import javax.inject.Inject;
 
 @Log4j2
 public class WebSocketFactory {
-  private Vertx vertx;
   private WebSocketService webSocketService;
   private ChatDBService chatDBService;
   private ChatCacheServiceImpl chatCacheService;
 
   @Inject
   public WebSocketFactory(
-      Vertx vertx,
       WebSocketService webSocketService,
       ChatDBService chatDBService,
       ChatCacheServiceImpl chatCacheService) {
-    this.vertx = vertx;
     this.webSocketService = webSocketService;
     this.chatDBService = chatDBService;
     this.chatCacheService = chatCacheService;
@@ -35,30 +32,30 @@ public class WebSocketFactory {
 
     webSocketService
         .authenticate(conn)
-        .onComplete(
-            userIdRs -> {
-              log.debug("Auth status: {}", userIdRs.succeeded());
-              if (userIdRs.succeeded()) {
-                hanleAuthenticated(conn, userIdRs.result());
-              } else {
-                log.error(
-                    "Reject to connecto user to websocket {}",
-                    JsonObject.mapFrom(conn.path()),
-                    userIdRs.cause());
-                conn.reject();
-              }
-            });
+        .onComplete(userIdRs -> handleAfterAuthentication(userIdRs, conn));
   }
 
-  private void hanleAuthenticated(ServerWebSocket conn, int userId) {
-    conn.accept();
+  private void handleAfterAuthentication(AsyncResult<Integer> userIdRs, ServerWebSocket conn) {
+    log.debug("Auth status: {}", userIdRs.succeeded());
+    if (userIdRs.succeeded()) {
+      // Accept connection
+      conn.accept();
 
-    // Create new handler
-    WebSocketHandler handler =
-        new WebSocketHandler(
-            vertx, conn, userId, webSocketService, chatDBService, chatCacheService);
+      // Create new handler
+      WebSocketHandler handler =
+          new WebSocketHandler(
+              conn, userIdRs.result(), webSocketService, chatDBService, chatCacheService);
 
-    // Handle
-    handler.handle();
+      // Handle
+      handler.handle();
+    } else {
+      log.error(
+          "Reject when connect to websocket {}",
+          JsonObject.mapFrom(conn),
+          userIdRs.cause());
+
+      // Reject connection
+      conn.reject();
+    }
   }
 }

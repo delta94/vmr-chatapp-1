@@ -7,7 +7,6 @@ import com.anhvan.vmr.entity.BaseResponse;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.util.JwtUtil;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
@@ -33,22 +32,30 @@ public class RegisterController extends BaseController {
     // Create user object
     User user = requestBody.mapTo(User.class);
 
-    if (!validate(user)) {
+    if (!isValid(user)) {
       log.info(
           "Validate user info not valid uname {} - name {} - pwlen {}",
           user.getUsername(),
           user.getName(),
           user.getPassword().length());
 
+      // Return error message
       registerPromise.complete(
           BaseResponse.builder()
               .statusCode(HttpResponseStatus.BAD_REQUEST.code())
               .message("Username or password not valid")
               .build());
+
+      return registerPromise.future();
     }
+
+    // Create response object
+    JsonObject jsonResponse = new JsonObject();
 
     // Add user
     Future<Integer> userIdFuture = userDBService.addUser(user);
+
+    // Failed when add user
     userIdFuture.onFailure(
         throwable ->
             registerPromise.complete(
@@ -58,44 +65,34 @@ public class RegisterController extends BaseController {
                     .build()));
 
     // Generate token
-    Future<String> tokenFuture = userIdFuture.compose(jwtUtil::generate);
-
-    // Response to user
-    CompositeFuture.all(userIdFuture, tokenFuture)
-        .onComplete(
-            result -> {
-              CompositeFuture compResult = result.result();
-
-              // Get userId from db future and token from jwt future
-              int userId = compResult.resultAt(0);
-              String token = compResult.resultAt(1);
-
-              // Create resposne
-              JsonObject jsonResponse = new JsonObject();
-              jsonResponse.put("jwtToken", token);
+    Future<String> tokenFuture =
+        userIdFuture.compose(
+            userId -> {
               jsonResponse.put("userId", userId);
 
-              registerPromise.complete(
-                  BaseResponse.builder()
-                      .statusCode(HttpResponseStatus.CREATED.code())
-                      .message("Create success")
-                      .data(jsonResponse)
-                      .build());
-            })
-        .onFailure(err -> log.error("Error", err));
+              user.setId(userId);
+              userCacheService.setUserCache(user);
+              userCacheService.addUserList(user);
 
-    // Set cache
-    userIdFuture.onSuccess(
-        id -> {
-          user.setId(id);
-          userCacheService.setUserCache(user);
-          userCacheService.addUserList(user);
+              return jwtUtil.generate(userId);
+            });
+
+    // When generate token successful
+    tokenFuture.onSuccess(
+        token -> {
+          jsonResponse.put("jwtToken", token);
+          registerPromise.complete(
+              BaseResponse.builder()
+                  .statusCode(HttpResponseStatus.CREATED.code())
+                  .message("Create success")
+                  .data(jsonResponse)
+                  .build());
         });
 
     return registerPromise.future();
   }
 
-  public boolean validate(User user) {
+  public boolean isValid(User user) {
     if (!user.getUsername().matches("^[a-zA-Z]\\w{7,}$")) {
       return false;
     }

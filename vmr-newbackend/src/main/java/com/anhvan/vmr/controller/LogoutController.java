@@ -28,6 +28,8 @@ public class LogoutController extends BaseController {
             .message("Logout successfully")
             .build());
 
+    log.info("Logout user with token {}", jwtToken);
+
     return logoutPromise.future();
   }
 }

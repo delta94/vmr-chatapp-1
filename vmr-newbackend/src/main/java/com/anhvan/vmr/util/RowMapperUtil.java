@@ -11,14 +11,14 @@ import java.util.List;
 
 @Log4j2
 public class RowMapperUtil {
-  private static final Byte TRUE_BYTE = new Byte("1");
+  private static final byte TRUE_BYTE = (byte) 1;
 
   public static <T> T mapRow(Row row, Class<T> classType) {
     T instance;
 
     try {
       // Create new instance
-      instance = classType.newInstance();
+      instance = classType.getDeclaredConstructor().newInstance();
 
       // Get all fields in class
       List<Field> fieldList = getAllFields(classType);
@@ -69,28 +69,23 @@ public class RowMapperUtil {
     } else if (byte.class.equals(type)) {
       return Byte.class;
     }
-
     return type;
   }
 
   private static <T> List<Field> getAllFields(Class<T> classType) {
     List<Field> fieldList = new ArrayList<>(Arrays.asList(classType.getDeclaredFields()));
-
     Class<? super T> superClass = classType.getSuperclass();
     if (superClass != null) {
       fieldList.addAll(getAllFields(superClass));
     }
-
     return fieldList;
   }
 
   private static String getColName(Field field) {
     ColName colNameAnn = field.getAnnotation(ColName.class);
-
     if (colNameAnn != null) {
       return colNameAnn.value();
     }
-
     return field.getName();
   }
 

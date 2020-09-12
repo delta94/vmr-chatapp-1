@@ -6,14 +6,12 @@ import io.vertx.core.Future;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.impl.ConcurrentHashSet;
 import io.vertx.core.json.Json;
-import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Log4j2
 public class WebSocketService {
   private Map<Integer, Set<ServerWebSocket>> connections = new ConcurrentHashMap<>();
   private JwtUtil jwtUtil;

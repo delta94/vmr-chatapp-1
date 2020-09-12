@@ -1,11 +1,6 @@
 package com.anhvan.vmr.dagger;
 
-import com.anhvan.vmr.cache.RedisCache;
 import com.anhvan.vmr.config.AuthConfig;
-import com.anhvan.vmr.config.ServerConfig;
-import com.anhvan.vmr.server.RouterFactory;
-import com.anhvan.vmr.server.WebServer;
-import com.anhvan.vmr.server.WebSocketFactory;
 import dagger.Module;
 import dagger.Provides;
 import io.vertx.core.Vertx;

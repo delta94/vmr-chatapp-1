@@ -3,22 +3,18 @@ package com.anhvan.vmr.websocket;
 import com.anhvan.vmr.cache.ChatCacheService;
 import com.anhvan.vmr.database.ChatDBService;
 import com.anhvan.vmr.model.Message;
-import io.vertx.core.Vertx;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.json.Json;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 import java.time.Instant;
 
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
-@Log4j2
 public class WebSocketHandler {
-  private Vertx vertx;
   private ServerWebSocket conn;
   private int userId;
   private WebSocketService webSocketService;

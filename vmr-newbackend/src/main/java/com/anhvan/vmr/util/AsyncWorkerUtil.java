@@ -1,6 +1,7 @@
 package com.anhvan.vmr.util;
 
 import io.vertx.core.Vertx;
+import lombok.NonNull;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -14,7 +15,7 @@ public class AsyncWorkerUtil {
     this.vertx = vertx;
   }
 
-  public void execute(Runnable job) {
+  public void execute(@NonNull Runnable job) {
     vertx.executeBlocking(
         promise -> {
           job.run();

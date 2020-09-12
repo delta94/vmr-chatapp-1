@@ -25,7 +25,6 @@ public class LoginController extends BaseController {
   private JwtUtil jwtUtil;
   private UserCacheService userCacheService;
 
-  @Override
   protected Future<BaseResponse> handlePost(BaseRequest baseRequest) {
     // Get response promise
     Promise<BaseResponse> responsePromise = Promise.promise();
@@ -34,55 +33,53 @@ public class LoginController extends BaseController {
     User user = baseRequest.getBody().mapTo(User.class);
     log.info("Handle login for user {}", user.getUsername());
 
+    // Response data
+    JsonObject data = new JsonObject();
+
     // Get user from database
     Future<User> userFuture = userDBService.getUserByUsername(user.getUsername());
 
-    // On get success
-    userFuture.onSuccess(
-        dbUser -> {
-          // Check password
-          if (user.getPassword() != null
-              && BCrypt.checkpw(user.getPassword(), dbUser.getPassword())) {
-            // Generate token
-            jwtUtil
-                .generate(dbUser.getId())
-                .onSuccess(
-                    token -> {
-                      JsonObject data = new JsonObject();
-                      data.put("jwtToken", token);
-                      data.put("userId", dbUser.getId());
+    Future<String> tokenFuture =
+        userFuture.compose(
+            dbUser -> {
+              // Check password
+              if (user.getPassword() != null
+                  && BCrypt.checkpw(user.getPassword(), dbUser.getPassword())) {
+                data.put("userId", dbUser.getId());
+                userCacheService.setUserCache(dbUser);
+                return jwtUtil.generate(dbUser.getId());
+              } else {
+                log.info("Login failed, user = {}, password not valid", user.getUsername());
+                responsePromise.complete(
+                    BaseResponse.builder()
+                        .statusCode(HttpResponseStatus.UNAUTHORIZED.code())
+                        .message("Password not valid")
+                        .build());
+                return Future.failedFuture("Password not valid");
+              }
+            },
+            throwable -> {
+              log.info("Login failed, user = {}, user not existed", user.getUsername(), throwable);
+              responsePromise.complete(
+                  BaseResponse.builder()
+                      .statusCode(HttpResponseStatus.UNAUTHORIZED.code())
+                      .message("Username not existed")
+                      .build());
+              return Future.failedFuture("Username not existed");
+            });
 
-                      responsePromise.complete(
-                          BaseResponse.builder()
-                              .statusCode(HttpResponseStatus.OK.code())
-                              .message("Login successfully")
-                              .data(data)
-                              .build());
+    tokenFuture.onSuccess(
+        token -> {
+          data.put("jwtToken", token);
 
-                      log.info("User {} login successfully", user.getUsername());
-                    });
-
-            // Save user to cache
-            userCacheService.setUserCache(dbUser);
-          } else {
-            log.info("Login failed, user = {}, password not valid", user.getUsername());
-            responsePromise.complete(
-                BaseResponse.builder()
-                    .statusCode(HttpResponseStatus.UNAUTHORIZED.code())
-                    .message("Password not valid")
-                    .build());
-          }
-        });
-
-    // Get user from db failed
-    userFuture.onFailure(
-        throwable -> {
-          log.info("Login failed, user = {}, user not existed", user.getUsername(), throwable);
           responsePromise.complete(
               BaseResponse.builder()
-                  .statusCode(HttpResponseStatus.UNAUTHORIZED.code())
-                  .message("Username not existed")
+                  .statusCode(HttpResponseStatus.OK.code())
+                  .message("Login successfully")
+                  .data(data)
                   .build());
+
+          log.info("User {} login successfully", user.getUsername());
         });
 
     return responsePromise.future();

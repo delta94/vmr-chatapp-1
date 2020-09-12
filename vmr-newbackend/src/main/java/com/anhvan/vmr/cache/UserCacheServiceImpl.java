@@ -5,7 +5,6 @@ import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.util.AsyncWorkerUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import lombok.extern.log4j.Log4j2;
 import org.redisson.api.RMap;
 import org.redisson.api.RQueue;
 import org.redisson.api.RedissonClient;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
-@Log4j2
 public class UserCacheServiceImpl implements UserCacheService {
   private RedissonClient redis;
   private AsyncWorkerUtil workerUtil;
