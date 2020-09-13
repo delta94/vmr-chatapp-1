@@ -22,9 +22,11 @@ public class UserDBServiceImpl implements UserDBService {
   public static final String INSERT_USER =
       "insert into users(username, password, name) values (?,?,?)";
 
-  public static final String GET_ALL_USER = "select * from users";
+  public static final String GET_ALL_USER = "select username, name, id, is_active from users";
 
   public static final String FIND_BY_USERNAME = "select * from users where username=?";
+
+  public static final String SELECT_BY_ID = "select * from users where id=?";
 
   private MySQLPool pool;
   private AsyncWorkerUtil workerUtil;
@@ -96,7 +98,7 @@ public class UserDBServiceImpl implements UserDBService {
   @Override
   public Future<User> getUserById(int id) {
     Promise<User> userPromise = Promise.promise();
-    pool.preparedQuery("select * from users where id=?")
+    pool.preparedQuery(SELECT_BY_ID)
         .execute(
             Tuple.of(id),
             rowSetRs -> {

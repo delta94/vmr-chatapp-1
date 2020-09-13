@@ -71,7 +71,9 @@ public class ChatDBServiceImpl implements ChatDBService {
             rowSet -> {
               if (rowSet.succeeded()) {
                 RowSet<Row> result = rowSet.result();
-                result.forEach(row -> messages.add(rowToWsMessage(row)));
+                for (Row row : result) {
+                  messages.add(rowToMessage(row));
+                }
               } else {
                 log.error(
                     "Get chat message between user {} and {} from database with offset {}",
@@ -87,7 +89,7 @@ public class ChatDBServiceImpl implements ChatDBService {
     return listMsgPromise.future();
   }
 
-  public Message rowToWsMessage(Row row) {
+  public Message rowToMessage(Row row) {
     return RowMapperUtil.mapRow(row, Message.class);
   }
 }

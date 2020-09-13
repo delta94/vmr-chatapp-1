@@ -6,6 +6,12 @@ const wsRoot = process.env.REACT_APP_WS_ROOT;
 
 let oldWs = null;
 
+function createMessage(type, data) {
+  return {
+    type, data
+  }
+}
+
 export function wsConnect() {
   // Current user id
   let senderId = Number(localStorage.getItem("userId"));
@@ -26,9 +32,9 @@ export function wsConnect() {
 
           // Function to send chat message
           let send = function (receiverId, message) {
-            let msg = {
-              receiverId, message, type: 'CHAT'
-            };
+            let msg = createMessage('CHAT', {
+              receiverId, message
+            });
             webSocket.send(JSON.stringify(msg));
           };
 
@@ -40,17 +46,17 @@ export function wsConnect() {
             let jsonMessage = JSON.parse(messageEvent.data);
             if (jsonMessage.type === 'CHAT') {
               // Handle chat
-              store.dispatch(receiveMessage(jsonMessage));
+              store.dispatch(receiveMessage(jsonMessage.data));
             } else if (jsonMessage.type === 'SEND_BACK') {
               // Handle sendback
               if (jsonMessage.receiverId === senderId) {
                 return;
               }
-              store.dispatch(sendbackMessage(jsonMessage));
+              store.dispatch(sendbackMessage(jsonMessage.data));
             } else if (jsonMessage.type === 'ONLINE') {
-              store.dispatch(onOffline(jsonMessage.senderId, true));
+              store.dispatch(onOffline(jsonMessage.data, true));
             } else if (jsonMessage.type === 'OFFLINE') {
-              store.dispatch(onOffline(jsonMessage.senderId, false));
+              store.dispatch(onOffline(jsonMessage.data, false));
             }
           };
 

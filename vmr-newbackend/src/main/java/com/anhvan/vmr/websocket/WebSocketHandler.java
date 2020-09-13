@@ -2,9 +2,10 @@ package com.anhvan.vmr.websocket;
 
 import com.anhvan.vmr.cache.ChatCacheService;
 import com.anhvan.vmr.database.ChatDBService;
+import com.anhvan.vmr.entity.WebSocketMessage;
 import com.anhvan.vmr.model.Message;
 import io.vertx.core.http.ServerWebSocket;
-import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ public class WebSocketHandler {
     webSocketService.addConnection(userId, conn);
 
     // Broadcast online status
-    webSocketService.broadCast(Message.builder().type("ONLINE").senderId(userId).build());
+    webSocketService.broadCast(WebSocketMessage.builder().type("ONLINE").data(userId).build());
 
     // Remove on close
     conn.closeHandler(
@@ -34,32 +35,38 @@ public class WebSocketHandler {
           webSocketService.removeConnection(userId, conn);
           if (!webSocketService.checkOnline(userId)) {
             webSocketService.broadCast(
-                Message.builder().type("OFFLINE").senderId(userId).build());
+                WebSocketMessage.builder().type("OFFLINE").data(userId).build());
           }
         });
 
     // On message
-    conn.textMessageHandler(
-        msg -> {
-          Message message = Json.decodeValue(msg, Message.class);
-          handleMessage(
-              message.toBuilder()
-                  .senderId(userId)
-                  .timestamp(Instant.now().getEpochSecond())
-                  .build());
-        });
+    conn.textMessageHandler(this::handleMessage);
   }
 
-  public void handleMessage(Message message) {
-    if (message.getType().equals("CHAT")) {
-      chatDBService
-          .addChat(message)
-          .onSuccess(
-              id -> {
-                chatCacheService.cacheMessage(message);
-                webSocketService.sendTo(userId, message.toBuilder().type("SEND_BACK").build());
-                webSocketService.sendTo(message.getReceiverId(), message);
-              });
+  private void handleMessage(String msg) {
+    JsonObject jsonMessage = new JsonObject(msg);
+    String type = jsonMessage.getString("type");
+
+    if (type.equals("CHAT")) {
+      JsonObject data = jsonMessage.getJsonObject("data");
+      Message message = data.mapTo(Message.class);
+      message.setSenderId(userId);
+      message.setTimestamp(Instant.now().getEpochSecond());
+      handleChat(message);
     }
+  }
+
+  private void handleChat(Message message) {
+    chatDBService
+        .addChat(message)
+        .onSuccess(
+            id -> {
+              chatCacheService.cacheMessage(message);
+              webSocketService.sendTo(
+                  userId, WebSocketMessage.builder().type("SEND_BACK").data(message).build());
+              webSocketService.sendTo(
+                  message.getReceiverId(),
+                  WebSocketMessage.builder().type("CHAT").data(message).build());
+            });
   }
 }

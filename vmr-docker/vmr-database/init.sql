@@ -8,7 +8,7 @@ create table users
     username  varchar(20) not null unique,
     password  varchar(60) not null,
     name      varchar(45) not null,
-    is_active boolean default true
+    is_active boolean not null default true
 );
 
 create table messages

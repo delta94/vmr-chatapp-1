@@ -13,12 +13,12 @@ import lombok.*;
 public class User {
   private String username;
   private String name;
-  private Integer id;
+  private int id;
 
   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   private String password;
 
   @ColName("is_active")
   @JsonIgnore
-  private Boolean active;
+  private boolean active;
 }

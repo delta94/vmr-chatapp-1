@@ -12,13 +12,12 @@ import lombok.*;
 @ToString
 public class Message {
   private long id;
-  private String type;
 
   @ColName("sender")
-  private Integer senderId;
+  private int senderId;
 
   @ColName("receiver")
-  private Integer receiverId;
+  private int receiverId;
 
   private String message;
 
