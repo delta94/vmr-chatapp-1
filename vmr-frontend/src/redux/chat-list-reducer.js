@@ -44,7 +44,8 @@ function initMessages(state, userList) {
 
 function handleChatReceive(state, data) {
   let chatMessages = state.chatMessagesHolder.chatMessages;
-  let listMsg = chatMessages.get(data.senderId);
+  let {senderId} = data;
+  let listMsg = chatMessages.get(senderId);
   listMsg.push(data);
   return Object.assign({}, state, {
     chatMessagesHolder: {

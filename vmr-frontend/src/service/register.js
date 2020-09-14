@@ -5,17 +5,17 @@ import {login} from "../redux/vmr-action";
 export default function register(username, name, password) {
   return new Promise((resolve, reject) => {
     post('/register', {username, name, password}).then(response => {
-      let data = response.data.data;
+      let {jwtToken, userId} = response.data.data;
 
       // Save to local storage
-      localStorage.setItem("jwtToken", data.jwtToken);
-      localStorage.setItem("userId", data.userId);
+      localStorage.setItem("jwtToken", jwtToken);
+      localStorage.setItem("userId", userId);
 
       // Dispatch to store
-      store.dispatch(login(data.jwtToken, data.userId));
+      store.dispatch(login(jwtToken, userId));
 
       // Send to register page
-      resolve(data);
+      resolve(response.data.data);
     }).catch(error => {
       console.log(error);
       reject('Register failed');
