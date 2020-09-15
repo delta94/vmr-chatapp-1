@@ -14,7 +14,7 @@ let webSocketActive = false;
 
 export function wsConnect() {
   // log info
-  console.log('Try to connecto to websocket');
+  console.log('Try to connect to websocket');
 
   // Get socket token from server and create connection
   protectedGet("/sockettoken").then(response => {
@@ -51,22 +51,25 @@ function internalConnect(token) {
   // Handle chat message
   webSocket.onmessage = messageEvent => {
     let jsonMessage = JSON.parse(messageEvent.data);
-    if (jsonMessage.type === 'CHAT') {
+    let {type, data} = jsonMessage;
+
+    if (type === 'CHAT') {
       // Handle chat
-      store.dispatch(receiveMessage(jsonMessage.data));
-    } else if (jsonMessage.type === 'SEND_BACK') {
+      store.dispatch(receiveMessage(data));
+    } else if (type === 'SEND_BACK') {
       // Handle sendback
-      if (jsonMessage.receiverId === senderId) {
+      if (data.receiverId === senderId) {
         return;
       }
-      store.dispatch(sendbackMessage(jsonMessage.data));
-    } else if (jsonMessage.type === 'ONLINE') {
-      store.dispatch(onOffline(jsonMessage.data, true));
-    } else if (jsonMessage.type === 'OFFLINE') {
-      store.dispatch(onOffline(jsonMessage.data, false));
+      store.dispatch(sendbackMessage(data));
+    } else if (type === 'ONLINE') {
+      store.dispatch(onOffline(data, true));
+    } else if (type === 'OFFLINE') {
+      store.dispatch(onOffline(data, false));
     }
   };
 
+  // Try to reconnect
   webSocket.onclose = () => {
     webSocketActive = false;
     setTimeout(() => {
