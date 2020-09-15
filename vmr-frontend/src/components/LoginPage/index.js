@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Form, Input, Button, Row, Col, Card, Alert, Checkbox} from "antd";
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined, LoginOutlined } from '@ant-design/icons';
 import bg from '../resource/registerbg.jpg';
 import {usernamePasswordLogin} from "../../service/login";
 import {Link} from 'react-router-dom';
@@ -23,17 +23,17 @@ const colStyle = {
 function LoginPage(props) {
   let [form] = Form.useForm();
   let [error, setError] = useState(false);
+  let [errorMessage, setErrorMessage] = useState("Credential not valid");
 
   let hanldeLoginForm = (event) => {
-    console.log(event);
     usernamePasswordLogin(event.username, event.password).then(() => {
       props.history.push('/');
-    }).catch(() => {
+    }).catch(msg => {
       form.resetFields();
       setError(true);
+      setErrorMessage(msg);
     });
   };
-
 
   let cleanMsg = (event) => {
     setError(false);
@@ -42,7 +42,7 @@ function LoginPage(props) {
   let msg = null;
   if (error) {
     msg = <Alert
-      message="Đăng nhập không thành công"
+      message={errorMessage}
       type="error"
       showIcon
     />;
@@ -88,7 +88,7 @@ function LoginPage(props) {
 
             <Form.Item>
               <Button type="primary" htmlType="submit" style={{width: "100%"}}>
-                Log in
+              <LoginOutlined />Log in
               </Button>
               Or <Link to="/register">register now!</Link>
             </Form.Item>

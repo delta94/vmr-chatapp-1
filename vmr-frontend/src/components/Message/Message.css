@@ -18,6 +18,11 @@
   display: flex;
 }
 
+.message .bubble {
+  max-width: 300px !important;
+  word-wrap: break-word;
+}
+
 .message.mine .bubble-container {
   justify-content: flex-end;
 }

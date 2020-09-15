@@ -63,7 +63,7 @@ public class LoginController extends BaseController {
               responsePromise.complete(
                   BaseResponse.builder()
                       .statusCode(HttpResponseStatus.UNAUTHORIZED.code())
-                      .message("Username not existed")
+                      .message("Username not valid")
                       .build());
               return Future.failedFuture("Username not existed");
             });

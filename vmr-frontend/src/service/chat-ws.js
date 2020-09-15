@@ -1,16 +1,33 @@
-import {protectedGet} from "./axios-wrapper";
+import { protectedGet } from "./axios-wrapper";
 import store from '../redux/vmr-store';
-import {webSocketConnected, receiveMessage, sendbackMessage, onOffline} from "../redux/vmr-action";
+import { webSocketConnected, receiveMessage, sendbackMessage, onOffline } from "../redux/vmr-action";
 
 const WEB_SOCKET_ROOT = process.env.REACT_APP_WS_ROOT;
 
 function createMessage(type, data) {
   return {
     type, data
-  }
+  };
 }
 
-let webSocketActive = false;
+let webSocketManager = {
+  currentConn: null,
+  setNew(conn) {
+    if (this.currentConn) {
+      this.currentConn.close();
+    }
+    this.currentConn = conn;
+  },
+  clear() {
+    if (this.currentConn) {
+      this.currentConn.close();
+      this.currentConn = null;
+    }
+  },
+  isActive() {
+    return Boolean(this.currentConn);
+  }
+};
 
 export function wsConnect() {
   // log info
@@ -34,7 +51,7 @@ function internalConnect(token) {
 
   // When connect successful
   webSocket.onopen = () => {
-    webSocketActive = true;
+    webSocketManager.setNew(webSocket);
 
     // Function to send chat message
     let send = function (receiverId, message) {
@@ -51,7 +68,7 @@ function internalConnect(token) {
   // Handle chat message
   webSocket.onmessage = messageEvent => {
     let jsonMessage = JSON.parse(messageEvent.data);
-    let {type, data} = jsonMessage;
+    let { type, data } = jsonMessage;
 
     if (type === 'CHAT') {
       // Handle chat
@@ -71,9 +88,9 @@ function internalConnect(token) {
 
   // Try to reconnect
   webSocket.onclose = () => {
-    webSocketActive = false;
+    webSocketManager.clear();
     setTimeout(() => {
-      if (!webSocketActive) {
+      if (!webSocketManager.isActive()) {
         internalConnect(token);
       }
     }, 1000);

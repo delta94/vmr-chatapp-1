@@ -38,9 +38,12 @@ public class UserCacheServiceImpl implements UserCacheService {
   public void setUserCache(User user) {
     String key = getUserKey(user.getId());
     RMap<String, String> userInfo = redis.getMap(key);
-    userInfo.putAsync("name", user.getName());
-    userInfo.putAsync("username", user.getUsername());
-    userInfo.expireAsync(cacheConfig.getTimeToLive(), TimeUnit.SECONDS);
+    workerUtil.execute(
+        () -> {
+          userInfo.put("name", user.getName());
+          userInfo.put("username", user.getUsername());
+          userInfo.expire(cacheConfig.getTimeToLive(), TimeUnit.SECONDS);
+        });
   }
 
   @Override

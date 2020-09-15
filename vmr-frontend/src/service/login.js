@@ -17,9 +17,8 @@ export function usernamePasswordLogin(username, password) {
 
       // Send to login page
       resolve(response.data.data);
-    }).catch(reason => {
-      console.error(reason);
-      reject('Login failed');
+    }).catch(error => {
+      reject(error.response.data.message);
     });
   });
 }
