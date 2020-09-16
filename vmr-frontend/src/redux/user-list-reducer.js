@@ -19,6 +19,9 @@ export default function userListReducer(state = initState, action) {
     case 'SET_CURRENT_CONVERSATION_ID':
       state = setCurrentConservationId(state, data);
       break;
+    case 'LOGOUT':
+      state = initState;
+      break;
     default:
     //Do nothing
   }
@@ -28,6 +31,7 @@ export default function userListReducer(state = initState, action) {
 
 function updateUserList(state, userList) {
   let userMap = new Map();
+  console.log(userList);
   for (let user of userList) {
     userMap.set(user.id, user);
   }

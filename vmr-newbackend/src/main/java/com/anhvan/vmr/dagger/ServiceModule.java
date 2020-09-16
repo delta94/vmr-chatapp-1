@@ -6,7 +6,6 @@ import dagger.Module;
 import dagger.Provides;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
-import io.vertx.core.WorkerExecutor;
 import io.vertx.ext.auth.JWTOptions;
 import io.vertx.ext.auth.PubSecKeyOptions;
 import io.vertx.ext.auth.jwt.JWTAuth;
@@ -37,12 +36,6 @@ public class ServiceModule {
   @Singleton
   public JWTAuth provideJwtAuth(Vertx vertx, JWTAuthOptions options) {
     return JWTAuth.create(vertx, options);
-  }
-
-  @Provides
-  @Singleton
-  public WorkerExecutor provideWorkerPool(Vertx vertx) {
-    return vertx.createSharedWorkerExecutor("worker-executor");
   }
 
   @Provides

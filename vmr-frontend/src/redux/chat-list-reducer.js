@@ -21,6 +21,9 @@ export default function chatListReducer(state = initState, action) {
     case 'GET_MSG_FROM_API':
       state = handleGetMsgFromAPI(state, data);
       break;
+    case 'LOGOUT':
+      state = initState;
+      break;
     default:
     // Do nothing
   }

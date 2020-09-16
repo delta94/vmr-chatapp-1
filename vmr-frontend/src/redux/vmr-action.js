@@ -27,12 +27,13 @@ export function logout() {
   }
 }
 
-export function webSocketConnected(webSocket, send) {
+export function webSocketConnected(webSocket, send, close) {
   return {
     type: 'WS_CONNECTED',
     data: {
       webSocket,
-      send
+      send,
+      close
     }
   }
 }
