@@ -64,4 +64,11 @@ public class ConfigModule {
 
     return cacheConfig;
   }
+
+  @Provides
+  @Singleton
+  public VertxConfig provideVertxConfig() {
+    JsonObject vertxConfig = config.getJsonObject("vertx");
+    return vertxConfig.mapTo(VertxConfig.class);
+  }
 }

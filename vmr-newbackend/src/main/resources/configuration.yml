@@ -15,3 +15,5 @@ mysql:
 cache:
   timeToLive: 600
   numMessagesCached: 20
+vertx:
+  numOfWorkerThread: 40
