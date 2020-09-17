@@ -93,3 +93,5 @@ function internalConnect(token) {
     webSocket.close();
   }
 }
+
+require('./grpc-service');

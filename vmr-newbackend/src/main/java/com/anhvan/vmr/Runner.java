@@ -26,5 +26,6 @@ public class Runner {
     // Start webserver and websocket server
     component.getWebServer().start();
     component.getWebSocketServer().start();
+    component.getGrpcServer().start();
   }
 }

@@ -4,6 +4,7 @@ import com.anhvan.vmr.cache.CacheModule;
 import com.anhvan.vmr.config.ConfigModule;
 import com.anhvan.vmr.controller.ControllerModule;
 import com.anhvan.vmr.database.DatabaseModule;
+import com.anhvan.vmr.server.GrpcServer;
 import com.anhvan.vmr.server.WebServer;
 import com.anhvan.vmr.server.WebSocketServer;
 import com.anhvan.vmr.websocket.WebSocketModule;
@@ -25,6 +26,8 @@ public interface ServiceComponent {
   WebServer getWebServer();
 
   WebSocketServer getWebSocketServer();
+
+  GrpcServer getGrpcServer();
 
   @Component.Builder
   interface Builder {

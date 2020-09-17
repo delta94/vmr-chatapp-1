@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package vmr;
+
+option java_package = "com.anhvan.vmr.proto";
+
+message SampleRequest {
+  string content = 1;
+}
+
+message SampleResponse {
+  string content = 1;
+}
+
+service SampleService {
+  rpc sampleCall(SampleRequest) returns (SampleResponse) {};
+}

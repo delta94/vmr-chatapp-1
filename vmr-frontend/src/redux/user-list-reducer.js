@@ -31,7 +31,6 @@ export default function userListReducer(state = initState, action) {
 
 function updateUserList(state, userList) {
   let userMap = new Map();
-  console.log(userList);
   for (let user of userList) {
     userMap.set(user.id, user);
   }
