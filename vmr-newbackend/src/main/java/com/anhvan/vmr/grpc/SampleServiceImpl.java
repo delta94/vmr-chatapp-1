@@ -17,6 +17,7 @@ public class SampleServiceImpl extends SampleServiceImplBase {
 
   @Override
   public void sampleCall(SampleRequest request, StreamObserver<SampleResponse> responseObserver) {
+    log.debug("Handle sampleCall grpc request");
     SampleResponse response =
         SampleResponse.newBuilder().setContent(request.getContent().toUpperCase()).build();
     responseObserver.onNext(response);
