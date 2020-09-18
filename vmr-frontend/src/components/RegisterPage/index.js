@@ -4,7 +4,8 @@ import {UserOutlined, LockOutlined, SmileOutlined, PlusCircleOutlined} from '@an
 import bg from '../resource/registerbg.jpg';
 import "./Register.css";
 import register from "../../service/register";
-import {useHistory, Link} from 'react-router-dom';
+
+const {useHistory, Link} = require('react-router-dom');
 
 const rowStyle = {
   minHeight: "100vh",
@@ -25,28 +26,46 @@ function RegisterPage() {
   let history = useHistory();
   let [form] = Form.useForm();
   let [error, setError] = useState(false);
+  let [errorMessage, setErrorMessage] = useState('');
 
   let submitForm = (formData) => {
-    register(formData.username, formData.fullname, formData.password).then(value => {
+    console.log('Submit form data');
+    let {username, fullname, password} = formData;
+    register(username, fullname, password).then(() => {
       history.push('/');
     }).catch(error => {
+      setErrorMessage(error.message);
       form.resetFields();
       setError(true);
     });
   };
 
-  let clearMsg = (event) => {
+  let clearMsg = () => {
     setError(false);
   };
 
   let msg = null;
   if (error) {
     msg = <Alert
-      message="Đăng ký không thành công"
+      message={errorMessage}
       type="error"
       showIcon
     />;
   }
+
+  let checkValidatePassword = (rule, value, callback) => {
+    if (!value) {
+      callback();
+      return;
+    }
+    if (value.length < 8 && value.length > 0) {
+      callback('Password not valid');
+    } else if (value !== form.getFieldValue('password')) {
+      callback('Password not match');
+    } else {
+      callback();
+    }
+  };
 
   return (
     <Row style={rowStyle} align="top">
@@ -64,46 +83,49 @@ function RegisterPage() {
 
             <Form.Item
               name="username"
-              rules={[{ required: true, message: 'Please input your username!' }]}
+              rules={[
+                {required: true, message: 'Please input your username!'},
+                {min: 8, message: 'Username length must greater than or equal 8'}
+              ]}
             >
-              <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+              <Input prefix={<UserOutlined className="site-form-item-icon"/>} placeholder="Username"/>
             </Form.Item>
 
             <Form.Item
               name="fullname"
-              rules={[{ required: true, message: 'Please input your full name!' }]}
+              rules={[{required: true, message: 'Please input your full name!'}]}
             >
-              <Input prefix={<SmileOutlined className="site-form-item-icon" />} placeholder="Full name" />
+              <Input prefix={<SmileOutlined className="site-form-item-icon"/>} placeholder="Full name"/>
             </Form.Item>
 
             <Form.Item
               name="password"
               type="password"
-              rules={[{ required: true, message: 'Please input your password!' }]}
+              rules={[{required: true, message: 'Please input your password!'}, {
+                min: 8,
+                message: 'Password length must greater than or equal to 8'
+              }]}
             >
-              <Input prefix={<LockOutlined className="site-form-item-icon" />} placeholder="Password" />
+              <Input.Password prefix={<LockOutlined className="site-form-item-icon"/>} placeholder="Password"/>
             </Form.Item>
 
             <Form.Item
               name="vpassword"
               type="password"
-              rules={[{ required: true, message: 'Please validate your password!' }]}
+              rules={[{required: true, message: 'Please validate your password!'},
+                {validator: checkValidatePassword}]}
             >
-              <Input prefix={<LockOutlined className="site-form-item-icon" />} placeholder="Password" />
+              <Input.Password prefix={<LockOutlined className="site-form-item-icon"/>} placeholder="Validate password"/>
             </Form.Item>
-        
+
             <Form.Item>
               <Button type="primary" htmlType="submit" style={{width: "100%"}}>
-              <PlusCircleOutlined />Register
+                <PlusCircleOutlined/>Register
               </Button>
               Or <Link to="/login">login now!</Link>
             </Form.Item>
           </Form>
-          <Row>
-            <Col>
-              {msg}
-            </Col>
-          </Row>
+          {msg}
         </Card>
       </Col>
     </Row>

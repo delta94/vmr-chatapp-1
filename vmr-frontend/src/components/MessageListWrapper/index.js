@@ -1,6 +1,6 @@
 import React from 'react';
 import MessageList from '../MessageList';
-import {Switch, Route} from 'react-router-dom';
+const {Switch, Route} =  require('react-router-dom');
 
 export default function MessageListWrapper() {
   return (

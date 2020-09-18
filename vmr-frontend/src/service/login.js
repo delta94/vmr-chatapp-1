@@ -1,6 +1,7 @@
 import {post} from './axios-wrapper';
 import {login} from "../redux/vmr-action";
 import store from '../redux/vmr-store';
+import {jwtLogin} from "../util/auth-util";
 
 export function usernamePasswordLogin(username, password) {
   return new Promise((resolve, reject) => {
@@ -9,8 +10,7 @@ export function usernamePasswordLogin(username, password) {
       let {jwtToken, userId} = response.data.data;
 
       // Save to local storage
-      localStorage.setItem("jwtToken", jwtToken);
-      localStorage.setItem("userId", userId);
+      jwtLogin(jwtToken, userId);
 
       // Dispatch to store
       store.dispatch(login(jwtToken, userId));
