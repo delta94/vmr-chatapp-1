@@ -22,11 +22,26 @@ export default function userListReducer(state = initState, action) {
     case 'LOGOUT':
       state = initState;
       break;
+    case 'NEW_USER':
+      state = handleNewUser(state, data);
+      break;
     default:
     //Do nothing
   }
 
   return state;
+}
+
+function handleNewUser(state, user) {
+  user.online = true;
+  let userMap = state.userMapHolder.userMap;
+  userMap.set(user.id, user);
+  return Object.assign({}, state, {
+    userList: [...state.userList, user],
+    userMapHolder: {
+      userMap
+    }
+  })
 }
 
 function updateUserList(state, userList) {

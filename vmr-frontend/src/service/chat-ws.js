@@ -1,5 +1,5 @@
 import store from '../redux/vmr-store';
-import {webSocketConnected, receiveMessage, sendbackMessage, onOffline} from "../redux/vmr-action";
+import {webSocketConnected, receiveMessage, sendbackMessage, onOffline, newUser} from "../redux/vmr-action";
 
 const WEB_SOCKET_ROOT = process.env.REACT_APP_WS_ROOT;
 
@@ -76,6 +76,8 @@ function internalConnect(token) {
       store.dispatch(onOffline(data, true));
     } else if (type === 'OFFLINE') {
       store.dispatch(onOffline(data, false));
+    } else if (type === 'NEW_USER') {
+      store.dispatch(newUser(data));
     }
   };
 

@@ -35,7 +35,7 @@ function LoginPage(props) {
     });
   };
 
-  let cleanMsg = (event) => {
+  let cleanMsg = () => {
     setError(false);
   };
 

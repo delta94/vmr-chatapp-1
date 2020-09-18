@@ -1,3 +1,7 @@
+function createAction(type, data) {
+  return {type, data};
+}
+
 export function login(jwt, userId) {
   return {
     type: 'LOGIN_SUCCESS',
@@ -67,4 +71,8 @@ export function onOffline(userId, status) {
       userId, status
     }
   }
+}
+
+export function newUser(user) {
+  return createAction('NEW_USER', user);
 }

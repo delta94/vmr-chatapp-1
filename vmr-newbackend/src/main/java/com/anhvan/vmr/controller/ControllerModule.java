@@ -43,12 +43,16 @@ public class ControllerModule {
   @IntoMap
   @StringKey("/api/public/register")
   public Controller provideRegisterController(
-      UserDBServiceImpl userDBService, JwtUtil jwtUtil, UserCacheServiceImpl userCacheService) {
+      UserDBServiceImpl userDBService,
+      JwtUtil jwtUtil,
+      UserCacheServiceImpl userCacheService,
+      WebSocketService webSocketService) {
     log.info("Register registration controller");
     return RegisterController.builder()
         .userCacheService(userCacheService)
         .jwtUtil(jwtUtil)
         .userDBService(userDBService)
+        .webSocketService(webSocketService)
         .build();
   }
 

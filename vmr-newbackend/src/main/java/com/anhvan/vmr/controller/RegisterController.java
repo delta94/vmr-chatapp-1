@@ -4,8 +4,10 @@ import com.anhvan.vmr.cache.UserCacheService;
 import com.anhvan.vmr.database.UserDBService;
 import com.anhvan.vmr.entity.BaseRequest;
 import com.anhvan.vmr.entity.BaseResponse;
+import com.anhvan.vmr.entity.WebSocketMessage;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.util.JwtUtil;
+import com.anhvan.vmr.websocket.WebSocketService;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -21,6 +23,7 @@ public class RegisterController extends BaseController {
   private UserDBService userDBService;
   private JwtUtil jwtUtil;
   private UserCacheService userCacheService;
+  private WebSocketService webSocketService;
 
   @Override
   public Future<BaseResponse> handlePost(BaseRequest baseRequest) {
@@ -69,11 +72,11 @@ public class RegisterController extends BaseController {
         userIdFuture.compose(
             userId -> {
               jsonResponse.put("userId", userId);
-
               user.setId(userId);
               userCacheService.setUserCache(user);
               userCacheService.addUserList(user);
-
+              webSocketService.broadCast(
+                  WebSocketMessage.builder().type("NEW_USER").data(user).build());
               return jwtUtil.generate(userId);
             });
 
