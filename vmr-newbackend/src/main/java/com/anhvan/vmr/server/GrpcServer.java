@@ -4,6 +4,7 @@ import com.anhvan.vmr.config.ServerConfig;
 import com.anhvan.vmr.grpc.SampleServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import io.vertx.core.AbstractVerticle;
 import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
@@ -12,7 +13,7 @@ import java.io.IOException;
 
 @Singleton
 @Log4j2
-public class GrpcServer {
+public class GrpcServer extends AbstractVerticle {
   private Server grpcServer;
   private int port;
 
@@ -22,6 +23,7 @@ public class GrpcServer {
     grpcServer = ServerBuilder.forPort(port).addService(sampleService).build();
   }
 
+  @Override
   public void start() {
     try {
       grpcServer.start();

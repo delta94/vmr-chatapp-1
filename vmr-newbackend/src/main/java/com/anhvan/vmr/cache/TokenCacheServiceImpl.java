@@ -41,20 +41,16 @@ public class TokenCacheServiceImpl implements TokenCacheService {
   @Override
   public Future<Boolean> checkExistInBacklist(String token) {
     Promise<Boolean> existPromise = Promise.promise();
-
-    redis
-        .getBucket(getKey(token))
-        .isExistsAsync()
-        .onComplete(
-            (exist, throwable) -> {
-              if (throwable != null) {
-                log.error("Error when check token exist from redis, token={}", token, throwable);
-                existPromise.fail(throwable);
-              } else {
-                existPromise.complete(exist);
-              }
-            });
-
+    asyncWorkerUtil.execute(
+        () -> {
+          try {
+            RBucket<String> tokenBucket = redis.getBucket(getKey(token));
+            existPromise.complete(tokenBucket.isExists());
+          } catch (Exception e) {
+            existPromise.fail(e);
+            log.error("Error when get bucket from redis", e);
+          }
+        });
     return existPromise.future();
   }
 

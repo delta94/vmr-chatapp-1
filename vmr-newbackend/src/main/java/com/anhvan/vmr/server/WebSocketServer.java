@@ -1,6 +1,7 @@
 package com.anhvan.vmr.server;
 
 import com.anhvan.vmr.config.ServerConfig;
+import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
@@ -11,14 +12,12 @@ import javax.inject.Singleton;
 
 @Log4j2
 @Singleton
-public class WebSocketServer {
-  private Vertx vertx;
+public class WebSocketServer extends AbstractVerticle {
   private ServerConfig config;
   private WebSocketFactory webSocketFactory;
 
   @Inject
-  public WebSocketServer(Vertx vertx, ServerConfig config, WebSocketFactory webSocketFactory) {
-    this.vertx = vertx;
+  public WebSocketServer(ServerConfig config, WebSocketFactory webSocketFactory) {
     this.config = config;
     this.webSocketFactory = webSocketFactory;
   }

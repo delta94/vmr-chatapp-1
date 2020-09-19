@@ -5,10 +5,11 @@ import com.anhvan.vmr.config.ConfigModule;
 import com.anhvan.vmr.controller.ControllerModule;
 import com.anhvan.vmr.database.DatabaseModule;
 import com.anhvan.vmr.server.GrpcServer;
-import com.anhvan.vmr.server.WebServer;
+import com.anhvan.vmr.server.WebServerVerticle;
 import com.anhvan.vmr.server.WebSocketServer;
 import com.anhvan.vmr.websocket.WebSocketModule;
 import dagger.Component;
+import io.vertx.core.Vertx;
 
 import javax.inject.Singleton;
 
@@ -23,7 +24,9 @@ import javax.inject.Singleton;
     })
 @Singleton
 public interface ServiceComponent {
-  WebServer getWebServer();
+  Vertx getVertx();
+
+  WebServerVerticle getWebServer();
 
   WebSocketServer getWebSocketServer();
 
