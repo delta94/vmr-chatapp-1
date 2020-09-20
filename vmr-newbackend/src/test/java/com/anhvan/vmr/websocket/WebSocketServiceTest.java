@@ -31,7 +31,7 @@ public class WebSocketServiceTest {
   void setUp() {
     jwtUtil = Mockito.mock(JwtUtil.class);
     connections = Mockito.spy(new ConcurrentHashMap<>());
-    webSocketService = new WebSocketService(jwtUtil, connections);
+    webSocketService = new WebSocketServiceImpl(jwtUtil, connections);
   }
 
   @Test
