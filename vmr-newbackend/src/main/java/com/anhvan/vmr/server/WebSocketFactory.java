@@ -10,8 +10,10 @@ import io.vertx.core.json.JsonObject;
 import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Log4j2
+@Singleton
 public class WebSocketFactory {
   private WebSocketService webSocketService;
   private ChatDatabaseService chatDatabaseService;
@@ -27,7 +29,7 @@ public class WebSocketFactory {
     this.chatCacheService = chatCacheService;
   }
 
-  public void webSocketHandler(ServerWebSocket conn) {
+  public void handleWebSocketConn(ServerWebSocket conn) {
     log.info("Get websocket connection {}", conn.path());
 
     webSocketService
@@ -38,21 +40,24 @@ public class WebSocketFactory {
   private void handleAfterAuthentication(AsyncResult<Integer> userIdRs, ServerWebSocket conn) {
     log.debug("Auth status: {}", userIdRs.succeeded());
     if (userIdRs.succeeded()) {
-      // Accept connection
+      // Authentication successfully
       conn.accept();
 
       // Create new handler
       WebSocketHandler handler =
-          new WebSocketHandler(
-              conn, userIdRs.result(), webSocketService, chatDatabaseService, chatCacheService);
+          WebSocketHandler.builder()
+              .conn(conn)
+              .userId(userIdRs.result())
+              .webSocketService(webSocketService)
+              .chatCacheService(chatCacheService)
+              .chatDatabaseService(chatDatabaseService)
+              .build();
 
       // Handle
       handler.handle();
     } else {
-      log.error(
-          "Reject when connect to websocket {}",
-          JsonObject.mapFrom(conn),
-          userIdRs.cause());
+      // Authentication failed
+      log.error("Reject when connect to websocket {}", JsonObject.mapFrom(conn), userIdRs.cause());
 
       // Reject connection
       conn.reject();

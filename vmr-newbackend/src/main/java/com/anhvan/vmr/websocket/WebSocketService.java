@@ -43,9 +43,11 @@ public class WebSocketService {
 
   public void removeConnection(int userId, ServerWebSocket conn) {
     Set<ServerWebSocket> userConns = connections.get(userId);
-    userConns.remove(conn);
-    if (userConns.size() == 0) {
-      connections.remove(userId);
+    if (userConns != null) {
+      userConns.remove(conn);
+      if (userConns.size() == 0) {
+        connections.remove(userId);
+      }
     }
   }
 

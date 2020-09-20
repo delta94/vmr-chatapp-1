@@ -39,7 +39,7 @@ public class MessageListController extends BaseController {
       // Cache hit
       chatMessages.onSuccess(
           wsMessages -> {
-            log.debug("Get chat messages - cache hit userId1: {} - userId2: {}", userId, friendId);
+            log.debug("Get chat messages - cache hit userId1:{} - userId2:{}", userId, friendId);
             JsonObject jsonResponse = new JsonObject();
             jsonResponse.put("messages", wsMessages);
             jsonResponse.put("newOffset", offset + wsMessages.size());
@@ -54,7 +54,11 @@ public class MessageListController extends BaseController {
       // Cache miss
       chatMessages.onFailure(
           throwable -> {
-            log.debug("Fail to load chat messages from cache {}-{}", userId, friendId, throwable);
+            log.debug(
+                "Fail to load chat messages from cache user1:{}-user2:{}",
+                userId,
+                friendId,
+                throwable);
             getFromDB(userId, friendId, offset, responsePromise, true);
           });
     } else {
