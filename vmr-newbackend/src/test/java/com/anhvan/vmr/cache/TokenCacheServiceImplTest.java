@@ -24,10 +24,13 @@ public class TokenCacheServiceImplTest {
   @BeforeEach
   void setUp() {
     redissonClient = Mockito.mock(RedissonClient.class);
+
     RedisCache cache = Mockito.mock(RedisCache.class);
     Mockito.when(cache.getRedissonClient()).thenReturn(redissonClient);
+
     AuthConfig authConfig = Mockito.mock(AuthConfig.class);
     Mockito.when(authConfig.getExpire()).thenReturn(20);
+
     AsyncWorkerUtil asyncWorkerUtil = Mockito.mock(AsyncWorkerUtil.class);
     Mockito.doAnswer(
             invocationOnMock -> {
@@ -37,6 +40,7 @@ public class TokenCacheServiceImplTest {
             })
         .when(asyncWorkerUtil)
         .execute(ArgumentMatchers.any());
+
     tokenCacheService = new TokenCacheServiceImpl(cache, authConfig, asyncWorkerUtil);
   }
 
@@ -54,6 +58,7 @@ public class TokenCacheServiceImplTest {
     RBucket<Boolean> existBucket = (RBucket<Boolean>) Mockito.mock(RBucket.class);
     Mockito.when(existBucket.isExists()).thenReturn(true);
     Mockito.when(redissonClient.<Boolean>getBucket("vmr:jwt:123:expire")).thenReturn(existBucket);
+
     tokenCacheService
         .checkExistInBacklist("123")
         .onSuccess(
@@ -69,6 +74,7 @@ public class TokenCacheServiceImplTest {
     RBucket<Boolean> existBucket = (RBucket<Boolean>) Mockito.mock(RBucket.class);
     Mockito.when(existBucket.isExists()).thenReturn(false);
     Mockito.when(redissonClient.<Boolean>getBucket("vmr:jwt:123:expire")).thenReturn(existBucket);
+
     tokenCacheService
         .checkExistInBacklist("123")
         .onSuccess(

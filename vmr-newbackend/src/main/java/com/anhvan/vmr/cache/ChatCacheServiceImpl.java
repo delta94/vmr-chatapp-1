@@ -55,10 +55,8 @@ public class ChatCacheServiceImpl implements ChatCacheService {
     workerUtil.execute(
         () -> {
           RList<Message> chatMessages = redis.getList(getKey(user1, user2));
+          chatMessages.clear();
           chatMessages.addAll(messages);
-          while (chatMessages.size() > cacheConfig.getNumMessagesCached()) {
-            chatMessages.remove(0);
-          }
           chatMessages.expire(cacheConfig.getTimeToLive(), TimeUnit.SECONDS);
         });
   }
