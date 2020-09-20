@@ -6,7 +6,7 @@ import com.anhvan.vmr.cache.UserCacheServiceImpl;
 import com.anhvan.vmr.database.ChatDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseServiceImpl;
 import com.anhvan.vmr.util.JwtUtil;
-import com.anhvan.vmr.websocket.WebSocketService;
+import com.anhvan.vmr.websocket.WebSocketServiceImpl;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
@@ -46,7 +46,7 @@ public class ControllerModule {
       UserDatabaseServiceImpl userDBService,
       JwtUtil jwtUtil,
       UserCacheServiceImpl userCacheService,
-      WebSocketService webSocketService) {
+      WebSocketServiceImpl webSocketService) {
     log.info("Register registration controller");
     return RegisterController.builder()
         .userCacheService(userCacheService)
@@ -62,7 +62,7 @@ public class ControllerModule {
   public Controller provideUserController(
       UserDatabaseServiceImpl userDBService,
       UserCacheServiceImpl userCacheService,
-      WebSocketService webSocketService) {
+      WebSocketServiceImpl webSocketService) {
     log.info("Register user list controller");
     return UserListController.builder()
         .userDBService(userDBService)
