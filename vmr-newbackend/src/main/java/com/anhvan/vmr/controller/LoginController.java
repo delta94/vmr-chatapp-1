@@ -1,7 +1,7 @@
 package com.anhvan.vmr.controller;
 
 import com.anhvan.vmr.cache.UserCacheService;
-import com.anhvan.vmr.database.UserDBService;
+import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.entity.BaseRequest;
 import com.anhvan.vmr.entity.BaseResponse;
 import com.anhvan.vmr.model.User;
@@ -16,12 +16,14 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.function.Function;
+
 @Log4j2
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class LoginController extends BaseController {
-  private UserDBService userDBService;
+  private UserDatabaseService userDBService;
   private JwtUtil jwtUtil;
   private UserCacheService userCacheService;
 
@@ -39,34 +41,39 @@ public class LoginController extends BaseController {
     // Get user from database
     Future<User> userFuture = userDBService.getUserByUsername(user.getUsername());
 
-    Future<String> tokenFuture =
-        userFuture.compose(
-            dbUser -> {
-              // Check password
-              if (user.getPassword() != null
-                  && BCrypt.checkpw(user.getPassword(), dbUser.getPassword())) {
-                data.put("userId", dbUser.getId());
-                userCacheService.setUserCache(dbUser);
-                return jwtUtil.generate(dbUser.getId());
-              } else {
-                log.info("Login failed, user = {}, password not valid", user.getUsername());
-                responsePromise.complete(
-                    BaseResponse.builder()
-                        .statusCode(HttpResponseStatus.UNAUTHORIZED.code())
-                        .message("Password not valid")
-                        .build());
-                return Future.failedFuture("Password not valid");
-              }
-            },
-            throwable -> {
-              log.info("Login failed, user = {}, user not existed", user.getUsername(), throwable);
-              responsePromise.complete(
-                  BaseResponse.builder()
-                      .statusCode(HttpResponseStatus.UNAUTHORIZED.code())
-                      .message("Username not existed")
-                      .build());
-              return Future.failedFuture("Username not existed");
-            });
+    // Handle user get from database
+    Function<User, Future<String>> databaseUserHandler =
+        dbUser -> {
+          // Check password
+          if (user.getPassword() != null
+              && BCrypt.checkpw(user.getPassword(), dbUser.getPassword())) {
+            data.put("userId", dbUser.getId());
+            userCacheService.setUserCache(dbUser);
+            return jwtUtil.generate(dbUser.getId());
+          } else {
+            log.info("Login failed, user = {}, password not valid", user.getUsername());
+            responsePromise.complete(
+                BaseResponse.builder()
+                    .statusCode(HttpResponseStatus.UNAUTHORIZED.code())
+                    .message("Password not valid")
+                    .build());
+            return Future.failedFuture("Password not valid");
+          }
+        };
+
+    // Handle get user from database fails
+    Function<Throwable, Future<String>> failueHandler =
+        throwable -> {
+          log.info("Login failed, user = {}, user not existed", user.getUsername(), throwable);
+          responsePromise.complete(
+              BaseResponse.builder()
+                  .statusCode(HttpResponseStatus.UNAUTHORIZED.code())
+                  .message("Username not valid")
+                  .build());
+          return Future.failedFuture("Username not existed");
+        };
+
+    Future<String> tokenFuture = userFuture.compose(databaseUserHandler, failueHandler);
 
     tokenFuture.onSuccess(
         token -> {

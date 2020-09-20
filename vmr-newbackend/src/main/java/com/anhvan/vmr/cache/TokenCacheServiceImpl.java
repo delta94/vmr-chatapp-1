@@ -1,6 +1,7 @@
 package com.anhvan.vmr.cache;
 
 import com.anhvan.vmr.config.AuthConfig;
+import com.anhvan.vmr.util.AsyncWorkerUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import lombok.extern.log4j.Log4j2;
@@ -16,38 +17,40 @@ import java.util.concurrent.TimeUnit;
 public class TokenCacheServiceImpl implements TokenCacheService {
   private RedissonClient redis;
   private AuthConfig authConfig;
+  private AsyncWorkerUtil asyncWorkerUtil;
 
   @Inject
-  public TokenCacheServiceImpl(RedisCache redisCache, AuthConfig authConfig) {
+  public TokenCacheServiceImpl(
+      RedisCache redisCache, AuthConfig authConfig, AsyncWorkerUtil asyncWorkerUtil) {
     this.redis = redisCache.getRedissonClient();
     this.authConfig = authConfig;
+    this.asyncWorkerUtil = asyncWorkerUtil;
   }
 
   @Override
   public void addToBlackList(String token) {
     String key = getKey(token);
     RBucket<Boolean> expireValue = redis.getBucket(key);
-    expireValue.setAsync(true);
-    expireValue.expireAsync(authConfig.getExpire(), TimeUnit.SECONDS);
+    asyncWorkerUtil.execute(
+        () -> {
+          expireValue.set(true);
+          expireValue.expire(authConfig.getExpire(), TimeUnit.SECONDS);
+        });
   }
 
   @Override
   public Future<Boolean> checkExistInBacklist(String token) {
     Promise<Boolean> existPromise = Promise.promise();
-
-    redis
-        .getBucket(getKey(token))
-        .isExistsAsync()
-        .onComplete(
-            (exist, throwable) -> {
-              if (throwable != null) {
-                log.warn("Error when get result from redis", throwable);
-                existPromise.fail(throwable);
-              } else {
-                existPromise.complete(exist);
-              }
-            });
-
+    asyncWorkerUtil.execute(
+        () -> {
+          try {
+            RBucket<String> tokenBucket = redis.getBucket(getKey(token));
+            existPromise.complete(tokenBucket.isExists());
+          } catch (Exception e) {
+            existPromise.fail(e);
+            log.error("Error when get bucket from redis", e);
+          }
+        });
     return existPromise.future();
   }
 

@@ -147,7 +147,7 @@ public abstract class BaseController implements Controller {
         return ann.value();
       }
     } catch (NoSuchMethodException e) {
-      log.debug("Class {} not override {}", this.getClass(), methodName);
+      log.debug("Class {} does not override {}", this.getClass(), methodName);
     }
 
     return "/";

@@ -13,3 +13,8 @@ services:
     image: "redis:6.0.6"
     ports:
       - "6379:6379"
+  envoy:
+    build: 
+        context: ./vmr-docker/vmr-envoy
+        dockerfile: ./dockerfile
+    network_mode: host

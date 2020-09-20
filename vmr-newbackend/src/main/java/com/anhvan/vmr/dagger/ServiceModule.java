@@ -1,21 +1,23 @@
 package com.anhvan.vmr.dagger;
 
 import com.anhvan.vmr.config.AuthConfig;
+import com.anhvan.vmr.config.VertxConfig;
 import dagger.Module;
 import dagger.Provides;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
-import io.vertx.core.WorkerExecutor;
 import io.vertx.ext.auth.JWTOptions;
 import io.vertx.ext.auth.PubSecKeyOptions;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Singleton;
 
 @Module
 @AllArgsConstructor
+@Log4j2
 public class ServiceModule {
   @Provides
   @Singleton
@@ -38,13 +40,11 @@ public class ServiceModule {
 
   @Provides
   @Singleton
-  public WorkerExecutor provideWorkerPool(Vertx vertx) {
-    return vertx.createSharedWorkerExecutor("worker-executor");
-  }
-
-  @Provides
-  @Singleton
-  public Vertx provideVertx() {
-    return Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setWorkerPoolSize(40));
+  public Vertx provideVertx(VertxConfig config) {
+    log.info("Vertx worker pool size = {}", config.getNumOfWorkerThread());
+    return Vertx.vertx(
+        new VertxOptions()
+            .setPreferNativeTransport(true)
+            .setWorkerPoolSize(config.getNumOfWorkerThread()));
   }
 }

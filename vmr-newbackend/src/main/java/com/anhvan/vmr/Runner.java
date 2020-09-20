@@ -4,6 +4,7 @@ import com.anhvan.vmr.config.ConfigLoader;
 import com.anhvan.vmr.config.ConfigModule;
 import com.anhvan.vmr.dagger.DaggerServiceComponent;
 import com.anhvan.vmr.dagger.ServiceComponent;
+import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
 public class Runner {
@@ -24,7 +25,11 @@ public class Runner {
         DaggerServiceComponent.builder().configModule(configModule).build();
 
     // Start webserver and websocket server
-    component.getWebServer().start();
-    component.getWebSocketServer().start();
+    Vertx vertx = component.getVertx();
+
+    // Deploy verticles
+    vertx.deployVerticle(component.getWebServer());
+    vertx.deployVerticle(component.getWebSocketServer());
+    vertx.deployVerticle(component.getGrpcServer());
   }
 }

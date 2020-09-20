@@ -1,8 +1,8 @@
 package com.anhvan.vmr.server;
 
 import com.anhvan.vmr.config.ServerConfig;
+import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
-import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import lombok.extern.log4j.Log4j2;
 
@@ -11,14 +11,12 @@ import javax.inject.Singleton;
 
 @Log4j2
 @Singleton
-public class WebSocketServer {
-  private Vertx vertx;
+public class WebSocketServer extends AbstractVerticle {
   private ServerConfig config;
   private WebSocketFactory webSocketFactory;
 
   @Inject
-  public WebSocketServer(Vertx vertx, ServerConfig config, WebSocketFactory webSocketFactory) {
-    this.vertx = vertx;
+  public WebSocketServer(ServerConfig config, WebSocketFactory webSocketFactory) {
     this.config = config;
     this.webSocketFactory = webSocketFactory;
   }
@@ -28,14 +26,14 @@ public class WebSocketServer {
     int wsPort = config.getWsPort();
     vertx
         .createHttpServer()
-        .webSocketHandler(webSocketFactory::webSocketHandler)
+        .webSocketHandler(webSocketFactory::handleWebSocketConn)
         .listen(
             wsPort,
             wsHost,
-            serverAsyncResult -> handleServerListen(serverAsyncResult, wsHost, wsPort));
+            serverAsyncResult -> handleAfterBind(serverAsyncResult, wsHost, wsPort));
   }
 
-  private void handleServerListen(
+  private void handleAfterBind(
       AsyncResult<HttpServer> serverAsyncResult, String wsHost, int wsPort) {
     if (serverAsyncResult.succeeded()) {
       log.info("Start websocket server at  {}:{}", wsHost, wsPort);

@@ -1,3 +1,7 @@
+function createAction(type, data) {
+  return {type, data};
+}
+
 export function login(jwt, userId) {
   return {
     type: 'LOGIN_SUCCESS',
@@ -27,12 +31,13 @@ export function logout() {
   }
 }
 
-export function webSocketConnected(webSocket, send) {
+export function webSocketConnected(webSocket, send, close) {
   return {
     type: 'WS_CONNECTED',
     data: {
       webSocket,
-      send
+      send,
+      close
     }
   }
 }
@@ -66,4 +71,8 @@ export function onOffline(userId, status) {
       userId, status
     }
   }
+}
+
+export function newUser(user) {
+  return createAction('NEW_USER', user);
 }

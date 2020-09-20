@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
-public class UserDBServiceImpl implements UserDBService {
+public class UserDatabaseServiceImpl implements UserDatabaseService {
   public static final String INSERT_USER =
       "insert into users(username, password, name) values (?,?,?)";
 
@@ -32,7 +32,7 @@ public class UserDBServiceImpl implements UserDBService {
   private AsyncWorkerUtil workerUtil;
 
   @Inject
-  public UserDBServiceImpl(DatabaseService databaseService, AsyncWorkerUtil workerUtil) {
+  public UserDatabaseServiceImpl(DatabaseService databaseService, AsyncWorkerUtil workerUtil) {
     pool = databaseService.getPool();
     this.workerUtil = workerUtil;
   }
@@ -50,6 +50,9 @@ public class UserDBServiceImpl implements UserDBService {
 
           // Info params
           Tuple info = Tuple.of(user.getUsername(), password, user.getName());
+
+          // Trace
+          log.trace("Pool will execute query");
 
           // Execute query
           pool.preparedQuery(INSERT_USER)
@@ -84,6 +87,7 @@ public class UserDBServiceImpl implements UserDBService {
                 if (result.size() == 1) {
                   result.forEach(row -> userPromise.complete(rowToUser(row)));
                 } else {
+                  log.info("Fail when get user with username:{} from database", username);
                   userPromise.fail("User not exist");
                 }
               } else {
@@ -123,19 +127,18 @@ public class UserDBServiceImpl implements UserDBService {
 
     Promise<List<User>> listUserPromise = Promise.promise();
 
-    List<User> userList = new ArrayList<>();
-
     pool.query(GET_ALL_USER)
         .execute(
             rowSetRs -> {
               if (rowSetRs.succeeded()) {
+                List<User> userList = new ArrayList<>();
                 RowSet<Row> result = rowSetRs.result();
                 result.forEach(row -> userList.add(rowToUser(row)));
+                listUserPromise.complete(userList);
               } else {
                 log.error("Fail when get user list", rowSetRs.cause());
                 listUserPromise.fail(rowSetRs.cause());
               }
-              listUserPromise.complete(userList);
             });
 
     return listUserPromise.future();

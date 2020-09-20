@@ -1,7 +1,7 @@
 package com.anhvan.vmr.controller;
 
 import com.anhvan.vmr.cache.ChatCacheService;
-import com.anhvan.vmr.database.ChatDBService;
+import com.anhvan.vmr.database.ChatDatabaseService;
 import com.anhvan.vmr.entity.BaseRequest;
 import com.anhvan.vmr.entity.BaseResponse;
 import com.anhvan.vmr.model.Message;
@@ -19,7 +19,7 @@ import java.util.List;
 @Log4j2
 public class MessageListController extends BaseController {
   private ChatCacheService chatCacheService;
-  private ChatDBService chatDBService;
+  private ChatDatabaseService chatDatabaseService;
 
   @Override
   @RoutePath("/:friendId/:offset")
@@ -39,7 +39,7 @@ public class MessageListController extends BaseController {
       // Cache hit
       chatMessages.onSuccess(
           wsMessages -> {
-            log.debug("Get chat messages - cache hit userId1: {} - userId2: {}", userId, friendId);
+            log.debug("Get chat messages - cache hit userId1:{} - userId2:{}", userId, friendId);
             JsonObject jsonResponse = new JsonObject();
             jsonResponse.put("messages", wsMessages);
             jsonResponse.put("newOffset", offset + wsMessages.size());
@@ -54,7 +54,11 @@ public class MessageListController extends BaseController {
       // Cache miss
       chatMessages.onFailure(
           throwable -> {
-            log.debug("Fail to load chat messages from cache {}-{}", userId, friendId, throwable);
+            log.debug(
+                "Fail to load chat messages from cache user1:{}-user2:{}",
+                userId,
+                friendId,
+                throwable);
             getFromDB(userId, friendId, offset, responsePromise, true);
           });
     } else {
@@ -72,7 +76,7 @@ public class MessageListController extends BaseController {
       Promise<BaseResponse> responsePromise,
       boolean isCached) {
 
-    chatDBService
+    chatDatabaseService
         .getChatMessages(userId, friendId, offset)
         .onComplete(
             result -> {

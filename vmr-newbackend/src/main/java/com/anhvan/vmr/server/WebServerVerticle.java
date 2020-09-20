@@ -1,9 +1,9 @@
 package com.anhvan.vmr.server;
 
 import com.anhvan.vmr.config.ServerConfig;
+import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import lombok.extern.log4j.Log4j2;
@@ -13,18 +13,17 @@ import javax.inject.Singleton;
 
 @Log4j2
 @Singleton
-public class WebServer {
-  private Vertx vertx;
+public class WebServerVerticle extends AbstractVerticle {
   private ServerConfig config;
   private RouterFactory routerFactory;
 
   @Inject
-  public WebServer(Vertx vertx, ServerConfig config, RouterFactory routerFactory) {
-    this.vertx = vertx;
+  public WebServerVerticle(ServerConfig config, RouterFactory routerFactory) {
     this.config = config;
     this.routerFactory = routerFactory;
   }
 
+  @Override
   public void start() {
     String host = config.getHost();
     int port = config.getPort();

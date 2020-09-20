@@ -1,6 +1,7 @@
 server:
   port: 8080
   wsPort: 8081
+  grpcPort: 8082
   host: 0.0.0.0
 auth:
   token: dsjkshd8y2387yuhfsghduhgf673tfsgfjhg76tg3yugfshjg
@@ -15,3 +16,5 @@ mysql:
 cache:
   timeToLive: 600
   numMessagesCached: 20
+vertx:
+  numOfWorkerThread: 40

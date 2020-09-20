@@ -31,7 +31,7 @@ function ConversationListItem(props) {
   }, []);
 
   const {name, text, id, isCurrentUser} = props.data;
-  let online = props.userMapHolder.userMap.get(id).online;
+  let online = props.userMap.get(id).online;
 
   let onlineStyle = "dot";
   if (isCurrentUser) {
@@ -65,7 +65,7 @@ function ConversationListItem(props) {
 function mapStateToProps(state) {
   return {
     currentConversationId: state.users.currentConversationId,
-    userMapHolder: state.users.userMapHolder
+    userMap: state.users.userMapHolder.userMap
   }
 }
 

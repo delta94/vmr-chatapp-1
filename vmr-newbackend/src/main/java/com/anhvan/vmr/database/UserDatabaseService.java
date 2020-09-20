@@ -5,7 +5,7 @@ import io.vertx.core.Future;
 
 import java.util.List;
 
-public interface UserDBService {
+public interface UserDatabaseService {
   Future<Integer> addUser(User user);
 
   Future<User> getUserByUsername(String username);

@@ -21,6 +21,11 @@ public class WebSocketService {
     this.jwtUtil = jwtUtil;
   }
 
+  public WebSocketService(JwtUtil jwtUtil, Map<Integer, Set<ServerWebSocket>> connections) {
+    this.jwtUtil = jwtUtil;
+    this.connections = connections;
+  }
+
   public Future<Integer> authenticate(ServerWebSocket conn) {
     String token = conn.query().substring(6);
     return jwtUtil.authenticate(token);
@@ -38,9 +43,11 @@ public class WebSocketService {
 
   public void removeConnection(int userId, ServerWebSocket conn) {
     Set<ServerWebSocket> userConns = connections.get(userId);
-    userConns.remove(conn);
-    if (userConns.size() == 0) {
-      connections.remove(userId);
+    if (userConns != null) {
+      userConns.remove(conn);
+      if (userConns.size() == 0) {
+        connections.remove(userId);
+      }
     }
   }
 

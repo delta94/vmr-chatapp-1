@@ -1,28 +1,38 @@
-import {protectedGet} from "./axios-wrapper";
 import store from '../redux/vmr-store';
-import {webSocketConnected, receiveMessage, sendbackMessage, onOffline} from "../redux/vmr-action";
+import {webSocketConnected, receiveMessage, sendbackMessage, onOffline, newUser} from "../redux/vmr-action";
 
 const WEB_SOCKET_ROOT = process.env.REACT_APP_WS_ROOT;
 
 function createMessage(type, data) {
   return {
     type, data
-  }
+  };
 }
 
-let webSocketActive = false;
+let webSocketManager = {
+  currentConn: null,
+  setNew(conn) {
+    if (this.currentConn) {
+      this.currentConn.close();
+    }
+    this.currentConn = conn;
+  },
+  clean() {
+    if (this.currentConn) {
+      this.currentConn.close();
+      this.currentConn = null;
+    }
+  },
+  isActive() {
+    return Boolean(this.currentConn);
+  }
+};
 
 export function wsConnect() {
   // log info
-  console.log('Try to connecto to websocket');
-
-  // Get socket token from server and create connection
-  protectedGet("/sockettoken").then(response => {
-    let token = response.data.data.token;
-    internalConnect(token);
-  }).catch(error => {
-    console.error(error);
-  });
+  console.log('Try to connect to websocket');
+  let token = localStorage.getItem("jwtToken");
+  internalConnect(token);
 }
 
 function internalConnect(token) {
@@ -34,7 +44,7 @@ function internalConnect(token) {
 
   // When connect successful
   webSocket.onopen = () => {
-    webSocketActive = true;
+    webSocketManager.setNew(webSocket);
 
     // Function to send chat message
     let send = function (receiverId, message) {
@@ -45,32 +55,37 @@ function internalConnect(token) {
     };
 
     // Notify to redux
-    store.dispatch(webSocketConnected(webSocket, send));
+    store.dispatch(webSocketConnected(webSocket, send, () => {webSocketManager.clean()}));
   };
 
   // Handle chat message
   webSocket.onmessage = messageEvent => {
     let jsonMessage = JSON.parse(messageEvent.data);
-    if (jsonMessage.type === 'CHAT') {
+    let {type, data} = jsonMessage;
+
+    if (type === 'CHAT') {
       // Handle chat
-      store.dispatch(receiveMessage(jsonMessage.data));
-    } else if (jsonMessage.type === 'SEND_BACK') {
+      store.dispatch(receiveMessage(data));
+    } else if (type === 'SEND_BACK') {
       // Handle sendback
-      if (jsonMessage.receiverId === senderId) {
+      if (data.receiverId === senderId) {
         return;
       }
-      store.dispatch(sendbackMessage(jsonMessage.data));
-    } else if (jsonMessage.type === 'ONLINE') {
-      store.dispatch(onOffline(jsonMessage.data, true));
-    } else if (jsonMessage.type === 'OFFLINE') {
-      store.dispatch(onOffline(jsonMessage.data, false));
+      store.dispatch(sendbackMessage(data));
+    } else if (type === 'ONLINE') {
+      store.dispatch(onOffline(data, true));
+    } else if (type === 'OFFLINE') {
+      store.dispatch(onOffline(data, false));
+    } else if (type === 'NEW_USER') {
+      store.dispatch(newUser(data));
     }
   };
 
+  // Try to reconnect
   webSocket.onclose = () => {
-    webSocketActive = false;
+    webSocketManager.clean();
     setTimeout(() => {
-      if (!webSocketActive) {
+      if (!webSocketManager.isActive()) {
         internalConnect(token);
       }
     }, 1000);
@@ -80,3 +95,5 @@ function internalConnect(token) {
     webSocket.close();
   }
 }
+
+require('./grpc-service');

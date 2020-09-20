@@ -1,8 +1,8 @@
 import React from 'react';
 import ConversationList from '../ConversationList';
-import MessageList from '../MessageList';
 import './Messenger.css';
 import {connect} from 'react-redux';
+import MessageListWrapper from '../MessageListWrapper';
 
 function mapStateToProps(state) {
   return {
@@ -19,7 +19,7 @@ function Messenger() {
       </div>
 
       <div className="scrollable content">
-        <MessageList/>
+        <MessageListWrapper/>
       </div>
     </div>
   );
