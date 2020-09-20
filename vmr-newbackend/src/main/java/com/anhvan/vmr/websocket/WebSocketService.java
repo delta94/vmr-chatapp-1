@@ -21,6 +21,11 @@ public class WebSocketService {
     this.jwtUtil = jwtUtil;
   }
 
+  public WebSocketService(JwtUtil jwtUtil, Map<Integer, Set<ServerWebSocket>> connections) {
+    this.jwtUtil = jwtUtil;
+    this.connections = connections;
+  }
+
   public Future<Integer> authenticate(ServerWebSocket conn) {
     String token = conn.query().substring(6);
     return jwtUtil.authenticate(token);

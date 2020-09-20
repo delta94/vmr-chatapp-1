@@ -26,6 +26,8 @@ public class Runner {
 
     // Start webserver and websocket server
     Vertx vertx = component.getVertx();
+
+    // Deploy verticles
     vertx.deployVerticle(component.getWebServer());
     vertx.deployVerticle(component.getWebSocketServer());
     vertx.deployVerticle(component.getGrpcServer());
