@@ -44,7 +44,7 @@ public class TokenCacheServiceImpl implements TokenCacheService {
     asyncWorkerUtil.execute(
         () -> {
           try {
-            RBucket<String> tokenBucket = redis.getBucket(getKey(token));
+            RBucket<Boolean> tokenBucket = redis.getBucket(getKey(token));
             existPromise.complete(tokenBucket.isExists());
           } catch (Exception e) {
             existPromise.fail(e);
