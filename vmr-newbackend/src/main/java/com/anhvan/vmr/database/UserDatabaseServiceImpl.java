@@ -87,6 +87,7 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
                 if (result.size() == 1) {
                   result.forEach(row -> userPromise.complete(rowToUser(row)));
                 } else {
+                  log.info("Fail when get user with username:{} from database", username);
                   userPromise.fail("User not exist");
                 }
               } else {
@@ -126,19 +127,18 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
 
     Promise<List<User>> listUserPromise = Promise.promise();
 
-    List<User> userList = new ArrayList<>();
-
     pool.query(GET_ALL_USER)
         .execute(
             rowSetRs -> {
               if (rowSetRs.succeeded()) {
+                List<User> userList = new ArrayList<>();
                 RowSet<Row> result = rowSetRs.result();
                 result.forEach(row -> userList.add(rowToUser(row)));
+                listUserPromise.complete(userList);
               } else {
                 log.error("Fail when get user list", rowSetRs.cause());
                 listUserPromise.fail(rowSetRs.cause());
               }
-              listUserPromise.complete(userList);
             });
 
     return listUserPromise.future();

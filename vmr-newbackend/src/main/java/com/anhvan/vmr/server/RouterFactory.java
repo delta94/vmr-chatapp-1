@@ -6,6 +6,7 @@ import com.anhvan.vmr.util.JwtUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -83,7 +84,8 @@ public class RouterFactory {
     existFuture.onSuccess(
         exist -> {
           if (exist) {
-            routingContext.response().setStatusCode(401).end();
+            JsonObject response = new JsonObject().put("message", "Jwt is expire");
+            routingContext.response().setStatusCode(401).end(response.toBuffer());
           } else {
             routingContext.next();
           }

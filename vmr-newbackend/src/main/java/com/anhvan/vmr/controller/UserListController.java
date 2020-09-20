@@ -35,51 +35,65 @@ public class UserListController extends BaseController {
 
     cachedList.onComplete(
         listAsyncResult -> {
-          JsonObject data = new JsonObject();
-
           if (listAsyncResult.succeeded()) {
-            // Cache hit
-            log.debug("Get user list, cache hit");
-            List<UserResponse> userResponseList = getUserResponseList(listAsyncResult.result());
-            data.put("userList", userResponseList);
-
-            // Response to user
-            userListPromise.complete(
-                BaseResponse.builder()
-                    .statusCode(200)
-                    .data(data)
-                    .message("Get user list successfully")
-                    .build());
+            handleUserListCache(listAsyncResult.result(), userListPromise);
           } else {
-            // Cache miss
-            log.trace("Cache miss");
-
-            // Load user form database
-            Future<List<User>> userListFuture = userDBService.getListUser();
-            userListFuture.onSuccess(
-                userList -> {
-                  List<UserResponse> userResponseList = getUserResponseList(userList);
-
-                  data.put("userList", userResponseList);
-
-                  // Update cache
-                  userCacheService.setUserList(userList);
-
-                  // Response to user
-                  userListPromise.complete(
-                      BaseResponse.builder()
-                          .statusCode(200)
-                          .data(data)
-                          .message("Get user list successfully")
-                          .build());
-                });
+            handleCacheMiss(userListPromise);
           }
         });
 
     return userListPromise.future();
   }
 
-  public List<UserResponse> getUserResponseList(List<User> userList) {
+  private void handleUserListCache(List<User> userList, Promise<BaseResponse> userListPromise) {
+    // Create data object
+    JsonObject data = new JsonObject();
+
+    // Cache hit
+    log.debug("Get user list, cache hit");
+    List<UserResponse> userResponseList = getUserResponseList(userList);
+    data.put("userList", userResponseList);
+
+    // Response to user
+    userListPromise.complete(
+        BaseResponse.builder()
+            .statusCode(200)
+            .data(data)
+            .message("Get user list successfully")
+            .build());
+  }
+
+  private void handleCacheMiss(Promise<BaseResponse> userListPromise) {
+    // Create data object
+    JsonObject data = new JsonObject();
+
+    // Cache miss
+    log.trace("Cache miss");
+
+    // Load user form database
+    Future<List<User>> userListFuture = userDBService.getListUser();
+    userListFuture.onSuccess(
+        userList -> {
+          List<UserResponse> userResponseList = getUserResponseList(userList);
+
+          data.put("userList", userResponseList);
+
+          // Update cache
+          userCacheService.setUserList(userList);
+
+          // Response to user
+          userListPromise.complete(
+              BaseResponse.builder()
+                  .statusCode(200)
+                  .data(data)
+                  .message("Get user list successfully")
+                  .build());
+        });
+
+    userListFuture.onFailure(userListPromise::fail);
+  }
+
+  private List<UserResponse> getUserResponseList(List<User> userList) {
     Set<Integer> onlineSet = webSocketService.getOnlineIds();
     return userList.stream()
         .map(
