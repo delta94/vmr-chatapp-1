@@ -22,17 +22,17 @@ import java.time.Instant;
 @ExtendWith(VertxExtension.class)
 @Log4j2
 @SuppressWarnings("unchecked")
-public class ChatDBServiceImplTest {
+public class ChatDatabaseServiceImplTest {
   private static MySQLPool pool;
 
-  private static ChatDBServiceImpl chatDBService;
+  private static ChatDatabaseServiceImpl chatDBService;
 
   @BeforeAll
   static void setUp() {
     pool = Mockito.mock(MySQLPool.class);
     DatabaseService databaseService = Mockito.mock(DatabaseService.class);
     Mockito.when(databaseService.getPool()).thenReturn(pool);
-    chatDBService = new ChatDBServiceImpl(databaseService);
+    chatDBService = new ChatDatabaseServiceImpl(databaseService);
   }
 
   @Test
@@ -40,7 +40,7 @@ public class ChatDBServiceImplTest {
     PreparedQuery<RowSet<Row>> preparedQuery =
         (PreparedQuery<RowSet<Row>>) Mockito.mock(PreparedQuery.class);
 
-    Mockito.when(pool.preparedQuery(ChatDBServiceImpl.INSERT_MESSAGE)).thenReturn(preparedQuery);
+    Mockito.when(pool.preparedQuery(ChatDatabaseServiceImpl.INSERT_MESSAGE)).thenReturn(preparedQuery);
 
     Mockito.doAnswer(
             invocationOnMock -> {
@@ -68,7 +68,7 @@ public class ChatDBServiceImplTest {
     PreparedQuery<RowSet<Row>> preparedQuery =
         (PreparedQuery<RowSet<Row>>) Mockito.mock(PreparedQuery.class);
 
-    Mockito.when(pool.preparedQuery(ChatDBServiceImpl.GET_MESSAGES_QUERY))
+    Mockito.when(pool.preparedQuery(ChatDatabaseServiceImpl.GET_MESSAGES_QUERY))
         .thenReturn(preparedQuery);
 
     chatDBService.getChatMessages(1, 2, 0);

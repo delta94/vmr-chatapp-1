@@ -1,7 +1,7 @@
 package com.anhvan.vmr.websocket;
 
 import com.anhvan.vmr.cache.ChatCacheService;
-import com.anhvan.vmr.database.ChatDBService;
+import com.anhvan.vmr.database.ChatDatabaseService;
 import com.anhvan.vmr.entity.WebSocketMessage;
 import com.anhvan.vmr.model.Message;
 import io.vertx.core.http.ServerWebSocket;
@@ -19,7 +19,7 @@ public class WebSocketHandler {
   private ServerWebSocket conn;
   private int userId;
   private WebSocketService webSocketService;
-  private ChatDBService chatDBService;
+  private ChatDatabaseService chatDatabaseService;
   private ChatCacheService chatCacheService;
 
   public void handle() {
@@ -57,7 +57,7 @@ public class WebSocketHandler {
   }
 
   private void handleChat(Message message) {
-    chatDBService
+    chatDatabaseService
         .addChat(message)
         .onSuccess(
             id -> {

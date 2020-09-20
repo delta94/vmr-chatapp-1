@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
-public class UserDBServiceImpl implements UserDBService {
+public class UserDatabaseServiceImpl implements UserDatabaseService {
   public static final String INSERT_USER =
       "insert into users(username, password, name) values (?,?,?)";
 
@@ -32,7 +32,7 @@ public class UserDBServiceImpl implements UserDBService {
   private AsyncWorkerUtil workerUtil;
 
   @Inject
-  public UserDBServiceImpl(DatabaseService databaseService, AsyncWorkerUtil workerUtil) {
+  public UserDatabaseServiceImpl(DatabaseService databaseService, AsyncWorkerUtil workerUtil) {
     pool = databaseService.getPool();
     this.workerUtil = workerUtil;
   }
@@ -50,6 +50,9 @@ public class UserDBServiceImpl implements UserDBService {
 
           // Info params
           Tuple info = Tuple.of(user.getUsername(), password, user.getName());
+
+          // Trace
+          log.trace("Pool will execute query");
 
           // Execute query
           pool.preparedQuery(INSERT_USER)

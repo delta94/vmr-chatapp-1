@@ -3,8 +3,8 @@ package com.anhvan.vmr.controller;
 import com.anhvan.vmr.cache.ChatCacheServiceImpl;
 import com.anhvan.vmr.cache.TokenCacheServiceImpl;
 import com.anhvan.vmr.cache.UserCacheServiceImpl;
-import com.anhvan.vmr.database.ChatDBService;
-import com.anhvan.vmr.database.UserDBServiceImpl;
+import com.anhvan.vmr.database.ChatDatabaseService;
+import com.anhvan.vmr.database.UserDatabaseServiceImpl;
 import com.anhvan.vmr.util.JwtUtil;
 import com.anhvan.vmr.websocket.WebSocketService;
 import dagger.Module;
@@ -30,7 +30,7 @@ public class ControllerModule {
   @IntoMap
   @StringKey("/api/public/login")
   public Controller provideLoginController(
-      UserDBServiceImpl userDBService, UserCacheServiceImpl userCacheService, JwtUtil jwtUtil) {
+      UserDatabaseServiceImpl userDBService, UserCacheServiceImpl userCacheService, JwtUtil jwtUtil) {
     log.info("Register login controller");
     return LoginController.builder()
         .userDBService(userDBService)
@@ -43,7 +43,7 @@ public class ControllerModule {
   @IntoMap
   @StringKey("/api/public/register")
   public Controller provideRegisterController(
-      UserDBServiceImpl userDBService,
+      UserDatabaseServiceImpl userDBService,
       JwtUtil jwtUtil,
       UserCacheServiceImpl userCacheService,
       WebSocketService webSocketService) {
@@ -60,7 +60,7 @@ public class ControllerModule {
   @IntoMap
   @StringKey("/api/protected/users")
   public Controller provideUserController(
-      UserDBServiceImpl userDBService,
+      UserDatabaseServiceImpl userDBService,
       UserCacheServiceImpl userCacheService,
       WebSocketService webSocketService) {
     log.info("Register user list controller");
@@ -91,9 +91,9 @@ public class ControllerModule {
   @IntoMap
   @StringKey("/api/protected/chat")
   public Controller provideMessageListController(
-      ChatDBService chatDBService, ChatCacheServiceImpl chatCacheService) {
+      ChatDatabaseService chatDatabaseService, ChatCacheServiceImpl chatCacheService) {
     log.info("Register message list controller");
-    return new MessageListController(chatCacheService, chatDBService);
+    return new MessageListController(chatCacheService, chatDatabaseService);
   }
 
   @Provides

@@ -1,7 +1,7 @@
 package com.anhvan.vmr.server;
 
 import com.anhvan.vmr.cache.ChatCacheServiceImpl;
-import com.anhvan.vmr.database.ChatDBService;
+import com.anhvan.vmr.database.ChatDatabaseService;
 import com.anhvan.vmr.websocket.WebSocketHandler;
 import com.anhvan.vmr.websocket.WebSocketService;
 import io.vertx.core.AsyncResult;
@@ -14,16 +14,16 @@ import javax.inject.Inject;
 @Log4j2
 public class WebSocketFactory {
   private WebSocketService webSocketService;
-  private ChatDBService chatDBService;
+  private ChatDatabaseService chatDatabaseService;
   private ChatCacheServiceImpl chatCacheService;
 
   @Inject
   public WebSocketFactory(
       WebSocketService webSocketService,
-      ChatDBService chatDBService,
+      ChatDatabaseService chatDatabaseService,
       ChatCacheServiceImpl chatCacheService) {
     this.webSocketService = webSocketService;
-    this.chatDBService = chatDBService;
+    this.chatDatabaseService = chatDatabaseService;
     this.chatCacheService = chatCacheService;
   }
 
@@ -44,7 +44,7 @@ public class WebSocketFactory {
       // Create new handler
       WebSocketHandler handler =
           new WebSocketHandler(
-              conn, userIdRs.result(), webSocketService, chatDBService, chatCacheService);
+              conn, userIdRs.result(), webSocketService, chatDatabaseService, chatCacheService);
 
       // Handle
       handler.handle();

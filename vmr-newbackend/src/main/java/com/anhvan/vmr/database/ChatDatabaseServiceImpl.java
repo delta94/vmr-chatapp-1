@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Log4j2
-public class ChatDBServiceImpl implements ChatDBService {
+public class ChatDatabaseServiceImpl implements ChatDatabaseService {
   public static final String GET_MESSAGES_QUERY =
       "select * from  "
           + "(select * from messages where sender=? and receiver=? "
@@ -31,7 +31,7 @@ public class ChatDBServiceImpl implements ChatDBService {
   private MySQLPool pool;
 
   @Inject
-  public ChatDBServiceImpl(DatabaseService databaseService) {
+  public ChatDatabaseServiceImpl(DatabaseService databaseService) {
     pool = databaseService.getPool();
   }
 

@@ -1,7 +1,7 @@
 package com.anhvan.vmr.controller;
 
 import com.anhvan.vmr.cache.UserCacheService;
-import com.anhvan.vmr.database.UserDBService;
+import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.entity.BaseRequest;
 import com.anhvan.vmr.entity.BaseResponse;
 import com.anhvan.vmr.entity.UserResponse;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Builder
 @Log4j2
 public class UserListController extends BaseController {
-  private UserDBService userDBService;
+  private UserDatabaseService userDBService;
   private UserCacheService userCacheService;
   private WebSocketService webSocketService;
 

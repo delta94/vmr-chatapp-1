@@ -1,7 +1,7 @@
 package com.anhvan.vmr.controller;
 
 import com.anhvan.vmr.cache.ChatCacheService;
-import com.anhvan.vmr.database.ChatDBService;
+import com.anhvan.vmr.database.ChatDatabaseService;
 import com.anhvan.vmr.entity.BaseRequest;
 import com.anhvan.vmr.entity.BaseResponse;
 import com.anhvan.vmr.model.Message;
@@ -19,7 +19,7 @@ import java.util.List;
 @Log4j2
 public class MessageListController extends BaseController {
   private ChatCacheService chatCacheService;
-  private ChatDBService chatDBService;
+  private ChatDatabaseService chatDatabaseService;
 
   @Override
   @RoutePath("/:friendId/:offset")
@@ -72,7 +72,7 @@ public class MessageListController extends BaseController {
       Promise<BaseResponse> responsePromise,
       boolean isCached) {
 
-    chatDBService
+    chatDatabaseService
         .getChatMessages(userId, friendId, offset)
         .onComplete(
             result -> {

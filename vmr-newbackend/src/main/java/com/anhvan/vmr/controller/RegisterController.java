@@ -1,7 +1,7 @@
 package com.anhvan.vmr.controller;
 
 import com.anhvan.vmr.cache.UserCacheService;
-import com.anhvan.vmr.database.UserDBService;
+import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.entity.BaseRequest;
 import com.anhvan.vmr.entity.BaseResponse;
 import com.anhvan.vmr.entity.WebSocketMessage;
@@ -20,7 +20,7 @@ import lombok.extern.log4j.Log4j2;
 @Builder
 @Log4j2
 public class RegisterController extends BaseController {
-  private UserDBService userDBService;
+  private UserDatabaseService userDBService;
   private JwtUtil jwtUtil;
   private UserCacheService userCacheService;
   private WebSocketService webSocketService;

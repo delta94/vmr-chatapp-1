@@ -9,13 +9,13 @@ import javax.inject.Singleton;
 public class DatabaseModule {
   @Provides
   @Singleton
-  public ChatDBService provideChatDBService(ChatDBServiceImpl impl) {
+  public ChatDatabaseService provideChatDBService(ChatDatabaseServiceImpl impl) {
     return impl;
   }
 
   @Provides
   @Singleton
-  public UserDBService provideUserDBService(UserDBServiceImpl impl) {
+  public UserDatabaseService provideUserDBService(UserDatabaseServiceImpl impl) {
     return impl;
   }
 }
