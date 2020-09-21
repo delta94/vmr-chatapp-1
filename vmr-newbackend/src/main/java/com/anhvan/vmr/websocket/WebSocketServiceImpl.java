@@ -6,12 +6,16 @@ import io.vertx.core.Future;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.impl.ConcurrentHashSet;
 import io.vertx.core.json.Json;
+import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Log4j2
+@Singleton
 public class WebSocketServiceImpl implements WebSocketService {
   private Map<Integer, Set<ServerWebSocket>> connections = new ConcurrentHashMap<>();
   private JwtUtil jwtUtil;
@@ -41,6 +45,7 @@ public class WebSocketServiceImpl implements WebSocketService {
       userConnections.add(serverWebSocket);
       connections.put(userId, userConnections);
     }
+    log.debug("Connections set {}", connections.keySet());
   }
 
   @Override
@@ -52,6 +57,7 @@ public class WebSocketServiceImpl implements WebSocketService {
         connections.remove(userId);
       }
     }
+    log.debug("Connections set when remove {}", connections.keySet());
   }
 
   @Override
@@ -80,6 +86,7 @@ public class WebSocketServiceImpl implements WebSocketService {
 
   @Override
   public Set<Integer> getOnlineIds() {
+    log.debug("Connections set {}", connections.keySet());
     return connections.keySet();
   }
 }

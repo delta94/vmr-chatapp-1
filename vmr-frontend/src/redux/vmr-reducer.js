@@ -1,6 +1,6 @@
 let initialState = {
   webSocket: {
-    webSocket: null,
+    webSocketManager: null,
     send: null,
     close: null
   }
@@ -14,7 +14,9 @@ export default function appReducer(state = initialState, action) {
       state = handleWsConnected(state, data);
       break;
     case 'LOGOUT':
-      state.webSocket.close();
+      if (state.webSocket.close) {
+        state.webSocket.close();
+      }
       state = initialState;
       break;
     default:
@@ -27,7 +29,7 @@ export default function appReducer(state = initialState, action) {
 function handleWsConnected(state, data) {
   return Object.assign({}, state, {
     webSocket: {
-      webSocket: data.webSocket,
+      webSocketManager: data.webSocketManager,
       send: data.send,
       close: data.close
     }

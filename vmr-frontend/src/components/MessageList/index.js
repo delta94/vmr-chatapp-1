@@ -9,25 +9,16 @@ import renderMessageNew from './message-render';
 
 import './MessageList.css';
 
-let MessageList = (props) => {
-  // Check if userMap is loaded
-  if (!props.showFlag) {
-    return null;
-  }
+let MessageListInternal = props => {
+  let {scrollFlag, currentConversationId, receiverId, receiver, webSocket} = props;
 
-  // Get receiver
-  let receiverId = Number(props.match.params.receiverId);
-  let receiver = props.receiver;
-
-  // Check receiver
-  if (!receiver) {
-    return null;
-  }
+  // Use to scroll message
+  let endOfMsgList = useRef(null);
+  let msgList = useRef(null);
 
   let messageList = props.chatMessages;
 
-  // Get websocket service from redux
-  let webSocket = props.webSocket;
+  // Scroolflag and conversationid
 
   // Messages list
   let messages = messageList.map((x) => {
@@ -39,10 +30,6 @@ let MessageList = (props) => {
       isMine: x.isMine
     };
   });
-
-  // Use to scroll message
-  let endOfMsgList = useRef(null);
-  let msgList = useRef(null);
 
   // Load message
   useEffect(
@@ -63,7 +50,7 @@ let MessageList = (props) => {
     () => {
       endOfMsgList.current.scrollIntoView({behavior: 'smooth'});
     },
-    [props.scrollFlag, props.currentConversationId]
+    [scrollFlag, currentConversationId]
   );
 
   // Load more message
@@ -115,8 +102,19 @@ let MessageList = (props) => {
   );
 };
 
+let MessageList = props => {
+  if (!props.isValid()) {
+    return null;
+  }
+
+  // Get receiver
+  let receiverId = Number(props.match.params.receiverId);
+
+  return <MessageListInternal {...props} receiverId={receiverId}/>
+};
+
 // Map from redux to props
-let mapStateToPropsMessageList = (state, ownProp) => {
+let stateToProps = (state, ownProp) => {
   let receiverId = Number(ownProp.match.params.receiverId);
 
   try {
@@ -126,7 +124,9 @@ let mapStateToPropsMessageList = (state, ownProp) => {
       webSocket: state.app.webSocket,
       scrollFlag: state.chat.scrollFlag,
       currentConversationId: state.users.currentConversationId,
-      showFlag: true
+      isValid: function () {
+        return this.chatMessages != null && this.receiver != null;
+      }
     };
   } catch (e) {
     return {
@@ -135,7 +135,7 @@ let mapStateToPropsMessageList = (state, ownProp) => {
   }
 };
 
-let mapDispatchToPropsMessageList = (dispatch) => {
+let dispatchToProps = (dispatch) => {
   return {
     updateMessageList: (data, friendId) => {
       dispatch(getMessageFromAPI(data, friendId));
@@ -146,4 +146,4 @@ let mapDispatchToPropsMessageList = (dispatch) => {
   };
 };
 
-export default connect(mapStateToPropsMessageList, mapDispatchToPropsMessageList)(MessageList);
+export default connect(stateToProps, dispatchToProps)(MessageList);

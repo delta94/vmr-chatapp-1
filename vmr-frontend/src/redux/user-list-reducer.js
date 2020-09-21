@@ -66,7 +66,7 @@ function handleOnOffLine(state, data) {
 
   let user = userMap.get(data.userId);
   if (user) {
-    user.online = data.status
+    user.online = data.status;
     userMap.set(data.userId, user);
   }
 
