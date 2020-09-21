@@ -7,7 +7,7 @@ sampleRequest.setContent("Hello world");
 
 sampleClient.sampleCall(sampleRequest, {}, (err, res) => {
   if (err) {
-    console.err(err);
+    console.log(err);
   } else {
     console.log(res.getContent());
   }
