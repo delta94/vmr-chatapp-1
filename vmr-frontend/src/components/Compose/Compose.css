@@ -5,11 +5,6 @@
   background: white;
   border-top: 1px solid #eeeef1 !important;
   border-left: 1px solid #eeeef1 !important;
-  position: fixed;
-  /*width: calc(100% - 20px);*/
-  right: 0;
-  left: 350px;
-  bottom: 0px;
 }
 
 @supports (backdrop-filter: blur(20px)) {
