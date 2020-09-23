@@ -4,11 +4,14 @@ import com.anhvan.vmr.config.CacheConfig;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.util.AsyncWorkerUtil;
 import io.vertx.junit5.VertxExtension;
+import io.vertx.junit5.VertxTestContext;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
+import org.redisson.api.RMap;
 import org.redisson.api.RQueue;
 import org.redisson.api.RedissonClient;
 
@@ -66,5 +69,50 @@ public class UserCacheServiceImplTest {
 
     Mockito.verify(userSet).add(user);
     Mockito.verify(userSet).expire(20, TimeUnit.SECONDS);
+  }
+
+  @Test
+  void testAddUserToCache() {
+    RMap<String, String> userInfoMap = (RMap<String, String>) Mockito.mock(RMap.class);
+    Mockito.when(redissonClient.<String, String>getMap("vmr:user:1:info")).thenReturn(userInfoMap);
+    User user = User.builder().id(1).active(true).username("Anh Van").name("Anh Van").build();
+
+    userCacheService.setUserCache(user);
+
+    Mockito.verify(userInfoMap).put(ArgumentMatchers.eq("name"), ArgumentMatchers.anyString());
+    Mockito.verify(userInfoMap).put(ArgumentMatchers.eq("username"), ArgumentMatchers.anyString());
+    Mockito.verify(userInfoMap).expire(20, TimeUnit.SECONDS);
+  }
+
+  @Test
+  void testGetUserFromCache(VertxTestContext testContext) {
+    RMap<String, String> userInfoMap = (RMap<String, String>) Mockito.mock(RMap.class);
+    Mockito.when(redissonClient.<String, String>getMap("vmr:user:1:info")).thenReturn(userInfoMap);
+    Mockito.when(userInfoMap.isExists()).thenReturn(true);
+    Mockito.when(userInfoMap.get("name")).thenReturn("Anh Van");
+    Mockito.when(userInfoMap.get("username")).thenReturn("anhvan");
+
+    userCacheService
+        .getUserCache(1)
+        .onSuccess(
+            user -> {
+              Assertions.assertEquals("anhvan", user.getUsername());
+              Assertions.assertEquals("Anh Van", user.getName());
+              testContext.completeNow();
+            })
+        .onFailure(testContext::failNow);
+  }
+
+  @Test
+  void testGetUserNotExistFromCache(VertxTestContext testContext) {
+    RMap<String, String> userInfoMap = (RMap<String, String>) Mockito.mock(RMap.class);
+    Mockito.when(redissonClient.<String, String>getMap("vmr:user:1:info")).thenReturn(userInfoMap);
+    Mockito.when(userInfoMap.isExists()).thenReturn(false);
+
+    userCacheService
+        .getUserCache(1)
+        .onSuccess(user -> testContext.failNow(new Exception("This call must failue")))
+        .onFailure(
+            throwable -> testContext.completeNow());
   }
 }
