@@ -27,7 +27,7 @@
   grid-row-end: span 3;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 700px) {
   .messenger {
     grid-template-columns: auto;
   }

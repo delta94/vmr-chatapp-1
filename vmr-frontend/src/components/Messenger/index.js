@@ -14,7 +14,7 @@ function Messenger(props) {
   let {sideBarActive} = props;
 
   let sideBarClassName = "sidebar ";
-  if (window.innerWidth <= 600 && sideBarActive) {
+  if (window.innerWidth <= 700 && sideBarActive) {
     sideBarClassName  += "sidebar-active";
   }
 
