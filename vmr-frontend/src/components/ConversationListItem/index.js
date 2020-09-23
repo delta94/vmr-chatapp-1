@@ -4,6 +4,7 @@ import shave from 'shave';
 import {useHistory} from 'react-router-dom';
 import {connect} from 'react-redux';
 import './ConversationListItem.css';
+import {setSideBarActive} from "../../redux/vmr-action";
 
 const colorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae', '#007aff'];
 
@@ -46,6 +47,7 @@ function ConversationListItem(props) {
 
   let clickHandle = () => {
     history.push('/t/' + id);
+    props.hideSideBar();
   }
 
   return (
@@ -70,5 +72,12 @@ function mapStateToProps(state) {
   }
 }
 
+function mapDispatchToProps(dispatch) {
+  return {
+    hideSideBar: () => {
+      dispatch(setSideBarActive(false));
+    }
+  }
+}
 
-export default connect(mapStateToProps, null)(ConversationListItem);
+export default connect(mapStateToProps, mapDispatchToProps)(ConversationListItem);
