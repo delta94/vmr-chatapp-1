@@ -76,3 +76,11 @@ export function onOffline(userId, status) {
 export function newUser(user) {
   return createAction('NEW_USER', user);
 }
+
+export function setSideBarActive(active) {
+  return createAction("SIDEBAR_SET_ACTIVE", active);
+}
+
+export function toggleSideBar() {
+  return createAction("TOGGLE_SIDE_BAR");
+}

@@ -3,7 +3,7 @@ import Compose from '../Compose';
 import Toolbar from '../Toolbar';
 import ToolbarButton from '../ToolbarButton';
 import {connect} from 'react-redux';
-import {getMessageFromAPI, updateActiveConservationId} from '../../redux/vmr-action';
+import {getMessageFromAPI, toggleSideBar, updateActiveConservationId} from '../../redux/vmr-action';
 import {getMessageList} from '../../service/message-list';
 import renderMessageNew from './message-render';
 
@@ -38,7 +38,10 @@ let MessageListInternal = props => {
       if (messageList.length === 0) {
         getMessageList(receiverId, messageList.length).then((data) => {
           props.updateMessageList(data, receiverId);
-          endOfMsgList.current.scrollIntoView({behavior: 'smooth'});
+          let {current} = endOfMsgList;
+          if (current) {
+            current.scrollIntoView({behavior: 'smooth'});
+          }
         });
       }
     },
@@ -82,6 +85,9 @@ let MessageListInternal = props => {
           <ToolbarButton key="info" icon="ion-ios-information-circle-outline"/>,
           <ToolbarButton key="video" icon="ion-ios-videocam"/>,
           <ToolbarButton key="phone" icon="ion-ios-call"/>
+        ]}
+        leftItems={[
+          <ToolbarButton key="cog" icon="ion-ios-arrow-dropleft" onClick={() => {props.toggleSideBar()}}/>
         ]}
       />
 
@@ -142,6 +148,9 @@ let dispatchToProps = (dispatch) => {
     },
     updateConversationId: (id) => {
       dispatch(updateActiveConservationId(id));
+    },
+    toggleSideBar: () => {
+      dispatch(toggleSideBar());
     }
   };
 };

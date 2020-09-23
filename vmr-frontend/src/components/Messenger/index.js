@@ -6,15 +6,22 @@ import MessageListWrapper from '../MessageListWrapper';
 
 function mapStateToProps(state) {
   return {
-    currentConversationId: state.currentConversationId
+    sideBarActive: state.ui.sideBarActive
   }
 }
 
-function Messenger() {
+function Messenger(props) {
+  let {sideBarActive} = props;
+
+  let sideBarClassName = "sidebar ";
+  if (window.innerWidth <= 600 && sideBarActive) {
+    sideBarClassName  += "sidebar-active";
+  }
+
   return (
     <div className="scrollable messenger">
 
-      <div className="sidebar">
+      <div className={sideBarClassName}>
         <ConversationList/>
       </div>
 
