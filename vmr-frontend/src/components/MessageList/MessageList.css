@@ -1,5 +1,5 @@
 .message-list-container {
   padding: 10px;
-  height: calc(100vh - 130px);
+  height: calc(100vh - 122px);
   overflow-y: auto;
 }

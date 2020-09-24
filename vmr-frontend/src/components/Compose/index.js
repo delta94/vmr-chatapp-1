@@ -9,6 +9,7 @@ export default function Compose(props) {
         className="compose-input"
         placeholder="Type a message, @name"
         onKeyUp={props.onKeyUp}
+        ref={props.inputRef}
       />
       {
         props.rightItems
