@@ -19,7 +19,7 @@ function ConversationListItem(props) {
   let [avatarStyle, setAvatarStyle] = useState({});
 
   let itemStyle = {
-    borderRadius: "10px",
+    borderRadius: "5px",
     marginLeft: "10px",
     marginRight: "10px"
   };

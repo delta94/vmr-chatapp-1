@@ -1,0 +1,13 @@
+.friend-search-icon{
+  margin-right: 20px;
+  color: #2f54eb !important;
+}
+
+.vmr-modal-title {
+  text-align: center;
+}
+
+.user-list-search {
+  height: 40vh;
+  overflow-y: auto;
+}

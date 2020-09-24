@@ -3,6 +3,7 @@ import ConversationList from '../ConversationList';
 import './Messenger.css';
 import {connect} from 'react-redux';
 import MessageListWrapper from '../MessageListWrapper';
+import AddFriendModal from "../AddFriendModal";
 
 function mapStateToProps(state) {
   return {
@@ -28,6 +29,8 @@ function Messenger(props) {
       <div className="scrollable content">
         <MessageListWrapper/>
       </div>
+
+      <AddFriendModal/>
     </div>
   );
 }

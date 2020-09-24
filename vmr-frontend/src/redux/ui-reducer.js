@@ -1,5 +1,6 @@
 let initialState = {
-  sideBarActive: false
+  sideBarActive: false,
+  searchUserActive: false
 }
 
 export default function uiReducer(state = initialState, action) {
@@ -16,6 +17,13 @@ export default function uiReducer(state = initialState, action) {
     return {
       ...state,
       sideBarActive: !state.sideBarActive
+    }
+  }
+
+  if (type === 'SET_SEARCH_USER_MODAL_ACTIVE') {
+    return {
+      ...state,
+      searchUserActive: data
     }
   }
 

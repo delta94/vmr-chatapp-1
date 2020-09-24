@@ -84,3 +84,7 @@ export function setSideBarActive(active) {
 export function toggleSideBar() {
   return createAction("TOGGLE_SIDE_BAR");
 }
+
+export function setSearchUserModalActive(active) {
+  return createAction("SET_SEARCH_USER_MODAL_ACTIVE", active);
+}
