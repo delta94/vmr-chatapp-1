@@ -26,6 +26,12 @@ let webSocketManager = {
       this.currentConn = null;
     }
   },
+  close() {
+    if (this.currentConn) {
+      this.currentConn.close();
+      this.currentConn = null;
+    }
+  },
   isActive() {
     return Boolean(this.currentConn);
   }
@@ -86,7 +92,7 @@ function internalConnect(token) {
 
   // Try to reconnect
   webSocket.onclose = () => {
-    webSocketManager.clean();
+    webSocketManager.close();
     setTimeout(() => {
       if (!webSocketManager.isActive() && webSocketManager.retry) {
         internalConnect(token);

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import Compose from '../Compose';
 import Toolbar from '../Toolbar';
 import ToolbarButton from '../ToolbarButton';
@@ -17,11 +17,7 @@ let MessageListInternal = props => {
   let msgList = useRef(null);
 
   let messageList = props.chatMessages;
-
-  // Scroolflag and conversationid
-
-  // Messages list
-  let messages = messageList.map((x) => {
+  let messages = messageList.map(x => {
     return {
       id: x.timestamp,
       message: x.message,
@@ -45,13 +41,17 @@ let MessageListInternal = props => {
         });
       }
     },
+    // eslint-disable-next-line
     [receiverId]
   );
 
   // Scroll to bottom of message list
   useEffect(
     () => {
-      endOfMsgList.current.scrollIntoView({behavior: 'smooth'});
+      let {current} = endOfMsgList;
+      if (current) {
+        current.scrollIntoView({behavior: 'smooth'});
+      }
     },
     [scrollFlag, currentConversationId]
   );
@@ -70,10 +70,24 @@ let MessageListInternal = props => {
     }
   };
 
+  let inputRef = useRef(null);
+  let [sendButtonActive, setSendBtnActive] = useState(false);
+
+  let handleSendButtonClick = () => {
+    let {value} = inputRef.current;
+    if (value !== '') {
+      webSocket.send(receiverId, value);
+    }
+    inputRef.current.value = '';
+    setSendBtnActive(false);
+  };
+
   let onChangeText = (event) => {
+    if (event.target.value !== '') {
+      setSendBtnActive(true);
+    }
     if (event.keyCode === 13 && event.target.value !== '') {
-      webSocket.send(receiverId, event.target.value);
-      event.target.value = '';
+      handleSendButtonClick();
     }
   };
 
@@ -87,7 +101,9 @@ let MessageListInternal = props => {
           <ToolbarButton key="phone" icon="ion-ios-call"/>
         ]}
         leftItems={[
-          <ToolbarButton key="cog" icon="ion-ios-arrow-dropleft" onClick={() => {props.toggleSideBar()}}/>
+          <ToolbarButton key="cog" icon="ion-ios-arrow-dropleft" onClick={() => {
+            props.toggleSideBar()
+          }}/>
         ]}
       />
 
@@ -100,15 +116,19 @@ let MessageListInternal = props => {
         rightItems={[
           <ToolbarButton key="photo" icon="ion-ios-camera"/>,
           <ToolbarButton key="audio" icon="ion-ios-mic"/>,
-          <ToolbarButton key="emoji" icon="ion-ios-happy"/>
+          <ToolbarButton key="emoji" icon="ion-ios-send"
+                         onClick={handleSendButtonClick}
+                         active={sendButtonActive}/>
         ]}
         onKeyUp={onChangeText}
+        inputRef={inputRef}
       />
     </div>
   );
 };
 
 let MessageList = props => {
+  // Check valid status of props
   if (!props.isValid()) {
     return null;
   }
@@ -116,6 +136,7 @@ let MessageList = props => {
   // Get receiver
   let receiverId = Number(props.match.params.receiverId);
 
+  // Render internal component
   return <MessageListInternal {...props} receiverId={receiverId}/>
 };
 

@@ -4,6 +4,10 @@
   transition: all 0.1s;
 }
 
+.toolbar-button-active {
+  color: #0063ce !important;
+}
+
 .toolbar-button:hover {
   cursor: pointer;
   color: #0063ce;

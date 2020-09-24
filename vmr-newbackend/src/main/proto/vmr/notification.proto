@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package vmr;
+
+option java_package = "com.anhvan.vmr.proto";
+
+enum NotificationType {
+  RECEIVE_NOTI = 0;
+}
+
+message Notification {
+  string message = 1;
+  int64 timestamp = 2;
+  NotificationType notiType = 3;
+}

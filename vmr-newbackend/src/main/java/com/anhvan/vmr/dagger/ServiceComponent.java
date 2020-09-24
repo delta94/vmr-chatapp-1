@@ -4,6 +4,7 @@ import com.anhvan.vmr.cache.CacheModule;
 import com.anhvan.vmr.config.ConfigModule;
 import com.anhvan.vmr.controller.ControllerModule;
 import com.anhvan.vmr.database.DatabaseModule;
+import com.anhvan.vmr.grpc.GrpcModule;
 import com.anhvan.vmr.server.GrpcServer;
 import com.anhvan.vmr.server.WebServerVerticle;
 import com.anhvan.vmr.server.WebSocketServer;
@@ -20,7 +21,8 @@ import javax.inject.Singleton;
       ControllerModule.class,
       WebSocketModule.class,
       DatabaseModule.class,
-      CacheModule.class
+      CacheModule.class,
+      GrpcModule.class
     })
 @Singleton
 public interface ServiceComponent {

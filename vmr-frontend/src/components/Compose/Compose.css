@@ -1,5 +1,5 @@
 .compose {
-  padding: 10px;
+  padding: 6px 10px;
   display: flex;
   align-items: center;
   background: white;
@@ -20,7 +20,7 @@
   border: none;
   font-size: 14px;
   height: 40px;
-  background: none;
+  background-color: #eaeaea;
 }
 
 .compose-input::placeholder {
@@ -33,5 +33,5 @@
 }
 
 .compose .toolbar-button:hover {
-  color: #99999c;
+  color: #336fff;
 }
