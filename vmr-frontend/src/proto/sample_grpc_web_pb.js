@@ -1,4 +1,4 @@
-/**
+/* eslint-disable */ /**
  * @fileoverview gRPC-Web generated client stub for vmr
  * @enhanceable
  * @public
@@ -226,4 +226,3 @@ proto.vmr.SampleServicePromiseClient.prototype.sampleStreamCall =
 
 
 module.exports = proto.vmr;
-
