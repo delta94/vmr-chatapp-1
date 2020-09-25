@@ -27,6 +27,8 @@ public class UserServiceImpl extends UserServiceImplBase {
     userListFuture.onSuccess(
         userList -> {
           UserListResponse.Builder response = UserListResponse.newBuilder();
+
+          // Convert user object to response
           for (User user : userList) {
             response.addUser(
                 UserListResponse.UserResponse.newBuilder()
@@ -35,6 +37,8 @@ public class UserServiceImpl extends UserServiceImplBase {
                     .setName(user.getName())
                     .build());
           }
+
+          // Send result to client
           responseObserver.onNext(response.build());
           responseObserver.onCompleted();
         });

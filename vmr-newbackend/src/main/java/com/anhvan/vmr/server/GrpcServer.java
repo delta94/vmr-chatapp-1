@@ -23,13 +23,22 @@ public class GrpcServer extends AbstractVerticle {
   @Inject
   public GrpcServer(
       ServerConfig serverConfig, Set<BindableService> serviceSet, AuthInterceptor authInterceptor) {
+    // Get port
     port = serverConfig.getGrpcPort();
+
     ServerBuilder<?> serverBuilder = ServerBuilder.forPort(port);
+
+    // Bind service
     for (BindableService service : serviceSet) {
       serverBuilder.addService(service);
     }
+
+    // Set authentication interceptor
     serverBuilder.intercept(authInterceptor);
+
+    // Set thread pool size
     serverBuilder.executor(Executors.newFixedThreadPool(40));
+    
     grpcServer = serverBuilder.build();
   }
 
