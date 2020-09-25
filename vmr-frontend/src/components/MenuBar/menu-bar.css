@@ -14,10 +14,12 @@
 }
 
 .menubar-item {
-  padding: 10px;
+  box-sizing: border-box;
+  margin: 2px;
   flex-basis: 25%;
   display: flex;
   justify-content: center;
+  border-radius: 5px;
 }
 
 .menubar-item-active, .menubar-item:hover {
