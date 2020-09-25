@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package vmr;
+
+option java_package = "com.anhvan.vmr.proto";
+
+import "vmr/transfer_status.proto";
+
+message TransferRequest {
+  int32 to = 1;
+  uint64 amount = 2;
+  string message = 3;
+}
+
+message TransferResponse {
+  TransferStatus transfer_status = 1;
+  string error_message = 2;
+  uint64 new_balance = 3;
+  uint64 timestamp = 4;
+}
+
+service TransferService {
+  rpc Transfer(TransferRequest) returns (TransferResponse) {};
+}

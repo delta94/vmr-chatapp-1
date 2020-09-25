@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package vmr;
+
+option java_package = "com.anhvan.vmr.proto";
+
+import "vmr/error.proto";
+
+service UserService {
+  rpc queryUser(UserListRequest) returns (UserListResponse) {}
+}
+
+message UserListRequest {
+  string query_string = 1;
+}
+
+message UserListResponse {
+  message UserResponse {
+    int32 id = 1;
+    string username = 2;
+    string name = 3;
+  }
+
+  Error error = 1;
+
+  repeated UserResponse user_list = 2;
+}

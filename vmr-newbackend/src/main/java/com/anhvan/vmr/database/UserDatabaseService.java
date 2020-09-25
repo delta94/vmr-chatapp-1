@@ -12,5 +12,7 @@ public interface UserDatabaseService {
 
   Future<User> getUserById(int id);
 
+  Future<List<User>> queryListUser(String query);
+
   Future<List<User>> getListUser();
 }

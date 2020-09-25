@@ -28,6 +28,9 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
 
   public static final String SELECT_BY_ID = "select * from users where id=?";
 
+  public static final String FIND_USER_FULLTEXT =
+      "select * from users where match(username, name) against (? IN NATURAL LANGUAGE MODE)";
+
   private MySQLPool pool;
   private AsyncWorkerUtil workerUtil;
 
@@ -142,6 +145,29 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
             });
 
     return listUserPromise.future();
+  }
+
+  @Override
+  public Future<List<User>> queryListUser(String query) {
+    log.debug("Query user with full text search");
+
+    Promise<List<User>> userListPromise = Promise.promise();
+
+    pool.preparedQuery(FIND_USER_FULLTEXT)
+        .execute(
+            Tuple.of(query),
+            rowSetRs -> {
+              if (rowSetRs.succeeded()) {
+                List<User> userList = new ArrayList<>();
+                RowSet<Row> result = rowSetRs.result();
+                result.forEach(row -> userList.add(rowToUser(row)));
+                userListPromise.complete(userList);
+              } else {
+                log.error("Fail to query user", rowSetRs.cause());
+              }
+            });
+
+    return userListPromise.future();
   }
 
   private User rowToUser(Row row) {

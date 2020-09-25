@@ -33,6 +33,7 @@ public class AuthInterceptor implements ServerInterceptor {
 
     try {
       int id = jwtUtil.authenticateBlocking(token);
+      log.debug("User id get from jwt token: {}", id);
     } catch (Exception e) {
       log.debug("Fail to authenticate jwt token", e);
       call.close(Status.UNAUTHENTICATED, headers);
