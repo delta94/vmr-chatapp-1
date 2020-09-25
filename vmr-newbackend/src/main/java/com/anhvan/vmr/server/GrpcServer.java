@@ -1,6 +1,7 @@
 package com.anhvan.vmr.server;
 
 import com.anhvan.vmr.config.ServerConfig;
+import com.anhvan.vmr.grpc.AuthInterceptor;
 import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -11,6 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.Set;
+import java.util.concurrent.Executors;
 
 @Singleton
 @Log4j2
@@ -19,12 +21,15 @@ public class GrpcServer extends AbstractVerticle {
   private int port;
 
   @Inject
-  public GrpcServer(ServerConfig serverConfig, Set<BindableService> serviceSet) {
+  public GrpcServer(
+      ServerConfig serverConfig, Set<BindableService> serviceSet, AuthInterceptor authInterceptor) {
     port = serverConfig.getGrpcPort();
     ServerBuilder<?> serverBuilder = ServerBuilder.forPort(port);
     for (BindableService service : serviceSet) {
       serverBuilder.addService(service);
     }
+    serverBuilder.intercept(authInterceptor);
+    serverBuilder.executor(Executors.newFixedThreadPool(40));
     grpcServer = serverBuilder.build();
   }
 

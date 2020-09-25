@@ -24,6 +24,9 @@ export default function chatListReducer(state = initState, action) {
     case 'LOGOUT':
       state = initState;
       break;
+    case 'NEW_USER':
+      state = handleNewUser(state, data);
+      break;
     default:
     // Do nothing
   }
@@ -43,6 +46,16 @@ function initMessages(state, userList) {
       chatMessages
     }
   });
+}
+
+
+function handleNewUser(state, user) {
+  let chatMessages = state.chatMessagesHolder.chatMessages;
+  chatMessages.set(user.id, []);
+  return {
+    ...state,
+    chatMessagesHolder: {chatMessages}
+  }
 }
 
 function handleChatReceive(state, data) {

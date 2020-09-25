@@ -1,5 +1,9 @@
 package com.anhvan.vmr.util;
 
+import com.anhvan.vmr.config.AuthConfig;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
@@ -17,11 +21,13 @@ import javax.inject.Singleton;
 public class JwtUtil {
   private JWTAuth jwtAuth;
   private AsyncWorkerUtil workerUtil;
+  private Algorithm algorithm;
 
   @Inject
-  public JwtUtil(AsyncWorkerUtil workerUtil, JWTAuth jwtAuth) {
+  public JwtUtil(AsyncWorkerUtil workerUtil, JWTAuth jwtAuth, AuthConfig authConfig) {
     this.jwtAuth = jwtAuth;
     this.workerUtil = workerUtil;
+    algorithm = Algorithm.HMAC256(authConfig.getToken());
   }
 
   public String getTokenFromHeader(@NonNull RoutingContext routingContext) {
@@ -72,5 +78,12 @@ public class JwtUtil {
         });
 
     return userIdPromise.future();
+  }
+
+  public int authenticateBlocking(@NonNull String token) {
+    DecodedJWT jwt = JWT.require(algorithm).build().verify(token);
+    int value = jwt.getClaim("userId").asInt();
+    log.debug("Get user id from jwt {}", value);
+    return value;
   }
 }

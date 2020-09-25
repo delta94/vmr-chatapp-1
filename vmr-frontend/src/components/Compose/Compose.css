@@ -5,6 +5,16 @@
   background: white;
   border-top: 1px solid #eeeef1 !important;
   border-left: 1px solid #eeeef1 !important;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 350px;
+}
+
+@media screen and (max-width: 700px) {
+  .compose {
+    left: 0 !important;
+  }
 }
 
 @supports (backdrop-filter: blur(20px)) {

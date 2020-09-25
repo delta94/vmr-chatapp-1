@@ -18,6 +18,7 @@ export function usernamePasswordLogin(username, password) {
       // Send to login page
       resolve(response.data.data);
     }).catch(error => {
+      console.log(error);
       reject(error.response.data.message);
     });
   });

@@ -95,6 +95,7 @@ let MessageListInternal = props => {
     <div className="message-list">
       <Toolbar
         title={receiver.name}
+        className="chat-title-bar"
         rightItems={[
           <ToolbarButton key="info" icon="ion-ios-information-circle-outline"/>,
           <ToolbarButton key="video" icon="ion-ios-videocam"/>,
@@ -130,6 +131,7 @@ let MessageListInternal = props => {
 let MessageList = props => {
   // Check valid status of props
   if (!props.isValid()) {
+    console.log(props);
     return null;
   }
 
