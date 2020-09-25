@@ -34,6 +34,6 @@ userClient.queryUser(userListRq, {'x-jwt-token': token}, (err, res) => {
   if (err) {
     console.log(err);
   } else {
-    console.log(res.getUserListList()[0].getName());
+    console.log(res.getUserList()[0].getName());
   }
 });

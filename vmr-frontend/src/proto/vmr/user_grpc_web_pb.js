@@ -78,8 +78,8 @@ proto.vmr.UserServicePromiseClient =
  *   !proto.vmr.UserListRequest,
  *   !proto.vmr.UserListResponse>}
  */
-const methodDescriptor_UserService_queryUser = new grpc.web.MethodDescriptor(
-  '/vmr.UserService/queryUser',
+const methodDescriptor_UserService_QueryUser = new grpc.web.MethodDescriptor(
+  '/vmr.UserService/QueryUser',
   grpc.web.MethodType.UNARY,
   proto.vmr.UserListRequest,
   proto.vmr.UserListResponse,
@@ -100,7 +100,7 @@ const methodDescriptor_UserService_queryUser = new grpc.web.MethodDescriptor(
  *   !proto.vmr.UserListRequest,
  *   !proto.vmr.UserListResponse>}
  */
-const methodInfo_UserService_queryUser = new grpc.web.AbstractClientBase.MethodInfo(
+const methodInfo_UserService_QueryUser = new grpc.web.AbstractClientBase.MethodInfo(
   proto.vmr.UserListResponse,
   /**
    * @param {!proto.vmr.UserListRequest} request
@@ -126,10 +126,10 @@ const methodInfo_UserService_queryUser = new grpc.web.AbstractClientBase.MethodI
 proto.vmr.UserServiceClient.prototype.queryUser =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/vmr.UserService/queryUser',
+      '/vmr.UserService/QueryUser',
       request,
       metadata || {},
-      methodDescriptor_UserService_queryUser,
+      methodDescriptor_UserService_QueryUser,
       callback);
 };
 
@@ -145,10 +145,10 @@ proto.vmr.UserServiceClient.prototype.queryUser =
 proto.vmr.UserServicePromiseClient.prototype.queryUser =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/vmr.UserService/queryUser',
+      '/vmr.UserService/QueryUser',
       request,
       metadata || {},
-      methodDescriptor_UserService_queryUser);
+      methodDescriptor_UserService_QueryUser);
 };
 
 

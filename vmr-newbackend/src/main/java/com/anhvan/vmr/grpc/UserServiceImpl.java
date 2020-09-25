@@ -28,7 +28,7 @@ public class UserServiceImpl extends UserServiceImplBase {
         userList -> {
           UserListResponse.Builder response = UserListResponse.newBuilder();
           for (User user : userList) {
-            response.addUserList(
+            response.addUser(
                 UserListResponse.UserResponse.newBuilder()
                     .setId(user.getId())
                     .setUsername(user.getUsername())

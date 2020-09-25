@@ -31,6 +31,7 @@ public class JwtUtilTest {
     jwtAuth = Mockito.mock(JWTAuth.class);
     workerUtil = Mockito.mock(AsyncWorkerUtil.class);
     config = Mockito.mock(AuthConfig.class);
+    Mockito.when(config.getToken()).thenReturn("12345");
     jwtUtil = new JwtUtil(workerUtil, jwtAuth, config);
 
     // Fake worker util object

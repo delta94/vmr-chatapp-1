@@ -7,7 +7,7 @@ option java_package = "com.anhvan.vmr.proto";
 import "vmr/error.proto";
 
 service UserService {
-  rpc queryUser(UserListRequest) returns (UserListResponse) {}
+  rpc QueryUser(UserListRequest) returns (UserListResponse) {}
 }
 
 message UserListRequest {
@@ -23,5 +23,5 @@ message UserListResponse {
 
   Error error = 1;
 
-  repeated UserResponse user_list = 2;
+  repeated UserResponse user = 2;
 }

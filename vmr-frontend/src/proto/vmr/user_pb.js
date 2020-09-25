@@ -212,7 +212,7 @@ proto.vmr.UserListResponse.prototype.toObject = function(opt_includeInstance) {
 proto.vmr.UserListResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     error: (f = msg.getError()) && vmr_error_pb.Error.toObject(includeInstance, f),
-    userListList: jspb.Message.toObjectList(msg.getUserListList(),
+    userList: jspb.Message.toObjectList(msg.getUserList(),
     proto.vmr.UserListResponse.UserResponse.toObject, includeInstance)
   };
 
@@ -258,7 +258,7 @@ proto.vmr.UserListResponse.deserializeBinaryFromReader = function(msg, reader) {
     case 2:
       var value = new proto.vmr.UserListResponse.UserResponse;
       reader.readMessage(value,proto.vmr.UserListResponse.UserResponse.deserializeBinaryFromReader);
-      msg.addUserList(value);
+      msg.addUser(value);
       break;
     default:
       reader.skipField();
@@ -297,7 +297,7 @@ proto.vmr.UserListResponse.serializeBinaryToWriter = function(message, writer) {
       vmr_error_pb.Error.serializeBinaryToWriter
     );
   }
-  f = message.getUserListList();
+  f = message.getUserList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
       2,
@@ -535,17 +535,17 @@ proto.vmr.UserListResponse.prototype.hasError = function() {
 
 
 /**
- * repeated UserResponse user_list = 2;
+ * repeated UserResponse user = 2;
  * @return {!Array<!proto.vmr.UserListResponse.UserResponse>}
  */
-proto.vmr.UserListResponse.prototype.getUserListList = function() {
+proto.vmr.UserListResponse.prototype.getUserList = function() {
   return /** @type{!Array<!proto.vmr.UserListResponse.UserResponse>} */ (
     jspb.Message.getRepeatedWrapperField(this, proto.vmr.UserListResponse.UserResponse, 2));
 };
 
 
 /** @param {!Array<!proto.vmr.UserListResponse.UserResponse>} value */
-proto.vmr.UserListResponse.prototype.setUserListList = function(value) {
+proto.vmr.UserListResponse.prototype.setUserList = function(value) {
   jspb.Message.setRepeatedWrapperField(this, 2, value);
 };
 
@@ -555,13 +555,13 @@ proto.vmr.UserListResponse.prototype.setUserListList = function(value) {
  * @param {number=} opt_index
  * @return {!proto.vmr.UserListResponse.UserResponse}
  */
-proto.vmr.UserListResponse.prototype.addUserList = function(opt_value, opt_index) {
+proto.vmr.UserListResponse.prototype.addUser = function(opt_value, opt_index) {
   return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.vmr.UserListResponse.UserResponse, opt_index);
 };
 
 
-proto.vmr.UserListResponse.prototype.clearUserListList = function() {
-  this.setUserListList([]);
+proto.vmr.UserListResponse.prototype.clearUserList = function() {
+  this.setUserList([]);
 };
 
 
