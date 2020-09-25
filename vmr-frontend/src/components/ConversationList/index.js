@@ -9,6 +9,7 @@ import {getUsers} from "../../service/user-list";
 import {wsConnect} from "../../service/chat-ws";
 
 import './ConversationList.css';
+import MenuBar from "../MenuBar";
 
 function ConversationList(props) {
   let currentUserId = Number(localStorage.getItem("userId"));
@@ -31,12 +32,20 @@ function ConversationList(props) {
 
   return (
     <div className="conversation-list">
-      <Toolbar
-        title="Messenger"
-        leftItems={[
-          <ToolbarButton key="cog" icon="ion-ios-cog"/>
-        ]}
-        rightItems={[
+      {/*<Toolbar*/}
+      {/*  title="Messenger"*/}
+      {/*  leftItems={[*/}
+      {/*    <ToolbarButton key="cog" icon="ion-ios-cog"/>*/}
+      {/*  ]}*/}
+      {/*  rightItems={[*/}
+      {/*    <ToolbarButton key="add" icon="ion-ios-log-out" onClick={logout}/>*/}
+      {/*  ]}*/}
+      {/*/>*/}
+      <MenuBar
+        items={[
+          <ToolbarButton key="cog" icon="ion-ios-contact"/>,
+          <ToolbarButton key="chat" isCurrent="true" icon="ion-ios-chatbubbles"/>,
+          <ToolbarButton key="bell" icon="ion-ios-notifications"/>,
           <ToolbarButton key="add" icon="ion-ios-log-out" onClick={logout}/>
         ]}
       />

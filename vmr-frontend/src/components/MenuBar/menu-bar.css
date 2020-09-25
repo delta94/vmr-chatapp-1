@@ -1,0 +1,26 @@
+.menubar {
+  display: flex;
+  align-items: center;
+
+  background-color: white;
+  font-weight: 500;
+  border-bottom: 1px solid #eeeef1 !important;
+
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: 65px;
+  justify-content: space-between;
+}
+
+.menubar-item {
+  padding: 10px;
+  flex-basis: 25%;
+  display: flex;
+  justify-content: center;
+}
+
+.menubar-item-active, .menubar-item:hover {
+  background-color: #eef2f5;
+  cursor: pointer;
+}

@@ -17,6 +17,7 @@ create table friends
     id        integer primary key auto_increment,
     user_id   integer not null,
     friend_id integer not null,
+    status    enum ('ACCEPTED', 'WAITING', 'REJECTED'),
     foreign key (user_id) references users (id),
     foreign key (friend_id) references users (id)
 );

@@ -38,7 +38,7 @@ public class GrpcServer extends AbstractVerticle {
 
     // Set thread pool size
     serverBuilder.executor(Executors.newFixedThreadPool(40));
-    
+
     grpcServer = serverBuilder.build();
   }
 
