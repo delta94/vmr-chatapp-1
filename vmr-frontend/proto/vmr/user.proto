@@ -14,10 +14,18 @@ message UserListRequest {
   string query_string = 1;
 }
 
+enum FriendStatus {
+  FRIEND = 0;
+  WAITING = 1;
+  NO_ANSWER = 2;
+  NOTHING = 3;
+}
+
 message UserResponse {
-  int32 id = 1;
+  int64 id = 1;
   string username = 2;
   string name = 3;
+  FriendStatus friendStatus = 4;
 }
 
 message UserListResponse {

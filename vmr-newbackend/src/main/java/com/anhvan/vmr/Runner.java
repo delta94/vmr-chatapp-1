@@ -30,6 +30,6 @@ public class Runner {
     // Deploy verticles
     vertx.deployVerticle(component.getWebServer());
     vertx.deployVerticle(component.getWebSocketServer());
-    vertx.deployVerticle(component.getGrpcServer());
+    component.getGrpcServer().start();
   }
 }

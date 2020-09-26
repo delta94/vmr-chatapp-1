@@ -12,6 +12,7 @@ var goog = jspb;
 var global = Function('return this')();
 
 var vmr_error_pb = require('../vmr/error_pb.js');
+goog.exportSymbol('proto.vmr.FriendStatus', null, global);
 goog.exportSymbol('proto.vmr.UserListRequest', null, global);
 goog.exportSymbol('proto.vmr.UserListResponse', null, global);
 goog.exportSymbol('proto.vmr.UserResponse', null, global);
@@ -206,7 +207,8 @@ proto.vmr.UserResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
     username: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    name: jspb.Message.getFieldWithDefault(msg, 3, "")
+    name: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    friendstatus: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -244,7 +246,7 @@ proto.vmr.UserResponse.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt32());
+      var value = /** @type {number} */ (reader.readInt64());
       msg.setId(value);
       break;
     case 2:
@@ -254,6 +256,10 @@ proto.vmr.UserResponse.deserializeBinaryFromReader = function(msg, reader) {
     case 3:
       var value = /** @type {string} */ (reader.readString());
       msg.setName(value);
+      break;
+    case 4:
+      var value = /** @type {!proto.vmr.FriendStatus} */ (reader.readEnum());
+      msg.setFriendstatus(value);
       break;
     default:
       reader.skipField();
@@ -286,7 +292,7 @@ proto.vmr.UserResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getId();
   if (f !== 0) {
-    writer.writeInt32(
+    writer.writeInt64(
       1,
       f
     );
@@ -305,11 +311,18 @@ proto.vmr.UserResponse.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
+  f = message.getFriendstatus();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      4,
+      f
+    );
+  }
 };
 
 
 /**
- * optional int32 id = 1;
+ * optional int64 id = 1;
  * @return {number}
  */
 proto.vmr.UserResponse.prototype.getId = function() {
@@ -350,6 +363,21 @@ proto.vmr.UserResponse.prototype.getName = function() {
 /** @param {string} value */
 proto.vmr.UserResponse.prototype.setName = function(value) {
   jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional FriendStatus friendStatus = 4;
+ * @return {!proto.vmr.FriendStatus}
+ */
+proto.vmr.UserResponse.prototype.getFriendstatus = function() {
+  return /** @type {!proto.vmr.FriendStatus} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/** @param {!proto.vmr.FriendStatus} value */
+proto.vmr.UserResponse.prototype.setFriendstatus = function(value) {
+  jspb.Message.setProto3EnumField(this, 4, value);
 };
 
 
@@ -564,5 +592,15 @@ proto.vmr.UserListResponse.prototype.clearUserList = function() {
   this.setUserList([]);
 };
 
+
+/**
+ * @enum {number}
+ */
+proto.vmr.FriendStatus = {
+  FRIEND: 0,
+  WAITING: 1,
+  NO_ANSWER: 2,
+  NOTHING: 3
+};
 
 goog.object.extend(exports, proto.vmr);

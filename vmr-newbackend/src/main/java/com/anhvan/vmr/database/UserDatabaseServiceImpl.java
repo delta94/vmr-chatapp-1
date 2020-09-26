@@ -1,5 +1,6 @@
 package com.anhvan.vmr.database;
 
+import com.anhvan.vmr.entity.UserWithStatus;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.util.AsyncWorkerUtil;
 import com.anhvan.vmr.util.RowMapperUtil;
@@ -30,6 +31,12 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
 
   public static final String FIND_USER_FULLTEXT =
       "select * from users where match(username, name) against (? IN NATURAL LANGUAGE MODE)";
+
+  public static final String FULL_TEXT_WITH_FRIEND_QUERY =
+      "select username, name, t1.id, t2.status "
+          + "from (select * from users where match(username, name) against(? IN NATURAL LANGUAGE MODE)) t1 "
+          + "left join (select * from friends where user_id = ?) t2 "
+          + "on t1.id = t2.friend_id";
 
   private MySQLPool pool;
   private AsyncWorkerUtil workerUtil;
@@ -161,6 +168,30 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
                 List<User> userList = new ArrayList<>();
                 RowSet<Row> result = rowSetRs.result();
                 result.forEach(row -> userList.add(rowToUser(row)));
+                userListPromise.complete(userList);
+              } else {
+                log.error("Fail to query user", rowSetRs.cause());
+              }
+            });
+
+    return userListPromise.future();
+  }
+
+  @Override
+  public Future<List<UserWithStatus>> queryListUserWithFriend(String query, long userId) {
+    log.debug("Query user with full text search");
+
+    Promise<List<UserWithStatus>> userListPromise = Promise.promise();
+
+    pool.preparedQuery(FULL_TEXT_WITH_FRIEND_QUERY)
+        .execute(
+            Tuple.of(query, userId),
+            rowSetRs -> {
+              if (rowSetRs.succeeded()) {
+                List<UserWithStatus> userList = new ArrayList<>();
+                RowSet<Row> result = rowSetRs.result();
+                result.forEach(
+                    row -> userList.add(RowMapperUtil.mapRow(row, UserWithStatus.class)));
                 userListPromise.complete(userList);
               } else {
                 log.error("Fail to query user", rowSetRs.cause());

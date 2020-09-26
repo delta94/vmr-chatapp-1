@@ -5,7 +5,6 @@ import com.anhvan.vmr.grpc.AuthInterceptor;
 import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import io.vertx.core.AbstractVerticle;
 import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
@@ -16,7 +15,7 @@ import java.util.concurrent.Executors;
 
 @Singleton
 @Log4j2
-public class GrpcServer extends AbstractVerticle {
+public class GrpcServer {
   private Server grpcServer;
   private int port;
 
@@ -42,7 +41,6 @@ public class GrpcServer extends AbstractVerticle {
     grpcServer = serverBuilder.build();
   }
 
-  @Override
   public void start() {
     try {
       grpcServer.start();
@@ -50,10 +48,5 @@ public class GrpcServer extends AbstractVerticle {
     } catch (IOException e) {
       log.error("Error when create grpc server", e);
     }
-  }
-
-  @Override
-  public void stop() {
-    grpcServer.shutdownNow();
   }
 }

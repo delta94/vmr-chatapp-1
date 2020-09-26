@@ -24,7 +24,6 @@ public class AuthInterceptor implements ServerInterceptor {
       ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
     Key<String> jwtToken = Key.of(TOKEN_HEADER_NAME, Metadata.ASCII_STRING_MARSHALLER);
     String token = headers.get(jwtToken);
-    log.debug("JwtToken = {}", token);
 
     if (token == null) {
       call.close(Status.UNAUTHENTICATED, headers);
@@ -32,14 +31,12 @@ public class AuthInterceptor implements ServerInterceptor {
     }
 
     try {
-      long id = jwtUtil.authenticateBlocking(token);
-      log.debug("User id get from jwt token: {}", id);
+      long userId = jwtUtil.authenticateBlocking(token);
+      Context context = Context.current().withValue(GrpcKey.USER_ID_KEY, String.valueOf(userId));
+      return Contexts.interceptCall(context, call, headers, next);
     } catch (Exception e) {
-      log.debug("Fail to authenticate jwt token", e);
       call.close(Status.UNAUTHENTICATED, headers);
       return new ServerCall.Listener<ReqT>() {};
     }
-
-    return next.startCall(call, headers);
   }
 }

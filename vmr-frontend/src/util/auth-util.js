@@ -4,7 +4,7 @@ export function jwtLogin(jwtToken, userId) {
 }
 
 export function getUserId() {
-  return localStorage.getItem("userId");
+  return Number(localStorage.getItem("userId"));
 }
 
 export function getJwtToken() {

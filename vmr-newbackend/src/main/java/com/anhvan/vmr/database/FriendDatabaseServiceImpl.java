@@ -11,12 +11,13 @@ import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Log4j2
 public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   private static final String ADD_FRIEND_QUERY =
-      "insert into friends(user_id, friend_id, status) values(?,?,'WAITING')";
+      "insert into friends(user_id, friend_id, status) values(?,?,?)";
 
   private static final String GET_LIST_FRIEND_QUERY =
       "select user.id, user.username, user.name from users user inner join friends friend"
@@ -27,6 +28,9 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
       "select user.id, user.username, user.name from users user inner join friends friend"
           + "on user.id = friend.user_id"
           + "where friend.friend_id = ? and status = 'WAITING'";
+
+  public static final String ACCEPT_FRIEND_REQUEST =
+      "update friends set status='ACCEPTED' where user_id=? and friend_id=?";
 
   private MySQLPool pool;
 
@@ -40,8 +44,9 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
     Promise<Long> addFriendIdPromise = Promise.promise();
 
     pool.preparedQuery(ADD_FRIEND_QUERY)
-        .execute(
-            Tuple.of(userId, friendId),
+        .executeBatch(
+            Arrays.asList(
+                Tuple.of(userId, friendId, "WAITING"), Tuple.of(friendId, userId, "NOT_ANSWER")),
             rowSetAsyncResult -> {
               if (rowSetAsyncResult.succeeded()) {
                 RowSet<Row> rs = rowSetAsyncResult.result();
@@ -113,50 +118,18 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   public Future<String> acceptFriend(long invitorId, long userId) {
     Promise<String> statusPromise = Promise.promise();
 
-    pool.getConnection(
-        ar -> {
-          if (ar.succeeded()) {
-            SqlConnection conn = ar.result();
-            Transaction transaction = conn.begin();
-
-            conn.preparedQuery(
-                    "update friends set status='ACCEPTED' where user_id=? and friend_id=?")
-                .execute(
-                    Tuple.of(invitorId, userId),
-                    updateAr -> {
-                      if (updateAr.succeeded()) {
-                        conn.preparedQuery(
-                                "insert into friends (user_id, friend_id, status) values (?, ?, 'ACCEPTED')")
-                            .execute(
-                                Tuple.of(userId, invitorId),
-                                insertRs -> {
-                                  if (insertRs.succeeded()) {
-                                    transaction.commit(
-                                        commitAr -> {
-                                          if (commitAr.succeeded()) {
-                                            statusPromise.complete();
-                                          } else {
-                                            log.error(
-                                                "Fail when commit transaction", commitAr.cause());
-                                            statusPromise.fail(commitAr.cause());
-                                          }
-                                          conn.close();
-                                        });
-
-                                  } else {
-                                    log.error("Error when accept friend", updateAr.cause());
-                                    conn.close();
-                                  }
-                                });
-
-                      } else {
-                        log.error("Error when accept friend", updateAr.cause());
-                        statusPromise.fail(updateAr.cause());
-                        conn.close();
-                      }
-                    });
-          }
-        });
+    pool.preparedQuery(ACCEPT_FRIEND_REQUEST)
+        .executeBatch(
+            Arrays.asList(Tuple.of(invitorId, userId), Tuple.of(userId, invitorId)),
+            ar -> {
+              if (ar.succeeded()) {
+                statusPromise.complete("ACCEPTED");
+              } else {
+                Throwable cause = ar.cause();
+                log.error("Error when accept friend request", cause);
+                statusPromise.fail(cause);
+              }
+            });
 
     return statusPromise.future();
   }

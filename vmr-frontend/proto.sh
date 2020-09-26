@@ -3,8 +3,6 @@
 OUT_DIR="./src/proto"
 IN_DIR="../vmr-newbackend/src/main/proto/vmr"
 
-rm $OUT_DIR/*
-
 cp -a "./$IN_DIR" "./proto"
 
 # shellcheck disable=SC2046
