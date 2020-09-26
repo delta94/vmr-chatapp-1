@@ -41,10 +41,10 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
   }
 
   @Override
-  public Future<Integer> addUser(User user) {
+  public Future<Long> addUser(User user) {
     log.info("Add user {} to database", user.getUsername());
 
-    Promise<Integer> idPromise = Promise.promise();
+    Promise<Long> idPromise = Promise.promise();
 
     workerUtil.execute(
         () -> {
@@ -64,7 +64,7 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
                   rowSetRs -> {
                     if (rowSetRs.succeeded()) {
                       RowSet<Row> rs = rowSetRs.result();
-                      idPromise.complete(rs.property(MySQLClient.LAST_INSERTED_ID).intValue());
+                      idPromise.complete(rs.property(MySQLClient.LAST_INSERTED_ID));
                     } else {
                       log.error("Error when create user {}", user.getUsername(), rowSetRs.cause());
                       idPromise.fail(rowSetRs.cause());
@@ -103,7 +103,7 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
   }
 
   @Override
-  public Future<User> getUserById(int id) {
+  public Future<User> getUserById(long id) {
     Promise<User> userPromise = Promise.promise();
     pool.preparedQuery(SELECT_BY_ID)
         .execute(

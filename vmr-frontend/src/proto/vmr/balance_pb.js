@@ -12,6 +12,7 @@ var goog = jspb;
 var global = Function('return this')();
 
 var google_protobuf_empty_pb = require('google-protobuf/google/protobuf/empty_pb.js');
+var vmr_error_pb = require('../vmr/error_pb.js');
 goog.exportSymbol('proto.vmr.BalanceResponse', null, global);
 
 /**
@@ -60,8 +61,9 @@ proto.vmr.BalanceResponse.prototype.toObject = function(opt_includeInstance) {
  */
 proto.vmr.BalanceResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    balance: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    lastUpdateTimestamp: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    error: (f = msg.getError()) && vmr_error_pb.Error.toObject(includeInstance, f),
+    balance: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    lastUpdateTimestamp: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
 
   if (includeInstance) {
@@ -99,10 +101,15 @@ proto.vmr.BalanceResponse.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = new vmr_error_pb.Error;
+      reader.readMessage(value,vmr_error_pb.Error.deserializeBinaryFromReader);
+      msg.setError(value);
+      break;
+    case 2:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setBalance(value);
       break;
-    case 2:
+    case 3:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setLastUpdateTimestamp(value);
       break;
@@ -135,50 +142,88 @@ proto.vmr.BalanceResponse.prototype.serializeBinary = function() {
  */
 proto.vmr.BalanceResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getBalance();
-  if (f !== 0) {
-    writer.writeInt64(
+  f = message.getError();
+  if (f != null) {
+    writer.writeMessage(
       1,
-      f
+      f,
+      vmr_error_pb.Error.serializeBinaryToWriter
     );
   }
-  f = message.getLastUpdateTimestamp();
+  f = message.getBalance();
   if (f !== 0) {
     writer.writeInt64(
       2,
       f
     );
   }
+  f = message.getLastUpdateTimestamp();
+  if (f !== 0) {
+    writer.writeInt64(
+      3,
+      f
+    );
+  }
 };
 
 
 /**
- * optional int64 balance = 1;
+ * optional Error error = 1;
+ * @return {?proto.vmr.Error}
+ */
+proto.vmr.BalanceResponse.prototype.getError = function() {
+  return /** @type{?proto.vmr.Error} */ (
+    jspb.Message.getWrapperField(this, vmr_error_pb.Error, 1));
+};
+
+
+/** @param {?proto.vmr.Error|undefined} value */
+proto.vmr.BalanceResponse.prototype.setError = function(value) {
+  jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+proto.vmr.BalanceResponse.prototype.clearError = function() {
+  this.setError(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {!boolean}
+ */
+proto.vmr.BalanceResponse.prototype.hasError = function() {
+  return jspb.Message.getField(this, 1) != null;
+};
+
+
+/**
+ * optional int64 balance = 2;
  * @return {number}
  */
 proto.vmr.BalanceResponse.prototype.getBalance = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
-};
-
-
-/** @param {number} value */
-proto.vmr.BalanceResponse.prototype.setBalance = function(value) {
-  jspb.Message.setProto3IntField(this, 1, value);
-};
-
-
-/**
- * optional int64 last_update_timestamp = 2;
- * @return {number}
- */
-proto.vmr.BalanceResponse.prototype.getLastUpdateTimestamp = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
 /** @param {number} value */
-proto.vmr.BalanceResponse.prototype.setLastUpdateTimestamp = function(value) {
+proto.vmr.BalanceResponse.prototype.setBalance = function(value) {
   jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional int64 last_update_timestamp = 3;
+ * @return {number}
+ */
+proto.vmr.BalanceResponse.prototype.getLastUpdateTimestamp = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/** @param {number} value */
+proto.vmr.BalanceResponse.prototype.setLastUpdateTimestamp = function(value) {
+  jspb.Message.setProto3IntField(this, 3, value);
 };
 
 

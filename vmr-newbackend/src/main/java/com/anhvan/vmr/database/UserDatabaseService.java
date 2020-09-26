@@ -6,11 +6,11 @@ import io.vertx.core.Future;
 import java.util.List;
 
 public interface UserDatabaseService {
-  Future<Integer> addUser(User user);
+  Future<Long> addUser(User user);
 
   Future<User> getUserByUsername(String username);
 
-  Future<User> getUserById(int id);
+  Future<User> getUserById(long id);
 
   Future<List<User>> queryListUser(String query);
 

@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Log4j2
 @Singleton
 public class WebSocketServiceImpl implements WebSocketService {
-  private Map<Integer, Set<ServerWebSocket>> connections = new ConcurrentHashMap<>();
+  private Map<Long, Set<ServerWebSocket>> connections = new ConcurrentHashMap<>();
   private JwtUtil jwtUtil;
 
   @Inject
@@ -25,19 +25,19 @@ public class WebSocketServiceImpl implements WebSocketService {
     this.jwtUtil = jwtUtil;
   }
 
-  public WebSocketServiceImpl(JwtUtil jwtUtil, Map<Integer, Set<ServerWebSocket>> connections) {
+  public WebSocketServiceImpl(JwtUtil jwtUtil, Map<Long, Set<ServerWebSocket>> connections) {
     this.jwtUtil = jwtUtil;
     this.connections = connections;
   }
 
   @Override
-  public Future<Integer> authenticate(ServerWebSocket conn) {
+  public Future<Long> authenticate(ServerWebSocket conn) {
     String token = conn.query().substring(6);
     return jwtUtil.authenticate(token);
   }
 
   @Override
-  public void addConnection(int userId, ServerWebSocket serverWebSocket) {
+  public void addConnection(long userId, ServerWebSocket serverWebSocket) {
     if (connections.containsKey(userId)) {
       connections.get(userId).add(serverWebSocket);
     } else {
@@ -49,7 +49,7 @@ public class WebSocketServiceImpl implements WebSocketService {
   }
 
   @Override
-  public void removeConnection(int userId, ServerWebSocket conn) {
+  public void removeConnection(long userId, ServerWebSocket conn) {
     Set<ServerWebSocket> userConns = connections.get(userId);
     if (userConns != null) {
       userConns.remove(conn);
@@ -61,7 +61,7 @@ public class WebSocketServiceImpl implements WebSocketService {
   }
 
   @Override
-  public void sendTo(int userId, WebSocketMessage msg) {
+  public void sendTo(long userId, WebSocketMessage msg) {
     String msgString = Json.encode(msg);
     Set<ServerWebSocket> receiverConn = connections.get(userId);
     for (ServerWebSocket conn : receiverConn) {
@@ -80,12 +80,12 @@ public class WebSocketServiceImpl implements WebSocketService {
   }
 
   @Override
-  public boolean checkOnline(int id) {
+  public boolean checkOnline(long id) {
     return connections.containsKey(id);
   }
 
   @Override
-  public Set<Integer> getOnlineIds() {
+  public Set<Long> getOnlineIds() {
     log.debug("Connections set {}", connections.keySet());
     return connections.keySet();
   }

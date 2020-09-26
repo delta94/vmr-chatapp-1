@@ -34,7 +34,7 @@ public class JwtUtil {
     return routingContext.request().getHeader("Authorization").substring(7);
   }
 
-  public Future<String> generate(int userId) {
+  public Future<String> generate(long userId) {
     Promise<String> tokenPromise = Promise.promise();
 
     workerUtil.execute(
@@ -46,7 +46,7 @@ public class JwtUtil {
     return tokenPromise.future();
   }
 
-  public Future<String> generate(int userId, int timeToLive) {
+  public Future<String> generate(long userId, int timeToLive) {
     Promise<String> tokenPromise = Promise.promise();
 
     workerUtil.execute(
@@ -61,14 +61,14 @@ public class JwtUtil {
     return tokenPromise.future();
   }
 
-  public Future<Integer> authenticate(@NonNull String token) {
-    Promise<Integer> userIdPromise = Promise.promise();
+  public Future<Long> authenticate(@NonNull String token) {
+    Promise<Long> userIdPromise = Promise.promise();
 
     jwtAuth.authenticate(
         new JsonObject().put("jwt", token),
         userAsyncResult -> {
           if (userAsyncResult.succeeded()) {
-            int userId = userAsyncResult.result().principal().getInteger("userId");
+            long userId = userAsyncResult.result().principal().getLong("userId");
             userIdPromise.complete(userId);
             log.info("Parse jwt for user {} successfully", userId);
           } else {
@@ -80,9 +80,9 @@ public class JwtUtil {
     return userIdPromise.future();
   }
 
-  public int authenticateBlocking(@NonNull String token) {
+  public long authenticateBlocking(@NonNull String token) {
     DecodedJWT jwt = JWT.require(algorithm).build().verify(token);
-    int value = jwt.getClaim("userId").asInt();
+    long value = jwt.getClaim("userId").asLong();
     log.debug("Get user id from jwt {}", value);
     return value;
   }

@@ -14,14 +14,13 @@ message UserListRequest {
   string query_string = 1;
 }
 
+message UserResponse {
+  int32 id = 1;
+  string username = 2;
+  string name = 3;
+}
+
 message UserListResponse {
-  message UserResponse {
-    int32 id = 1;
-    string username = 2;
-    string name = 3;
-  }
-
   Error error = 1;
-
   repeated UserResponse user = 2;
 }

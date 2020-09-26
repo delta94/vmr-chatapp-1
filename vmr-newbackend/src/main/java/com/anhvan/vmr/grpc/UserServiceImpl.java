@@ -4,6 +4,7 @@ import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.proto.User.UserListRequest;
 import com.anhvan.vmr.proto.User.UserListResponse;
+import com.anhvan.vmr.proto.User.UserResponse;
 import com.anhvan.vmr.proto.UserServiceGrpc.UserServiceImplBase;
 import io.grpc.stub.StreamObserver;
 import io.vertx.core.Future;
@@ -31,7 +32,7 @@ public class UserServiceImpl extends UserServiceImplBase {
           // Convert user object to response
           for (User user : userList) {
             response.addUser(
-                UserListResponse.UserResponse.newBuilder()
+                UserResponse.newBuilder()
                     .setId(user.getId())
                     .setUsername(user.getUsername())
                     .setName(user.getName())

@@ -1,6 +1,7 @@
 let initialState = {
-  sideBarActive: false,
-  searchUserActive: false
+  sideBarActive: true,
+  searchUserActive: false,
+  currentTab: 'chat'
 }
 
 export default function uiReducer(state = initialState, action) {
@@ -24,6 +25,13 @@ export default function uiReducer(state = initialState, action) {
     return {
       ...state,
       searchUserActive: data
+    }
+  }
+
+  if (type === 'SET_TAB') {
+    return {
+      ...state,
+      currentTab: data
     }
   }
 

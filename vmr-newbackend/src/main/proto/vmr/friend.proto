@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package vmr;
+
+option java_package = "com.anhvan.vmr.proto";
+
+import "vmr/error.proto";
+
+service FriendService {
+  rpc AddFriend(AddFriendRequest) returns (AddFriendResponse) {};
+}
+
+message AddFriendRequest {
+  int64 user_id = 1;
+}
+
+message AddFriendResponse {
+  Error error = 1;
+}
+
+message Friend {
+  int64 id = 1;
+  string username = 2;
+  string name = 3;
+  bool online = 4;
+}

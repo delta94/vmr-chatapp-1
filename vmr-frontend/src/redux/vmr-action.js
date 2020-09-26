@@ -88,3 +88,7 @@ export function toggleSideBar() {
 export function setSearchUserModalActive(active) {
   return createAction("SET_SEARCH_USER_MODAL_ACTIVE", active);
 }
+
+export function setTab(tab) {
+  return createAction("SET_TAB", tab);
+}

@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 public class UserResponse {
   private Boolean online;
-  private int id;
+  private long id;
   private String name;
   private String username;
 

@@ -17,6 +17,8 @@ grpc.web = require('grpc-web');
 
 
 var google_protobuf_empty_pb = require('google-protobuf/google/protobuf/empty_pb.js')
+
+var vmr_error_pb = require('../vmr/error_pb.js')
 const proto = {};
 proto.vmr = require('./balance_pb.js');
 

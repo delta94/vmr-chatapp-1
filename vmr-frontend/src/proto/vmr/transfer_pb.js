@@ -11,7 +11,7 @@ var jspb = require('google-protobuf');
 var goog = jspb;
 var global = Function('return this')();
 
-var vmr_transfer_status_pb = require('../vmr/transfer_status_pb.js');
+var vmr_error_pb = require('../vmr/error_pb.js');
 goog.exportSymbol('proto.vmr.TransferRequest', null, global);
 goog.exportSymbol('proto.vmr.TransferResponse', null, global);
 
@@ -257,7 +257,7 @@ proto.vmr.TransferResponse.prototype.toObject = function(opt_includeInstance) {
  */
 proto.vmr.TransferResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    transferStatus: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    error: (f = msg.getError()) && vmr_error_pb.Error.toObject(includeInstance, f),
     errorMessage: jspb.Message.getFieldWithDefault(msg, 2, ""),
     newBalance: jspb.Message.getFieldWithDefault(msg, 3, 0),
     timestamp: jspb.Message.getFieldWithDefault(msg, 4, 0)
@@ -298,8 +298,9 @@ proto.vmr.TransferResponse.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {!proto.vmr.TransferStatus} */ (reader.readEnum());
-      msg.setTransferStatus(value);
+      var value = new vmr_error_pb.Error;
+      reader.readMessage(value,vmr_error_pb.Error.deserializeBinaryFromReader);
+      msg.setError(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
@@ -342,11 +343,12 @@ proto.vmr.TransferResponse.prototype.serializeBinary = function() {
  */
 proto.vmr.TransferResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getTransferStatus();
-  if (f !== 0.0) {
-    writer.writeEnum(
+  f = message.getError();
+  if (f != null) {
+    writer.writeMessage(
       1,
-      f
+      f,
+      vmr_error_pb.Error.serializeBinaryToWriter
     );
   }
   f = message.getErrorMessage();
@@ -374,17 +376,32 @@ proto.vmr.TransferResponse.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional TransferStatus transfer_status = 1;
- * @return {!proto.vmr.TransferStatus}
+ * optional Error error = 1;
+ * @return {?proto.vmr.Error}
  */
-proto.vmr.TransferResponse.prototype.getTransferStatus = function() {
-  return /** @type {!proto.vmr.TransferStatus} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+proto.vmr.TransferResponse.prototype.getError = function() {
+  return /** @type{?proto.vmr.Error} */ (
+    jspb.Message.getWrapperField(this, vmr_error_pb.Error, 1));
 };
 
 
-/** @param {!proto.vmr.TransferStatus} value */
-proto.vmr.TransferResponse.prototype.setTransferStatus = function(value) {
-  jspb.Message.setProto3EnumField(this, 1, value);
+/** @param {?proto.vmr.Error|undefined} value */
+proto.vmr.TransferResponse.prototype.setError = function(value) {
+  jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+proto.vmr.TransferResponse.prototype.clearError = function() {
+  this.setError(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {!boolean}
+ */
+proto.vmr.TransferResponse.prototype.hasError = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 

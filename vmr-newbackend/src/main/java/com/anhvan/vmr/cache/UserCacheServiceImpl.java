@@ -28,7 +28,7 @@ public class UserCacheServiceImpl implements UserCacheService {
     this.cacheConfig = cacheConfig;
   }
 
-  private String getUserKey(int userId) {
+  private String getUserKey(long userId) {
     String keyPattern = "vmr:user:%d:info";
     return String.format(keyPattern, userId);
   }

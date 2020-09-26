@@ -215,8 +215,7 @@ proto.vmr.Error.prototype.clearExtraMap = function() {
  * @enum {number}
  */
 proto.vmr.ErrorCode = {
-  SUCCESS: 0,
-  FAILUE: 1
+  FAILUE: 0
 };
 
 goog.object.extend(exports, proto.vmr);

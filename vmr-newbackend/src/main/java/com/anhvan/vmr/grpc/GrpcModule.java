@@ -1,5 +1,6 @@
 package com.anhvan.vmr.grpc;
 
+import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import dagger.Module;
 import dagger.Provides;
@@ -29,5 +30,12 @@ public class GrpcModule {
   @Singleton
   public BindableService provideUserServiceImpl(UserDatabaseService service) {
     return UserServiceImpl.builder().userDbService(service).build();
+  }
+
+  @Provides
+  @IntoSet
+  @Singleton
+  public BindableService provideFriendServiceImpl(FriendDatabaseService service) {
+    return FriendServiceImpl.builder().friendDbService(service).build();
   }
 }

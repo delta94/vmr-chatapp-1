@@ -4,7 +4,7 @@ package vmr;
 
 option java_package = "com.anhvan.vmr.proto";
 
-import "vmr/transfer_status.proto";
+import "vmr/error.proto";
 
 message TransferRequest {
   int32 to = 1;
@@ -13,7 +13,7 @@ message TransferRequest {
 }
 
 message TransferResponse {
-  TransferStatus transfer_status = 1;
+  Error error = 1;
   string error_message = 2;
   uint64 new_balance = 3;
   uint64 timestamp = 4;

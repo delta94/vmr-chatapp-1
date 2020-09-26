@@ -37,7 +37,7 @@ public class WebSocketFactory {
         .onComplete(userIdRs -> handleAfterAuthentication(userIdRs, conn));
   }
 
-  private void handleAfterAuthentication(AsyncResult<Integer> userIdRs, ServerWebSocket conn) {
+  private void handleAfterAuthentication(AsyncResult<Long> userIdRs, ServerWebSocket conn) {
     log.debug("Auth status: {}", userIdRs.succeeded());
     if (userIdRs.succeeded()) {
       // Authentication successfully

@@ -5,8 +5,7 @@ package vmr;
 option java_package = "com.anhvan.vmr.proto";
 
 import "google/protobuf/empty.proto";
-
-import "vmr/transfer_status.proto";
+import "vmr/error.proto";
 
 service HistoryService {
   rpc getHistory(google.protobuf.Empty) returns (stream HistoryResponse);
@@ -18,6 +17,11 @@ enum HistoryResponseType {
 }
 
 message TransferHistoryResponse {
+  enum TransferStatus {
+    TRANSFER_SUCCESS = 0;
+    TRANSFER_FAILUE = 1;
+  }
+
   int64 to = 1;
   int64 timestamp = 2;
   int64 amount = 3;
@@ -34,4 +38,9 @@ message HistoryResponse {
   HistoryResponseType type = 1;
   TransferHistoryResponse transfer_response = 2;
   ReceiveHistoryResponse receive_response = 3;
+}
+
+message HistoryListResponse {
+  Error error = 1;
+  repeated HistoryResponse history_response = 2;
 }
