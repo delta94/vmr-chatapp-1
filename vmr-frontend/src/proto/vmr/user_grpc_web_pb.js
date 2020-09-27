@@ -19,6 +19,8 @@ grpc.web = require('grpc-web');
 var vmr_error_pb = require('../vmr/error_pb.js')
 
 var vmr_friend_pb = require('../vmr/friend_pb.js')
+
+var vmr_empty_pb = require('../vmr/empty_pb.js')
 const proto = {};
 proto.vmr = require('./user_pb.js');
 
@@ -151,6 +153,86 @@ proto.vmr.UserServicePromiseClient.prototype.queryUser =
       request,
       metadata || {},
       methodDescriptor_UserService_QueryUser);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.vmr.Empty,
+ *   !proto.vmr.UserResponse>}
+ */
+const methodDescriptor_UserService_GetInfo = new grpc.web.MethodDescriptor(
+  '/vmr.UserService/GetInfo',
+  grpc.web.MethodType.UNARY,
+  vmr_empty_pb.Empty,
+  proto.vmr.UserResponse,
+  /**
+   * @param {!proto.vmr.Empty} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.UserResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.vmr.Empty,
+ *   !proto.vmr.UserResponse>}
+ */
+const methodInfo_UserService_GetInfo = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.vmr.UserResponse,
+  /**
+   * @param {!proto.vmr.Empty} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.UserResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.vmr.Empty} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.vmr.UserResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.vmr.UserResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.vmr.UserServiceClient.prototype.getInfo =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/vmr.UserService/GetInfo',
+      request,
+      metadata || {},
+      methodDescriptor_UserService_GetInfo,
+      callback);
+};
+
+
+/**
+ * @param {!proto.vmr.Empty} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.vmr.UserResponse>}
+ *     Promise that resolves to the response
+ */
+proto.vmr.UserServicePromiseClient.prototype.getInfo =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/vmr.UserService/GetInfo',
+      request,
+      metadata || {},
+      methodDescriptor_UserService_GetInfo);
 };
 
 

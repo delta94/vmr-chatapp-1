@@ -23,7 +23,6 @@ function ConversationList(props) {
 
   useEffect(() => {
     getChatFriendList().then(result => {
-      console.log(result.getFriendinfoList().length);
       dispatch(updateUserList(result.getFriendinfoList().map(x => {
         console.log(x.getOnline());
         return {

@@ -6,9 +6,11 @@ option java_package = "com.anhvan.vmr.proto";
 
 import "vmr/error.proto";
 import "vmr/friend.proto";
+import "vmr/empty.proto";
 
 service UserService {
-  rpc QueryUser(UserListRequest) returns (UserListResponse) {}
+  rpc QueryUser(UserListRequest) returns (UserListResponse);
+  rpc GetInfo(Empty) returns (UserResponse);
 }
 
 message UserListRequest {

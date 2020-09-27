@@ -1,7 +1,8 @@
-import {getJwtToken} from "../util/auth-util";
+import {getJwtToken, getGrpcTokenMetadata} from "../util/auth-util";
 
 const {UserListRequest} = require('../proto/vmr/user_pb');
 const {UserServiceClient} = require('../proto/vmr/user_grpc_web_pb');
+const {Empty} = require('../proto/vmr/empty_pb');
 
 let ENVOY_ROOT = process.env.REACT_APP_ENVOY_ROOT;
 
@@ -19,6 +20,18 @@ export function queryUser(queryString) {
         console.log(err);
       } else {
         resolve(res.getUserList());
+      }
+    });
+  });
+}
+
+export function getUserInfo() {
+  return new Promise((resolve, reject) => {
+    userClient.getInfo(new Empty(), getGrpcTokenMetadata(), (err, res) => {
+      if (err) {
+        console.log(err);
+      } else {
+        resolve(res);
       }
     });
   });

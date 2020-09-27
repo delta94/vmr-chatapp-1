@@ -17,9 +17,13 @@ __VMR Chat__ là ứng dụng chat realtime với tính năng cơ bản. Là pro
 
 - Đăng ký
 - Đăng nhập - đăng xuất sử dụng JWT
-- Xem danh sách người dùng trong hệ thống
+- Tìm kiếm bạn bè
+- Kết bạn
 - Chat 1 - 1
 - Hiện trạng thái online của người dùng
+- Chuyển tiền
+- Xem số dư
+- Hiện lịch sử giao dịch
 
 Các công nghệ sử dụng:
 
@@ -55,6 +59,8 @@ docker-compose up -d
 
 ## 4. Thiết kế
 
+- [Mockup](https://balsamiq.cloud/seo701z/pbade9k)
+- [GRPC API Design](report/doc/grpc-design.md)
 - [API design](https://app.swaggerhub.com/apis-docs/anhvan1999/vmr-chat/1.0.0)
 - [Sequence diagrams](report/doc/sequence-diagrams.md)
 - [Database schema](report/doc/database-diagrams.md)

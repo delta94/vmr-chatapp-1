@@ -4,34 +4,30 @@ package vmr;
 
 option java_package = "com.anhvan.vmr.proto";
 
-import "google/protobuf/empty.proto";
+import "vmr/empty.proto";
 import "vmr/error.proto";
 
 service HistoryService {
-  rpc getHistory(google.protobuf.Empty) returns (stream HistoryResponse);
+  rpc GetHistory(Empty) returns (HistoryListResponse);
 }
 
 enum HistoryResponseType {
-  TRANSFER = 0;
-  RECEIVE = 1;
+  HISTORY_TRANSFER = 0;
+  HISTORY_RECEIVE = 1;
 }
 
 message TransferHistoryResponse {
-  enum TransferStatus {
-    TRANSFER_SUCCESS = 0;
-    TRANSFER_FAILUE = 1;
-  }
-
   int64 to = 1;
   int64 timestamp = 2;
   int64 amount = 3;
-  TransferStatus transfer_status = 4;
+  string message = 4;
 }
 
 message ReceiveHistoryResponse {
   int64 from = 1;
   int64 timestamp = 2;
   int64 amount = 3;
+  string message = 4;
 }
 
 message HistoryResponse {

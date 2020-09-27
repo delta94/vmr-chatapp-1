@@ -13,6 +13,7 @@ var global = Function('return this')();
 
 var vmr_error_pb = require('../vmr/error_pb.js');
 var vmr_friend_pb = require('../vmr/friend_pb.js');
+var vmr_empty_pb = require('../vmr/empty_pb.js');
 goog.exportSymbol('proto.vmr.UserListRequest', null, global);
 goog.exportSymbol('proto.vmr.UserListResponse', null, global);
 goog.exportSymbol('proto.vmr.UserResponse', null, global);
