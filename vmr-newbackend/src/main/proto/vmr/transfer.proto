@@ -14,7 +14,6 @@ message TransferRequest {
 
 message TransferResponse {
   Error error = 1;
-  string error_message = 2;
   uint64 new_balance = 3;
   uint64 timestamp = 4;
 }

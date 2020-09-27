@@ -3,7 +3,8 @@ package com.anhvan.vmr.grpc;
 import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.entity.UserWithStatus;
-import com.anhvan.vmr.proto.Friend.FriendStatus;
+import com.anhvan.vmr.model.User;
+import com.anhvan.vmr.proto.EmptyOuterClass;
 import com.anhvan.vmr.proto.User.UserListRequest;
 import com.anhvan.vmr.proto.User.UserListResponse;
 import com.anhvan.vmr.proto.User.UserResponse;
@@ -56,5 +57,30 @@ public class UserServiceImpl extends UserServiceImplBase {
 
     userListFuture.onFailure(
         event -> responseObserver.onError(new Exception("Internal server error")));
+  }
+
+  @Override
+  public void getInfo(
+      EmptyOuterClass.Empty request, StreamObserver<UserResponse> responseObserver) {
+    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+
+    userDbService
+        .getUserById(userId)
+        .onComplete(
+            ar -> {
+              if (ar.succeeded()) {
+                User user = ar.result();
+                UserResponse response =
+                    UserResponse.newBuilder()
+                        .setId(user.getId())
+                        .setUsername(user.getUsername())
+                        .setName(user.getName())
+                        .build();
+                responseObserver.onNext(response);
+              } else {
+                log.error("Error when get user info");
+              }
+              responseObserver.onCompleted();
+            });
   }
 }

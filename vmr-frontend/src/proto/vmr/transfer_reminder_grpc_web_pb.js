@@ -16,11 +16,9 @@ const grpc = {};
 grpc.web = require('grpc-web');
 
 
-var vmr_empty_pb = require('../vmr/empty_pb.js')
-
 var vmr_error_pb = require('../vmr/error_pb.js')
 const proto = {};
-proto.vmr = require('./history_pb.js');
+proto.vmr = require('./transfer_reminder_pb.js');
 
 /**
  * @param {string} hostname
@@ -30,7 +28,7 @@ proto.vmr = require('./history_pb.js');
  * @struct
  * @final
  */
-proto.vmr.HistoryServiceClient =
+proto.vmr.TransferReminderServiceClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
   options['format'] = 'text';
@@ -56,7 +54,7 @@ proto.vmr.HistoryServiceClient =
  * @struct
  * @final
  */
-proto.vmr.HistoryServicePromiseClient =
+proto.vmr.TransferReminderServicePromiseClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
   options['format'] = 'text';
@@ -77,80 +75,80 @@ proto.vmr.HistoryServicePromiseClient =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.vmr.Empty,
- *   !proto.vmr.HistoryListResponse>}
+ *   !proto.vmr.TransferReminderRequest,
+ *   !proto.vmr.TransferReminderResponse>}
  */
-const methodDescriptor_HistoryService_GetHistory = new grpc.web.MethodDescriptor(
-  '/vmr.HistoryService/GetHistory',
+const methodDescriptor_TransferReminderService_RemindTransfer = new grpc.web.MethodDescriptor(
+  '/vmr.TransferReminderService/RemindTransfer',
   grpc.web.MethodType.UNARY,
-  vmr_empty_pb.Empty,
-  proto.vmr.HistoryListResponse,
+  proto.vmr.TransferReminderRequest,
+  proto.vmr.TransferReminderResponse,
   /**
-   * @param {!proto.vmr.Empty} request
+   * @param {!proto.vmr.TransferReminderRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.vmr.HistoryListResponse.deserializeBinary
+  proto.vmr.TransferReminderResponse.deserializeBinary
 );
 
 
 /**
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.vmr.Empty,
- *   !proto.vmr.HistoryListResponse>}
+ *   !proto.vmr.TransferReminderRequest,
+ *   !proto.vmr.TransferReminderResponse>}
  */
-const methodInfo_HistoryService_GetHistory = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.vmr.HistoryListResponse,
+const methodInfo_TransferReminderService_RemindTransfer = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.vmr.TransferReminderResponse,
   /**
-   * @param {!proto.vmr.Empty} request
+   * @param {!proto.vmr.TransferReminderRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.vmr.HistoryListResponse.deserializeBinary
+  proto.vmr.TransferReminderResponse.deserializeBinary
 );
 
 
 /**
- * @param {!proto.vmr.Empty} request The
+ * @param {!proto.vmr.TransferReminderRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.Error, ?proto.vmr.HistoryListResponse)}
+ * @param {function(?grpc.web.Error, ?proto.vmr.TransferReminderResponse)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.vmr.HistoryListResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.vmr.TransferReminderResponse>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.vmr.HistoryServiceClient.prototype.getHistory =
+proto.vmr.TransferReminderServiceClient.prototype.remindTransfer =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/vmr.HistoryService/GetHistory',
+      '/vmr.TransferReminderService/RemindTransfer',
       request,
       metadata || {},
-      methodDescriptor_HistoryService_GetHistory,
+      methodDescriptor_TransferReminderService_RemindTransfer,
       callback);
 };
 
 
 /**
- * @param {!proto.vmr.Empty} request The
+ * @param {!proto.vmr.TransferReminderRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.vmr.HistoryListResponse>}
+ * @return {!Promise<!proto.vmr.TransferReminderResponse>}
  *     Promise that resolves to the response
  */
-proto.vmr.HistoryServicePromiseClient.prototype.getHistory =
+proto.vmr.TransferReminderServicePromiseClient.prototype.remindTransfer =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/vmr.HistoryService/GetHistory',
+      '/vmr.TransferReminderService/RemindTransfer',
       request,
       metadata || {},
-      methodDescriptor_HistoryService_GetHistory);
+      methodDescriptor_TransferReminderService_RemindTransfer);
 };
 
 
