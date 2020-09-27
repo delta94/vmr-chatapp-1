@@ -7,6 +7,7 @@
     - [3.1 Register](#31-register)
     - [3.2 Login](#32-login)
     - [3.3 Hiện danh sách user, chat 1-1](#33-hiện-danh-sách-user-chat-1-1)
+    - [3.4 Thêm bạn bè](#34-thêm-bạn-bè)
   - [4. Thiết kế](#4-thiết-kế)
 
 ## 1. Tổng quan
@@ -55,7 +56,11 @@ docker-compose up -d
 
 ### 3.3 Hiện danh sách user, chat 1-1
 
-![Chat](report/img/demo/chat.png)
+![Chat](report/img/demo/chat-1-1.png)
+
+### 3.4 Thêm bạn bè
+
+![Add friend](report/img/demo/add-friend.png)
 
 ## 4. Thiết kế
 
