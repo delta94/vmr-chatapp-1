@@ -1,13 +1,15 @@
 package com.anhvan.vmr.database;
 
 import com.anhvan.vmr.entity.UserWithStatus;
-import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.util.RowMapperUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.mysqlclient.MySQLClient;
 import io.vertx.mysqlclient.MySQLPool;
-import io.vertx.sqlclient.*;
+import io.vertx.sqlclient.Row;
+import io.vertx.sqlclient.RowSet;
+import io.vertx.sqlclient.Transaction;
+import io.vertx.sqlclient.Tuple;
 import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
@@ -25,10 +27,10 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
           + "on user.id = friend.friend_id "
           + "where friend.user_id = ?";
 
-  private static final String GET_FRIEND_INVITATION_QUERY =
-      "select user.id, user.username, user.name from users user inner join friends friend"
-          + "on user.id = friend.user_id"
-          + "where friend.friend_id = ? and status = 'WAITING'";
+  private static final String GET_CHAT_LIST_FRIEND_QUERY =
+      "select user.id, user.username, user.name from users user inner join friends friend "
+          + "on user.id = friend.friend_id "
+          + "where friend.user_id = ? and friend.status='ACCEPTED'";
 
   public static final String ACCEPT_FRIEND_REQUEST =
       "update friends set status='ACCEPTED' where user_id=? and friend_id=?";
@@ -110,31 +112,6 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   }
 
   @Override
-  public Future<List<User>> getFriendInvitation(long userId) {
-    Promise<List<User>> invitationPromise = Promise.promise();
-
-    pool.preparedQuery(GET_FRIEND_INVITATION_QUERY)
-        .execute(
-            Tuple.of(userId),
-            rowSetAsyncRs -> {
-              if (rowSetAsyncRs.succeeded()) {
-                RowSet<Row> rowSet = rowSetAsyncRs.result();
-                List<User> userList = new ArrayList<>();
-                for (Row row : rowSet) {
-                  userList.add(RowMapperUtil.mapRow(row, User.class));
-                }
-                invitationPromise.complete(userList);
-              } else {
-                Throwable cause = rowSetAsyncRs.cause();
-                log.error("Error when get friend list of user {}", userId, cause);
-                invitationPromise.fail(cause);
-              }
-            });
-
-    return invitationPromise.future();
-  }
-
-  @Override
   public Future<String> acceptFriend(long invitorId, long userId) {
     Promise<String> statusPromise = Promise.promise();
 
@@ -152,5 +129,50 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
             });
 
     return statusPromise.future();
+  }
+
+  @Override
+  public Future<String> rejectFriend(long invitorId, long userId) {
+    Promise<String> statusPromise = Promise.promise();
+
+    pool.preparedQuery("delete from friends where (user_id=? and friend_id=?)")
+        .executeBatch(
+            Arrays.asList(Tuple.of(userId, invitorId), Tuple.of(invitorId, userId)),
+            ar -> {
+              if (ar.succeeded()) {
+                statusPromise.complete("OK");
+              } else {
+                Throwable cause = ar.cause();
+                log.error("Error when remove friend", cause);
+                statusPromise.fail(cause);
+              }
+            });
+
+    return statusPromise.future();
+  }
+
+  @Override
+  public Future<List<UserWithStatus>> getChatFriendList(long userId) {
+    Promise<List<UserWithStatus>> friendListPromise = Promise.promise();
+
+    pool.preparedQuery(GET_CHAT_LIST_FRIEND_QUERY)
+        .execute(
+            Tuple.of(userId),
+            rowSetAsyncRs -> {
+              if (rowSetAsyncRs.succeeded()) {
+                RowSet<Row> rowSet = rowSetAsyncRs.result();
+                List<UserWithStatus> userList = new ArrayList<>();
+                for (Row row : rowSet) {
+                  userList.add(RowMapperUtil.mapRow(row, UserWithStatus.class));
+                }
+                friendListPromise.complete(userList);
+              } else {
+                Throwable cause = rowSetAsyncRs.cause();
+                log.error("Error when get friend list of user {}", userId, cause);
+                friendListPromise.fail(cause);
+              }
+            });
+
+    return friendListPromise.future();
   }
 }

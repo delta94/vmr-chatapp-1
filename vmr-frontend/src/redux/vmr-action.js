@@ -92,3 +92,7 @@ export function setSearchUserModalActive(active) {
 export function setTab(tab) {
   return createAction("SET_TAB", tab);
 }
+
+export function friendReload() {
+  return createAction('FRIEND_RELOAD');
+}

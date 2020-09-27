@@ -314,4 +314,164 @@ proto.vmr.FriendServicePromiseClient.prototype.acceptFriend =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.vmr.RejectFriendRequest,
+ *   !proto.vmr.RejectFriendResponse>}
+ */
+const methodDescriptor_FriendService_RejectFriend = new grpc.web.MethodDescriptor(
+  '/vmr.FriendService/RejectFriend',
+  grpc.web.MethodType.UNARY,
+  proto.vmr.RejectFriendRequest,
+  proto.vmr.RejectFriendResponse,
+  /**
+   * @param {!proto.vmr.RejectFriendRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.RejectFriendResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.vmr.RejectFriendRequest,
+ *   !proto.vmr.RejectFriendResponse>}
+ */
+const methodInfo_FriendService_RejectFriend = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.vmr.RejectFriendResponse,
+  /**
+   * @param {!proto.vmr.RejectFriendRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.RejectFriendResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.vmr.RejectFriendRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.vmr.RejectFriendResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.vmr.RejectFriendResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.vmr.FriendServiceClient.prototype.rejectFriend =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/vmr.FriendService/RejectFriend',
+      request,
+      metadata || {},
+      methodDescriptor_FriendService_RejectFriend,
+      callback);
+};
+
+
+/**
+ * @param {!proto.vmr.RejectFriendRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.vmr.RejectFriendResponse>}
+ *     Promise that resolves to the response
+ */
+proto.vmr.FriendServicePromiseClient.prototype.rejectFriend =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/vmr.FriendService/RejectFriend',
+      request,
+      metadata || {},
+      methodDescriptor_FriendService_RejectFriend);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.vmr.Empty,
+ *   !proto.vmr.FriendListResponse>}
+ */
+const methodDescriptor_FriendService_GetChatFriendList = new grpc.web.MethodDescriptor(
+  '/vmr.FriendService/GetChatFriendList',
+  grpc.web.MethodType.UNARY,
+  vmr_empty_pb.Empty,
+  proto.vmr.FriendListResponse,
+  /**
+   * @param {!proto.vmr.Empty} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.FriendListResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.vmr.Empty,
+ *   !proto.vmr.FriendListResponse>}
+ */
+const methodInfo_FriendService_GetChatFriendList = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.vmr.FriendListResponse,
+  /**
+   * @param {!proto.vmr.Empty} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.FriendListResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.vmr.Empty} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.vmr.FriendListResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.vmr.FriendListResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.vmr.FriendServiceClient.prototype.getChatFriendList =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/vmr.FriendService/GetChatFriendList',
+      request,
+      metadata || {},
+      methodDescriptor_FriendService_GetChatFriendList,
+      callback);
+};
+
+
+/**
+ * @param {!proto.vmr.Empty} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.vmr.FriendListResponse>}
+ *     Promise that resolves to the response
+ */
+proto.vmr.FriendServicePromiseClient.prototype.getChatFriendList =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/vmr.FriendService/GetChatFriendList',
+      request,
+      metadata || {},
+      methodDescriptor_FriendService_GetChatFriendList);
+};
+
+
 module.exports = proto.vmr;

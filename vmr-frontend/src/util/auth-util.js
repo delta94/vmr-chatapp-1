@@ -14,3 +14,7 @@ export function getJwtToken() {
 export function logout() {
   localStorage.clear();
 }
+
+export function getGrpcTokenMetadata() {
+  return {'x-jwt-token': getJwtToken()};
+}

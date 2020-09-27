@@ -1,9 +1,9 @@
 package com.anhvan.vmr.server;
 
-import com.anhvan.vmr.cache.ChatCacheServiceImpl;
+import com.anhvan.vmr.cache.ChatCacheService;
 import com.anhvan.vmr.database.ChatDatabaseService;
 import com.anhvan.vmr.websocket.WebSocketHandler;
-import com.anhvan.vmr.websocket.WebSocketServiceImpl;
+import com.anhvan.vmr.websocket.WebSocketService;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.json.JsonObject;
@@ -15,15 +15,15 @@ import javax.inject.Singleton;
 @Log4j2
 @Singleton
 public class WebSocketFactory {
-  private WebSocketServiceImpl webSocketService;
+  private WebSocketService webSocketService;
   private ChatDatabaseService chatDatabaseService;
-  private ChatCacheServiceImpl chatCacheService;
+  private ChatCacheService chatCacheService;
 
   @Inject
   public WebSocketFactory(
-      WebSocketServiceImpl webSocketService,
+      WebSocketService webSocketService,
       ChatDatabaseService chatDatabaseService,
-      ChatCacheServiceImpl chatCacheService) {
+      ChatCacheService chatCacheService) {
     this.webSocketService = webSocketService;
     this.chatDatabaseService = chatDatabaseService;
     this.chatCacheService = chatCacheService;

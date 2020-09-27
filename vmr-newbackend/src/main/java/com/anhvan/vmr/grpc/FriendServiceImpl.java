@@ -8,6 +8,7 @@ import com.anhvan.vmr.proto.Friend.*;
 import com.anhvan.vmr.proto.FriendServiceGrpc.*;
 import com.anhvan.vmr.proto.EmptyOuterClass.Empty;
 import com.anhvan.vmr.util.GrpcUtil;
+import com.anhvan.vmr.websocket.WebSocketService;
 import io.grpc.stub.StreamObserver;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +21,7 @@ import java.util.List;
 @Log4j2
 public class FriendServiceImpl extends FriendServiceImplBase {
   private FriendDatabaseService friendDbService;
+  private WebSocketService webSocketService;
 
   @Override
   public void addFriend(
@@ -93,6 +95,88 @@ public class FriendServiceImpl extends FriendServiceImplBase {
                                 .build())
                         .build());
               }
+              responseObserver.onCompleted();
+            });
+  }
+
+  @Override
+  public void acceptFriend(
+      AcceptFriendRequest request, StreamObserver<AcceptFriendResponse> responseObserver) {
+    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+
+    AcceptFriendResponse.Builder responseBuilder = AcceptFriendResponse.newBuilder();
+
+    friendDbService
+        .acceptFriend(request.getFriendId(), userId)
+        .onComplete(
+            ar -> {
+              if (ar.failed()) {
+                log.debug(
+                    "Fail to accept friend request userId:{}, friendId:{}",
+                    userId,
+                    request.getFriendId(),
+                    ar.cause());
+                responseBuilder.setError(
+                    Error.newBuilder().setMessage("Accept friend failed").build());
+              }
+              responseObserver.onNext(responseBuilder.build());
+              responseObserver.onCompleted();
+            });
+  }
+
+  @Override
+  public void rejectFriend(
+      RejectFriendRequest request, StreamObserver<RejectFriendResponse> responseObserver) {
+    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+
+    RejectFriendResponse.Builder responseBuilder = RejectFriendResponse.newBuilder();
+
+    friendDbService
+        .rejectFriend(request.getFriendId(), userId)
+        .onComplete(
+            ar -> {
+              if (ar.failed()) {
+                log.debug(
+                    "Fail to reject friend request userId:{}, friendId:{}",
+                    userId,
+                    request.getFriendId(),
+                    ar.cause());
+                responseBuilder.setError(
+                    Error.newBuilder().setMessage("Remove friend failed").build());
+              }
+              responseObserver.onNext(responseBuilder.build());
+              responseObserver.onCompleted();
+            });
+  }
+
+  @Override
+  public void getChatFriendList(
+      Empty request, StreamObserver<FriendListResponse> responseObserver) {
+    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+
+    FriendListResponse.Builder responseBuilder = FriendListResponse.newBuilder();
+
+    friendDbService
+        .getChatFriendList(userId)
+        .onComplete(
+            ar -> {
+              log.debug("Connection set: {} ", webSocketService.getOnlineIds());
+              if (ar.succeeded()) {
+                for (UserWithStatus usr : ar.result()) {
+                  responseBuilder.addFriendInfo(
+                      FriendInfo.newBuilder()
+                          .setId(usr.getId())
+                          .setName(usr.getName())
+                          .setUsername(usr.getUsername())
+                          .setOnline(webSocketService.checkOnline(usr.getId()))
+                          .build());
+                }
+              } else {
+                log.error("Error when get friend of users {}", userId, ar.cause());
+                responseBuilder.setError(
+                    Error.newBuilder().setMessage("Error when get friend list").build());
+              }
+              responseObserver.onNext(responseBuilder.build());
               responseObserver.onCompleted();
             });
   }

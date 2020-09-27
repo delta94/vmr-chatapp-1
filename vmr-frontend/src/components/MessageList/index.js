@@ -131,7 +131,6 @@ let MessageListInternal = props => {
 let MessageList = props => {
   // Check valid status of props
   if (!props.isValid()) {
-    console.log(props);
     return null;
   }
 

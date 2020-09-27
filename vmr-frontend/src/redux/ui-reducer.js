@@ -1,7 +1,8 @@
 let initialState = {
   sideBarActive: true,
   searchUserActive: false,
-  currentTab: 'chat'
+  currentTab: 'chat',
+  friendReloadFlag: true
 }
 
 export default function uiReducer(state = initialState, action) {
@@ -32,6 +33,13 @@ export default function uiReducer(state = initialState, action) {
     return {
       ...state,
       currentTab: data
+    }
+  }
+
+  if (type === 'FRIEND_RELOAD') {
+    return {
+      ...state,
+      friendReloadFlag: !state.friendReloadFlag
     }
   }
 

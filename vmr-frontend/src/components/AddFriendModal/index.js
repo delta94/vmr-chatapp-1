@@ -3,13 +3,14 @@ import {Modal, Typography, Input, Avatar, List, Button} from 'antd';
 import {CheckOutlined, PlusOutlined, SearchOutlined} from '@ant-design/icons';
 import {useSelector, useDispatch} from "react-redux";
 import './add-friend-modal.css';
-import {setSearchUserModalActive} from "../../redux/vmr-action";
+import {friendReload, setSearchUserModalActive} from "../../redux/vmr-action";
 import {queryUser} from "../../service/query-user";
 import {getFirstLetter} from "../../util/string-util";
 import {getColor} from "../../util/ui-util";
-import {addFriend} from "../../service/friend";
+import {acceptFriend, addFriend} from "../../service/friend";
 import {getUserId} from "../../util/auth-util";
 
+const {useHistory} = require('react-router-dom');
 const {FriendStatus} = require("../../proto/vmr/friend_pb");
 const {Title, Text} = Typography;
 const {Search} = Input;
@@ -57,10 +58,14 @@ function AddFriendModal() {
   );
 }
 
+
 function SearchListItem(props) {
   let {item} = props;
+  let dispatch = useDispatch();
+  let history = useHistory();
 
   let [addFriendSucceeded, setAddFriednSucceeded] = useState(false);
+  let [acceptSucceeded, setAcceptSucceeded] = useState(false);
 
   let handleAddFriend = () => {
     addFriend(item.getId()).then(r => {
@@ -71,13 +76,31 @@ function SearchListItem(props) {
     });
   };
 
+  let acceptFriendBtnHandle = () => {
+    acceptFriend(item.getId()).then(res => {
+      console.log(res);
+      setAcceptSucceeded(true);
+      dispatch(friendReload());
+    }).catch(err => {
+      console.log(err);
+    });
+  };
+
+  let chatHandle = () => {
+    dispatch(setSearchUserModalActive(false));
+    history.push('/t/' + item.getId());
+  }
+
   let button = <Button type="primary" className="friend-modal-button" onClick={handleAddFriend}><PlusOutlined/>Kết
     bạn</Button>;
 
-  if (addFriendSucceeded || item.getFriendstatus() === FriendStatus.WAITING) {
+  if (acceptSucceeded || item.getFriendstatus() === FriendStatus.FRIEND) {
+    button = <Button className="friend-modal-button" onClick={chatHandle}>Chat ngay</Button>;
+  } else if (addFriendSucceeded || item.getFriendstatus() === FriendStatus.WAITING) {
     button = <Text type="secondary">Đang chờ phản hồi</Text>;
   } else if (item.getFriendstatus() === FriendStatus.NOT_ANSWER) {
-    button = <Button className="friend-modal-button"><CheckOutlined/>Chấp nhận</Button>;
+    button = <Button className="friend-modal-button" onClick={acceptFriendBtnHandle}><CheckOutlined/>Chấp
+      nhận</Button>;
   }
 
   return (
