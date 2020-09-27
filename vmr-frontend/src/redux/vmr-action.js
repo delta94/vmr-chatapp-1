@@ -76,3 +76,23 @@ export function onOffline(userId, status) {
 export function newUser(user) {
   return createAction('NEW_USER', user);
 }
+
+export function setSideBarActive(active) {
+  return createAction("SIDEBAR_SET_ACTIVE", active);
+}
+
+export function toggleSideBar() {
+  return createAction("TOGGLE_SIDE_BAR");
+}
+
+export function setSearchUserModalActive(active) {
+  return createAction("SET_SEARCH_USER_MODAL_ACTIVE", active);
+}
+
+export function setTab(tab) {
+  return createAction("SET_TAB", tab);
+}
+
+export function friendReload() {
+  return createAction('FRIEND_RELOAD');
+}

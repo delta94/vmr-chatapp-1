@@ -11,13 +11,22 @@ function createMessage(type, data) {
 
 let webSocketManager = {
   currentConn: null,
+  retry: false,
   setNew(conn) {
+    this.retry = true;
     if (this.currentConn) {
       this.currentConn.close();
     }
     this.currentConn = conn;
   },
   clean() {
+    this.retry = false;
+    if (this.currentConn) {
+      this.currentConn.close();
+      this.currentConn = null;
+    }
+  },
+  close() {
     if (this.currentConn) {
       this.currentConn.close();
       this.currentConn = null;
@@ -29,8 +38,6 @@ let webSocketManager = {
 };
 
 export function wsConnect() {
-  // log info
-  console.log('Try to connect to websocket');
   let token = localStorage.getItem("jwtToken");
   internalConnect(token);
 }
@@ -55,7 +62,9 @@ function internalConnect(token) {
     };
 
     // Notify to redux
-    store.dispatch(webSocketConnected(webSocket, send, () => {webSocketManager.clean()}));
+    store.dispatch(webSocketConnected(webSocketManager, send, () => {
+      webSocketManager.clean()
+    }));
   };
 
   // Handle chat message
@@ -83,9 +92,9 @@ function internalConnect(token) {
 
   // Try to reconnect
   webSocket.onclose = () => {
-    webSocketManager.clean();
+    webSocketManager.close();
     setTimeout(() => {
-      if (!webSocketManager.isActive()) {
+      if (!webSocketManager.isActive() && webSocketManager.retry) {
         internalConnect(token);
       }
     }, 1000);

@@ -54,6 +54,9 @@ public class UserListController extends BaseController {
     List<UserResponse> userResponseList = getUserResponseList(userList);
     data.put("userList", userResponseList);
 
+    // View user list response
+    log.debug(data.toString());
+
     // Response to user
     userListPromise.complete(
         BaseResponse.builder()
@@ -81,6 +84,9 @@ public class UserListController extends BaseController {
           // Update cache
           userCacheService.setUserList(userList);
 
+          // View user list response
+          log.debug(data.toString());
+
           // Response to user
           userListPromise.complete(
               BaseResponse.builder()
@@ -94,7 +100,8 @@ public class UserListController extends BaseController {
   }
 
   private List<UserResponse> getUserResponseList(List<User> userList) {
-    Set<Integer> onlineSet = webSocketService.getOnlineIds();
+    Set<Long> onlineSet = webSocketService.getOnlineIds();
+    log.debug("Online list = {}", onlineSet);
     return userList.stream()
         .map(
             user -> {

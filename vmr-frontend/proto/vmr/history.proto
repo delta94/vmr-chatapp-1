@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package vmr;
+
+option java_package = "com.anhvan.vmr.proto";
+
+import "vmr/empty.proto";
+import "vmr/error.proto";
+
+service HistoryService {
+  rpc GetHistory(Empty) returns (HistoryListResponse);
+}
+
+enum HistoryResponseType {
+  HISTORY_TRANSFER = 0;
+  HISTORY_RECEIVE = 1;
+}
+
+message TransferHistoryResponse {
+  int64 to = 1;
+  int64 timestamp = 2;
+  int64 amount = 3;
+  string message = 4;
+}
+
+message ReceiveHistoryResponse {
+  int64 from = 1;
+  int64 timestamp = 2;
+  int64 amount = 3;
+  string message = 4;
+}
+
+message HistoryResponse {
+  HistoryResponseType type = 1;
+  TransferHistoryResponse transfer_response = 2;
+  ReceiveHistoryResponse receive_response = 3;
+}
+
+message HistoryListResponse {
+  Error error = 1;
+  repeated HistoryResponse history_response = 2;
+}

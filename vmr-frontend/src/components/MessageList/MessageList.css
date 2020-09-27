@@ -1,5 +1,29 @@
 .message-list-container {
+  position: fixed;
   padding: 10px;
-  height: calc(100vh - 130px);
+  left: 350px;
+  right: 0;
+  top:64px;
+  bottom: 57px;
   overflow-y: auto;
+  background-color: white;
+  border-left: 1px solid #eeeef1 !important;
+}
+
+.chat-title-bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 350px;
+  border-left: 1px solid #eeeef1 !important;
+}
+
+@media screen and (max-width: 700px) {
+  .message-list-container {
+    left: 0;
+  }
+
+  .chat-title-bar {
+    left: 0;
+  }
 }

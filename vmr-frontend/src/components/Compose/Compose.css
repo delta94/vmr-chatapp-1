@@ -1,15 +1,20 @@
 .compose {
-  padding: 10px;
+  padding: 6px 10px;
   display: flex;
   align-items: center;
   background: white;
   border-top: 1px solid #eeeef1 !important;
   border-left: 1px solid #eeeef1 !important;
   position: fixed;
-  /*width: calc(100% - 20px);*/
+  bottom: 0;
   right: 0;
   left: 350px;
-  bottom: 0px;
+}
+
+@media screen and (max-width: 700px) {
+  .compose {
+    left: 0 !important;
+  }
 }
 
 @supports (backdrop-filter: blur(20px)) {
@@ -25,7 +30,7 @@
   border: none;
   font-size: 14px;
   height: 40px;
-  background: none;
+  background-color: #eaeaea;
 }
 
 .compose-input::placeholder {
@@ -38,5 +43,5 @@
 }
 
 .compose .toolbar-button:hover {
-  color: #99999c;
+  color: #336fff;
 }

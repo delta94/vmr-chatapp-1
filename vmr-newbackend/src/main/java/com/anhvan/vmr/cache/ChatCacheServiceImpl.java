@@ -27,7 +27,7 @@ public class ChatCacheServiceImpl implements ChatCacheService {
     this.cacheConfig = cacheConfig;
   }
 
-  private String getKey(int id1, int id2) {
+  private String getKey(long id1, long id2) {
     String formatString = "vmr:chat:%d:%d";
     if (id1 < id2) {
       return String.format(formatString, id1, id2);
@@ -55,10 +55,8 @@ public class ChatCacheServiceImpl implements ChatCacheService {
     workerUtil.execute(
         () -> {
           RList<Message> chatMessages = redis.getList(getKey(user1, user2));
+          chatMessages.clear();
           chatMessages.addAll(messages);
-          while (chatMessages.size() > cacheConfig.getNumMessagesCached()) {
-            chatMessages.remove(0);
-          }
           chatMessages.expire(cacheConfig.getTimeToLive(), TimeUnit.SECONDS);
         });
   }

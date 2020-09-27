@@ -56,7 +56,7 @@ public class RegisterController extends BaseController {
     JsonObject jsonResponse = new JsonObject();
 
     // Add user
-    Future<Integer> userIdFuture = userDBService.addUser(user);
+    Future<Long> userIdFuture = userDBService.addUser(user);
 
     // Failed when add user
     userIdFuture.onFailure(

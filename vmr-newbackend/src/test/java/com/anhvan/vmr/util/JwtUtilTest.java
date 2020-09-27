@@ -1,5 +1,6 @@
 package com.anhvan.vmr.util;
 
+import com.anhvan.vmr.config.AuthConfig;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -23,12 +24,15 @@ public class JwtUtilTest {
   static JWTAuth jwtAuth;
   static AsyncWorkerUtil workerUtil;
   static JwtUtil jwtUtil;
+  static AuthConfig config;
 
   @BeforeAll
   static void setUp(VertxTestContext testContext) {
     jwtAuth = Mockito.mock(JWTAuth.class);
     workerUtil = Mockito.mock(AsyncWorkerUtil.class);
-    jwtUtil = new JwtUtil(workerUtil, jwtAuth);
+    config = Mockito.mock(AuthConfig.class);
+    Mockito.when(config.getToken()).thenReturn("12345");
+    jwtUtil = new JwtUtil(workerUtil, jwtAuth, config);
 
     // Fake worker util object
     Mockito.doAnswer(

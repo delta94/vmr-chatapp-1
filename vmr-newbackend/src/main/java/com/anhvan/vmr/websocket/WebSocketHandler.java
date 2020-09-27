@@ -19,7 +19,7 @@ import java.time.Instant;
 @Log4j2
 public class WebSocketHandler {
   private ServerWebSocket conn;
-  private int userId;
+  private long userId;
   private WebSocketService webSocketService;
   private ChatDatabaseService chatDatabaseService;
   private ChatCacheService chatCacheService;

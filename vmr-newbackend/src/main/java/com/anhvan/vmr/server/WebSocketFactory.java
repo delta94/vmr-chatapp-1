@@ -1,6 +1,6 @@
 package com.anhvan.vmr.server;
 
-import com.anhvan.vmr.cache.ChatCacheServiceImpl;
+import com.anhvan.vmr.cache.ChatCacheService;
 import com.anhvan.vmr.database.ChatDatabaseService;
 import com.anhvan.vmr.websocket.WebSocketHandler;
 import com.anhvan.vmr.websocket.WebSocketService;
@@ -17,13 +17,13 @@ import javax.inject.Singleton;
 public class WebSocketFactory {
   private WebSocketService webSocketService;
   private ChatDatabaseService chatDatabaseService;
-  private ChatCacheServiceImpl chatCacheService;
+  private ChatCacheService chatCacheService;
 
   @Inject
   public WebSocketFactory(
       WebSocketService webSocketService,
       ChatDatabaseService chatDatabaseService,
-      ChatCacheServiceImpl chatCacheService) {
+      ChatCacheService chatCacheService) {
     this.webSocketService = webSocketService;
     this.chatDatabaseService = chatDatabaseService;
     this.chatCacheService = chatCacheService;
@@ -37,7 +37,7 @@ public class WebSocketFactory {
         .onComplete(userIdRs -> handleAfterAuthentication(userIdRs, conn));
   }
 
-  private void handleAfterAuthentication(AsyncResult<Integer> userIdRs, ServerWebSocket conn) {
+  private void handleAfterAuthentication(AsyncResult<Long> userIdRs, ServerWebSocket conn) {
     log.debug("Auth status: {}", userIdRs.succeeded());
     if (userIdRs.succeeded()) {
       // Authentication successfully

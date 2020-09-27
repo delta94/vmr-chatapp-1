@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package vmr;
+
+option java_package = "com.anhvan.vmr.proto";
+
+enum NotificationType {
+  RECEIVE = 0;
+  TRANSFER_REMINDER = 1;
+}
+
+message Notification {
+  NotificationType noti_type = 1;
+  ReceiveNotification receive_noti = 2;
+  TransferReminderNotification remind_noti = 3;
+}
+
+message ReceiveNotification {
+  int64 from = 1;
+  int64 amount = 2;
+  string message = 3;
+  int64 timestamp = 4;
+}
+
+message TransferReminderNotification {
+  int64 from = 1;
+  int64 amount = 2;
+  string message = 3;
+  int64 timestamp = 4;
+}

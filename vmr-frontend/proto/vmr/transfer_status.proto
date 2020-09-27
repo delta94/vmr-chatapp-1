@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package vmr;
+
+option java_package = "com.anhvan.vmr.proto";
+
+enum TransferStatus {
+  TRANSFER_SUCCESS = 0;
+  TRANSFER_FAILUE = 1;
+}

@@ -4,7 +4,7 @@ export function jwtLogin(jwtToken, userId) {
 }
 
 export function getUserId() {
-  return localStorage.getItem("userId");
+  return Number(localStorage.getItem("userId"));
 }
 
 export function getJwtToken() {
@@ -13,4 +13,8 @@ export function getJwtToken() {
 
 export function logout() {
   localStorage.clear();
+}
+
+export function getGrpcTokenMetadata() {
+  return {'x-jwt-token': getJwtToken()};
 }

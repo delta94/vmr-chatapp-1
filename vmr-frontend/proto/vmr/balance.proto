@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package vmr;
+
+option java_package = "com.anhvan.vmr.proto";
+
+import "google/protobuf/empty.proto";
+import "vmr/error.proto";
+
+service BalanceService {
+  rpc GetBalance(google.protobuf.Empty) returns (BalanceResponse){};
+}
+
+message BalanceResponse {
+  Error error = 1;
+  int64 balance = 2;
+  int64 last_update_timestamp = 3;
+}

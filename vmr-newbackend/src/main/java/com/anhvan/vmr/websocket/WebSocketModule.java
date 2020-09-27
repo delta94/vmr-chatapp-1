@@ -11,6 +11,6 @@ public class WebSocketModule {
   @Provides
   @Singleton
   public WebSocketService provideWebsocketService(JwtUtil jwtUtil) {
-    return new WebSocketService(jwtUtil);
+    return new WebSocketServiceImpl(jwtUtil);
   }
 }

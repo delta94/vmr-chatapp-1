@@ -25,20 +25,20 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WebSocketServiceTest {
   JwtUtil jwtUtil;
   WebSocketService webSocketService;
-  Map<Integer, Set<ServerWebSocket>> connections;
+  Map<Long, Set<ServerWebSocket>> connections;
 
   @BeforeEach
   void setUp() {
     jwtUtil = Mockito.mock(JwtUtil.class);
     connections = Mockito.spy(new ConcurrentHashMap<>());
-    webSocketService = new WebSocketService(jwtUtil, connections);
+    webSocketService = new WebSocketServiceImpl(jwtUtil, connections);
   }
 
   @Test
   void testAuthenticateSuccess(VertxTestContext testContext) {
     ServerWebSocket serverWebSocket = Mockito.mock(ServerWebSocket.class);
     Mockito.when(serverWebSocket.query()).thenReturn("token=123");
-    Mockito.when(jwtUtil.authenticate("123")).thenReturn(Future.succeededFuture(123));
+    Mockito.when(jwtUtil.authenticate("123")).thenReturn(Future.succeededFuture(123L));
     webSocketService
         .authenticate(serverWebSocket)
         .onSuccess(
@@ -69,8 +69,8 @@ public class WebSocketServiceTest {
     webSocketService.addConnection(1, conn);
     webSocketService.addConnection(1, conn);
     webSocketService.addConnection(2, conn);
-    Mockito.verify(connections).put(ArgumentMatchers.eq(1), ArgumentMatchers.any());
-    Mockito.verify(connections).put(ArgumentMatchers.eq(2), ArgumentMatchers.any());
+    Mockito.verify(connections).put(ArgumentMatchers.eq(1L), ArgumentMatchers.any());
+    Mockito.verify(connections).put(ArgumentMatchers.eq(2L), ArgumentMatchers.any());
   }
 
   @Test
@@ -83,7 +83,7 @@ public class WebSocketServiceTest {
     webSocketService.removeConnection(1, conn);
 
     // Internal remove only one time
-    Mockito.verify(connections).remove(1);
+    Mockito.verify(connections).remove(1L);
   }
 
   @Test

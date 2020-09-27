@@ -6,8 +6,6 @@ import io.vertx.core.Future;
 import java.util.List;
 
 public interface UserCacheService {
-  String getUserKey(int userId);
-
   void setUserCache(User user);
 
   Future<User> getUserCache(int userId);

@@ -14,10 +14,10 @@ public class Message {
   private long id;
 
   @ColName("sender")
-  private int senderId;
+  private long senderId;
 
   @ColName("receiver")
-  private int receiverId;
+  private long receiverId;
 
   private String message;
 

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package vmr;
+
+option java_package = "com.anhvan.vmr.proto";
+
+import "vmr/error.proto";
+
+message TransferReminderRequest {
+  int64 user_id = 1;
+  int64 amount = 2;
+  string message = 3;
+  int64 request_id = 4;
+}
+
+message TransferReminderResponse {
+  Error error = 1;
+}
+
+service TransferReminderService {
+  rpc RemindTransfer(TransferReminderRequest) returns (TransferReminderResponse);
+}

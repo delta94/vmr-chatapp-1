@@ -1,15 +1,18 @@
 .conversation-search {
   padding: 10px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 }
 
 .conversation-search-input {
   background: #f4f4f8;
   padding: 8px 10px;
-  border-radius: 10px;
+  /*border-radius: 10px;*/
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
   border: none;
   font-size: 14px;
+  width:70%;
 }
 
 .conversation-search-input::placeholder {

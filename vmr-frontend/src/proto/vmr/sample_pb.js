@@ -1,4 +1,4 @@
-/**
+/* eslint-disable */ /**
  * @fileoverview
  * @enhanceable
  * @suppress {messageConventions} JS Compiler reports an error if a variable or
@@ -6,7 +6,6 @@
  * @public
  */
 // GENERATED CODE -- DO NOT EDIT!
-/* eslint-disable */
 
 var jspb = require('google-protobuf');
 var goog = jspb;

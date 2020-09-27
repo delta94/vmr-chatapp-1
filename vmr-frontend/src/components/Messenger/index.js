@@ -3,24 +3,34 @@ import ConversationList from '../ConversationList';
 import './Messenger.css';
 import {connect} from 'react-redux';
 import MessageListWrapper from '../MessageListWrapper';
+import AddFriendModal from "../AddFriendModal";
 
 function mapStateToProps(state) {
   return {
-    currentConversationId: state.currentConversationId
+    sideBarActive: state.ui.sideBarActive
   }
 }
 
-function Messenger() {
+function Messenger(props) {
+  let {sideBarActive} = props;
+
+  let sideBarClassName = "sidebar ";
+  if (window.innerWidth <= 700 && sideBarActive) {
+    sideBarClassName  += "sidebar-active";
+  }
+
   return (
     <div className="scrollable messenger">
 
-      <div className="sidebar">
+      <div className={sideBarClassName}>
         <ConversationList/>
       </div>
 
       <div className="scrollable content">
         <MessageListWrapper/>
       </div>
+
+      <AddFriendModal/>
     </div>
   );
 }
