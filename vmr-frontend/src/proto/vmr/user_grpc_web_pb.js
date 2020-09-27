@@ -17,6 +17,8 @@ grpc.web = require('grpc-web');
 
 
 var vmr_error_pb = require('../vmr/error_pb.js')
+
+var vmr_friend_pb = require('../vmr/friend_pb.js')
 const proto = {};
 proto.vmr = require('./user_pb.js');
 

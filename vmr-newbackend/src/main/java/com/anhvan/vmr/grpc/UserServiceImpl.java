@@ -3,11 +3,12 @@ package com.anhvan.vmr.grpc;
 import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.entity.UserWithStatus;
-import com.anhvan.vmr.proto.User.FriendStatus;
+import com.anhvan.vmr.proto.Friend.FriendStatus;
 import com.anhvan.vmr.proto.User.UserListRequest;
 import com.anhvan.vmr.proto.User.UserListResponse;
 import com.anhvan.vmr.proto.User.UserResponse;
 import com.anhvan.vmr.proto.UserServiceGrpc.UserServiceImplBase;
+import com.anhvan.vmr.util.GrpcUtil;
 import io.grpc.stub.StreamObserver;
 import io.vertx.core.Future;
 import lombok.AllArgsConstructor;
@@ -44,7 +45,7 @@ public class UserServiceImpl extends UserServiceImplBase {
                     .setId(user.getId())
                     .setUsername(user.getUsername())
                     .setName(user.getName())
-                    .setFriendStatus(string2FriendStatus(user.getFriendStatus()))
+                    .setFriendStatus(GrpcUtil.string2FriendStatus(user.getFriendStatus()))
                     .build());
           }
 
@@ -55,18 +56,5 @@ public class UserServiceImpl extends UserServiceImplBase {
 
     userListFuture.onFailure(
         event -> responseObserver.onError(new Exception("Internal server error")));
-  }
-
-  private FriendStatus string2FriendStatus(String status) {
-    if (status == null) {
-      return FriendStatus.NOTHING;
-    }
-    if (status.equals("WAITING")) {
-      return FriendStatus.WAITING;
-    }
-    if (status.equals("NOT_ANSWER")) {
-      return FriendStatus.NOT_ANSWER;
-    }
-    return FriendStatus.FRIEND;
   }
 }

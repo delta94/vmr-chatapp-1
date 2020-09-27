@@ -7,7 +7,7 @@ import {setSearchUserModalActive} from "../../redux/vmr-action";
 import {queryUser} from "../../service/query-user";
 import {getFirstLetter} from "../../util/string-util";
 import {getColor} from "../../util/ui-util";
-import {addFriend} from "../../service/add-friend";
+import {addFriend} from "../../service/friend";
 import {getUserId} from "../../util/auth-util";
 
 const {FriendStatus} = require("../../proto/vmr/friend_pb");
@@ -60,20 +60,24 @@ function AddFriendModal() {
 function SearchListItem(props) {
   let {item} = props;
 
+  let [addFriendSucceeded, setAddFriednSucceeded] = useState(false);
+
   let handleAddFriend = () => {
     addFriend(item.getId()).then(r => {
       console.log(r);
+      setAddFriednSucceeded(true);
     }).catch(err => {
       console.log(err);
     });
   };
 
-  let button = <Button type="primary" className="friend-modal-button" onClick={handleAddFriend}><PlusOutlined/>Kết bạn</Button>;
+  let button = <Button type="primary" className="friend-modal-button" onClick={handleAddFriend}><PlusOutlined/>Kết
+    bạn</Button>;
 
-  if (item.getFriendstatus() === FriendStatus.WAITING) {
+  if (addFriendSucceeded || item.getFriendstatus() === FriendStatus.WAITING) {
     button = <Text type="secondary">Đang chờ phản hồi</Text>;
-  } else if (item.getFriendstatus() === FriendStatus.NO_ANSWER) {
-    button =  <Button className="friend-modal-button" ><CheckOutlined/>Chấp nhận</Button>;
+  } else if (item.getFriendstatus() === FriendStatus.NOT_ANSWER) {
+    button = <Button className="friend-modal-button"><CheckOutlined/>Chấp nhận</Button>;
   }
 
   return (

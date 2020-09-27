@@ -12,7 +12,7 @@ var goog = jspb;
 var global = Function('return this')();
 
 var vmr_error_pb = require('../vmr/error_pb.js');
-goog.exportSymbol('proto.vmr.FriendStatus', null, global);
+var vmr_friend_pb = require('../vmr/friend_pb.js');
 goog.exportSymbol('proto.vmr.UserListRequest', null, global);
 goog.exportSymbol('proto.vmr.UserListResponse', null, global);
 goog.exportSymbol('proto.vmr.UserResponse', null, global);
@@ -592,15 +592,5 @@ proto.vmr.UserListResponse.prototype.clearUserList = function() {
   this.setUserList([]);
 };
 
-
-/**
- * @enum {number}
- */
-proto.vmr.FriendStatus = {
-  FRIEND: 0,
-  WAITING: 1,
-  NO_ANSWER: 2,
-  NOTHING: 3
-};
 
 goog.object.extend(exports, proto.vmr);

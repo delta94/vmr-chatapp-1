@@ -5,6 +5,7 @@ package vmr;
 option java_package = "com.anhvan.vmr.proto";
 
 import "vmr/error.proto";
+import "vmr/friend.proto";
 
 service UserService {
   rpc QueryUser(UserListRequest) returns (UserListResponse) {}
@@ -12,13 +13,6 @@ service UserService {
 
 message UserListRequest {
   string query_string = 1;
-}
-
-enum FriendStatus {
-  FRIEND = 0;
-  WAITING = 1;
-  NO_ANSWER = 2;
-  NOTHING = 3;
 }
 
 message UserResponse {
