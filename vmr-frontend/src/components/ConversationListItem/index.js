@@ -1,17 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {Avatar} from 'antd';
 import shave from 'shave';
-import {useHistory} from 'react-router-dom';
 import {connect} from 'react-redux';
 import './ConversationListItem.css';
 import {setSideBarActive} from "../../redux/vmr-action";
+import {getFirstLetter} from "../../util/string-util";
+import {randColor} from "../../util/ui-util";
 
-const colorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae', '#007aff'];
-
-function getFirstLetter(name) {
-  let word = name.split(' ');
-  return word[word.length - 1].charAt(0).toUpperCase();
-}
+const {useHistory} = require('react-router-dom');
 
 function ConversationListItem(props) {
   let history = useHistory();
@@ -27,7 +23,7 @@ function ConversationListItem(props) {
   useEffect(() => {
     shave('.conversation-snippet', 20);
     setAvatarStyle({
-      backgroundColor: colorList[Math.round(Math.random() * 10) % colorList.length]
+      backgroundColor: randColor()
     });
   }, []);
 
@@ -52,7 +48,6 @@ function ConversationListItem(props) {
 
   return (
     <div className="conversation-list-item" onClick={clickHandle} style={itemStyle}>
-      {/*<img className="conversation-photo" src={photo} alt="conversation" />*/}
       <Avatar style={avatarStyle} size={50}>
         {getFirstLetter(name)}
       </Avatar>

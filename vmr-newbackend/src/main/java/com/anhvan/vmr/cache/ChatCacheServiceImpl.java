@@ -27,7 +27,7 @@ public class ChatCacheServiceImpl implements ChatCacheService {
     this.cacheConfig = cacheConfig;
   }
 
-  private String getKey(int id1, int id2) {
+  private String getKey(long id1, long id2) {
     String formatString = "vmr:chat:%d:%d";
     if (id1 < id2) {
       return String.format(formatString, id1, id2);

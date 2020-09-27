@@ -7,17 +7,17 @@ import io.vertx.core.http.ServerWebSocket;
 import java.util.Set;
 
 public interface WebSocketService {
-  Future<Integer> authenticate(ServerWebSocket conn);
+  Future<Long> authenticate(ServerWebSocket conn);
 
-  void addConnection(int userId, ServerWebSocket serverWebSocket);
+  void addConnection(long userId, ServerWebSocket serverWebSocket);
 
-  void removeConnection(int userId, ServerWebSocket conn);
+  void removeConnection(long userId, ServerWebSocket conn);
 
-  void sendTo(int userId, WebSocketMessage msg);
+  void sendTo(long userId, WebSocketMessage msg);
 
   void broadCast(WebSocketMessage msg);
 
-  boolean checkOnline(int id);
+  boolean checkOnline(long id);
 
-  Set<Integer> getOnlineIds();
+  Set<Long> getOnlineIds();
 }

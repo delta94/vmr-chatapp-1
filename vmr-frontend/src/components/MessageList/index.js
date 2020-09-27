@@ -95,6 +95,7 @@ let MessageListInternal = props => {
     <div className="message-list">
       <Toolbar
         title={receiver.name}
+        className="chat-title-bar"
         rightItems={[
           <ToolbarButton key="info" icon="ion-ios-information-circle-outline"/>,
           <ToolbarButton key="video" icon="ion-ios-videocam"/>,

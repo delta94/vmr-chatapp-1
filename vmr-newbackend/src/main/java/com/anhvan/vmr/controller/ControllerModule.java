@@ -1,12 +1,12 @@
 package com.anhvan.vmr.controller;
 
-import com.anhvan.vmr.cache.ChatCacheServiceImpl;
-import com.anhvan.vmr.cache.TokenCacheServiceImpl;
-import com.anhvan.vmr.cache.UserCacheServiceImpl;
+import com.anhvan.vmr.cache.ChatCacheService;
+import com.anhvan.vmr.cache.TokenCacheService;
+import com.anhvan.vmr.cache.UserCacheService;
 import com.anhvan.vmr.database.ChatDatabaseService;
-import com.anhvan.vmr.database.UserDatabaseServiceImpl;
+import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.util.JwtUtil;
-import com.anhvan.vmr.websocket.WebSocketServiceImpl;
+import com.anhvan.vmr.websocket.WebSocketService;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
@@ -30,7 +30,7 @@ public class ControllerModule {
   @IntoMap
   @StringKey("/api/public/login")
   public Controller provideLoginController(
-      UserDatabaseServiceImpl userDBService, UserCacheServiceImpl userCacheService, JwtUtil jwtUtil) {
+      UserDatabaseService userDBService, UserCacheService userCacheService, JwtUtil jwtUtil) {
     log.info("Register login controller");
     return LoginController.builder()
         .userDBService(userDBService)
@@ -43,10 +43,10 @@ public class ControllerModule {
   @IntoMap
   @StringKey("/api/public/register")
   public Controller provideRegisterController(
-      UserDatabaseServiceImpl userDBService,
+      UserDatabaseService userDBService,
       JwtUtil jwtUtil,
-      UserCacheServiceImpl userCacheService,
-      WebSocketServiceImpl webSocketService) {
+      UserCacheService userCacheService,
+      WebSocketService webSocketService) {
     log.info("Register registration controller");
     return RegisterController.builder()
         .userCacheService(userCacheService)
@@ -60,9 +60,9 @@ public class ControllerModule {
   @IntoMap
   @StringKey("/api/protected/users")
   public Controller provideUserController(
-      UserDatabaseServiceImpl userDBService,
-      UserCacheServiceImpl userCacheService,
-      WebSocketServiceImpl webSocketService) {
+      UserDatabaseService userDBService,
+      UserCacheService userCacheService,
+      WebSocketService webSocketService) {
     log.info("Register user list controller");
     return UserListController.builder()
         .userDBService(userDBService)
@@ -74,7 +74,7 @@ public class ControllerModule {
   @Provides
   @IntoMap
   @StringKey("/api/protected/logout")
-  public Controller provideLogoutController(TokenCacheServiceImpl tokenCacheService) {
+  public Controller provideLogoutController(TokenCacheService tokenCacheService) {
     log.info("Register logout controller");
     return LogoutController.builder().tokenCacheService(tokenCacheService).build();
   }
@@ -91,7 +91,7 @@ public class ControllerModule {
   @IntoMap
   @StringKey("/api/protected/chat")
   public Controller provideMessageListController(
-      ChatDatabaseService chatDatabaseService, ChatCacheServiceImpl chatCacheService) {
+      ChatDatabaseService chatDatabaseService, ChatCacheService chatCacheService) {
     log.info("Register message list controller");
     return new MessageListController(chatCacheService, chatDatabaseService);
   }

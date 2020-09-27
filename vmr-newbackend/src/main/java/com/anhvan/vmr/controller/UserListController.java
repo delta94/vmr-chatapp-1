@@ -100,7 +100,7 @@ public class UserListController extends BaseController {
   }
 
   private List<UserResponse> getUserResponseList(List<User> userList) {
-    Set<Integer> onlineSet = webSocketService.getOnlineIds();
+    Set<Long> onlineSet = webSocketService.getOnlineIds();
     log.debug("Online list = {}", onlineSet);
     return userList.stream()
         .map(

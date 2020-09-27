@@ -1,23 +1,43 @@
 import React, {useEffect} from 'react';
-import ConversationSearch from '../ConversationSearch';
-import ConversationListItem from '../ConversationListItem';
-import Toolbar from '../Toolbar';
 import ToolbarButton from '../ToolbarButton';
-import {connect} from 'react-redux';
+import {connect, useDispatch, useSelector} from 'react-redux';
 import logout from "../../service/logout";
-import {getUsers} from "../../service/user-list";
 import {wsConnect} from "../../service/chat-ws";
-
 import './ConversationList.css';
+import MenuBar from "../MenuBar";
+import {setTab, updateUserList} from "../../redux/vmr-action";
+import FriendTab from "../FriendTab";
+import ChatTab from "../ChatTab";
+import {getChatFriendList} from "../../service/friend";
 
 function ConversationList(props) {
   let currentUserId = Number(localStorage.getItem("userId"));
 
+  let tab = useSelector(state => state.ui.currentTab);
+  let friendReloadFlag = useSelector(state => state.ui.friendReloadFlag);
+  let dispatch = useDispatch();
+
+  let setCurrentTab = (tab) => {
+    dispatch(setTab(tab));
+  }
+
   useEffect(() => {
-    getUsers().then(() => {
+    getChatFriendList().then(result => {
+      console.log(result.getFriendinfoList().length);
+      dispatch(updateUserList(result.getFriendinfoList().map(x => {
+        console.log(x.getOnline());
+        return {
+          id: x.getId(),
+          name: x.getName(),
+          username: x.getUsername(),
+          online: x.getOnline()
+        }
+      })));
       wsConnect();
+    }).catch(err => {
+      console.log(err);
     });
-  }, []);
+  }, [friendReloadFlag]);
 
   let conversations = props.userList.map(item => {
     return {
@@ -29,31 +49,33 @@ function ConversationList(props) {
     }
   });
 
+  let menuItems = [
+    {key: "general", icon: "ion-ios-contact"},
+    {key: "chat", icon: "ion-ios-chatbubbles"},
+    {key: "friend", icon: "ion-ios-contacts"},
+    {key: "notitfication", icon: "ion-ios-notifications"}
+  ]
+
   return (
     <div className="conversation-list">
-      <Toolbar
-        title="Messenger"
-        leftItems={[
-          <ToolbarButton key="cog" icon="ion-ios-cog"/>
-        ]}
-        rightItems={[
-          <ToolbarButton key="add" icon="ion-ios-log-out" onClick={logout}/>
+      <MenuBar
+        items={[
+          ...menuItems.map(x => (
+            <ToolbarButton {...x} onClick={() => setCurrentTab(x.key)} isCurrent={x.key === tab}/>
+          )),
+          <ToolbarButton key="logout" icon="ion-ios-log-out" onClick={logout}/>
         ]}
       />
-      <div className="conversation-list-scroll">
-        <ConversationSearch/>
-        {
-          conversations.map(conversation =>
-            <ConversationListItem
-              key={conversation.id}
-              data={conversation}
-            />
-          )
-        }
-      </div>
+      {
+        tab === 'chat' && <ChatTab conversations={conversations}/>
+      }
+      {
+        tab === 'friend' && <FriendTab/>
+      }
     </div>
   );
 }
+
 
 function mapStateToProps(state) {
   return {

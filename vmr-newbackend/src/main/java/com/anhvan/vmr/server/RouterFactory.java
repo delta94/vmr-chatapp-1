@@ -16,10 +16,12 @@ import io.vertx.ext.web.handler.JWTAuthHandler;
 import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.HashSet;
 import java.util.Set;
 
 @Log4j2
+@Singleton
 public class RouterFactory {
   private Vertx vertx;
   private JWTAuth jwtAuth;

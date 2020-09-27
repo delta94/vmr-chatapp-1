@@ -3,10 +3,11 @@ import {Button} from 'antd';
 import './ConversationSearch.css';
 import {useDispatch} from "react-redux";
 import {setSearchUserModalActive} from "../../redux/vmr-action";
+import {PlusOutlined} from "@ant-design/icons";
 
 let buttonStyle = {
   height: "38px",
-  width: "20%",
+  width: "30%",
   borderRadius: 0,
   borderTopRightRadius: "5px",
   borderBottomRightRadius: "5px"
@@ -26,7 +27,7 @@ export default function ConversationSearch() {
         className="conversation-search-input"
         placeholder="Tìm bạn bè"
       />
-      <Button type="primary" style={buttonStyle} onClick={handleClick}>Thêm</Button>
+      <Button type="primary" style={buttonStyle} onClick={handleClick}><PlusOutlined/>Thêm</Button>
     </div>
   );
 }

@@ -13,7 +13,7 @@ public class RowMapperUtilTest {
   void testMapperOnUserObject() {
     Row row = Mockito.mock(Row.class);
 
-    Mockito.when(row.getValue("id")).thenReturn(1);
+    Mockito.when(row.getValue("id")).thenReturn(1L);
     Mockito.when(row.getValue("username")).thenReturn("danganhvan");
     Mockito.when(row.getValue("password")).thenReturn("12345678");
     Mockito.when(row.getValue("is_active")).thenReturn(Byte.parseByte("1"));

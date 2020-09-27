@@ -18,4 +18,10 @@ public class DatabaseModule {
   public UserDatabaseService provideUserDBService(UserDatabaseServiceImpl impl) {
     return impl;
   }
+
+  @Provides
+  @Singleton
+  public FriendDatabaseService provideFriendDatabaseService(FriendDatabaseServiceImpl impl) {
+    return impl;
+  }
 }
