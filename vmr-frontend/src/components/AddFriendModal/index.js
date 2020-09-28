@@ -64,13 +64,14 @@ function SearchListItem(props) {
   let dispatch = useDispatch();
   let history = useHistory();
 
-  let [addFriendSucceeded, setAddFriednSucceeded] = useState(false);
+  let [addFriendSucceeded, setAddFriendSucceeded] = useState(false);
   let [acceptSucceeded, setAcceptSucceeded] = useState(false);
 
   let handleAddFriend = () => {
     addFriend(item.getId()).then(r => {
       console.log(r);
-      setAddFriednSucceeded(true);
+      setAddFriendSucceeded(true);
+      dispatch(friendReload());
     }).catch(err => {
       console.log(err);
     });
