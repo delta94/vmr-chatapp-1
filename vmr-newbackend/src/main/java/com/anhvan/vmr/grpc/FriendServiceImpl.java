@@ -1,7 +1,7 @@
 package com.anhvan.vmr.grpc;
 
 import com.anhvan.vmr.database.FriendDatabaseService;
-import com.anhvan.vmr.entity.UserWithStatus;
+import com.anhvan.vmr.entity.GrpcUserResponse;
 import com.anhvan.vmr.proto.ErrorOuterClass.Error;
 import com.anhvan.vmr.proto.ErrorOuterClass.*;
 import com.anhvan.vmr.proto.Friend.*;
@@ -74,8 +74,8 @@ public class FriendServiceImpl extends FriendServiceImplBase {
             ar -> {
               if (ar.succeeded()) {
                 FriendListResponse.Builder response = FriendListResponse.newBuilder();
-                List<UserWithStatus> userWithStatusList = ar.result();
-                for (UserWithStatus user : userWithStatusList) {
+                List<GrpcUserResponse> grpcUserResponseList = ar.result();
+                for (GrpcUserResponse user : grpcUserResponseList) {
                   response.addFriendInfo(
                       FriendInfo.newBuilder()
                           .setUsername(user.getUsername())
@@ -162,7 +162,7 @@ public class FriendServiceImpl extends FriendServiceImplBase {
             ar -> {
               log.debug("Connection set: {} ", webSocketService.getOnlineIds());
               if (ar.succeeded()) {
-                for (UserWithStatus usr : ar.result()) {
+                for (GrpcUserResponse usr : ar.result()) {
                   responseBuilder.addFriendInfo(
                       FriendInfo.newBuilder()
                           .setId(usr.getId())

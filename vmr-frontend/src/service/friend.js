@@ -52,7 +52,7 @@ export function getFriendList() {
 export function getChatFriendList() {
   return new Promise((resolve, reject) => {
     let emptyRequest = new Empty();
-    friendServiceClient.getChatFriendList(emptyRequest, {'x-jwt-token': getJwtToken()}, (err, res) => {
+    friendServiceClient.getChatFriendList(emptyRequest, getGrpcTokenMetadata(), (err, res) => {
       if (err) {
         console.log('Connection error');
         reject(err);

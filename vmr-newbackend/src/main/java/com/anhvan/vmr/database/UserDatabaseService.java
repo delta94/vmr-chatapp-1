@@ -1,6 +1,6 @@
 package com.anhvan.vmr.database;
 
-import com.anhvan.vmr.entity.UserWithStatus;
+import com.anhvan.vmr.entity.GrpcUserResponse;
 import com.anhvan.vmr.model.User;
 import io.vertx.core.Future;
 
@@ -17,5 +17,5 @@ public interface UserDatabaseService {
 
   Future<List<User>> getListUser();
 
-  Future<List<UserWithStatus>> queryListUserWithFriend(String query, long userId);
+  Future<List<GrpcUserResponse>> queryListUserWithFriend(String query, long userId);
 }

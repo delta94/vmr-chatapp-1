@@ -1,5 +1,6 @@
 import store from '../redux/vmr-store';
 import {webSocketConnected, receiveMessage, sendbackMessage, onOffline, newUser} from "../redux/vmr-action";
+import {getJwtToken, getUserId} from "../util/auth-util";
 
 const WEB_SOCKET_ROOT = process.env.REACT_APP_WS_ROOT;
 
@@ -11,40 +12,31 @@ function createMessage(type, data) {
 
 let webSocketManager = {
   currentConn: null,
-  retry: false,
   setNew(conn) {
-    this.retry = true;
-    if (this.currentConn) {
+    if (this.isActive()) {
       this.currentConn.close();
     }
     this.currentConn = conn;
   },
   clean() {
-    this.retry = false;
-    if (this.currentConn) {
+    if (this.isActive()) {
       this.currentConn.close();
-      this.currentConn = null;
     }
-  },
-  close() {
-    if (this.currentConn) {
-      this.currentConn.close();
-      this.currentConn = null;
-    }
+    this.currentConn = null;
   },
   isActive() {
-    return Boolean(this.currentConn);
+    return Boolean(this.currentConn) && this.currentConn.readyState === WebSocket.OPEN;
   }
 };
 
 export function wsConnect() {
-  let token = localStorage.getItem("jwtToken");
-  internalConnect(token);
+  internalConnect();
 }
 
-function internalConnect(token) {
+function internalConnect() {
   // Get senderId
-  let senderId = Number(localStorage.getItem("userId"));
+  let senderId = getUserId();
+  let token = getJwtToken();
 
   // Create new websocket connection
   let webSocket = new WebSocket(WEB_SOCKET_ROOT + `?token=${token}`);
@@ -92,15 +84,16 @@ function internalConnect(token) {
 
   // Try to reconnect
   webSocket.onclose = () => {
-    webSocketManager.close();
     setTimeout(() => {
-      if (!webSocketManager.isActive() && webSocketManager.retry) {
+      if (!webSocketManager.isActive()) {
+        console.log('reconnect');
         internalConnect(token);
       }
     }, 1000);
   };
 
   webSocket.onerror = () => {
+    webSocketManager.clean();
     webSocket.close();
   }
 }

@@ -18,6 +18,8 @@ create table friends
     user_id   bigint                                                 not null,
     friend_id bigint                                                 not null,
     status    enum ('ACCEPTED', 'WAITING', 'NOT_ANSWER', 'REJECTED') not null,
+    last_message_id bigint,
+    num_unread_message int default 0,
     foreign key (user_id) references users (id),
     foreign key (friend_id) references users (id),
     unique key user_friend_unique (user_id, friend_id)

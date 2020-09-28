@@ -28,6 +28,11 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
   public static final String INSERT_MESSAGE =
       "insert into messages (sender, receiver, message, send_time) values (?, ?, ?, ?)";
 
+  public static final String SELECT_LAST_MESSAGE =
+      "select * from messages where id=(select greatest(coalesce((select max(id) from "
+          + "messages where sender=? and receiver=?)), coalesce((select max (id) from messages "
+          + "where sender=? and receiver=?))))";
+
   private MySQLPool pool;
 
   @Inject
@@ -53,6 +58,10 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
             });
 
     return idPromise.future();
+  }
+
+  private Future<Long> updateLastMessageId(long userId, long friendId, long messageId) {
+    return null;
   }
 
   public Future<List<Message>> getChatMessages(int user1, int user2, int offset) {
@@ -87,6 +96,33 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
             });
 
     return listMsgPromise.future();
+  }
+
+  public Future<Message> getLastMessage(long user1, long user2) {
+    Promise<Message> messagePromise = Promise.promise();
+
+    pool.preparedQuery(SELECT_LAST_MESSAGE)
+        .execute(
+            Tuple.of(user1, user2, user2, user1),
+            ar -> {
+              if (ar.succeeded()) {
+                RowSet<Row> result = ar.result();
+                if (result.size() > 0) {
+                  for (Row row : result) {
+                    messagePromise.complete(rowToMessage(row));
+                    break;
+                  }
+                } else {
+                  messagePromise.complete(null);
+                }
+              } else {
+                Throwable cause = ar.cause();
+                log.error("Error when get last message");
+                messagePromise.fail(cause);
+              }
+            });
+
+    return messagePromise.future();
   }
 
   public Message rowToMessage(Row row) {

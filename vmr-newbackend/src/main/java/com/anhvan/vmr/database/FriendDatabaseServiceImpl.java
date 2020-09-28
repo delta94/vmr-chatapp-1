@@ -1,6 +1,6 @@
 package com.anhvan.vmr.database;
 
-import com.anhvan.vmr.entity.UserWithStatus;
+import com.anhvan.vmr.entity.GrpcUserResponse;
 import com.anhvan.vmr.util.RowMapperUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -87,8 +87,8 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   }
 
   @Override
-  public Future<List<UserWithStatus>> getFriendList(long userId) {
-    Promise<List<UserWithStatus>> friendListPromise = Promise.promise();
+  public Future<List<GrpcUserResponse>> getFriendList(long userId) {
+    Promise<List<GrpcUserResponse>> friendListPromise = Promise.promise();
 
     pool.preparedQuery(GET_LIST_FRIEND_QUERY)
         .execute(
@@ -96,9 +96,9 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
             rowSetAsyncRs -> {
               if (rowSetAsyncRs.succeeded()) {
                 RowSet<Row> rowSet = rowSetAsyncRs.result();
-                List<UserWithStatus> userList = new ArrayList<>();
+                List<GrpcUserResponse> userList = new ArrayList<>();
                 for (Row row : rowSet) {
-                  userList.add(RowMapperUtil.mapRow(row, UserWithStatus.class));
+                  userList.add(RowMapperUtil.mapRow(row, GrpcUserResponse.class));
                 }
                 friendListPromise.complete(userList);
               } else {
@@ -152,8 +152,8 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   }
 
   @Override
-  public Future<List<UserWithStatus>> getChatFriendList(long userId) {
-    Promise<List<UserWithStatus>> friendListPromise = Promise.promise();
+  public Future<List<GrpcUserResponse>> getChatFriendList(long userId) {
+    Promise<List<GrpcUserResponse>> friendListPromise = Promise.promise();
 
     pool.preparedQuery(GET_CHAT_LIST_FRIEND_QUERY)
         .execute(
@@ -161,9 +161,9 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
             rowSetAsyncRs -> {
               if (rowSetAsyncRs.succeeded()) {
                 RowSet<Row> rowSet = rowSetAsyncRs.result();
-                List<UserWithStatus> userList = new ArrayList<>();
+                List<GrpcUserResponse> userList = new ArrayList<>();
                 for (Row row : rowSet) {
-                  userList.add(RowMapperUtil.mapRow(row, UserWithStatus.class));
+                  userList.add(RowMapperUtil.mapRow(row, GrpcUserResponse.class));
                 }
                 friendListPromise.complete(userList);
               } else {

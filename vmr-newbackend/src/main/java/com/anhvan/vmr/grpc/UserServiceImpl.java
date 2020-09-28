@@ -2,7 +2,7 @@ package com.anhvan.vmr.grpc;
 
 import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
-import com.anhvan.vmr.entity.UserWithStatus;
+import com.anhvan.vmr.entity.GrpcUserResponse;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.proto.EmptyOuterClass;
 import com.anhvan.vmr.proto.User.UserListRequest;
@@ -32,7 +32,7 @@ public class UserServiceImpl extends UserServiceImplBase {
 
     String queryString = request.getQueryString();
 
-    Future<List<UserWithStatus>> userListFuture =
+    Future<List<GrpcUserResponse>> userListFuture =
         userDbService.queryListUserWithFriend(queryString, userId);
 
     userListFuture.onSuccess(
@@ -40,7 +40,7 @@ public class UserServiceImpl extends UserServiceImplBase {
           UserListResponse.Builder response = UserListResponse.newBuilder();
 
           // Convert user object to response
-          for (UserWithStatus user : userList) {
+          for (GrpcUserResponse user : userList) {
             response.addUser(
                 UserResponse.newBuilder()
                     .setId(user.getId())

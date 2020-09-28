@@ -7,7 +7,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserWithStatus extends User {
+public class GrpcUserResponse extends User {
   @ColName("status")
   private String friendStatus;
+
+  @ColName("last_message")
+  private String lastMessage;
+
+  @ColName("last_msg_sender")
+  private long lastMessageSenderId;
 }
