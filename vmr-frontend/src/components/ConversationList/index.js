@@ -1,7 +1,7 @@
 import React from 'react';
 import ToolbarButton from '../ToolbarButton';
 import {useDispatch, useSelector} from 'react-redux';
-import logout from "../../service/logout";
+import {logout} from "../../service/user";
 import './ConversationList.css';
 import MenuBar from "../MenuBar";
 import {setTab} from "../../redux/vmr-action";
@@ -10,6 +10,7 @@ import ChatTab from "../ChatTab";
 
 export default function ConversationList() {
   let tab = useSelector(state => state.ui.currentTab);
+
   let dispatch = useDispatch();
 
   let setCurrentTab = (tab) => {

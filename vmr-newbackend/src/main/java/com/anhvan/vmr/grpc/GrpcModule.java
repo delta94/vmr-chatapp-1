@@ -22,22 +22,14 @@ public class GrpcModule {
   @Provides
   @IntoSet
   @Singleton
-  public BindableService provideTransferServiceImpl() {
-    return new TransferServiceImpl();
-  }
-
-  @Provides
-  @IntoSet
-  @Singleton
-  public BindableService provideUserServiceImpl(UserDatabaseService service) {
-    return UserServiceImpl.builder().userDbService(service).build();
-  }
-
-  @Provides
-  @IntoSet
-  @Singleton
   public BindableService provideFriendServiceImpl(
-      FriendDatabaseService service, WebSocketService wsService) {
-    return FriendServiceImpl.builder().friendDbService(service).webSocketService(wsService).build();
+      UserDatabaseService userDatabaseService,
+      FriendDatabaseService friendDatabaseService,
+      WebSocketService wsService) {
+    return FriendServiceImpl.builder()
+        .userDbService(userDatabaseService)
+        .friendDbService(friendDatabaseService)
+        .webSocketService(wsService)
+        .build();
   }
 }

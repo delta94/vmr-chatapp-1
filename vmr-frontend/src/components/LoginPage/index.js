@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {Form, Input, Button, Row, Col, Card, Alert, Checkbox} from "antd";
-import { UserOutlined, LockOutlined, LoginOutlined } from '@ant-design/icons';
+import {UserOutlined, LockOutlined, LoginOutlined} from '@ant-design/icons';
 import bg from '../resource/registerbg.jpg';
-import {usernamePasswordLogin} from "../../service/login";
+import {login} from "../../service/user";
 import {Link} from 'react-router-dom';
 
 const rowStyle = {
@@ -25,8 +25,8 @@ function LoginPage(props) {
   let [error, setError] = useState(false);
   let [errorMessage, setErrorMessage] = useState("Credential not valid");
 
-  let hanldeLoginForm = (event) => {
-    usernamePasswordLogin(event.username, event.password).then(() => {
+  let handleLogin = (event) => {
+    login(event.username, event.password).then(() => {
       props.history.push('/');
     }).catch(msg => {
       form.resetFields();
@@ -50,11 +50,12 @@ function LoginPage(props) {
 
   return (
     <Row style={rowStyle} align="top">
-      <Col xs={{span: 22, offset: 1}} sm={{span: 16, offset: 4}} md={{span: 10, offset: 7}} lg={{span:8, offset:8}} style={colStyle}>
+      <Col xs={{span: 22, offset: 1}} sm={{span: 16, offset: 4}} md={{span: 10, offset: 7}} lg={{span: 8, offset: 8}}
+           style={colStyle}>
         <h1 style={{textAlign: "center"}}>Login</h1>
         <Card bordered={false}>
           <Form form={form}
-                onFinish={hanldeLoginForm}
+                onFinish={handleLogin}
                 className="login-form"
                 name="basic"
                 initialValues={{remember: true}}
@@ -62,16 +63,16 @@ function LoginPage(props) {
           >
             <Form.Item
               name="username"
-              rules={[{ required: true, message: 'Please input your Username!' }]}
+              rules={[{required: true, message: 'Please input your Username!'}]}
             >
-              <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+              <Input prefix={<UserOutlined className="site-form-item-icon"/>} placeholder="Username"/>
             </Form.Item>
             <Form.Item
               name="password"
-              rules={[{ required: true, message: 'Please input your Password!' }]}
+              rules={[{required: true, message: 'Please input your Password!'}]}
             >
               <Input
-                prefix={<LockOutlined className="site-form-item-icon" />}
+                prefix={<LockOutlined className="site-form-item-icon"/>}
                 type="password"
                 placeholder="Password"
               />
@@ -88,7 +89,7 @@ function LoginPage(props) {
 
             <Form.Item>
               <Button type="primary" htmlType="submit" style={{width: "100%"}}>
-              <LoginOutlined />Log in
+                <LoginOutlined/>Log in
               </Button>
               Or <Link to="/register">register now!</Link>
             </Form.Item>
