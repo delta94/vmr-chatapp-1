@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package vmr;
+
+option java_package = "com.anhvan.vmr.proto";
+
+import "vmr/error.proto";
+import "vmr/empty.proto";
+
+message TransferRequest {
+  int32 to = 1;
+  uint64 amount = 2;
+  string message = 3;
+}
+
+message TransferResponse {
+  message Data {
+    int64 balance = 1;
+    int64 last_updated = 2;
+  }
+
+  Error error = 1;
+  Data data = 2;
+}
+
+message BalanceResponse {
+  message Data {
+    int64 balance = 1;
+    int64 last_updated = 2;
+  }
+
+  Error error = 1;
+  Data data = 2;
+}
+
+message HistoryResponse {
+  enum Type {
+    TRANSFER = 0;
+    RECEIVE = 1;
+  }
+  message Item {
+    int64 id = 1;
+    int64 user_id = 2;
+    int64 amount = 3;
+    int64 timestamp = 4;
+    Type type = 5;
+  }
+
+  Error error = 1;
+  repeated Item item = 2;
+}
+
+service WalletService {
+  rpc Transfer(TransferRequest) returns (TransferResponse);
+  rpc GetBalance(Empty) returns (BalanceResponse);
+  rpc GetHistory(Empty) returns (HistoryResponse);
+}

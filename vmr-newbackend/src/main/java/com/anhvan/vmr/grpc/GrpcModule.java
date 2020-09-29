@@ -19,12 +19,6 @@ public class GrpcModule {
     return new SampleServiceImpl();
   }
 
-  @Provides
-  @IntoSet
-  @Singleton
-  public BindableService provideTransferServiceImpl() {
-    return new TransferServiceImpl();
-  }
 
   @Provides
   @IntoSet
