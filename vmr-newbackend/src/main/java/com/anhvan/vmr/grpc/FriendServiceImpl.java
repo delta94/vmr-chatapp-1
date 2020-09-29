@@ -1,6 +1,7 @@
 package com.anhvan.vmr.grpc;
 
 import com.anhvan.vmr.database.FriendDatabaseService;
+import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.entity.GrpcUserResponse;
 import com.anhvan.vmr.proto.ErrorOuterClass.Error;
 import com.anhvan.vmr.proto.ErrorOuterClass.*;
@@ -10,6 +11,7 @@ import com.anhvan.vmr.proto.EmptyOuterClass.Empty;
 import com.anhvan.vmr.util.GrpcUtil;
 import com.anhvan.vmr.websocket.WebSocketService;
 import io.grpc.stub.StreamObserver;
+import io.vertx.core.Future;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.log4j.Log4j2;
@@ -20,6 +22,7 @@ import java.util.List;
 @Builder
 @Log4j2
 public class FriendServiceImpl extends FriendServiceImplBase {
+  private UserDatabaseService userDbService;
   private FriendDatabaseService friendDbService;
   private WebSocketService webSocketService;
 
@@ -179,5 +182,38 @@ public class FriendServiceImpl extends FriendServiceImplBase {
               responseObserver.onNext(responseBuilder.build());
               responseObserver.onCompleted();
             });
+  }
+
+  @Override
+  public void queryUser(UserListRequest request, StreamObserver<UserListResponse> responseObserver) {
+    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+
+    String queryString = request.getQueryString();
+
+    Future<List<GrpcUserResponse>> userListFuture =
+        userDbService.queryListUserWithFriend(queryString, userId);
+
+    userListFuture.onSuccess(
+        userList -> {
+          UserListResponse.Builder response = UserListResponse.newBuilder();
+
+          // Convert user object to response
+          for (GrpcUserResponse user : userList) {
+            response.addUser(
+                UserResponse.newBuilder()
+                    .setId(user.getId())
+                    .setUsername(user.getUsername())
+                    .setName(user.getName())
+                    .setFriendStatus(GrpcUtil.string2FriendStatus(user.getFriendStatus()))
+                    .build());
+          }
+
+          // Send result to client
+          responseObserver.onNext(response.build());
+          responseObserver.onCompleted();
+        });
+
+    userListFuture.onFailure(
+        event -> responseObserver.onError(new Exception("Internal server error")));
   }
 }
