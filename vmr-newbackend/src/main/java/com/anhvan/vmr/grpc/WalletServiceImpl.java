@@ -91,4 +91,9 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
               responseObserver.onCompleted();
             });
   }
+
+  @Override
+  public void transfer(TransferRequest request, StreamObserver<TransferResponse> responseObserver) {
+    super.transfer(request, responseObserver);
+  }
 }

@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface WalletDatabaseService {
   Future<List<History>> getHistory(long userid);
+
 }

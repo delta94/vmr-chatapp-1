@@ -1,13 +1,12 @@
 package com.anhvan.vmr.database;
 
 import com.anhvan.vmr.entity.History;
+import com.anhvan.vmr.entity.TransferResponse;
 import com.anhvan.vmr.util.RowMapperUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.mysqlclient.MySQLPool;
-import io.vertx.sqlclient.Row;
-import io.vertx.sqlclient.RowSet;
-import io.vertx.sqlclient.Tuple;
+import io.vertx.sqlclient.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.log4j.Log4j2;
@@ -52,6 +51,64 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
             });
 
     return historyPromise.future();
+  }
+
+  public Future<TransferResponse> transfer(long senderId, long receiverId, long amount) {
+    Promise<TransferResponse> responsePromise = Promise.promise();
+
+    pool.getConnection(
+        ar -> {
+          if (ar.failed()) {
+            log.error("Could not get connection", ar.cause());
+            responsePromise.fail(ar.cause());
+            return;
+          }
+
+          SqlConnection connection = ar.result();
+          Transaction transaction = connection.begin();
+        });
+
+    return responsePromise.future();
+  }
+
+  private Future<Boolean> checkExist(SqlConnection conn, long userId) {
+    Promise<Boolean> existPromise = Promise.promise();
+
+    conn.preparedQuery("select exists(select * from users where id = ?) as user_exist")
+        .execute(
+            Tuple.of(userId),
+            ar -> {
+              if (ar.succeeded()) {
+                for (Row row : ar.result()) {
+                  existPromise.complete(row.getBoolean("user_exist"));
+                }
+              } else {
+                existPromise.fail(ar.cause());
+              }
+            });
+
+    return existPromise.future();
+  }
+
+  private Future<Boolean> checkBalanceEnought(
+      SqlConnection conn, long userId, long amount) {
+    Promise<Boolean> existPromise = Promise.promise();
+
+    conn.preparedQuery("select balance from users where id = ?")
+        .execute(
+            Tuple.of(userId),
+            ar -> {
+              if (ar.succeeded()) {
+                for (Row row : ar.result()) {
+                  long balance = row.getLong("balance");
+                  existPromise.complete(balance >= amount);
+                }
+              } else {
+                existPromise.fail(ar.cause());
+              }
+            });
+
+    return existPromise.future();
   }
 
   private History row2History(Row row) {
