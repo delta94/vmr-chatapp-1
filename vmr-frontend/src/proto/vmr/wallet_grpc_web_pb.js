@@ -75,86 +75,6 @@ proto.vmr.WalletServicePromiseClient =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.vmr.TransferRequest,
- *   !proto.vmr.TransferResponse>}
- */
-const methodDescriptor_WalletService_Transfer = new grpc.web.MethodDescriptor(
-  '/vmr.WalletService/Transfer',
-  grpc.web.MethodType.UNARY,
-  proto.vmr.TransferRequest,
-  proto.vmr.TransferResponse,
-  /**
-   * @param {!proto.vmr.TransferRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.vmr.TransferResponse.deserializeBinary
-);
-
-
-/**
- * @const
- * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.vmr.TransferRequest,
- *   !proto.vmr.TransferResponse>}
- */
-const methodInfo_WalletService_Transfer = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.vmr.TransferResponse,
-  /**
-   * @param {!proto.vmr.TransferRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.vmr.TransferResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.vmr.TransferRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.Error, ?proto.vmr.TransferResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.vmr.TransferResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.vmr.WalletServiceClient.prototype.transfer =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/vmr.WalletService/Transfer',
-      request,
-      metadata || {},
-      methodDescriptor_WalletService_Transfer,
-      callback);
-};
-
-
-/**
- * @param {!proto.vmr.TransferRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.vmr.TransferResponse>}
- *     Promise that resolves to the response
- */
-proto.vmr.WalletServicePromiseClient.prototype.transfer =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/vmr.WalletService/Transfer',
-      request,
-      metadata || {},
-      methodDescriptor_WalletService_Transfer);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
  *   !proto.vmr.Empty,
  *   !proto.vmr.BalanceResponse>}
  */
@@ -229,6 +149,86 @@ proto.vmr.WalletServicePromiseClient.prototype.getBalance =
       request,
       metadata || {},
       methodDescriptor_WalletService_GetBalance);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.vmr.TransferRequest,
+ *   !proto.vmr.TransferResponse>}
+ */
+const methodDescriptor_WalletService_Transfer = new grpc.web.MethodDescriptor(
+  '/vmr.WalletService/Transfer',
+  grpc.web.MethodType.UNARY,
+  proto.vmr.TransferRequest,
+  proto.vmr.TransferResponse,
+  /**
+   * @param {!proto.vmr.TransferRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.TransferResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.vmr.TransferRequest,
+ *   !proto.vmr.TransferResponse>}
+ */
+const methodInfo_WalletService_Transfer = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.vmr.TransferResponse,
+  /**
+   * @param {!proto.vmr.TransferRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.TransferResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.vmr.TransferRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.vmr.TransferResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.vmr.TransferResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.vmr.WalletServiceClient.prototype.transfer =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/vmr.WalletService/Transfer',
+      request,
+      metadata || {},
+      methodDescriptor_WalletService_Transfer,
+      callback);
+};
+
+
+/**
+ * @param {!proto.vmr.TransferRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.vmr.TransferResponse>}
+ *     Promise that resolves to the response
+ */
+proto.vmr.WalletServicePromiseClient.prototype.transfer =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/vmr.WalletService/Transfer',
+      request,
+      metadata || {},
+      methodDescriptor_WalletService_Transfer);
 };
 
 

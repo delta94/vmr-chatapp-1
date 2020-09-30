@@ -41,10 +41,13 @@ message HistoryResponse {
 
   message Item {
     int64 id = 1;
-    int64 user_id = 2;
-    int64 amount = 3;
-    int64 timestamp = 4;
-    Type type = 5;
+    int64 sender = 2;
+    int64 receiver = 3;
+    int64 amount = 4;
+    int64 timestamp = 5;
+    string message = 6;
+    int64 balance = 7;
+    Type type = 8;
   }
 
   Error error = 1;

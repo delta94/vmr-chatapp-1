@@ -2,6 +2,7 @@ package com.anhvan.vmr.grpc;
 
 import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
+import com.anhvan.vmr.database.WalletDatabaseService;
 import com.anhvan.vmr.websocket.WebSocketService;
 import dagger.Module;
 import dagger.Provides;
@@ -36,7 +37,11 @@ public class GrpcModule {
   @Provides
   @IntoSet
   @Singleton
-  public BindableService provideWalletServiceImpl(UserDatabaseService userDatabaseService) {
-    return WalletServiceImpl.builder().userDbService(userDatabaseService).build();
+  public BindableService provideWalletServiceImpl(
+      UserDatabaseService userDatabaseService, WalletDatabaseService walletDatabaseService) {
+    return WalletServiceImpl.builder()
+        .userDbService(userDatabaseService)
+        .walletDatabaseService(walletDatabaseService)
+        .build();
   }
 }

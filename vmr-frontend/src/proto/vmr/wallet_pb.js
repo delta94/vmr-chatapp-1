@@ -1351,9 +1351,12 @@ proto.vmr.HistoryResponse.Item.prototype.toObject = function(opt_includeInstance
 proto.vmr.HistoryResponse.Item.toObject = function(includeInstance, msg) {
   var f, obj = {
     id: msg.getId(),
-    userId: msg.getUserId(),
+    sender: msg.getSender(),
+    receiver: msg.getReceiver(),
     amount: msg.getAmount(),
     timestamp: msg.getTimestamp(),
+    message: msg.getMessage(),
+    balance: msg.getBalance(),
     type: msg.getType()
   };
 
@@ -1397,17 +1400,29 @@ proto.vmr.HistoryResponse.Item.deserializeBinaryFromReader = function(msg, reade
       break;
     case 2:
       var value = /** @type {number} */ (reader.readInt64());
-      msg.setUserId(value);
+      msg.setSender(value);
       break;
     case 3:
       var value = /** @type {number} */ (reader.readInt64());
-      msg.setAmount(value);
+      msg.setReceiver(value);
       break;
     case 4:
       var value = /** @type {number} */ (reader.readInt64());
-      msg.setTimestamp(value);
+      msg.setAmount(value);
       break;
     case 5:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setTimestamp(value);
+      break;
+    case 6:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setMessage(value);
+      break;
+    case 7:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setBalance(value);
+      break;
+    case 8:
       var value = /** @type {!proto.vmr.HistoryResponse.Type} */ (reader.readEnum());
       msg.setType(value);
       break;
@@ -1456,31 +1471,52 @@ proto.vmr.HistoryResponse.Item.prototype.serializeBinaryToWriter = function (wri
       f
     );
   }
-  f = this.getUserId();
+  f = this.getSender();
   if (f !== 0) {
     writer.writeInt64(
       2,
       f
     );
   }
-  f = this.getAmount();
+  f = this.getReceiver();
   if (f !== 0) {
     writer.writeInt64(
       3,
       f
     );
   }
-  f = this.getTimestamp();
+  f = this.getAmount();
   if (f !== 0) {
     writer.writeInt64(
       4,
       f
     );
   }
+  f = this.getTimestamp();
+  if (f !== 0) {
+    writer.writeInt64(
+      5,
+      f
+    );
+  }
+  f = this.getMessage();
+  if (f.length > 0) {
+    writer.writeString(
+      6,
+      f
+    );
+  }
+  f = this.getBalance();
+  if (f !== 0) {
+    writer.writeInt64(
+      7,
+      f
+    );
+  }
   f = this.getType();
   if (f !== 0.0) {
     writer.writeEnum(
-      5,
+      8,
       f
     );
   }
@@ -1512,62 +1548,107 @@ proto.vmr.HistoryResponse.Item.prototype.setId = function(value) {
 
 
 /**
- * optional int64 user_id = 2;
+ * optional int64 sender = 2;
  * @return {number}
  */
-proto.vmr.HistoryResponse.Item.prototype.getUserId = function() {
+proto.vmr.HistoryResponse.Item.prototype.getSender = function() {
   return /** @type {number} */ (jspb.Message.getFieldProto3(this, 2, 0));
 };
 
 
 /** @param {number} value  */
-proto.vmr.HistoryResponse.Item.prototype.setUserId = function(value) {
+proto.vmr.HistoryResponse.Item.prototype.setSender = function(value) {
   jspb.Message.setField(this, 2, value);
 };
 
 
 /**
- * optional int64 amount = 3;
+ * optional int64 receiver = 3;
  * @return {number}
  */
-proto.vmr.HistoryResponse.Item.prototype.getAmount = function() {
+proto.vmr.HistoryResponse.Item.prototype.getReceiver = function() {
   return /** @type {number} */ (jspb.Message.getFieldProto3(this, 3, 0));
 };
 
 
 /** @param {number} value  */
-proto.vmr.HistoryResponse.Item.prototype.setAmount = function(value) {
+proto.vmr.HistoryResponse.Item.prototype.setReceiver = function(value) {
   jspb.Message.setField(this, 3, value);
 };
 
 
 /**
- * optional int64 timestamp = 4;
+ * optional int64 amount = 4;
  * @return {number}
  */
-proto.vmr.HistoryResponse.Item.prototype.getTimestamp = function() {
+proto.vmr.HistoryResponse.Item.prototype.getAmount = function() {
   return /** @type {number} */ (jspb.Message.getFieldProto3(this, 4, 0));
 };
 
 
 /** @param {number} value  */
-proto.vmr.HistoryResponse.Item.prototype.setTimestamp = function(value) {
+proto.vmr.HistoryResponse.Item.prototype.setAmount = function(value) {
   jspb.Message.setField(this, 4, value);
 };
 
 
 /**
- * optional Type type = 5;
+ * optional int64 timestamp = 5;
+ * @return {number}
+ */
+proto.vmr.HistoryResponse.Item.prototype.getTimestamp = function() {
+  return /** @type {number} */ (jspb.Message.getFieldProto3(this, 5, 0));
+};
+
+
+/** @param {number} value  */
+proto.vmr.HistoryResponse.Item.prototype.setTimestamp = function(value) {
+  jspb.Message.setField(this, 5, value);
+};
+
+
+/**
+ * optional string message = 6;
+ * @return {string}
+ */
+proto.vmr.HistoryResponse.Item.prototype.getMessage = function() {
+  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 6, ""));
+};
+
+
+/** @param {string} value  */
+proto.vmr.HistoryResponse.Item.prototype.setMessage = function(value) {
+  jspb.Message.setField(this, 6, value);
+};
+
+
+/**
+ * optional int64 balance = 7;
+ * @return {number}
+ */
+proto.vmr.HistoryResponse.Item.prototype.getBalance = function() {
+  return /** @type {number} */ (jspb.Message.getFieldProto3(this, 7, 0));
+};
+
+
+/** @param {number} value  */
+proto.vmr.HistoryResponse.Item.prototype.setBalance = function(value) {
+  jspb.Message.setField(this, 7, value);
+};
+
+
+/**
+ * optional Type type = 8;
  * @return {!proto.vmr.HistoryResponse.Type}
  */
 proto.vmr.HistoryResponse.Item.prototype.getType = function() {
-  return /** @type {!proto.vmr.HistoryResponse.Type} */ (jspb.Message.getFieldProto3(this, 5, 0));
+  return /** @type {!proto.vmr.HistoryResponse.Type} */ (jspb.Message.getFieldProto3(this, 8, 0));
 };
 
 
 /** @param {!proto.vmr.HistoryResponse.Type} value  */
 proto.vmr.HistoryResponse.Item.prototype.setType = function(value) {
-  jspb.Message.setField(this, 5, value);
+  jspb.Message.setField(this, 8, value);
 };
 
 
