@@ -45,4 +45,10 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
               responseObserver.onCompleted();
             });
   }
+
+  @Override
+  public void getHistory(
+      Common.Empty request, StreamObserver<Wallet.HistoryResponse> responseObserver) {
+
+  }
 }
