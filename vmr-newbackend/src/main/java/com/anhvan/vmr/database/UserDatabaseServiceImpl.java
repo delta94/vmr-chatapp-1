@@ -15,13 +15,14 @@ import jodd.crypt.BCrypt;
 import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
 public class UserDatabaseServiceImpl implements UserDatabaseService {
   public static final String INSERT_USER =
-      "insert into users(username, password, name) values (?,?,?)";
+      "insert into users(username, password, name, last_updated) values (?,?,?,?)";
 
   public static final String GET_ALL_USER = "select username, name, id, is_active from users";
 
@@ -59,7 +60,9 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
           String password = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 
           // Info params
-          Tuple info = Tuple.of(user.getUsername(), password, user.getName());
+          Tuple info =
+              Tuple.of(
+                  user.getUsername(), password, user.getName(), Instant.now().getEpochSecond());
 
           // Trace
           log.trace("Pool will execute query");

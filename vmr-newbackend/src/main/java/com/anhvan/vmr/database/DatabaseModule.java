@@ -24,4 +24,10 @@ public class DatabaseModule {
   public FriendDatabaseService provideFriendDatabaseService(FriendDatabaseServiceImpl impl) {
     return impl;
   }
+
+  @Provides
+  @Singleton
+  public WalletDatabaseService provideWalletDatabaseService(DatabaseService dbService) {
+    return WalletDatabaseServiceImpl.builder().pool(dbService.getPool()).build();
+  }
 }

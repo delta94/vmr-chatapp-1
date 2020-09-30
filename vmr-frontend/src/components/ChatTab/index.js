@@ -30,7 +30,7 @@ export default function ChatTab() {
     }).catch(err => {
       console.log(err);
     });
-  }, [friendReloadFlag]);
+  }, [friendReloadFlag, dispatch]);
 
   let conversations = userList.map(item => {
     return {

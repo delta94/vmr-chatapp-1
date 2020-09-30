@@ -6,7 +6,7 @@ const {
   RejectFriendRequest,
   UserListRequest
 } = require('../proto/vmr/friend_pb');
-const {Empty} = require('../proto/vmr/empty_pb');
+const {Empty} = require('../proto/vmr/common_pb');
 const {FriendServiceClient} = require('../proto/vmr/friend_grpc_web_pb');
 
 const ENVOY_ROOT = process.env.REACT_APP_ENVOY_ROOT;

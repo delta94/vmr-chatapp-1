@@ -16,9 +16,7 @@ const grpc = {};
 grpc.web = require('grpc-web');
 
 
-var vmr_error_pb = require('../vmr/error_pb.js')
-
-var vmr_empty_pb = require('../vmr/empty_pb.js')
+var vmr_common_pb = require('../vmr/common_pb.js')
 const proto = {};
 proto.vmr = require('./friend_pb.js');
 
@@ -163,7 +161,7 @@ proto.vmr.FriendServicePromiseClient.prototype.addFriend =
 const methodDescriptor_FriendService_GetFriendList = new grpc.web.MethodDescriptor(
   '/vmr.FriendService/GetFriendList',
   grpc.web.MethodType.UNARY,
-  vmr_empty_pb.Empty,
+  vmr_common_pb.Empty,
   proto.vmr.FriendListResponse,
   /**
    * @param {!proto.vmr.Empty} request
@@ -403,7 +401,7 @@ proto.vmr.FriendServicePromiseClient.prototype.rejectFriend =
 const methodDescriptor_FriendService_GetChatFriendList = new grpc.web.MethodDescriptor(
   '/vmr.FriendService/GetChatFriendList',
   grpc.web.MethodType.UNARY,
-  vmr_empty_pb.Empty,
+  vmr_common_pb.Empty,
   proto.vmr.FriendListResponse,
   /**
    * @param {!proto.vmr.Empty} request

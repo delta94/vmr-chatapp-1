@@ -32,4 +32,11 @@ public class GrpcModule {
         .webSocketService(wsService)
         .build();
   }
+
+  @Provides
+  @IntoSet
+  @Singleton
+  public BindableService provideWalletServiceImpl(UserDatabaseService userDatabaseService) {
+    return WalletServiceImpl.builder().userDbService(userDatabaseService).build();
+  }
 }

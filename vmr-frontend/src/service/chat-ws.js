@@ -1,6 +1,7 @@
 import store from '../redux/vmr-store';
 import {webSocketConnected, receiveMessage, sendbackMessage, onOffline, newUser} from "../redux/vmr-action";
 import {getJwtToken, getUserId} from "../util/auth-util";
+import {getBalance} from "./wallet";
 
 const WEB_SOCKET_ROOT = process.env.REACT_APP_WS_ROOT;
 
@@ -37,6 +38,10 @@ function internalConnect() {
   // Get senderId
   let senderId = getUserId();
   let token = getJwtToken();
+
+  if (!token) {
+    return;
+  }
 
   // Create new websocket connection
   let webSocket = new WebSocket(WEB_SOCKET_ROOT + `?token=${token}`);
@@ -98,4 +103,4 @@ function internalConnect() {
   }
 }
 
-require('./grpc-service');
+getBalance();

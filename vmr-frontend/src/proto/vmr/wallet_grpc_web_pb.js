@@ -16,9 +16,7 @@ const grpc = {};
 grpc.web = require('grpc-web');
 
 
-var vmr_error_pb = require('../vmr/error_pb.js')
-
-var vmr_empty_pb = require('../vmr/empty_pb.js')
+var vmr_common_pb = require('../vmr/common_pb.js')
 const proto = {};
 proto.vmr = require('./wallet_pb.js');
 
@@ -163,7 +161,7 @@ proto.vmr.WalletServicePromiseClient.prototype.transfer =
 const methodDescriptor_WalletService_GetBalance = new grpc.web.MethodDescriptor(
   '/vmr.WalletService/GetBalance',
   grpc.web.MethodType.UNARY,
-  vmr_empty_pb.Empty,
+  vmr_common_pb.Empty,
   proto.vmr.BalanceResponse,
   /**
    * @param {!proto.vmr.Empty} request
@@ -243,7 +241,7 @@ proto.vmr.WalletServicePromiseClient.prototype.getBalance =
 const methodDescriptor_WalletService_GetHistory = new grpc.web.MethodDescriptor(
   '/vmr.WalletService/GetHistory',
   grpc.web.MethodType.UNARY,
-  vmr_empty_pb.Empty,
+  vmr_common_pb.Empty,
   proto.vmr.HistoryResponse,
   /**
    * @param {!proto.vmr.Empty} request
@@ -311,6 +309,166 @@ proto.vmr.WalletServicePromiseClient.prototype.getHistory =
       request,
       metadata || {},
       methodDescriptor_WalletService_GetHistory);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.vmr.TransferReminderRequest,
+ *   !proto.vmr.TransferReminderResponse>}
+ */
+const methodDescriptor_WalletService_RemindTransfer = new grpc.web.MethodDescriptor(
+  '/vmr.WalletService/RemindTransfer',
+  grpc.web.MethodType.UNARY,
+  proto.vmr.TransferReminderRequest,
+  proto.vmr.TransferReminderResponse,
+  /**
+   * @param {!proto.vmr.TransferReminderRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.TransferReminderResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.vmr.TransferReminderRequest,
+ *   !proto.vmr.TransferReminderResponse>}
+ */
+const methodInfo_WalletService_RemindTransfer = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.vmr.TransferReminderResponse,
+  /**
+   * @param {!proto.vmr.TransferReminderRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.TransferReminderResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.vmr.TransferReminderRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.vmr.TransferReminderResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.vmr.TransferReminderResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.vmr.WalletServiceClient.prototype.remindTransfer =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/vmr.WalletService/RemindTransfer',
+      request,
+      metadata || {},
+      methodDescriptor_WalletService_RemindTransfer,
+      callback);
+};
+
+
+/**
+ * @param {!proto.vmr.TransferReminderRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.vmr.TransferReminderResponse>}
+ *     Promise that resolves to the response
+ */
+proto.vmr.WalletServicePromiseClient.prototype.remindTransfer =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/vmr.WalletService/RemindTransfer',
+      request,
+      metadata || {},
+      methodDescriptor_WalletService_RemindTransfer);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.vmr.Empty,
+ *   !proto.vmr.TransferReminderListResponse>}
+ */
+const methodDescriptor_WalletService_GetTransferReminder = new grpc.web.MethodDescriptor(
+  '/vmr.WalletService/GetTransferReminder',
+  grpc.web.MethodType.UNARY,
+  vmr_common_pb.Empty,
+  proto.vmr.TransferReminderListResponse,
+  /**
+   * @param {!proto.vmr.Empty} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.TransferReminderListResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.vmr.Empty,
+ *   !proto.vmr.TransferReminderListResponse>}
+ */
+const methodInfo_WalletService_GetTransferReminder = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.vmr.TransferReminderListResponse,
+  /**
+   * @param {!proto.vmr.Empty} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.TransferReminderListResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.vmr.Empty} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.vmr.TransferReminderListResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.vmr.TransferReminderListResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.vmr.WalletServiceClient.prototype.getTransferReminder =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/vmr.WalletService/GetTransferReminder',
+      request,
+      metadata || {},
+      methodDescriptor_WalletService_GetTransferReminder,
+      callback);
+};
+
+
+/**
+ * @param {!proto.vmr.Empty} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.vmr.TransferReminderListResponse>}
+ *     Promise that resolves to the response
+ */
+proto.vmr.WalletServicePromiseClient.prototype.getTransferReminder =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/vmr.WalletService/GetTransferReminder',
+      request,
+      metadata || {},
+      methodDescriptor_WalletService_GetTransferReminder);
 };
 
 

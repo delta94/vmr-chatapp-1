@@ -4,8 +4,7 @@ package vmr;
 
 option java_package = "com.anhvan.vmr.proto";
 
-import "vmr/error.proto";
-import "vmr/empty.proto";
+import "vmr/common.proto";
 
 message TransferRequest {
   int64 request_id = 1;
@@ -78,8 +77,8 @@ message TransferReminderListResponse {
 }
 
 service WalletService {
-  rpc Transfer(TransferRequest) returns (TransferResponse);
   rpc GetBalance(Empty) returns (BalanceResponse);
+  rpc Transfer(TransferRequest) returns (TransferResponse);
   rpc GetHistory(Empty) returns (HistoryResponse);
   rpc RemindTransfer(TransferReminderRequest) returns (TransferReminderResponse);
   rpc GetTransferReminder(Empty) returns (TransferReminderListResponse);

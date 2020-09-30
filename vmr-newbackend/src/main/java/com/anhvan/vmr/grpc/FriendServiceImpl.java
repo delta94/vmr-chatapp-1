@@ -3,11 +3,11 @@ package com.anhvan.vmr.grpc;
 import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.entity.GrpcUserResponse;
-import com.anhvan.vmr.proto.ErrorOuterClass.Error;
-import com.anhvan.vmr.proto.ErrorOuterClass.*;
+import com.anhvan.vmr.proto.Common.Error;
+import com.anhvan.vmr.proto.Common.ErrorCode;
+import com.anhvan.vmr.proto.Common.Empty;
 import com.anhvan.vmr.proto.Friend.*;
 import com.anhvan.vmr.proto.FriendServiceGrpc.*;
-import com.anhvan.vmr.proto.EmptyOuterClass.Empty;
 import com.anhvan.vmr.util.GrpcUtil;
 import com.anhvan.vmr.websocket.WebSocketService;
 import io.grpc.stub.StreamObserver;
@@ -185,7 +185,8 @@ public class FriendServiceImpl extends FriendServiceImplBase {
   }
 
   @Override
-  public void queryUser(UserListRequest request, StreamObserver<UserListResponse> responseObserver) {
+  public void queryUser(
+      UserListRequest request, StreamObserver<UserListResponse> responseObserver) {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
 
     String queryString = request.getQueryString();

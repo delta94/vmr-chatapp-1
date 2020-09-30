@@ -4,8 +4,7 @@ package vmr;
 
 option java_package = "com.anhvan.vmr.proto";
 
-import "vmr/error.proto";
-import "vmr/empty.proto";
+import "vmr/common.proto";
 
 service FriendService {
   rpc AddFriend(AddFriendRequest) returns (AddFriendResponse);
