@@ -9,6 +9,8 @@ import renderMessageNew from './message-render';
 
 import './MessageList.css';
 
+import {ArrowLeftOutlined, MoreOutlined, SendOutlined} from '@ant-design/icons';
+
 let MessageListInternal = props => {
   let {scrollFlag, currentConversationId, receiverId, receiver, webSocket} = props;
 
@@ -91,20 +93,20 @@ let MessageListInternal = props => {
     }
   };
 
+  let toggleSideBar = () => {
+    props.toggleSideBar();
+  };
+
   return (
     <div className="message-list">
       <Toolbar
         title={receiver.name}
         className="chat-title-bar"
         rightItems={[
-          <ToolbarButton key="info" icon="ion-ios-information-circle-outline"/>,
-          <ToolbarButton key="video" icon="ion-ios-videocam"/>,
-          <ToolbarButton key="phone" icon="ion-ios-call"/>
+          <ToolbarButton key="info" icon={<MoreOutlined/>} type="top-bar-btn"/>
         ]}
         leftItems={[
-          <ToolbarButton key="cog" icon="ion-ios-arrow-dropleft" onClick={() => {
-            props.toggleSideBar()
-          }}/>
+          <ToolbarButton key="info" icon={<ArrowLeftOutlined/>} onClick={toggleSideBar} type={"top-bar-btn"}/>
         ]}
       />
 
@@ -115,11 +117,10 @@ let MessageListInternal = props => {
 
       <Compose
         rightItems={[
-          <ToolbarButton key="photo" icon="ion-ios-camera"/>,
-          <ToolbarButton key="audio" icon="ion-ios-mic"/>,
-          <ToolbarButton key="emoji" icon="ion-ios-send"
+          <ToolbarButton key="emoji" icon={<SendOutlined/>}
                          onClick={handleSendButtonClick}
-                         active={sendButtonActive}/>
+                         active={sendButtonActive}
+                         type="compose-btn"/>
         ]}
         onKeyUp={onChangeText}
         inputRef={inputRef}
@@ -149,7 +150,7 @@ let stateToProps = (state, ownProp) => {
     return {
       chatMessages: state.chat.chatMessagesHolder.chatMessages.get(receiverId),
       receiver: state.users.userMapHolder.userMap.get(receiverId),
-      webSocket: state.app.webSocket,
+      webSocket: state.webSocket.webSocket,
       scrollFlag: state.chat.scrollFlag,
       currentConversationId: state.users.currentConversationId,
       isValid: function () {

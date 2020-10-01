@@ -13,7 +13,7 @@
   justify-content: space-between;
 }
 
-.menubar-item {
+.icon-wrapper {
   box-sizing: border-box;
   margin: 2px;
   flex-basis: 25%;
@@ -22,7 +22,13 @@
   border-radius: 5px;
 }
 
-.menubar-item-active, .menubar-item:hover {
+.icon-wrapper-active, .icon-wrapper:hover {
   background-color: #eef2f5;
   cursor: pointer;
+}
+
+.menubar-icon {
+  font-size: 28px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }

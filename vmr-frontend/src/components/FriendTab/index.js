@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {acceptFriend, getFriendList, rejectFriend} from "../../service/friend";
-import ConversationSearch from "../ConversationSearch";
+import ConversationSearch from "../FriendSearch";
 import {Avatar, Button, List, Menu, Dropdown} from "antd";
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import {getColor} from "../../util/ui-util";

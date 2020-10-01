@@ -6,6 +6,7 @@ import {getChatFriendList} from "../../service/friend";
 import {updateUserList} from "../../redux/vmr-action";
 import {wsConnect} from "../../service/chat-ws";
 import {useDispatch} from "react-redux";
+import ConversationSearch from "../ConversationSearch";
 
 export default function ChatTab() {
   let currentUserId = getUserId();
@@ -44,6 +45,7 @@ export default function ChatTab() {
 
   return (
     <div className="conversation-list-scroll">
+      <ConversationSearch/>
       {
         conversations.map(conversation =>
           <ConversationListItem
