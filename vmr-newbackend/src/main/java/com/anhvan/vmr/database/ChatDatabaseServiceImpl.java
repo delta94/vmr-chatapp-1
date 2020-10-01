@@ -98,6 +98,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
     return listMsgPromise.future();
   }
 
+  @Override
   public Future<Message> getLastMessage(long user1, long user2) {
     Promise<Message> messagePromise = Promise.promise();
 

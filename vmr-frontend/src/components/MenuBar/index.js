@@ -4,7 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {setTab} from "../../redux/vmr-action";
 import {logout} from "../../service/user";
 
-import {UserOutlined, MessageOutlined, TeamOutlined, LogoutOutlined} from '@ant-design/icons';
+import {CreditCardOutlined, MessageOutlined, TeamOutlined, LogoutOutlined} from '@ant-design/icons';
 
 export default function MenuBar(props) {
   let dispatch = useDispatch();
@@ -24,11 +24,13 @@ export default function MenuBar(props) {
       <IconWrapper icon={<MessageOutlined className="menubar-icon" style={{color: "green"}}/>}
                    onClick={() => setCurrentTab("chat")}
                    tab="chat"/>
-      <IconWrapper icon={<UserOutlined className="menubar-icon" style={{color: "#cc4d53"}}/>}
+      <IconWrapper icon={<CreditCardOutlined className="menubar-icon" style={{color: "#cc4d53"}}/>}
                    onClick={() => setCurrentTab("home")}
+                   isMid
                    tab="home"/>
       <IconWrapper icon={<TeamOutlined className="menubar-icon" style={{color: "#7474ed"}}/>}
                    onClick={() => setCurrentTab("friend")}
+                   isMid
                    tab={"friend"}/>
       <IconWrapper icon={<LogoutOutlined className="menubar-icon" style={{color: "purple"}}/>}
                    onClick={logout}/>
@@ -39,9 +41,12 @@ export default function MenuBar(props) {
 function IconWrapper(props) {
   let currentTab = useSelector(state => state.ui.currentTab);
 
-  let {icon, onClick, tab} = props;
+  let {icon, onClick, tab, isMid} = props;
 
-  let className = "icon-wrapper";
+  let className = "icon-wrapper ";
+  if (isMid) {
+    className += " mid";
+  }
   if (currentTab === tab) {
     className += " icon-wrapper-active";
   }

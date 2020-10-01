@@ -50,33 +50,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
         ar -> {
           if (ar.succeeded()) {
             Transaction transaction = ar.result();
-            transaction
-                .preparedQuery(ADD_FRIEND_QUERY)
-                .executeBatch(
-                    Arrays.asList(
-                        Tuple.of(userId, friendId, "WAITING"),
-                        Tuple.of(friendId, userId, "NOT_ANSWER")),
-                    rowSetAsyncResult -> {
-                      if (rowSetAsyncResult.succeeded()) {
-                        RowSet<Row> rs = rowSetAsyncResult.result();
-                        transaction.commit(
-                            transactionAr -> {
-                              if (transactionAr.succeeded()) {
-                                addFriendIdPromise.complete(
-                                    rs.property(MySQLClient.LAST_INSERTED_ID));
-                              } else {
-                                log.error("Error when commit transaction ", transactionAr.cause());
-                              }
-                            });
-                      } else {
-                        log.error(
-                            "Error when add friend userId:{}, friendId:{}",
-                            userId,
-                            friendId,
-                            rowSetAsyncResult.cause());
-                        addFriendIdPromise.fail(rowSetAsyncResult.cause());
-                      }
-                    });
+            internalAddFriend(transaction, addFriendIdPromise, userId, friendId);
           } else {
             log.error("Error when start a transaction", ar.cause());
             addFriendIdPromise.fail(ar.cause());
@@ -84,6 +58,38 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
         });
 
     return addFriendIdPromise.future();
+  }
+
+  private void internalAddFriend(
+      Transaction transaction, Promise<Long> addFriendPromise, long userId, long friendId) {
+    List<Tuple> tuples =
+        Arrays.asList(
+            Tuple.of(userId, friendId, "WAITING"), Tuple.of(friendId, userId, "NOT_ANSWER"));
+
+    transaction
+        .preparedQuery(ADD_FRIEND_QUERY)
+        .executeBatch(
+            tuples,
+            queryAr -> {
+              if (queryAr.succeeded()) {
+                RowSet<Row> rs = queryAr.result();
+                transaction.commit(
+                    transactionAr -> {
+                      if (transactionAr.succeeded()) {
+                        addFriendPromise.complete(rs.property(MySQLClient.LAST_INSERTED_ID));
+                      } else {
+                        log.error("Error when commit transaction ", transactionAr.cause());
+                      }
+                    });
+              } else {
+                log.error(
+                    "Error when add friend userId:{}, friendId:{}",
+                    userId,
+                    friendId,
+                    queryAr.cause());
+                addFriendPromise.fail(queryAr.cause());
+              }
+            });
   }
 
   @Override

@@ -2,6 +2,8 @@ package com.anhvan.vmr.database;
 
 import com.anhvan.vmr.entity.History;
 import com.anhvan.vmr.entity.TransferResponse;
+import com.anhvan.vmr.exception.TransferException;
+import com.anhvan.vmr.exception.TransferException.ErrorCode;
 import com.anhvan.vmr.util.RowMapperUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -9,9 +11,12 @@ import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Builder
@@ -50,6 +55,8 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
               }
             });
 
+    transfer(1, 2, 100000);
+
     return historyPromise.future();
   }
 
@@ -66,21 +73,56 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 
           SqlConnection connection = ar.result();
           Transaction transaction = connection.begin();
+
+          // Create holder to pass state throught all step
+          TransferStateHolder holder =
+              TransferStateHolder.builder()
+                  .conn(connection)
+                  .transaction(transaction)
+                  .senderId(senderId)
+                  .receiverId(receiverId)
+                  .amount(amount)
+                  .build();
+
+          checkExist(holder)
+              .compose(this::checkBalanceEnought)
+              .compose(this::updateAccountBalance)
+              .compose(this::writeTransfer)
+              .compose(this::writeAccountLog)
+              .onComplete(
+                  transAr -> {
+                    if (transAr.succeeded()) {
+                      transaction.commit();
+                      log.info("Transfer succeeded");
+                    } else {
+                      // Rollback all commit
+                      transaction.rollback();
+                      log.error("Error when transfer", transAr.cause());
+                    }
+                  });
         });
 
     return responsePromise.future();
   }
 
-  private Future<Boolean> checkExist(SqlConnection conn, long userId) {
-    Promise<Boolean> existPromise = Promise.promise();
+  private Future<TransferStateHolder> checkExist(TransferStateHolder holder) {
+    Promise<TransferStateHolder> existPromise = Promise.promise();
+
+    SqlConnection conn = holder.getConn();
 
     conn.preparedQuery("select exists(select * from users where id = ?) as user_exist")
         .execute(
-            Tuple.of(userId),
+            Tuple.of(holder.getReceiverId()),
             ar -> {
               if (ar.succeeded()) {
                 for (Row row : ar.result()) {
-                  existPromise.complete(row.getBoolean("user_exist"));
+                  // Check if receiver exist
+                  if (row.getBoolean("user_exist")) {
+                    existPromise.complete(holder);
+                  } else {
+                    existPromise.fail(
+                        new TransferException("Receiver not exist", ErrorCode.RECEIVER_INVALID));
+                  }
                 }
               } else {
                 existPromise.fail(ar.cause());
@@ -90,25 +132,76 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     return existPromise.future();
   }
 
-  private Future<Boolean> checkBalanceEnought(
-      SqlConnection conn, long userId, long amount) {
-    Promise<Boolean> existPromise = Promise.promise();
+  private Future<TransferStateHolder> checkBalanceEnought(TransferStateHolder holder) {
+    Promise<TransferStateHolder> enoughtPromise = Promise.promise();
 
-    conn.preparedQuery("select balance from users where id = ?")
-        .execute(
-            Tuple.of(userId),
+    SqlConnection conn = holder.getConn();
+
+    conn.preparedQuery("select balance from users where id = ? for update")
+        .executeBatch(
+            Arrays.asList(Tuple.of(holder.getSenderId()), Tuple.of(holder.getReceiverId())),
             ar -> {
               if (ar.succeeded()) {
-                for (Row row : ar.result()) {
+                // Sender checking
+                RowSet<Row> senderResult = ar.result();
+                for (Row row : senderResult) {
                   long balance = row.getLong("balance");
-                  existPromise.complete(balance >= amount);
+                  if (balance < holder.getAmount()) {
+                    enoughtPromise.fail(
+                        new TransferException(
+                            "Balance is not enought", ErrorCode.BALANCE_NOT_ENOUGHT));
+                    return;
+                  } else {
+                    holder.setSenderBalance(balance);
+                  }
                 }
+                // Receiver check
+                RowSet<Row> receiverResult = ar.result();
+                for (Row row : receiverResult) {
+                  holder.setReceiverBalance(row.getLong("balance"));
+                }
+                enoughtPromise.complete(holder);
+
               } else {
-                existPromise.fail(ar.cause());
+                enoughtPromise.fail(ar.cause());
               }
             });
 
-    return existPromise.future();
+    return enoughtPromise.future();
+  }
+
+  private Future<TransferStateHolder> updateAccountBalance(TransferStateHolder holder) {
+    Promise<TransferStateHolder> balancePromise = Promise.promise();
+
+    SqlConnection conn = holder.getConn();
+
+    conn.preparedQuery("update users set balance=balance+? where id=?")
+        .executeBatch(
+            Arrays.asList(
+                Tuple.of(-holder.getAmount(), holder.getSenderId()),
+                Tuple.of(holder.getAmount(), holder.getReceiverId())),
+            ar -> {
+              if (!ar.succeeded()) {
+                balancePromise.fail(ar.cause());
+                return;
+              }
+              holder.setNewSenderBalance(holder.getSenderBalance() - holder.getAmount());
+              balancePromise.complete(holder);
+            });
+
+    return balancePromise.future();
+  }
+
+  private Future<TransferStateHolder> writeTransfer(TransferStateHolder holder) {
+    Promise<TransferStateHolder> transferPromise = Promise.promise();
+    transferPromise.complete();
+    return transferPromise.future();
+  }
+
+  private Future<TransferStateHolder> writeAccountLog(TransferStateHolder holder) {
+    Promise<TransferStateHolder> accountLogPromise = Promise.promise();
+    accountLogPromise.complete();
+    return accountLogPromise.future();
   }
 
   private History row2History(Row row) {
@@ -121,4 +214,19 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     }
     return history;
   }
+}
+
+@Getter
+@Setter
+@Builder
+class TransferStateHolder {
+  private SqlConnection conn;
+  private Transaction transaction;
+  private long receiverId;
+  private long senderId;
+  private long amount;
+  private long senderBalance;
+  private long receiverBalance;
+  private long newSenderBalance; // after update balance
+  private long newReceiverBalance; // after update balance
 }

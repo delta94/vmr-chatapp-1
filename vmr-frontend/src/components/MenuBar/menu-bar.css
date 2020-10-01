@@ -11,15 +11,21 @@
   z-index: 10;
   height: 65px;
   justify-content: space-between;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .icon-wrapper {
   box-sizing: border-box;
-  margin: 2px;
   flex-basis: 25%;
   display: flex;
   justify-content: center;
   border-radius: 5px;
+}
+
+.icon-wrapper.mid {
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .icon-wrapper-active, .icon-wrapper:hover {
