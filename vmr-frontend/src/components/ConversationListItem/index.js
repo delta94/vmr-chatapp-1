@@ -1,6 +1,6 @@
 import React from 'react';
 import {Avatar} from 'antd';
-import {connect} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import './ConversationListItem.css';
 import {setSideBarActive} from "../../redux/vmr-action";
 import {getFirstLetter} from "../../util/string-util";
@@ -9,10 +9,16 @@ import {getUserId} from "../../util/auth-util";
 
 const {useHistory} = require('react-router-dom');
 
-function ConversationListItem(props) {
+export default function ConversationListItem(props) {
   let history = useHistory();
-
   let currentUserId = getUserId();
+  let currentConversationId = useSelector(state => state.users.currentConversationId);
+  let userMapHolder = useSelector(state => state.users.userMapHolder);
+  let dispatch = useDispatch();
+
+  let hideSideBar = () => {
+    dispatch(setSideBarActive(false));
+  };
 
   let itemStyle = {
     borderRadius: "5px",
@@ -20,7 +26,7 @@ function ConversationListItem(props) {
     marginRight: "10px"
   };
 
-  let user = props.userMapHolder.userMap.get(props.friendId);
+  let user = userMapHolder.userMap.get(props.friendId);
   let {online, id} = user;
   let isCurrentUser = id === currentUserId;
 
@@ -35,7 +41,7 @@ function ConversationListItem(props) {
     backgroundColor: getColor(user.id)
   }
 
-  if (props.currentConversationId === user.id) {
+  if (currentConversationId === user.id) {
     itemStyle.backgroundColor = 'rgba(0, 0, 0, .05)';
   }
 
@@ -49,7 +55,7 @@ function ConversationListItem(props) {
 
   let clickHandle = () => {
     history.push('/t/' + id);
-    props.hideSideBar();
+    hideSideBar();
   }
 
   return (
@@ -64,21 +70,3 @@ function ConversationListItem(props) {
     </div>
   );
 }
-
-function mapStateToProps(state) {
-  console.log('Updated state');
-  return {
-    currentConversationId: state.users.currentConversationId,
-    userMapHolder: state.users.userMapHolder
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    hideSideBar: () => {
-      dispatch(setSideBarActive(false));
-    }
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ConversationListItem);

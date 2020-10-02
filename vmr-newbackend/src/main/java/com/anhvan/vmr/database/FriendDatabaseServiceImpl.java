@@ -33,7 +33,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
           + "messages.sender as last_message_sender "
           + "from users inner join friends "
           + "on users.id = friends.friend_id "
-          + "inner join messages on messages.id = friends.last_message_id "
+          + "left join messages on messages.id = friends.last_message_id "
           + "where friends.user_id = ? and friends.status='ACCEPTED'";
 
   public static final String ACCEPT_FRIEND =

@@ -22,3 +22,9 @@
 .friend-search-input:focus::placeholder {
   text-align: left;
 }
+
+.friend-search-button {
+  height: 38px !important;
+  width:30% !important;
+  border-radius: 0 5px 5px 0 !important;
+}

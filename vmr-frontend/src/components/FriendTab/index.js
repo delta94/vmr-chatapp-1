@@ -85,7 +85,13 @@ function FriendListItem(props) {
   }
 
   if (item.getFriendStatus() === FriendStatus.WAITING) {
-    button = <Button className="friend-modal-button" onClick={rejectFriendHandle}><CloseOutlined/>Hủy lời mời</Button>;
+    button = (
+      <Button
+        className="friend-modal-button"
+        onClick={rejectFriendHandle}>
+        <CloseOutlined/>Hủy lời mời
+      </Button>
+    );
     description = "Bạn đã gửi lời mời";
   } else if (item.getFriendStatus() === FriendStatus.NOT_ANSWER) {
     button = (

@@ -1,22 +1,16 @@
 import React from 'react';
-import ConversationList from '../ConversationList';
+import ConversationList from '../LeftSideBar';
 import './Messenger.css';
-import {connect} from 'react-redux';
+import {useSelector} from 'react-redux';
 import MessageListWrapper from '../MessageListWrapper';
 import AddFriendModal from "../AddFriendModal";
 
-function mapStateToProps(state) {
-  return {
-    sideBarActive: state.ui.sideBarActive
-  }
-}
-
-function Messenger(props) {
-  let {sideBarActive} = props;
+function Messenger() {
+  let sideBarActive = useSelector(state => state.ui.sideBarActive);
 
   let sideBarClassName = "sidebar ";
   if (window.innerWidth <= 700 && sideBarActive) {
-    sideBarClassName  += "sidebar-active";
+    sideBarClassName += "sidebar-active";
   }
 
   return (
@@ -35,4 +29,4 @@ function Messenger(props) {
   );
 }
 
-export default connect(mapStateToProps, null)(Messenger);
+export default Messenger;
