@@ -91,7 +91,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     // Execute each step in transfer process
     checkPassword(initHolder)
         .compose(this::checkExist)
-        .compose(this::checkBalanceEnought)
+        .compose(this::checkBalanceEnough)
         .compose(this::checkRequestIdExist)
         .compose(this::updateAccountBalance)
         .compose(this::writeTransfer)
@@ -101,8 +101,9 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
               if (ar.succeeded()) {
                 initHolder.getTransaction().commit();
                 initHolder.getConn().close();
+                log.info("Transfer successfully {}", transferRequest);
               } else {
-                log.error("Error when transfer", ar.cause());
+                log.error("Error when transfer {}", transferRequest, ar.cause());
                 if (initHolder.getConn() != null) {
                   initHolder.getTransaction().rollback();
                   initHolder.getConn().close();
@@ -158,9 +159,9 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   private Future<TransferStateHolder> checkExist(TransferStateHolder holder) {
     Promise<TransferStateHolder> existPromise = Promise.promise();
 
-    SqlConnection conn = holder.getConn();
-
-    conn.preparedQuery("select exists(select * from users where id = ?) as user_exist")
+    holder
+        .getConn()
+        .preparedQuery("select exists(select * from users where id = ?) as user_exist")
         .execute(
             Tuple.of(holder.getReceiverId()),
             ar -> {
@@ -211,7 +212,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     return existPromise.future();
   }
 
-  private Future<TransferStateHolder> checkBalanceEnought(TransferStateHolder holder) {
+  private Future<TransferStateHolder> checkBalanceEnough(TransferStateHolder holder) {
     Promise<TransferStateHolder> enoughtPromise = Promise.promise();
 
     holder
@@ -278,7 +279,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   private Future<TransferStateHolder> writeTransfer(TransferStateHolder holder) {
     Promise<TransferStateHolder> transferPromise = Promise.promise();
 
-    Tuple tuple =
+    Tuple transferTuple =
         Tuple.of(
             holder.getSenderId(),
             holder.getReceiverId(),
@@ -293,12 +294,15 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
             "insert into transfers (sender, receiver, amount, message, timestamp, "
                 + "request_id) values (?,?,?,?,?,?)")
         .execute(
-            tuple,
+            transferTuple,
             ar -> {
+              // Transfer failed
               if (ar.failed()) {
                 transferPromise.fail(ar.cause());
                 return;
               }
+
+              // Save transfer id
               holder.setTransferId(ar.result().property(MySQLClient.LAST_INSERTED_ID));
               transferPromise.complete(holder);
             });
@@ -353,8 +357,8 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 @Setter
 @Builder
 class TransferStateHolder {
-  private SqlConnection conn;
-  private Transaction transaction;
+  private volatile SqlConnection conn;
+  private volatile Transaction transaction;
   private long receiverId;
   private long senderId;
   private long requestId;

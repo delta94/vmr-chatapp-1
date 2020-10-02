@@ -3,10 +3,12 @@ package com.anhvan.vmr.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @Builder
+@ToString
 public class TransferRequest {
   private long sender;
   private long receiver;
