@@ -1030,6 +1030,8 @@ proto.vmr.FriendInfo.toObject = function(includeInstance, msg) {
     username: msg.getUsername(),
     name: msg.getName(),
     online: msg.getOnline(),
+    lastMessage: msg.getLastMessage(),
+    lastMessageSender: msg.getLastMessageSender(),
     friendStatus: msg.getFriendStatus()
   };
 
@@ -1084,6 +1086,14 @@ proto.vmr.FriendInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setOnline(value);
       break;
     case 5:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setLastMessage(value);
+      break;
+    case 6:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setLastMessageSender(value);
+      break;
+    case 7:
       var value = /** @type {!proto.vmr.FriendStatus} */ (reader.readEnum());
       msg.setFriendStatus(value);
       break;
@@ -1153,10 +1163,24 @@ proto.vmr.FriendInfo.prototype.serializeBinaryToWriter = function (writer) {
       f
     );
   }
+  f = this.getLastMessage();
+  if (f.length > 0) {
+    writer.writeString(
+      5,
+      f
+    );
+  }
+  f = this.getLastMessageSender();
+  if (f !== 0) {
+    writer.writeInt64(
+      6,
+      f
+    );
+  }
   f = this.getFriendStatus();
   if (f !== 0.0) {
     writer.writeEnum(
-      5,
+      7,
       f
     );
   }
@@ -1235,17 +1259,47 @@ proto.vmr.FriendInfo.prototype.setOnline = function(value) {
 
 
 /**
- * optional FriendStatus friend_status = 5;
+ * optional string last_message = 5;
+ * @return {string}
+ */
+proto.vmr.FriendInfo.prototype.getLastMessage = function() {
+  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 5, ""));
+};
+
+
+/** @param {string} value  */
+proto.vmr.FriendInfo.prototype.setLastMessage = function(value) {
+  jspb.Message.setField(this, 5, value);
+};
+
+
+/**
+ * optional int64 last_message_sender = 6;
+ * @return {number}
+ */
+proto.vmr.FriendInfo.prototype.getLastMessageSender = function() {
+  return /** @type {number} */ (jspb.Message.getFieldProto3(this, 6, 0));
+};
+
+
+/** @param {number} value  */
+proto.vmr.FriendInfo.prototype.setLastMessageSender = function(value) {
+  jspb.Message.setField(this, 6, value);
+};
+
+
+/**
+ * optional FriendStatus friend_status = 7;
  * @return {!proto.vmr.FriendStatus}
  */
 proto.vmr.FriendInfo.prototype.getFriendStatus = function() {
-  return /** @type {!proto.vmr.FriendStatus} */ (jspb.Message.getFieldProto3(this, 5, 0));
+  return /** @type {!proto.vmr.FriendStatus} */ (jspb.Message.getFieldProto3(this, 7, 0));
 };
 
 
 /** @param {!proto.vmr.FriendStatus} value  */
 proto.vmr.FriendInfo.prototype.setFriendStatus = function(value) {
-  jspb.Message.setField(this, 5, value);
+  jspb.Message.setField(this, 7, value);
 };
 
 

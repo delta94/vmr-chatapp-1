@@ -1,8 +1,8 @@
 package com.anhvan.vmr.database;
 
+import com.anhvan.vmr.entity.DatabaseTransferRequest;
+import com.anhvan.vmr.entity.DatabaseTransferResponse;
 import com.anhvan.vmr.entity.History;
-import com.anhvan.vmr.entity.TransferRequest;
-import com.anhvan.vmr.entity.TransferResponse;
 import com.anhvan.vmr.exception.TransferException;
 import com.anhvan.vmr.exception.TransferException.ErrorCode;
 import com.anhvan.vmr.util.PasswordUtil;
@@ -14,8 +14,6 @@ import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
 import java.time.Instant;
@@ -34,6 +32,25 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
           + "account_logs inner join transfers "
           + "on account_logs.transfer = transfers.id "
           + "where account_logs.user = ?";
+
+  public static final String CHECK_USER_EXIST_QUERY =
+      "select exists(select * from users where id = ?) as user_exist";
+
+  public static final String CHECK_REQUEST_ID_EXIST_QUERY =
+      "select exists(select * from transfers where sender=? and "
+          + "request_id=?) as transfer_exist";
+
+  public static final String BALANCE_QUERY = "select balance from users where id = ? for update";
+
+  public static final String UPDATE_BALANCE_QUERY =
+      "update users set balance=?, last_updated=? where id=?";
+
+  public static final String CREATE_TRANSFER_QUERY =
+      "insert into transfers (sender, receiver, amount, message, timestamp, "
+          + "request_id) values (?,?,?,?,?,?)";
+
+  public static final String CREATE_ACCOUNT_LOG_QUERY =
+      "insert into account_logs (user, transfer, balance, type) values (?,?,?,?)";
 
   private MySQLPool pool;
   private PasswordUtil passwordUtil;
@@ -60,37 +77,28 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
               }
             });
 
-    transfer(
-        TransferRequest.builder()
-            .sender(1)
-            .receiver(2)
-            .amount(1000)
-            .message("Sample " + "message")
-            .password("12345678")
-            .requestId(3)
-            .build());
-
     return historyPromise.future();
   }
 
-  public Future<TransferResponse> transfer(TransferRequest transferRequest) {
-    Promise<TransferResponse> responsePromise = Promise.promise();
+  public Future<DatabaseTransferResponse> transfer(
+      DatabaseTransferRequest databaseTransferRequest) {
+    Promise<DatabaseTransferResponse> responsePromise = Promise.promise();
 
     // Create holder to pass state throught all step
     TransferStateHolder initHolder =
         TransferStateHolder.builder()
-            .senderId(transferRequest.getSender())
-            .receiverId(transferRequest.getReceiver())
-            .amount(transferRequest.getAmount())
-            .requestId(transferRequest.getRequestId())
+            .senderId(databaseTransferRequest.getSender())
+            .receiverId(databaseTransferRequest.getReceiver())
+            .amount(databaseTransferRequest.getAmount())
+            .requestId(databaseTransferRequest.getRequestId())
             .lastUpdated(Instant.now().getEpochSecond())
-            .message(transferRequest.getMessage())
-            .password(transferRequest.getPassword())
+            .message(databaseTransferRequest.getMessage())
+            .password(databaseTransferRequest.getPassword())
             .build();
 
     // Execute each step in transfer process
     checkPassword(initHolder)
-        .compose(this::checkExist)
+        .compose(this::checkReceiverExist)
         .compose(this::checkBalanceEnough)
         .compose(this::checkRequestIdExist)
         .compose(this::updateAccountBalance)
@@ -99,15 +107,31 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
         .onComplete(
             ar -> {
               if (ar.succeeded()) {
+                // Transfer successfully
                 initHolder.getTransaction().commit();
                 initHolder.getConn().close();
-                log.info("Transfer successfully {}", transferRequest);
+
+                log.info("Transfer successfully {}", databaseTransferRequest);
+
+                // Return new balance and last update time to sender
+                responsePromise.complete(
+                    DatabaseTransferResponse.builder()
+                        .newBalance(initHolder.getNewSenderBalance())
+                        .lastUpdated(initHolder.getLastUpdated())
+                        .build());
               } else {
-                log.error("Error when transfer {}", transferRequest, ar.cause());
+                Throwable cause = ar.cause();
+
+                log.error("Error when transfer {}", databaseTransferRequest, cause);
+
+                // Rollback and close connection
                 if (initHolder.getConn() != null) {
                   initHolder.getTransaction().rollback();
                   initHolder.getConn().close();
                 }
+
+                // Return error
+                responsePromise.fail(cause);
               }
             });
 
@@ -143,6 +167,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
                       return;
                     }
 
+                    // Create connection and start a transaction
                     SqlConnection conn = connAr.result();
                     Transaction tx = conn.begin();
 
@@ -156,12 +181,12 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     return passwordPromise.future();
   }
 
-  private Future<TransferStateHolder> checkExist(TransferStateHolder holder) {
+  private Future<TransferStateHolder> checkReceiverExist(TransferStateHolder holder) {
     Promise<TransferStateHolder> existPromise = Promise.promise();
 
     holder
         .getConn()
-        .preparedQuery("select exists(select * from users where id = ?) as user_exist")
+        .preparedQuery(CHECK_USER_EXIST_QUERY)
         .execute(
             Tuple.of(holder.getReceiverId()),
             ar -> {
@@ -188,9 +213,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 
     holder
         .getConn()
-        .preparedQuery(
-            "select exists(select * from transfers where sender=? and "
-                + "request_id=?) as transfer_exist")
+        .preparedQuery(CHECK_REQUEST_ID_EXIST_QUERY)
         .execute(
             Tuple.of(holder.getSenderId(), holder.getRequestId()),
             ar -> {
@@ -217,33 +240,34 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 
     holder
         .getConn()
-        .preparedQuery("select balance from users where id = ? for update")
+        .preparedQuery(BALANCE_QUERY)
         .executeBatch(
             Arrays.asList(Tuple.of(holder.getSenderId()), Tuple.of(holder.getReceiverId())),
             ar -> {
-              if (ar.succeeded()) {
-                // Sender checking
-                RowSet<Row> senderResult = ar.result();
-                for (Row row : senderResult) {
-                  long balance = row.getLong("balance");
-                  if (balance < holder.getAmount()) {
-                    enoughtPromise.fail(
-                        new TransferException(
-                            "Balance is not enought", ErrorCode.BALANCE_NOT_ENOUGHT));
-                    return;
-                  }
-                  holder.setSenderBalance(balance);
-                }
-
-                // Receiver check
-                RowSet<Row> receiverResult = senderResult.next();
-                for (Row row : receiverResult) {
-                  holder.setReceiverBalance(row.getLong("balance"));
-                }
-                enoughtPromise.complete(holder);
-              } else {
+              if (ar.failed()) {
                 enoughtPromise.fail(ar.cause());
+                return;
               }
+
+              // Sender checking
+              RowSet<Row> senderResult = ar.result();
+              for (Row row : senderResult) {
+                long balance = row.getLong("balance");
+                if (balance < holder.getAmount()) {
+                  enoughtPromise.fail(
+                      new TransferException(
+                          "Balance is not enought", ErrorCode.BALANCE_NOT_ENOUGHT));
+                  return;
+                }
+                holder.setSenderBalance(balance);
+              }
+
+              // Receiver check
+              RowSet<Row> receiverResult = senderResult.next();
+              for (Row row : receiverResult) {
+                holder.setReceiverBalance(row.getLong("balance"));
+              }
+              enoughtPromise.complete(holder);
             });
 
     return enoughtPromise.future();
@@ -255,14 +279,18 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     long amount = holder.getAmount();
     long senderNewBalance = holder.getSenderBalance() - amount;
     long recevierNewBalance = holder.getReceiverBalance() + amount;
+    long lastUpdated = holder.getLastUpdated();
+
+    List<Tuple> queryTuples =
+        Arrays.asList(
+            Tuple.of(senderNewBalance, lastUpdated, holder.getSenderId()),
+            Tuple.of(recevierNewBalance, lastUpdated, holder.getReceiverId()));
 
     holder
         .getConn()
-        .preparedQuery("update users set balance=?, last_updated=? where id=?")
+        .preparedQuery(UPDATE_BALANCE_QUERY)
         .executeBatch(
-            Arrays.asList(
-                Tuple.of(senderNewBalance, holder.getLastUpdated(), holder.getSenderId()),
-                Tuple.of(recevierNewBalance, holder.getLastUpdated(), holder.getReceiverId())),
+            queryTuples,
             ar -> {
               if (ar.failed()) {
                 balancePromise.fail(ar.cause());
@@ -290,9 +318,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 
     holder
         .getConn()
-        .preparedQuery(
-            "insert into transfers (sender, receiver, amount, message, timestamp, "
-                + "request_id) values (?,?,?,?,?,?)")
+        .preparedQuery(CREATE_TRANSFER_QUERY)
         .execute(
             transferTuple,
             ar -> {
@@ -312,6 +338,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 
   private Future<TransferStateHolder> writeAccountLog(TransferStateHolder holder) {
     Promise<TransferStateHolder> accountLogPromise = Promise.promise();
+
     List<Tuple> tuples =
         Arrays.asList(
             Tuple.of(
@@ -324,9 +351,10 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
                 holder.getTransferId(),
                 holder.getNewReceiverBalance(),
                 "RECEIVE"));
+
     holder
         .getConn()
-        .preparedQuery("insert into account_logs (user, transfer, balance, type) values (?,?,?,?)")
+        .preparedQuery(CREATE_ACCOUNT_LOG_QUERY)
         .executeBatch(
             tuples,
             ar -> {
@@ -343,32 +371,15 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 
   private History row2History(Row row) {
     History history = RowMapperUtil.mapRow(row, History.class);
+
+    // Set type
     String typeString = row.getString("type_string");
     if (typeString.equals("transfer")) {
       history.setType(History.Type.TRANSFER);
     } else if (typeString.equals("receive")) {
       history.setType(History.Type.RECEIVE);
     }
+
     return history;
   }
-}
-
-@Getter
-@Setter
-@Builder
-class TransferStateHolder {
-  private volatile SqlConnection conn;
-  private volatile Transaction transaction;
-  private long receiverId;
-  private long senderId;
-  private long requestId;
-  private long amount;
-  private long senderBalance;
-  private long receiverBalance;
-  private long newSenderBalance; // after update balance
-  private long newReceiverBalance; // after update balance
-  private long lastUpdated;
-  private String message;
-  private long transferId;
-  private String password;
 }

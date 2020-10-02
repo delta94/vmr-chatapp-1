@@ -1,18 +1,19 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Avatar} from 'antd';
-import shave from 'shave';
 import {connect} from 'react-redux';
 import './ConversationListItem.css';
 import {setSideBarActive} from "../../redux/vmr-action";
 import {getFirstLetter} from "../../util/string-util";
-import {randColor} from "../../util/ui-util";
+import {getColor} from "../../util/ui-util";
+import {getUserId} from "../../util/auth-util";
 
 const {useHistory} = require('react-router-dom');
 
 function ConversationListItem(props) {
   let history = useHistory();
 
-  let [avatarStyle, setAvatarStyle] = useState({});
+
+  let currentUserId = getUserId();
 
   let itemStyle = {
     borderRadius: "5px",
@@ -20,15 +21,9 @@ function ConversationListItem(props) {
     marginRight: "10px"
   };
 
-  useEffect(() => {
-    shave('.conversation-snippet', 20);
-    setAvatarStyle({
-      backgroundColor: randColor()
-    });
-  }, []);
-
-  const {name, text, id, isCurrentUser} = props.data;
-  let online = props.userMap.get(id).online;
+  let user = props.userMap.get(props.friendId);
+  let {online, id} = user;
+  let isCurrentUser = id === currentUserId;
 
   let onlineStyle = "dot";
   if (isCurrentUser) {
@@ -37,8 +32,20 @@ function ConversationListItem(props) {
     onlineStyle = "dot online";
   }
 
-  if (props.currentConversationId === id) {
+  let avatarStyle = {
+    backgroundColor: getColor(user.id)
+  }
+
+  if (props.currentConversationId === user.id) {
     itemStyle.backgroundColor = 'rgba(0, 0, 0, .05)';
+  }
+
+  let textMsg = `@${user.username}`;
+  if (user.lastMsg) {
+    textMsg = ((user.lastMsgSender === currentUserId) ? 'Bạn: ' : '') + user.lastMsg;
+    if (textMsg.length > 30) {
+      textMsg = textMsg.substr(0, 27) + '...';
+    }
   }
 
   let clickHandle = () => {
@@ -49,11 +56,11 @@ function ConversationListItem(props) {
   return (
     <div className="conversation-list-item" onClick={clickHandle} style={itemStyle}>
       <Avatar style={avatarStyle} size={50}>
-        {getFirstLetter(name)}
+        {getFirstLetter(user.name)}
       </Avatar>
       <div className="conversation-info" style={{paddingLeft: "10px"}}>
-        <h1 className="conversation-title"><span className={onlineStyle}/>{name}</h1>
-        <p className="conservation-text" style={{marginBottom: 0, color: '#888'}}>{text}</p>
+        <h1 className="conversation-title"><span className={onlineStyle}/>{user.name}</h1>
+        <p className="conservation-text" style={{marginBottom: 0, color: '#888'}}>{textMsg}</p>
       </div>
     </div>
   );

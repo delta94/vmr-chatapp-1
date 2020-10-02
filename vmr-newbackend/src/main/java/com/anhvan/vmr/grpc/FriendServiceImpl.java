@@ -166,13 +166,19 @@ public class FriendServiceImpl extends FriendServiceImplBase {
               log.debug("Connection set: {} ", webSocketService.getOnlineIds());
               if (ar.succeeded()) {
                 for (GrpcUserResponse usr : ar.result()) {
-                  responseBuilder.addFriendInfo(
+                  FriendInfo.Builder friendInfoBuidler =
                       FriendInfo.newBuilder()
                           .setId(usr.getId())
                           .setName(usr.getName())
                           .setUsername(usr.getUsername())
-                          .setOnline(webSocketService.checkOnline(usr.getId()))
-                          .build());
+                          .setOnline(webSocketService.checkOnline(usr.getId()));
+                  if (usr.getLastMessage() != null) {
+                    friendInfoBuidler
+                        .setLastMessage(usr.getLastMessage())
+                        .setLastMessageSender(usr.getLastMessageSenderId());
+                  }
+
+                  responseBuilder.addFriendInfo(friendInfoBuidler.build());
                 }
               } else {
                 log.error("Error when get friend of users {}", userId, ar.cause());

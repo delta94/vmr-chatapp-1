@@ -13,6 +13,7 @@ import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,8 +61,28 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
     return idPromise.future();
   }
 
-  private Future<Long> updateLastMessageId(long userId, long friendId, long messageId) {
-    return null;
+  @Override
+  public Future<Void> updateLastMessageId(long userId, long friendId, long messageId) {
+    Promise<Void> updatedPromise = Promise.promise();
+
+    pool.preparedQuery("update friends set last_message_id=? where user_id=? and friend_id=?")
+        .executeBatch(
+            Arrays.asList(
+                Tuple.of(messageId, userId, friendId), Tuple.of(messageId, friendId, userId)),
+            ar -> {
+              if (ar.succeeded()) {
+                updatedPromise.complete();
+              } else {
+                log.error(
+                    "Error when update last message between user {}-{}, lastmsgid: {}",
+                    userId,
+                    friendId,
+                    messageId,
+                    ar.cause());
+              }
+            });
+
+    return updatedPromise.future();
   }
 
   public Future<List<Message>> getChatMessages(int user1, int user2, int offset) {

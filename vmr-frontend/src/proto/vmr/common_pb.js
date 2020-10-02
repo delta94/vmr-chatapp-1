@@ -359,7 +359,12 @@ proto.vmr.Empty.prototype.cloneMessage = function() {
  * @enum {number}
  */
 proto.vmr.ErrorCode = {
-  FAILUE: 0
+  PASSWORD_INVALID: 0,
+  BALANCE_NOT_ENOUGH: 1,
+  RECEIVER_NOT_EXIST: 2,
+  INTERNAL_SERVER_ERROR: 3,
+  REQUEST_EXISTED: 4,
+  FAILUE: 5
 };
 
 goog.object.extend(exports, proto.vmr);

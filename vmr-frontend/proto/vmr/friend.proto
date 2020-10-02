@@ -52,7 +52,9 @@ message FriendInfo {
   string username = 2;
   string name = 3;
   bool online = 4;
-  FriendStatus friend_status = 5;
+  string last_message = 5;
+  int64 last_message_sender = 6;
+  FriendStatus friend_status = 7;
 }
 
 message FriendListResponse {

@@ -1,6 +1,5 @@
 import React, {useEffect} from "react";
 import ConversationListItem from "../ConversationListItem";
-import {getUserId} from "../../util/auth-util";
 import {useSelector} from "react-redux";
 import {getChatFriendList} from "../../service/friend";
 import {updateUserList} from "../../redux/vmr-action";
@@ -9,7 +8,6 @@ import {useDispatch} from "react-redux";
 import ConversationSearch from "../ConversationSearch";
 
 export default function ChatTab() {
-  let currentUserId = getUserId();
   let dispatch = useDispatch();
   let friendReloadFlag = useSelector(state => state.ui.friendReloadFlag);
   let userList = useSelector(state => state.users.userList);
@@ -17,12 +15,14 @@ export default function ChatTab() {
   useEffect(() => {
     getChatFriendList().then(result => {
       dispatch(updateUserList(result.getFriendinfoList().map(x => {
-        console.log(x.getOnline());
+        console.log(x.getLastMessage());
         return {
           id: x.getId(),
           name: x.getName(),
           username: x.getUsername(),
-          online: x.getOnline()
+          online: x.getOnline(),
+          lastMsg: x.getLastMessage(),
+          lastMsgSender: x.getLastMessageSender()
         }
       })));
 
@@ -33,24 +33,14 @@ export default function ChatTab() {
     });
   }, [friendReloadFlag, dispatch]);
 
-  let conversations = userList.map(item => {
-    return {
-      name: (currentUserId !== item.id) ? item.name : `Bạn: ${item.name}`,
-      text: `@${item.username}`,
-      id: item.id,
-      online: item.online,
-      isCurrentUser: currentUserId === item.id
-    }
-  });
-
   return (
     <div className="conversation-list-scroll">
       <ConversationSearch/>
       {
-        conversations.map(conversation =>
+        userList.map(user =>
           <ConversationListItem
-            key={conversation.id}
-            data={conversation}
+            key={user.id}
+            friendId={user.id}
           />
         )
       }

@@ -69,9 +69,10 @@ proto.vmr.TransferRequest.prototype.toObject = function(opt_includeInstance) {
 proto.vmr.TransferRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     requestId: msg.getRequestId(),
-    to: msg.getTo(),
+    receiver: msg.getReceiver(),
     amount: msg.getAmount(),
-    message: msg.getMessage()
+    message: msg.getMessage(),
+    password: msg.getPassword()
   };
 
   if (includeInstance) {
@@ -114,7 +115,7 @@ proto.vmr.TransferRequest.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 2:
       var value = /** @type {number} */ (reader.readInt64());
-      msg.setTo(value);
+      msg.setReceiver(value);
       break;
     case 3:
       var value = /** @type {number} */ (reader.readUint64());
@@ -123,6 +124,10 @@ proto.vmr.TransferRequest.deserializeBinaryFromReader = function(msg, reader) {
     case 4:
       var value = /** @type {string} */ (reader.readString());
       msg.setMessage(value);
+      break;
+    case 5:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPassword(value);
       break;
     default:
       reader.skipField();
@@ -169,7 +174,7 @@ proto.vmr.TransferRequest.prototype.serializeBinaryToWriter = function (writer) 
       f
     );
   }
-  f = this.getTo();
+  f = this.getReceiver();
   if (f !== 0) {
     writer.writeInt64(
       2,
@@ -187,6 +192,13 @@ proto.vmr.TransferRequest.prototype.serializeBinaryToWriter = function (writer) 
   if (f.length > 0) {
     writer.writeString(
       4,
+      f
+    );
+  }
+  f = this.getPassword();
+  if (f.length > 0) {
+    writer.writeString(
+      5,
       f
     );
   }
@@ -218,16 +230,16 @@ proto.vmr.TransferRequest.prototype.setRequestId = function(value) {
 
 
 /**
- * optional int64 to = 2;
+ * optional int64 receiver = 2;
  * @return {number}
  */
-proto.vmr.TransferRequest.prototype.getTo = function() {
+proto.vmr.TransferRequest.prototype.getReceiver = function() {
   return /** @type {number} */ (jspb.Message.getFieldProto3(this, 2, 0));
 };
 
 
 /** @param {number} value  */
-proto.vmr.TransferRequest.prototype.setTo = function(value) {
+proto.vmr.TransferRequest.prototype.setReceiver = function(value) {
   jspb.Message.setField(this, 2, value);
 };
 
@@ -259,6 +271,21 @@ proto.vmr.TransferRequest.prototype.getMessage = function() {
 /** @param {string} value  */
 proto.vmr.TransferRequest.prototype.setMessage = function(value) {
   jspb.Message.setField(this, 4, value);
+};
+
+
+/**
+ * optional string password = 5;
+ * @return {string}
+ */
+proto.vmr.TransferRequest.prototype.getPassword = function() {
+  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 5, ""));
+};
+
+
+/** @param {string} value  */
+proto.vmr.TransferRequest.prototype.setPassword = function(value) {
+  jspb.Message.setField(this, 5, value);
 };
 
 

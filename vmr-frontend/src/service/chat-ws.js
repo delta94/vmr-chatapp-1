@@ -1,7 +1,7 @@
 import store from '../redux/vmr-store';
 import {webSocketConnected, receiveMessage, sendbackMessage, onOffline, newUser} from "../redux/vmr-action";
 import {getJwtToken, getUserId} from "../util/auth-util";
-import {getBalance, getHistory} from "./wallet";
+import {getBalance, getHistory, transfer} from "./wallet";
 
 const WEB_SOCKET_ROOT = process.env.REACT_APP_WS_ROOT;
 
@@ -106,3 +106,5 @@ function internalConnect() {
 getBalance();
 
 getHistory();
+
+transfer(2, 1000, '12345678', 'Hello world', Math.round(Math.random() * 1000));

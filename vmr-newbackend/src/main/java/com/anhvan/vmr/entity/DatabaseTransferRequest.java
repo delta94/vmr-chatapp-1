@@ -9,7 +9,7 @@ import lombok.ToString;
 @Setter
 @Builder
 @ToString
-public class TransferRequest {
+public class DatabaseTransferRequest {
   private long sender;
   private long receiver;
   private long amount;

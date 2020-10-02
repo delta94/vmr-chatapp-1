@@ -19,20 +19,24 @@ import java.util.List;
 
 @Log4j2
 public class FriendDatabaseServiceImpl implements FriendDatabaseService {
-  private static final String ADD_FRIEND_QUERY =
+  private static final String ADD_FRIEND =
       "insert into friends(user_id, friend_id, status) values(?,?,?)";
 
-  private static final String GET_LIST_FRIEND_QUERY =
-      "select user.id, user.username, user.name, friend.status from users user inner join friends friend "
-          + "on user.id = friend.friend_id "
-          + "where friend.user_id = ?";
+  private static final String GET_FRIEND_LIST =
+      "select users.id, users.username, users.name, friends.status "
+          + "from users "
+          + "inner join friends on users.id = friends.friend_id "
+          + "where friends.user_id = ?";
 
   private static final String GET_CHAT_LIST_FRIEND_QUERY =
-      "select user.id, user.username, user.name from users user inner join friends friend "
-          + "on user.id = friend.friend_id "
-          + "where friend.user_id = ? and friend.status='ACCEPTED'";
+      "select users.id, users.username, users.name, messages.message as last_message, "
+          + "messages.sender as last_message_sender "
+          + "from users inner join friends "
+          + "on users.id = friends.friend_id "
+          + "inner join messages on messages.id = friends.last_message_id "
+          + "where friends.user_id = ? and friends.status='ACCEPTED'";
 
-  public static final String ACCEPT_FRIEND_REQUEST =
+  public static final String ACCEPT_FRIEND =
       "update friends set status='ACCEPTED' where user_id=? and friend_id=?";
 
   private MySQLPool pool;
@@ -67,7 +71,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
             Tuple.of(userId, friendId, "WAITING"), Tuple.of(friendId, userId, "NOT_ANSWER"));
 
     transaction
-        .preparedQuery(ADD_FRIEND_QUERY)
+        .preparedQuery(ADD_FRIEND)
         .executeBatch(
             tuples,
             queryAr -> {
@@ -96,7 +100,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   public Future<List<GrpcUserResponse>> getFriendList(long userId) {
     Promise<List<GrpcUserResponse>> friendListPromise = Promise.promise();
 
-    pool.preparedQuery(GET_LIST_FRIEND_QUERY)
+    pool.preparedQuery(GET_FRIEND_LIST)
         .execute(
             Tuple.of(userId),
             rowSetAsyncRs -> {
@@ -121,7 +125,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   public Future<String> acceptFriend(long invitorId, long userId) {
     Promise<String> statusPromise = Promise.promise();
 
-    pool.preparedQuery(ACCEPT_FRIEND_REQUEST)
+    pool.preparedQuery(ACCEPT_FRIEND)
         .executeBatch(
             Arrays.asList(Tuple.of(invitorId, userId), Tuple.of(userId, invitorId)),
             ar -> {
