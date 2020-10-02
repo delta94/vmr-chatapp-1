@@ -1,12 +1,12 @@
 package com.anhvan.vmr.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Setter
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class History {
   public enum Type {
     TRANSFER,
