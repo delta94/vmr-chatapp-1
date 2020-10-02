@@ -12,7 +12,6 @@ const {useHistory} = require('react-router-dom');
 function ConversationListItem(props) {
   let history = useHistory();
 
-
   let currentUserId = getUserId();
 
   let itemStyle = {
@@ -21,7 +20,7 @@ function ConversationListItem(props) {
     marginRight: "10px"
   };
 
-  let user = props.userMap.get(props.friendId);
+  let user = props.userMapHolder.userMap.get(props.friendId);
   let {online, id} = user;
   let isCurrentUser = id === currentUserId;
 
@@ -67,9 +66,9 @@ function ConversationListItem(props) {
 }
 
 function mapStateToProps(state) {
+  console.log('Updated state');
   return {
     currentConversationId: state.users.currentConversationId,
-    userMap: state.users.userMapHolder.userMap,
     userMapHolder: state.users.userMapHolder
   }
 }
