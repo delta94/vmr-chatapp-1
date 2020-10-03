@@ -13,8 +13,6 @@ public interface UserDatabaseService {
 
   Future<User> getUserById(long id);
 
-  Future<List<User>> queryListUser(String query);
-
   Future<List<User>> getListUser();
 
   Future<List<GrpcUserResponse>> queryListUserWithFriend(String query, long userId);

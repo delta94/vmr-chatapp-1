@@ -25,7 +25,7 @@ import java.util.List;
 @AllArgsConstructor
 @Log4j2
 public class WalletDatabaseServiceImpl implements WalletDatabaseService {
-  private static final String HISTORY_QUERY =
+  public static final String HISTORY_QUERY =
       "select transfers.sender, transfers.receiver, transfers.timestamp, transfers.amount, "
           + "transfers.message, account_logs.balance, account_logs.type as type_string, "
           + "account_logs.id from "

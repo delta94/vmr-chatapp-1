@@ -1,3 +1,5 @@
+import {getUserId} from "../util/auth-util";
+
 let initState = {
   userList: [],
   userMapHolder: {
@@ -44,7 +46,7 @@ function handleChatSendback(state, data) {
   let user = userMap.get(data.receiverId);
 
   user.lastMsg = data.message;
-  user.lastMsgSender = data.message.senderId;
+  user.lastMsgSender = getUserId();
 
   return {
     ...state,
