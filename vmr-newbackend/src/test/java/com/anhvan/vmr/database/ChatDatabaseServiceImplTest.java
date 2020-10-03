@@ -23,9 +23,8 @@ import java.time.Instant;
 @Log4j2
 @SuppressWarnings("unchecked")
 public class ChatDatabaseServiceImplTest {
-  private static MySQLPool pool;
-
-  private static ChatDatabaseServiceImpl chatDBService;
+  static MySQLPool pool;
+  static ChatDatabaseServiceImpl chatDBService;
 
   @BeforeAll
   static void setUp() {
@@ -40,7 +39,8 @@ public class ChatDatabaseServiceImplTest {
     PreparedQuery<RowSet<Row>> preparedQuery =
         (PreparedQuery<RowSet<Row>>) Mockito.mock(PreparedQuery.class);
 
-    Mockito.when(pool.preparedQuery(ChatDatabaseServiceImpl.INSERT_MESSAGE)).thenReturn(preparedQuery);
+    Mockito.when(pool.preparedQuery(ChatDatabaseServiceImpl.INSERT_MESSAGE))
+        .thenReturn(preparedQuery);
 
     Mockito.doAnswer(
             invocationOnMock -> {

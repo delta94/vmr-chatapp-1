@@ -138,7 +138,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     return responsePromise.future();
   }
 
-  private Future<TransferStateHolder> checkPassword(TransferStateHolder holder) {
+  Future<TransferStateHolder> checkPassword(TransferStateHolder holder) {
     Promise<TransferStateHolder> passwordPromise = Promise.promise();
 
     passwordUtil
@@ -181,7 +181,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     return passwordPromise.future();
   }
 
-  private Future<TransferStateHolder> checkReceiverExist(TransferStateHolder holder) {
+  Future<TransferStateHolder> checkReceiverExist(TransferStateHolder holder) {
     Promise<TransferStateHolder> existPromise = Promise.promise();
 
     holder
@@ -190,25 +190,26 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
         .execute(
             Tuple.of(holder.getReceiverId()),
             ar -> {
-              if (ar.succeeded()) {
-                for (Row row : ar.result()) {
-                  // Check if receiver exist
-                  if (row.getBoolean("user_exist")) {
-                    existPromise.complete(holder);
-                  } else {
-                    existPromise.fail(
-                        new TransferException("Receiver not exist", ErrorCode.RECEIVER_INVALID));
-                  }
-                }
-              } else {
+              if (ar.failed()) {
                 existPromise.fail(ar.cause());
+                return;
+              }
+
+              for (Row row : ar.result()) {
+                // Check if receiver exist
+                if (row.getBoolean("user_exist")) {
+                  existPromise.complete(holder);
+                } else {
+                  existPromise.fail(
+                      new TransferException("Receiver not exist", ErrorCode.RECEIVER_INVALID));
+                }
               }
             });
 
     return existPromise.future();
   }
 
-  private Future<TransferStateHolder> checkRequestIdExist(TransferStateHolder holder) {
+  Future<TransferStateHolder> checkRequestIdExist(TransferStateHolder holder) {
     Promise<TransferStateHolder> existPromise = Promise.promise();
 
     holder
@@ -235,7 +236,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     return existPromise.future();
   }
 
-  private Future<TransferStateHolder> checkBalanceEnough(TransferStateHolder holder) {
+  Future<TransferStateHolder> checkBalanceEnough(TransferStateHolder holder) {
     Promise<TransferStateHolder> enoughtPromise = Promise.promise();
 
     holder
@@ -273,7 +274,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     return enoughtPromise.future();
   }
 
-  private Future<TransferStateHolder> updateAccountBalance(TransferStateHolder holder) {
+  Future<TransferStateHolder> updateAccountBalance(TransferStateHolder holder) {
     Promise<TransferStateHolder> balancePromise = Promise.promise();
 
     long amount = holder.getAmount();
@@ -304,7 +305,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     return balancePromise.future();
   }
 
-  private Future<TransferStateHolder> writeTransfer(TransferStateHolder holder) {
+  Future<TransferStateHolder> writeTransfer(TransferStateHolder holder) {
     Promise<TransferStateHolder> transferPromise = Promise.promise();
 
     Tuple transferTuple =
@@ -336,7 +337,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     return transferPromise.future();
   }
 
-  private Future<TransferStateHolder> writeAccountLog(TransferStateHolder holder) {
+  Future<TransferStateHolder> writeAccountLog(TransferStateHolder holder) {
     Promise<TransferStateHolder> accountLogPromise = Promise.promise();
 
     List<Tuple> tuples =
@@ -369,7 +370,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     return accountLogPromise.future();
   }
 
-  private History row2History(Row row) {
+  History row2History(Row row) {
     History history = RowMapperUtil.mapRow(row, History.class);
 
     // Set type

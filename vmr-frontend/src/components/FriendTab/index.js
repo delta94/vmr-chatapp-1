@@ -5,9 +5,10 @@ import {Avatar, Button, List, Menu, Dropdown} from "antd";
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import {getColor} from "../../util/ui-util";
 import {getFirstLetter} from "../../util/string-util";
-import "./friend-tab.css";
 import {useDispatch, useSelector} from "react-redux";
 import {friendReload, setSideBarActive} from "../../redux/vmr-action";
+
+import "./friend-tab.css";
 
 const {useHistory} = require("react-router-dom");
 const {FriendStatus} = require('../../proto/vmr/friend_pb');
@@ -46,7 +47,8 @@ function FriendListItem(props) {
   let button;
   let description = "Bạn bè";
 
-  let acceptFriendBtnHandle = () => {
+  let acceptFriendBtnHandle = (e) => {
+    e.preventDefault();
     acceptFriend(item.getId()).then(res => {
       console.log(res);
       dispatch(friendReload());
@@ -55,7 +57,8 @@ function FriendListItem(props) {
     });
   };
 
-  let rejectFriendHandle = () => {
+  let rejectFriendHandle = (e) => {
+    e.preventDefault();
     rejectFriend(item.getId()).then(res => {
       console.log(res);
       dispatch(friendReload());
@@ -67,12 +70,12 @@ function FriendListItem(props) {
   let menu = (
     <Menu>
       <Menu.Item>
-        <a href="#" onClick={acceptFriendBtnHandle}>
+        <a href="/" onClick={acceptFriendBtnHandle}>
           Chấp nhận
         </a>
       </Menu.Item>
       <Menu.Item>
-        <a href="#" onClick={rejectFriendHandle}>
+        <a href="/" onClick={rejectFriendHandle}>
           Từ chối
         </a>
       </Menu.Item>

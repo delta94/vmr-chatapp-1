@@ -18,9 +18,9 @@ import org.mockito.Mockito;
 @ExtendWith(VertxExtension.class)
 @SuppressWarnings("unchecked")
 public class WalletDatabaseServiceImplTest {
-  private MySQLPool pool;
-  private WalletDatabaseServiceImpl walletDatabaseService;
-  private PasswordUtil passwordUtil;
+  MySQLPool pool;
+  WalletDatabaseServiceImpl walletDatabaseService;
+  PasswordUtil passwordUtil;
 
   @BeforeEach
   void setUp() {
