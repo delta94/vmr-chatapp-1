@@ -5,44 +5,6 @@
   background: #eeeef1;
 }
 
-.container {
-  padding: 10px;
-}
-
-.scrollable {
-  position: relative;
-  -webkit-overflow-scrolling: touch;
-}
-
-.sidebar {
-  background: white;
-  grid-row-start: 1;
-  grid-row-end: span 3;
-}
-
-@media screen and (max-width: 700px) {
-  .messenger {
-    grid-template-columns: auto;
-  }
-
-  .sidebar {
-    position: fixed;
-    z-index: 100;
-    width: 100%;
-    transform: translateX(-100%);
-  }
-}
-
-.sidebar-active {
-  transform: none;
-}
-
-.content {
-  background: white;
-  grid-row-start: 1;
-  grid-row-end: span 3;
-}
-
 .footer {
   grid-column-start: 2;
   background: white;

@@ -1,6 +1,8 @@
+import {getJwtToken, getUserId} from "../util/auth-util";
+
 let initialUser = {
-  jwt: localStorage.getItem("jwtToken"),
-  userId: localStorage.getItem("userId")
+  jwt: getJwtToken(),
+  userId: getUserId()
 };
 
 export default function userReducer(state = initialUser, action) {

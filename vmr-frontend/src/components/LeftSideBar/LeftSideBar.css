@@ -1,4 +1,4 @@
-.conversation-list {
+.left-sidebar {
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -8,13 +8,21 @@
   left: 0;
   background-color: white;
   border-right: 1px;
+  transition: transform 0.5s;
 }
 
 @media screen and (max-width: 700px) {
-  .conversation-list {
+  .left-sidebar {
     width: 100vw;
+    z-index: 20;
+    transform: translate(-100%, 0);
+  }
+
+  .left-sidebar.active {
+    transform: translate(0, 0);
   }
 }
+
 
 .conversation-list-scroll {
   height: calc(100vh - 65px);

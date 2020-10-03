@@ -3,7 +3,7 @@ import Compose from '../Compose';
 import Toolbar from '../Toolbar';
 import ToolbarButton from '../ToolbarButton';
 import {connect} from 'react-redux';
-import {getMessageFromAPI, toggleSideBar, updateActiveConservationId} from '../../redux/vmr-action';
+import {getMessageFromAPI, setSideBarActive, updateActiveConservationId} from '../../redux/vmr-action';
 import {getMessageList} from '../../service/message-list';
 import renderMessageNew from './message-render';
 
@@ -94,7 +94,7 @@ let MessageListInternal = props => {
   };
 
   let toggleSideBar = () => {
-    props.toggleSideBar();
+    props.openSideBar();
   };
 
   return (
@@ -172,8 +172,8 @@ let dispatchToProps = (dispatch) => {
     updateConversationId: (id) => {
       dispatch(updateActiveConservationId(id));
     },
-    toggleSideBar: () => {
-      dispatch(toggleSideBar());
+    openSideBar: () => {
+      dispatch(setSideBarActive(true));
     }
   };
 };

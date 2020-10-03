@@ -26,13 +26,32 @@ export default function userListReducer(state = initState, action) {
       state = handleNewUser(state, data);
       break;
     case 'CHAT_RECEIVE':
-      state = handleChatReceive(state, data)
+      state = handleChatReceive(state, data);
+      break;
+    case 'CHAT_SENDBACK':
+      state = handleChatSendback(state, data);
       break;
     default:
 
   }
 
   return state;
+}
+
+function handleChatSendback(state, data) {
+  let userMap = state.userMapHolder.userMap;
+
+  let user = userMap.get(data.receiverId);
+
+  user.lastMsg = data.message;
+  user.lastMsgSender = data.message.senderId;
+
+  return {
+    ...state,
+    userMapHolder: {
+      userMap
+    }
+  }
 }
 
 function handleChatReceive(state, data) {
@@ -42,7 +61,6 @@ function handleChatReceive(state, data) {
   user.lastMsg = data.message;
   user.lastMsgSender = data.senderId;
 
-  console.log('Handle chat receive');
   return {
     ...state,
     userMapHolder: {
