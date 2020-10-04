@@ -6,7 +6,6 @@ import com.anhvan.vmr.entity.History;
 import com.anhvan.vmr.exception.TransferException;
 import com.anhvan.vmr.exception.TransferException.ErrorCode;
 import com.anhvan.vmr.util.PasswordUtil;
-import com.anhvan.vmr.util.RowMapperUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.mysqlclient.MySQLClient;
@@ -67,7 +66,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
                 RowSet<Row> rowSet = ar.result();
                 List<History> historyList = new ArrayList<>();
                 for (Row row : rowSet) {
-                  historyList.add(row2History(row));
+                  historyList.add(History.fromRow(row));
                 }
                 historyPromise.complete(historyList);
               } else {
@@ -80,24 +79,24 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     return historyPromise.future();
   }
 
-  public Future<DatabaseTransferResponse> transfer(
-      DatabaseTransferRequest databaseTransferRequest) {
+  public Future<DatabaseTransferResponse> transfer(DatabaseTransferRequest transferRequest) {
     Promise<DatabaseTransferResponse> responsePromise = Promise.promise();
 
     // Create holder to pass state throught all step
     TransferStateHolder initHolder =
         TransferStateHolder.builder()
-            .senderId(databaseTransferRequest.getSender())
-            .receiverId(databaseTransferRequest.getReceiver())
-            .amount(databaseTransferRequest.getAmount())
-            .requestId(databaseTransferRequest.getRequestId())
+            .senderId(transferRequest.getSender())
+            .receiverId(transferRequest.getReceiver())
+            .amount(transferRequest.getAmount())
+            .requestId(transferRequest.getRequestId())
             .lastUpdated(Instant.now().getEpochSecond())
-            .message(databaseTransferRequest.getMessage())
-            .password(databaseTransferRequest.getPassword())
+            .message(transferRequest.getMessage())
+            .password(transferRequest.getPassword())
             .build();
 
     // Execute each step in transfer process
     checkPassword(initHolder)
+        .compose(this::startTransaction)
         .compose(this::checkReceiverExist)
         .compose(this::checkBalanceEnough)
         .compose(this::checkRequestIdExist)
@@ -111,7 +110,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
                 initHolder.getTransaction().commit();
                 initHolder.getConn().close();
 
-                log.info("Transfer successfully {}", databaseTransferRequest);
+                log.info("Transfer successfully {}", transferRequest);
 
                 // Return new balance and last update time to sender
                 responsePromise.complete(
@@ -122,7 +121,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
               } else {
                 Throwable cause = ar.cause();
 
-                log.error("Error when transfer {}", databaseTransferRequest, cause);
+                log.error("Error when transfer {}", transferRequest, cause);
 
                 // Rollback and close connection
                 if (initHolder.getConn() != null) {
@@ -158,27 +157,35 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
                 return;
               }
 
-              // Start new transaction
-              pool.getConnection(
-                  connAr -> {
-                    if (ar.failed()) {
-                      log.error("Could not get connection", ar.cause());
-                      passwordPromise.fail(ar.cause());
-                      return;
-                    }
-
-                    // Create connection and start a transaction
-                    SqlConnection conn = connAr.result();
-                    Transaction tx = conn.begin();
-
-                    holder.setConn(conn);
-                    holder.setTransaction(tx);
-
-                    passwordPromise.complete(holder);
-                  });
+              passwordPromise.complete(holder);
             });
 
     return passwordPromise.future();
+  }
+
+  Future<TransferStateHolder> startTransaction(TransferStateHolder holder) {
+    Promise<TransferStateHolder> txPromise = Promise.promise();
+
+    pool.getConnection(
+        ar -> {
+          if (ar.failed()) {
+            log.error("Could not get connection", ar.cause());
+            txPromise.fail(ar.cause());
+            return;
+          }
+
+          // Create connection and start a transaction
+          SqlConnection conn = ar.result();
+          Transaction tx = conn.begin();
+
+          // Add connection to holder
+          holder.setConn(conn);
+          holder.setTransaction(tx);
+
+          txPromise.complete(holder);
+        });
+
+    return txPromise.future();
   }
 
   Future<TransferStateHolder> checkReceiverExist(TransferStateHolder holder) {
@@ -368,19 +375,5 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
             });
 
     return accountLogPromise.future();
-  }
-
-  History row2History(Row row) {
-    History history = RowMapperUtil.mapRow(row, History.class);
-
-    // Set type
-    String typeString = row.getString("type_string");
-    if (typeString.equals("transfer")) {
-      history.setType(History.Type.TRANSFER);
-    } else if (typeString.equals("receive")) {
-      history.setType(History.Type.RECEIVE);
-    }
-
-    return history;
   }
 }

@@ -19,20 +19,15 @@ import java.util.List;
 
 @Log4j2
 public class ChatDatabaseServiceImpl implements ChatDatabaseService {
-  public static final String GET_MESSAGES_QUERY =
+  public static final String GET_MESSAGE_STMT =
       "select * from  "
           + "(select * from messages where sender=? and receiver=? "
           + "union select * from messages where sender=? and receiver=?) msgs "
           + "order by id desc "
           + "limit ?, 20";
 
-  public static final String INSERT_MESSAGE =
+  public static final String INSERT_MESSAGE_STMT =
       "insert into messages (sender, receiver, message, send_time) values (?, ?, ?, ?)";
-
-  public static final String SELECT_LAST_MESSAGE =
-      "select * from messages where id=(select greatest(coalesce((select max(id) from "
-          + "messages where sender=? and receiver=?)), coalesce((select max (id) from messages "
-          + "where sender=? and receiver=?))))";
 
   private MySQLPool pool;
 
@@ -46,7 +41,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
 
     Promise<Long> idPromise = Promise.promise();
 
-    pool.preparedQuery(INSERT_MESSAGE)
+    pool.preparedQuery(INSERT_MESSAGE_STMT)
         .execute(
             Tuple.of(msg.getSenderId(), msg.getReceiverId(), msg.getMessage(), msg.getTimestamp()),
             rs -> {
@@ -94,11 +89,12 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
 
     Promise<List<Message>> listMsgPromise = Promise.promise();
 
-    List<Message> messages = new ArrayList<>();
-    pool.preparedQuery(GET_MESSAGES_QUERY)
+    pool.preparedQuery(GET_MESSAGE_STMT)
         .execute(
             Tuple.of(user1, user2, user2, user1, offset),
             rowSet -> {
+              List<Message> messages = new ArrayList<>();
+
               if (rowSet.succeeded()) {
                 RowSet<Row> result = rowSet.result();
                 for (Row row : result) {
@@ -112,39 +108,12 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
                     offset,
                     rowSet.cause());
               }
+
               Collections.reverse(messages);
               listMsgPromise.complete(messages);
             });
 
     return listMsgPromise.future();
-  }
-
-  @Override
-  public Future<Message> getLastMessage(long user1, long user2) {
-    Promise<Message> messagePromise = Promise.promise();
-
-    pool.preparedQuery(SELECT_LAST_MESSAGE)
-        .execute(
-            Tuple.of(user1, user2, user2, user1),
-            ar -> {
-              if (ar.succeeded()) {
-                RowSet<Row> result = ar.result();
-                if (result.size() > 0) {
-                  for (Row row : result) {
-                    messagePromise.complete(rowToMessage(row));
-                    break;
-                  }
-                } else {
-                  messagePromise.complete(null);
-                }
-              } else {
-                Throwable cause = ar.cause();
-                log.error("Error when get last message");
-                messagePromise.fail(cause);
-              }
-            });
-
-    return messagePromise.future();
   }
 
   public Message rowToMessage(Row row) {

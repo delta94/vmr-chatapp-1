@@ -39,7 +39,7 @@ public class ChatDatabaseServiceImplTest {
     PreparedQuery<RowSet<Row>> preparedQuery =
         (PreparedQuery<RowSet<Row>>) Mockito.mock(PreparedQuery.class);
 
-    Mockito.when(pool.preparedQuery(ChatDatabaseServiceImpl.INSERT_MESSAGE))
+    Mockito.when(pool.preparedQuery(ChatDatabaseServiceImpl.INSERT_MESSAGE_STMT))
         .thenReturn(preparedQuery);
 
     Mockito.doAnswer(
@@ -68,7 +68,7 @@ public class ChatDatabaseServiceImplTest {
     PreparedQuery<RowSet<Row>> preparedQuery =
         (PreparedQuery<RowSet<Row>>) Mockito.mock(PreparedQuery.class);
 
-    Mockito.when(pool.preparedQuery(ChatDatabaseServiceImpl.GET_MESSAGES_QUERY))
+    Mockito.when(pool.preparedQuery(ChatDatabaseServiceImpl.GET_MESSAGE_STMT))
         .thenReturn(preparedQuery);
 
     chatDBService.getChatMessages(1, 2, 0);

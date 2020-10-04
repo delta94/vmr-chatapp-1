@@ -10,7 +10,5 @@ public interface ChatDatabaseService {
 
   Future<List<Message>> getChatMessages(int user1, int user2, int offset);
 
-  Future<Message> getLastMessage(long user1, long user2);
-
   Future<Void> updateLastMessageId(long userId, long friendId, long messageId);
 }
