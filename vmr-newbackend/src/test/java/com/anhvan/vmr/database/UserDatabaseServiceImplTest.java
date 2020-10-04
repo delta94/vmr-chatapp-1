@@ -43,7 +43,7 @@ public class UserDatabaseServiceImplTest {
     PreparedQuery<RowSet<Row>> preparedQuery =
         (PreparedQuery<RowSet<Row>>) Mockito.mock(PreparedQuery.class);
 
-    Mockito.when(mySQLPool.preparedQuery(UserDatabaseServiceImpl.INSERT_USER))
+    Mockito.when(mySQLPool.preparedQuery(UserDatabaseServiceImpl.INSERT_USER_STMT))
         .thenReturn(preparedQuery);
 
     userDatabaseService.addUser(
@@ -51,7 +51,7 @@ public class UserDatabaseServiceImplTest {
 
     testContext.awaitCompletion(500, TimeUnit.MILLISECONDS);
 
-    Mockito.verify(mySQLPool).preparedQuery(UserDatabaseServiceImpl.INSERT_USER);
+    Mockito.verify(mySQLPool).preparedQuery(UserDatabaseServiceImpl.INSERT_USER_STMT);
     Mockito.verify(preparedQuery).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
   }
 
@@ -60,7 +60,7 @@ public class UserDatabaseServiceImplTest {
     PreparedQuery<RowSet<Row>> preparedQuery =
         (PreparedQuery<RowSet<Row>>) Mockito.mock(PreparedQuery.class);
 
-    Mockito.when(mySQLPool.preparedQuery(UserDatabaseServiceImpl.FIND_BY_USERNAME))
+    Mockito.when(mySQLPool.preparedQuery(UserDatabaseServiceImpl.FIND_BY_USERNAME_STMT))
         .thenReturn(preparedQuery);
 
     Mockito.doAnswer(
@@ -84,7 +84,7 @@ public class UserDatabaseServiceImplTest {
     PreparedQuery<RowSet<Row>> preparedQuery =
         (PreparedQuery<RowSet<Row>>) Mockito.mock(PreparedQuery.class);
 
-    Mockito.when(mySQLPool.query(UserDatabaseServiceImpl.GET_ALL_USER)).thenReturn(preparedQuery);
+    Mockito.when(mySQLPool.query(UserDatabaseServiceImpl.FIND_ALL_USER_STMT)).thenReturn(preparedQuery);
 
     userDatabaseService.getListUser();
 
@@ -97,7 +97,7 @@ public class UserDatabaseServiceImplTest {
     PreparedQuery<RowSet<Row>> preparedQuery =
         (PreparedQuery<RowSet<Row>>) Mockito.mock(PreparedQuery.class);
 
-    Mockito.when(mySQLPool.preparedQuery(UserDatabaseServiceImpl.SELECT_BY_ID))
+    Mockito.when(mySQLPool.preparedQuery(UserDatabaseServiceImpl.FIND_BY_ID_STMT))
         .thenReturn(preparedQuery);
 
     Mockito.doAnswer(

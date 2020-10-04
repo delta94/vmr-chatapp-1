@@ -16,9 +16,7 @@ const grpc = {};
 grpc.web = require('grpc-web');
 
 
-var vmr_error_pb = require('../vmr/error_pb.js')
-
-var vmr_empty_pb = require('../vmr/empty_pb.js')
+var vmr_common_pb = require('../vmr/common_pb.js')
 const proto = {};
 proto.vmr = require('./friend_pb.js');
 
@@ -163,7 +161,7 @@ proto.vmr.FriendServicePromiseClient.prototype.addFriend =
 const methodDescriptor_FriendService_GetFriendList = new grpc.web.MethodDescriptor(
   '/vmr.FriendService/GetFriendList',
   grpc.web.MethodType.UNARY,
-  vmr_empty_pb.Empty,
+  vmr_common_pb.Empty,
   proto.vmr.FriendListResponse,
   /**
    * @param {!proto.vmr.Empty} request
@@ -403,7 +401,7 @@ proto.vmr.FriendServicePromiseClient.prototype.rejectFriend =
 const methodDescriptor_FriendService_GetChatFriendList = new grpc.web.MethodDescriptor(
   '/vmr.FriendService/GetChatFriendList',
   grpc.web.MethodType.UNARY,
-  vmr_empty_pb.Empty,
+  vmr_common_pb.Empty,
   proto.vmr.FriendListResponse,
   /**
    * @param {!proto.vmr.Empty} request
@@ -471,6 +469,166 @@ proto.vmr.FriendServicePromiseClient.prototype.getChatFriendList =
       request,
       metadata || {},
       methodDescriptor_FriendService_GetChatFriendList);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.vmr.GetLastMessageRequest,
+ *   !proto.vmr.GetLastMessageResponse>}
+ */
+const methodDescriptor_FriendService_GetLastMessage = new grpc.web.MethodDescriptor(
+  '/vmr.FriendService/GetLastMessage',
+  grpc.web.MethodType.UNARY,
+  proto.vmr.GetLastMessageRequest,
+  proto.vmr.GetLastMessageResponse,
+  /**
+   * @param {!proto.vmr.GetLastMessageRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.GetLastMessageResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.vmr.GetLastMessageRequest,
+ *   !proto.vmr.GetLastMessageResponse>}
+ */
+const methodInfo_FriendService_GetLastMessage = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.vmr.GetLastMessageResponse,
+  /**
+   * @param {!proto.vmr.GetLastMessageRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.GetLastMessageResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.vmr.GetLastMessageRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.vmr.GetLastMessageResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.vmr.GetLastMessageResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.vmr.FriendServiceClient.prototype.getLastMessage =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/vmr.FriendService/GetLastMessage',
+      request,
+      metadata || {},
+      methodDescriptor_FriendService_GetLastMessage,
+      callback);
+};
+
+
+/**
+ * @param {!proto.vmr.GetLastMessageRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.vmr.GetLastMessageResponse>}
+ *     Promise that resolves to the response
+ */
+proto.vmr.FriendServicePromiseClient.prototype.getLastMessage =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/vmr.FriendService/GetLastMessage',
+      request,
+      metadata || {},
+      methodDescriptor_FriendService_GetLastMessage);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.vmr.UserListRequest,
+ *   !proto.vmr.UserListResponse>}
+ */
+const methodDescriptor_FriendService_QueryUser = new grpc.web.MethodDescriptor(
+  '/vmr.FriendService/QueryUser',
+  grpc.web.MethodType.UNARY,
+  proto.vmr.UserListRequest,
+  proto.vmr.UserListResponse,
+  /**
+   * @param {!proto.vmr.UserListRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.UserListResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.vmr.UserListRequest,
+ *   !proto.vmr.UserListResponse>}
+ */
+const methodInfo_FriendService_QueryUser = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.vmr.UserListResponse,
+  /**
+   * @param {!proto.vmr.UserListRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.UserListResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.vmr.UserListRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.vmr.UserListResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.vmr.UserListResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.vmr.FriendServiceClient.prototype.queryUser =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/vmr.FriendService/QueryUser',
+      request,
+      metadata || {},
+      methodDescriptor_FriendService_QueryUser,
+      callback);
+};
+
+
+/**
+ * @param {!proto.vmr.UserListRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.vmr.UserListResponse>}
+ *     Promise that resolves to the response
+ */
+proto.vmr.FriendServicePromiseClient.prototype.queryUser =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/vmr.FriendService/QueryUser',
+      request,
+      metadata || {},
+      methodDescriptor_FriendService_QueryUser);
 };
 
 

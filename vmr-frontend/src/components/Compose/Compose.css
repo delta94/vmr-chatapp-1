@@ -9,6 +9,7 @@
   bottom: 0;
   right: 0;
   left: 350px;
+  height: 57px;
 }
 
 @media screen and (max-width: 700px) {
@@ -31,6 +32,9 @@
   font-size: 14px;
   height: 40px;
   background-color: #eaeaea;
+  border-radius: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .compose-input::placeholder {

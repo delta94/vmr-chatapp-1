@@ -1,5 +1,4 @@
 import {getGrpcTokenMetadata} from "../util/auth-util";
-
 const {SampleRequest} = require('../proto/vmr/sample_pb');
 const {SampleServiceClient} = require('../proto/vmr/sample_grpc_web_pb');
 

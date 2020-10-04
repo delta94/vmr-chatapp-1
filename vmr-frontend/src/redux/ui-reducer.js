@@ -2,7 +2,8 @@ let initialState = {
   sideBarActive: true,
   searchUserActive: false,
   currentTab: 'chat',
-  friendReloadFlag: true
+  friendReloadFlag: true,
+  currentWalletTab: 'balance'
 }
 
 export default function uiReducer(state = initialState, action) {
@@ -40,6 +41,13 @@ export default function uiReducer(state = initialState, action) {
     return {
       ...state,
       friendReloadFlag: !state.friendReloadFlag
+    }
+  }
+
+  if (type === 'SET_WALLET_TAB') {
+    return {
+      ...state,
+      currentWalletTab: data
     }
   }
 

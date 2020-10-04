@@ -1,6 +1,6 @@
 package com.anhvan.vmr.database;
 
-import com.anhvan.vmr.entity.UserWithStatus;
+import com.anhvan.vmr.entity.GrpcUserResponse;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.util.AsyncWorkerUtil;
 import com.anhvan.vmr.util.RowMapperUtil;
@@ -15,25 +15,23 @@ import jodd.crypt.BCrypt;
 import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
 public class UserDatabaseServiceImpl implements UserDatabaseService {
-  public static final String INSERT_USER =
-      "insert into users(username, password, name) values (?,?,?)";
+  public static final String INSERT_USER_STMT =
+      "insert into users(username, password, name, last_updated) values (?,?,?,?)";
 
-  public static final String GET_ALL_USER = "select username, name, id, is_active from users";
+  public static final String FIND_ALL_USER_STMT = "select username, name, id, is_active from users";
 
-  public static final String FIND_BY_USERNAME = "select * from users where username=?";
+  public static final String FIND_BY_USERNAME_STMT = "select * from users where username=?";
 
-  public static final String SELECT_BY_ID = "select * from users where id=?";
+  public static final String FIND_BY_ID_STMT = "select * from users where id=?";
 
-  public static final String FIND_USER_FULLTEXT =
-      "select * from users where match(username, name) against (? IN NATURAL LANGUAGE MODE)";
-
-  public static final String FULL_TEXT_WITH_FRIEND_QUERY =
-      "select username, name, t1.id, t2.status "
+  public static final String FIND_USER_FULL_TEXT_STMT =
+      "select t1.username, t1.name, t1.id, t2.status "
           + "from (select * from users where match(username, name) against(? IN NATURAL LANGUAGE MODE)) t1 "
           + "left join (select * from friends where user_id = ?) t2 "
           + "on t1.id = t2.friend_id";
@@ -59,13 +57,15 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
           String password = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 
           // Info params
-          Tuple info = Tuple.of(user.getUsername(), password, user.getName());
+          Tuple info =
+              Tuple.of(
+                  user.getUsername(), password, user.getName(), Instant.now().getEpochSecond());
 
           // Trace
           log.trace("Pool will execute query");
 
           // Execute query
-          pool.preparedQuery(INSERT_USER)
+          pool.preparedQuery(INSERT_USER_STMT)
               .execute(
                   info,
                   rowSetRs -> {
@@ -88,7 +88,7 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
 
     Promise<User> userPromise = Promise.promise();
 
-    pool.preparedQuery(FIND_BY_USERNAME)
+    pool.preparedQuery(FIND_BY_USERNAME_STMT)
         .execute(
             Tuple.of(username),
             rowSetRs -> {
@@ -112,7 +112,7 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
   @Override
   public Future<User> getUserById(long id) {
     Promise<User> userPromise = Promise.promise();
-    pool.preparedQuery(SELECT_BY_ID)
+    pool.preparedQuery(FIND_BY_ID_STMT)
         .execute(
             Tuple.of(id),
             rowSetRs -> {
@@ -137,7 +137,7 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
 
     Promise<List<User>> listUserPromise = Promise.promise();
 
-    pool.query(GET_ALL_USER)
+    pool.query(FIND_ALL_USER_STMT)
         .execute(
             rowSetRs -> {
               if (rowSetRs.succeeded()) {
@@ -155,43 +155,20 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
   }
 
   @Override
-  public Future<List<User>> queryListUser(String query) {
+  public Future<List<GrpcUserResponse>> queryListUserWithFriend(String query, long userId) {
     log.debug("Query user with full text search");
 
-    Promise<List<User>> userListPromise = Promise.promise();
+    Promise<List<GrpcUserResponse>> userListPromise = Promise.promise();
 
-    pool.preparedQuery(FIND_USER_FULLTEXT)
-        .execute(
-            Tuple.of(query),
-            rowSetRs -> {
-              if (rowSetRs.succeeded()) {
-                List<User> userList = new ArrayList<>();
-                RowSet<Row> result = rowSetRs.result();
-                result.forEach(row -> userList.add(rowToUser(row)));
-                userListPromise.complete(userList);
-              } else {
-                log.error("Fail to query user", rowSetRs.cause());
-              }
-            });
-
-    return userListPromise.future();
-  }
-
-  @Override
-  public Future<List<UserWithStatus>> queryListUserWithFriend(String query, long userId) {
-    log.debug("Query user with full text search");
-
-    Promise<List<UserWithStatus>> userListPromise = Promise.promise();
-
-    pool.preparedQuery(FULL_TEXT_WITH_FRIEND_QUERY)
+    pool.preparedQuery(FIND_USER_FULL_TEXT_STMT)
         .execute(
             Tuple.of(query, userId),
             rowSetRs -> {
               if (rowSetRs.succeeded()) {
-                List<UserWithStatus> userList = new ArrayList<>();
+                List<GrpcUserResponse> userList = new ArrayList<>();
                 RowSet<Row> result = rowSetRs.result();
                 result.forEach(
-                    row -> userList.add(RowMapperUtil.mapRow(row, UserWithStatus.class)));
+                    row -> userList.add(RowMapperUtil.mapRow(row, GrpcUserResponse.class)));
                 userListPromise.complete(userList);
               } else {
                 log.error("Fail to query user", rowSetRs.cause());

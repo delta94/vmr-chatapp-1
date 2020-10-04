@@ -96,3 +96,7 @@ export function setTab(tab) {
 export function friendReload() {
   return createAction('FRIEND_RELOAD');
 }
+
+export function setWalletTab(tab) {
+  return createAction('SET_WALLET_TAB', tab);
+}

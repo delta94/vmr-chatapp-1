@@ -1,3 +1,5 @@
+import {getUserId} from "../util/auth-util";
+
 let initState = {
   userList: [],
   userMapHolder: {
@@ -25,11 +27,48 @@ export default function userListReducer(state = initState, action) {
     case 'NEW_USER':
       state = handleNewUser(state, data);
       break;
+    case 'CHAT_RECEIVE':
+      state = handleChatReceive(state, data);
+      break;
+    case 'CHAT_SENDBACK':
+      state = handleChatSendback(state, data);
+      break;
     default:
-    //Do nothing
+
   }
 
   return state;
+}
+
+function handleChatSendback(state, data) {
+  let userMap = state.userMapHolder.userMap;
+
+  let user = userMap.get(data.receiverId);
+
+  user.lastMsg = data.message;
+  user.lastMsgSender = getUserId();
+
+  return {
+    ...state,
+    userMapHolder: {
+      userMap
+    }
+  }
+}
+
+function handleChatReceive(state, data) {
+  let userMap = state.userMapHolder.userMap;
+
+  let user = userMap.get(data.senderId);
+  user.lastMsg = data.message;
+  user.lastMsgSender = data.senderId;
+
+  return {
+    ...state,
+    userMapHolder: {
+      userMap
+    }
+  }
 }
 
 function handleNewUser(state, user) {

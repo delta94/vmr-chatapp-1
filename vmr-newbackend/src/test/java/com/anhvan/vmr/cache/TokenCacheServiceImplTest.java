@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit;
 @ExtendWith(VertxExtension.class)
 @SuppressWarnings("unchecked")
 public class TokenCacheServiceImplTest {
-  private RedissonClient redissonClient;
-  private TokenCacheServiceImpl tokenCacheService;
+  RedissonClient redissonClient;
+  TokenCacheServiceImpl tokenCacheService;
 
   @BeforeEach
   void setUp() {

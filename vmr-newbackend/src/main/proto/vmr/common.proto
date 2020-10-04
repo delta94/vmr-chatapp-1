@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package vmr;
+
+option java_package = "com.anhvan.vmr.proto";
+
+enum ErrorCode {
+  PASSWORD_INVALID = 0;
+  BALANCE_NOT_ENOUGH = 1;
+  RECEIVER_NOT_EXIST = 2;
+  INTERNAL_SERVER_ERROR = 3;
+  REQUEST_EXISTED = 4;
+  FAILUE = 5;
+}
+
+message Error {
+  ErrorCode code = 1;
+  string message = 2;
+  map<string, string> extra = 3;
+}
+
+message Empty {}

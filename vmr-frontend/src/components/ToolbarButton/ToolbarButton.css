@@ -1,19 +1,28 @@
-.toolbar-button {
-  color: #007aff;
-  font-size: 28px;
-  transition: all 0.1s;
+.toolbar-btn-wrapper {
+  padding: 10px;
+  border-radius: 5px;
 }
 
-.toolbar-button-active {
-  color: #0063ce !important;
+.toolbar-btn-wrapper .anticon {
+  font-size: 27px;
 }
 
-.toolbar-button:hover {
+.toolbar-btn-wrapper:hover {
   cursor: pointer;
-  color: #0063ce;
 }
 
-.toolbar-button:active {
+.topbar-btn-wrapper {
   color: #007aff;
-  opacity: 0.25;
+}
+
+.compose-btn-wrapper {
+  color: #a2a8ad;
+}
+
+.topbar-btn-wrapper:hover {
+  background-color: #e6e9eb;
+}
+
+.compose-btn-active, .compose-btn-wapper:hover {
+  color: #007aff;
 }

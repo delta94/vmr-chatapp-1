@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from "react";
 import {acceptFriend, getFriendList, rejectFriend} from "../../service/friend";
-import ConversationSearch from "../ConversationSearch";
+import ConversationSearch from "../FriendSearch";
 import {Avatar, Button, List, Menu, Dropdown} from "antd";
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import {getColor} from "../../util/ui-util";
 import {getFirstLetter} from "../../util/string-util";
-import "./friend-tab.css";
 import {useDispatch, useSelector} from "react-redux";
 import {friendReload, setSideBarActive} from "../../redux/vmr-action";
+
+import "./friend-tab.css";
+import {Link} from "react-router-dom";
 
 const {useHistory} = require("react-router-dom");
 const {FriendStatus} = require('../../proto/vmr/friend_pb');
@@ -46,7 +48,8 @@ function FriendListItem(props) {
   let button;
   let description = "Bạn bè";
 
-  let acceptFriendBtnHandle = () => {
+  let acceptFriendBtnHandle = (e) => {
+    e.preventDefault();
     acceptFriend(item.getId()).then(res => {
       console.log(res);
       dispatch(friendReload());
@@ -55,7 +58,8 @@ function FriendListItem(props) {
     });
   };
 
-  let rejectFriendHandle = () => {
+  let rejectFriendHandle = (e) => {
+    e.preventDefault();
     rejectFriend(item.getId()).then(res => {
       console.log(res);
       dispatch(friendReload());
@@ -67,12 +71,12 @@ function FriendListItem(props) {
   let menu = (
     <Menu>
       <Menu.Item>
-        <a href="#" onClick={acceptFriendBtnHandle}>
+        <a href="/" onClick={acceptFriendBtnHandle}>
           Chấp nhận
         </a>
       </Menu.Item>
       <Menu.Item>
-        <a href="#" onClick={rejectFriendHandle}>
+        <a href="/" onClick={rejectFriendHandle}>
           Từ chối
         </a>
       </Menu.Item>
@@ -85,7 +89,13 @@ function FriendListItem(props) {
   }
 
   if (item.getFriendStatus() === FriendStatus.WAITING) {
-    button = <Button className="friend-modal-button" onClick={rejectFriendHandle}><CloseOutlined/>Hủy lời mời</Button>;
+    button = (
+      <Button
+        className="friend-modal-button"
+        onClick={rejectFriendHandle}>
+        <CloseOutlined/>Hủy lời mời
+      </Button>
+    );
     description = "Bạn đã gửi lời mời";
   } else if (item.getFriendStatus() === FriendStatus.NOT_ANSWER) {
     button = (
@@ -110,7 +120,7 @@ function FriendListItem(props) {
             {getFirstLetter(item.getName())}
           </Avatar>
         }
-        title={<a href="https://ant.design">{item.getName()}</a>}
+        title={<Link to={"/t/" + item.getId()}>{item.getName()}</Link>}
         description={description}
       />
       <div>{button}</div>

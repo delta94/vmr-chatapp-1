@@ -1,27 +1,21 @@
 import React from 'react';
 import Messenger from '../Messenger';
 import store from '../../redux/vmr-store';
-import {Provider} from 'react-redux';
-import {BrowserRouter as Router, Switch, Route, Redirect} from 'react-router-dom';
+import {Provider, useSelector} from 'react-redux';
+import {BrowserRouter as Router} from 'react-router-dom';
 import RegisterPage from "../RegisterPage";
 import 'antd/dist/antd.css';
 import LoginPage from "../LoginPage";
-import {connect} from "react-redux";
 
-let AuthFragment = (props) => {
-  if (props.authStatus) {
+const {Switch, Route, Redirect} = require('react-router-dom');
+
+function AuthFragment() {
+  let authStatus = useSelector(state => state.user.jwt != null);
+  if (authStatus) {
     return <Messenger/>;
   }
   return <Redirect to={"/login"}/>;
-};
-
-function mapUserStatus(state) {
-  return {
-    authStatus: state.user.jwt !== null
-  }
 }
-
-AuthFragment = connect(mapUserStatus, null)(AuthFragment);
 
 export default function App() {
   return (

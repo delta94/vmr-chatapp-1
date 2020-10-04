@@ -1,12 +1,35 @@
 import {getGrpcTokenMetadata, getJwtToken} from "../util/auth-util";
 
-const {AddFriendRequest, AcceptFriendRequest, RejectFriendRequest} = require('../proto/vmr/friend_pb');
-const {Empty} = require('../proto/vmr/empty_pb');
+const {
+  AddFriendRequest,
+  AcceptFriendRequest,
+  RejectFriendRequest,
+  UserListRequest
+} = require('../proto/vmr/friend_pb');
+const {Empty} = require('../proto/vmr/common_pb');
 const {FriendServiceClient} = require('../proto/vmr/friend_grpc_web_pb');
 
 const ENVOY_ROOT = process.env.REACT_APP_ENVOY_ROOT;
 
 let friendServiceClient = new FriendServiceClient(ENVOY_ROOT, null, null);
+
+export function queryUser(queryString) {
+  return new Promise(resolve => {
+    // Create request object
+    let userListRq = new UserListRequest();
+    userListRq.setQueryString(queryString);
+
+    // Call grpc service
+    friendServiceClient.queryUser(userListRq, getGrpcTokenMetadata(), (err, res) => {
+      if (err) {
+        console.log(err);
+      } else {
+        resolve(res.getUserList());
+      }
+    });
+  });
+}
+
 
 export function addFriend(friendId) {
   return new Promise((resolve, reject) => {
@@ -52,7 +75,7 @@ export function getFriendList() {
 export function getChatFriendList() {
   return new Promise((resolve, reject) => {
     let emptyRequest = new Empty();
-    friendServiceClient.getChatFriendList(emptyRequest, {'x-jwt-token': getJwtToken()}, (err, res) => {
+    friendServiceClient.getChatFriendList(emptyRequest, getGrpcTokenMetadata(), (err, res) => {
       if (err) {
         console.log('Connection error');
         reject(err);

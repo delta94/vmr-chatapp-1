@@ -44,21 +44,25 @@ public class LoginController extends BaseController {
     // Handle user get from database
     Function<User, Future<String>> databaseUserHandler =
         dbUser -> {
+          // view user
+          log.debug("Get user from database {}", dbUser);
+
           // Check password
           if (user.getPassword() != null
               && BCrypt.checkpw(user.getPassword(), dbUser.getPassword())) {
             data.put("userId", dbUser.getId());
             userCacheService.setUserCache(dbUser);
             return jwtUtil.generate(dbUser.getId());
-          } else {
-            log.info("Login failed, user = {}, password not valid", user.getUsername());
-            responsePromise.complete(
-                BaseResponse.builder()
-                    .statusCode(HttpResponseStatus.UNAUTHORIZED.code())
-                    .message("Password not valid")
-                    .build());
-            return Future.failedFuture("Password not valid");
           }
+
+          // Password not valid
+          log.info("Login failed, user = {}, password not valid", user.getUsername());
+          responsePromise.complete(
+              BaseResponse.builder()
+                  .statusCode(HttpResponseStatus.UNAUTHORIZED.code())
+                  .message("Password not valid")
+                  .build());
+          return Future.failedFuture("Password not valid");
         };
 
     // Handle get user from database fails

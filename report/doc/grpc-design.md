@@ -1,6 +1,6 @@
 # Grpc API Design
 
-## 1. Chức năng xem số dư
+## 1. Truy vấn số dư, xem lịch sử, chuyển tiền
 
 ```protobuf
 syntax = "proto3";
@@ -9,161 +9,89 @@ package vmr;
 
 option java_package = "com.anhvan.vmr.proto";
 
+import "vmr/error.proto";
 import "vmr/empty.proto";
-import "vmr/error.proto";
-
-service BalanceService {
-  rpc GetBalance(Empty) returns (BalanceResponse){};
-}
-
-message BalanceResponse {
-  Error error = 1;
-  int64 balance = 2;
-  int64 last_update_timestamp = 3;
-}
-```
-
-## 2. Chức năng chuyển tiền
-
-```protobuf
-syntax = "proto3";
-
-package vmr;
-
-option java_package = "com.anhvan.vmr.proto";
-
-import "vmr/error.proto";
-
-service TransferService {
-  rpc Transfer(TransferRequest) returns (TransferResponse);
-}
 
 message TransferRequest {
-  int64 to = 1;
-  int64 amount = 2;
-  string transfer_message = 3;
-  int64 request_id = 4;
+  int64 request_id = 1;
+  int64 to = 2;
+  uint64 amount = 3;
+  string message = 4;
 }
 
 message TransferResponse {
+  message Data {
+    int64 balance = 1;
+    int64 last_updated = 2;
+  }
+
   Error error = 1;
-  int64 new_balance = 3;
-  int64 timestamp = 4;
-}
-```
-
-## 3. Chức năng xem lịch sử
-
-```protobuf
-syntax = "proto3";
-
-package vmr;
-
-option java_package = "com.anhvan.vmr.proto";
-
-import "vmr/empty.proto";
-import "vmr/error.proto";
-
-service HistoryService {
-  rpc GetHistory(Empty) returns (HistoryListResponse);
+  Data data = 2;
 }
 
-enum HistoryResponseType {
-  TRANSFER = 0;
-  RECEIVE = 1;
-}
+message BalanceResponse {
+  message Data {
+    int64 balance = 1;
+    int64 last_updated = 2;
+  }
 
-message TransferHistoryResponse {
-  int64 to = 1;
-  int64 timestamp = 2;
-  int64 amount = 3;
-  string message = 4;
-}
-
-message ReceiveHistoryResponse {
-  int64 from = 1;
-  int64 timestamp = 2;
-  int64 amount = 3;
-  string message = 4;
+  Error error = 1;
+  Data data = 2;
 }
 
 message HistoryResponse {
-  HistoryResponseType type = 1;
-  TransferHistoryResponse transfer_response = 2;
-  ReceiveHistoryResponse receive_response = 3;
-}
+  enum Type {
+    TRANSFER = 0;
+    RECEIVE = 1;
+  }
 
-message HistoryListResponse {
+  message Item {
+    int64 id = 1;
+    int64 user_id = 2;
+    int64 amount = 3;
+    int64 timestamp = 4;
+    Type type = 5;
+  }
+
   Error error = 1;
-  repeated HistoryResponse history_response = 2;
+  repeated Item item = 2;
 }
-```
-
-## 4. Chức năng nhắc chuyển tiền
-
-```protobuf
-syntax = "proto3";
-
-package vmr;
-
-option java_package = "com.anhvan.vmr.proto";
-
-import "vmr/error.proto";
 
 message TransferReminderRequest {
-  int64 user_id = 1;
-  int64 amount = 2;
-  string message = 3;
-  int64 request_id = 4;
+  int64 request_id = 1;
+  int64 user_id = 2;
+  int64 amount = 3;
+  string content = 4;
 }
 
 message TransferReminderResponse {
   Error error = 1;
 }
 
-service TransferReminderService {
+message TransferReminder {
+  int64 id = 1;
+  int64 timestamp = 2;
+  int64 from = 3;
+  int64 to = 4;
+  int64 amount = 5;
+  string content = 6;
+}
+
+message TransferReminderListResponse {
+  Error error = 1;
+  repeated TransferReminder reminder = 2;
+}
+
+service WalletService {
+  rpc Transfer(TransferRequest) returns (TransferResponse);
+  rpc GetBalance(Empty) returns (BalanceResponse);
+  rpc GetHistory(Empty) returns (HistoryResponse);
   rpc RemindTransfer(TransferReminderRequest) returns (TransferReminderResponse);
+  rpc GetTransferReminder(Empty) returns (TransferReminderListResponse);
 }
 ```
 
-## 5. Hiện thông báo
-
-Thông báo realtime vẫn sử dụng web socket.
-
-```protobuf
-syntax = "proto3";
-
-package vmr;
-
-option java_package = "com.anhvan.vmr.proto";
-
-enum NotificationType {
-  RECEIVE = 0;
-  TRANSFER_REMINDER = 1;
-}
-
-message Notification {
-  NotificationType noti_type = 1;
-  ReceiveNotification receive_noti = 2;
-  TransferReminderNotification remind_noti = 3;
-}
-
-message ReceiveNotification {
-  int64 from = 1;
-  int64 amount = 2;
-  string message = 3;
-  int64 timestamp = 4;
-}
-
-message TransferReminderNotification {
-  int64 from = 1;
-  int64 amount = 2;
-  string message = 3;
-  int64 timestamp = 4;
-}
-```
-
-## 6. Tìm kiếm và kết bạn (bổ sung module trước)
+## 2. Tìm kiếm và kết bạn (bổ sung module trước)
 
 ```protobuf
 syntax = "proto3";
@@ -181,6 +109,24 @@ service FriendService {
   rpc AcceptFriend(AcceptFriendRequest) returns (AcceptFriendResponse);
   rpc RejectFriend(RejectFriendRequest) returns (RejectFriendResponse);
   rpc GetChatFriendList(Empty) returns (FriendListResponse);
+  rpc GetLastMessage(GetLastMessageRequest) returns (GetLastMessageResponse);
+  rpc QueryUser(UserListRequest) returns (UserListResponse);
+}
+
+message UserListRequest {
+  string query_string = 1;
+}
+
+message UserResponse {
+  int64 id = 1;
+  string username = 2;
+  string name = 3;
+  FriendStatus friendStatus = 4;
+}
+
+message UserListResponse {
+  Error error = 1;
+  repeated UserResponse user = 2;
 }
 
 message AddFriendRequest {
@@ -226,9 +172,21 @@ message RejectFriendRequest {
 message RejectFriendResponse {
   Error error = 1;
 }
+
+message GetLastMessageRequest {
+  int64 friend_id = 1;
+}
+
+message GetLastMessageResponse {
+  Error error = 1;
+  int64 sender_id = 2;
+  int64 receiver_id = 3;
+  int64 message = 4;
+  int64 timestamp = 5;
+}
 ```
 
-## 7. Error message
+## 3. Error message
 
 ```protobuf
 syntax = "proto3";

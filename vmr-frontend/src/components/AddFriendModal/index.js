@@ -4,10 +4,9 @@ import {CheckOutlined, PlusOutlined, SearchOutlined} from '@ant-design/icons';
 import {useSelector, useDispatch} from "react-redux";
 import './add-friend-modal.css';
 import {friendReload, setSearchUserModalActive} from "../../redux/vmr-action";
-import {queryUser} from "../../service/query-user";
 import {getFirstLetter} from "../../util/string-util";
 import {getColor} from "../../util/ui-util";
-import {acceptFriend, addFriend} from "../../service/friend";
+import {acceptFriend, addFriend, queryUser} from "../../service/friend";
 import {getUserId} from "../../util/auth-util";
 
 const {useHistory} = require('react-router-dom');
@@ -57,7 +56,6 @@ function AddFriendModal() {
     </Modal>
   );
 }
-
 
 function SearchListItem(props) {
   let {item} = props;

@@ -13,19 +13,20 @@ import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 @Log4j2
 public class ChatDatabaseServiceImpl implements ChatDatabaseService {
-  public static final String GET_MESSAGES_QUERY =
+  public static final String GET_MESSAGE_STMT =
       "select * from  "
           + "(select * from messages where sender=? and receiver=? "
           + "union select * from messages where sender=? and receiver=?) msgs "
           + "order by id desc "
           + "limit ?, 20";
 
-  public static final String INSERT_MESSAGE =
+  public static final String INSERT_MESSAGE_STMT =
       "insert into messages (sender, receiver, message, send_time) values (?, ?, ?, ?)";
 
   private MySQLPool pool;
@@ -40,7 +41,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
 
     Promise<Long> idPromise = Promise.promise();
 
-    pool.preparedQuery(INSERT_MESSAGE)
+    pool.preparedQuery(INSERT_MESSAGE_STMT)
         .execute(
             Tuple.of(msg.getSenderId(), msg.getReceiverId(), msg.getMessage(), msg.getTimestamp()),
             rs -> {
@@ -55,6 +56,30 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
     return idPromise.future();
   }
 
+  @Override
+  public Future<Void> updateLastMessageId(long userId, long friendId, long messageId) {
+    Promise<Void> updatedPromise = Promise.promise();
+
+    pool.preparedQuery("update friends set last_message_id=? where user_id=? and friend_id=?")
+        .executeBatch(
+            Arrays.asList(
+                Tuple.of(messageId, userId, friendId), Tuple.of(messageId, friendId, userId)),
+            ar -> {
+              if (ar.succeeded()) {
+                updatedPromise.complete();
+              } else {
+                log.error(
+                    "Error when update last message between user {}-{}, lastmsgid: {}",
+                    userId,
+                    friendId,
+                    messageId,
+                    ar.cause());
+              }
+            });
+
+    return updatedPromise.future();
+  }
+
   public Future<List<Message>> getChatMessages(int user1, int user2, int offset) {
     log.debug(
         "Get chat message between user {} and {} from database with offset {}",
@@ -64,11 +89,12 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
 
     Promise<List<Message>> listMsgPromise = Promise.promise();
 
-    List<Message> messages = new ArrayList<>();
-    pool.preparedQuery(GET_MESSAGES_QUERY)
+    pool.preparedQuery(GET_MESSAGE_STMT)
         .execute(
             Tuple.of(user1, user2, user2, user1, offset),
             rowSet -> {
+              List<Message> messages = new ArrayList<>();
+
               if (rowSet.succeeded()) {
                 RowSet<Row> result = rowSet.result();
                 for (Row row : result) {
@@ -82,6 +108,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
                     offset,
                     rowSet.cause());
               }
+
               Collections.reverse(messages);
               listMsgPromise.complete(messages);
             });

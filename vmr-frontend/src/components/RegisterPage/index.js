@@ -3,7 +3,7 @@ import {Form, Input, Button, Row, Col, Card, Alert} from "antd";
 import {UserOutlined, LockOutlined, SmileOutlined, PlusCircleOutlined} from '@ant-design/icons';
 import bg from '../resource/registerbg.jpg';
 import "./Register.css";
-import register from "../../service/register";
+import {register} from "../../service/user";
 
 const {useHistory, Link} = require('react-router-dom');
 

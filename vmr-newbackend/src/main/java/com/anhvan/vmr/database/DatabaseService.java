@@ -1,10 +1,15 @@
 package com.anhvan.vmr.database;
 
 import com.anhvan.vmr.config.DatabaseConfig;
+import com.anhvan.vmr.entity.FutureStateHolder;
+import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.mysqlclient.MySQLConnectOptions;
 import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.PoolOptions;
+import io.vertx.sqlclient.SqlConnection;
+import io.vertx.sqlclient.Transaction;
 import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
@@ -13,6 +18,10 @@ import javax.inject.Singleton;
 @Log4j2
 @Singleton
 public class DatabaseService {
+  public static final String CONN_KEY = "conn";
+
+  public static final String TX_KEY = "tx";
+
   private MySQLPool pool;
 
   @Inject
@@ -50,5 +59,25 @@ public class DatabaseService {
 
   public MySQLPool getPool() {
     return pool;
+  }
+
+  /**
+   * @param futureStateHolder initial state holder
+   * @return state holder after set transaction
+   */
+  public Future<FutureStateHolder> getTransaction(FutureStateHolder futureStateHolder) {
+    Promise<FutureStateHolder> promise = Promise.promise();
+    pool.getConnection(
+        ar -> {
+          if (ar.succeeded()) {
+            SqlConnection connection = ar.result();
+            Transaction transaction = connection.begin();
+            futureStateHolder.set(CONN_KEY, connection);
+            futureStateHolder.set(TX_KEY, transaction);
+          } else {
+            promise.fail(ar.cause());
+          }
+        });
+    return promise.future();
   }
 }

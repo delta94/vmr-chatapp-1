@@ -11,18 +11,30 @@
   z-index: 10;
   height: 65px;
   justify-content: space-between;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
-.menubar-item {
+.icon-wrapper {
   box-sizing: border-box;
-  margin: 2px;
   flex-basis: 25%;
   display: flex;
   justify-content: center;
   border-radius: 5px;
 }
 
-.menubar-item-active, .menubar-item:hover {
+.icon-wrapper.mid {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.icon-wrapper-active, .icon-wrapper:hover {
   background-color: #eef2f5;
   cursor: pointer;
+}
+
+.menubar-icon {
+  font-size: 28px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }

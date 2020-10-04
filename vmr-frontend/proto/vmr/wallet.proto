@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package vmr;
+
+option java_package = "com.anhvan.vmr.proto";
+
+import "vmr/common.proto";
+
+message TransferRequest {
+  int64 request_id = 1;
+  int64 receiver = 2;
+  uint64 amount = 3;
+  string message = 4;
+  string password = 5;
+}
+
+message TransferResponse {
+  message Data {
+    int64 balance = 1;
+    int64 last_updated = 2;
+  }
+
+  Error error = 1;
+  Data data = 2;
+}
+
+message BalanceResponse {
+  message Data {
+    int64 balance = 1;
+    int64 last_updated = 2;
+  }
+
+  Error error = 1;
+  Data data = 2;
+}
+
+message HistoryResponse {
+  enum Type {
+    TRANSFER = 0;
+    RECEIVE = 1;
+  }
+
+  message Item {
+    int64 id = 1;
+    int64 sender = 2;
+    int64 receiver = 3;
+    int64 amount = 4;
+    int64 timestamp = 5;
+    string message = 6;
+    int64 balance = 7;
+    Type type = 8;
+  }
+
+  Error error = 1;
+  repeated Item item = 2;
+}
+
+message TransferReminderRequest {
+  int64 request_id = 1;
+  int64 user_id = 2;
+  int64 amount = 3;
+  string content = 4;
+}
+
+message TransferReminderResponse {
+  Error error = 1;
+}
+
+message TransferReminder {
+  int64 id = 1;
+  int64 timestamp = 2;
+  int64 from = 3;
+  int64 to = 4;
+  int64 amount = 5;
+  string content = 6;
+}
+
+message TransferReminderListResponse {
+  Error error = 1;
+  repeated TransferReminder reminder = 2;
+}
+
+service WalletService {
+  rpc GetBalance(Empty) returns (BalanceResponse);
+  rpc Transfer(TransferRequest) returns (TransferResponse);
+  rpc GetHistory(Empty) returns (HistoryResponse);
+  rpc RemindTransfer(TransferReminderRequest) returns (TransferReminderResponse);
+  rpc GetTransferReminder(Empty) returns (TransferReminderListResponse);
+}

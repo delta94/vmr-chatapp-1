@@ -4,8 +4,7 @@ package vmr;
 
 option java_package = "com.anhvan.vmr.proto";
 
-import "vmr/error.proto";
-import "vmr/empty.proto";
+import "vmr/common.proto";
 
 service FriendService {
   rpc AddFriend(AddFriendRequest) returns (AddFriendResponse);
@@ -13,6 +12,24 @@ service FriendService {
   rpc AcceptFriend(AcceptFriendRequest) returns (AcceptFriendResponse);
   rpc RejectFriend(RejectFriendRequest) returns (RejectFriendResponse);
   rpc GetChatFriendList(Empty) returns (FriendListResponse);
+  rpc GetLastMessage(GetLastMessageRequest) returns (GetLastMessageResponse);
+  rpc QueryUser(UserListRequest) returns (UserListResponse);
+}
+
+message UserListRequest {
+  string query_string = 1;
+}
+
+message UserResponse {
+  int64 id = 1;
+  string username = 2;
+  string name = 3;
+  FriendStatus friendStatus = 4;
+}
+
+message UserListResponse {
+  Error error = 1;
+  repeated UserResponse user = 2;
 }
 
 message AddFriendRequest {
@@ -35,7 +52,9 @@ message FriendInfo {
   string username = 2;
   string name = 3;
   bool online = 4;
-  FriendStatus friend_status = 5;
+  string last_message = 5;
+  int64 last_message_sender = 6;
+  FriendStatus friend_status = 7;
 }
 
 message FriendListResponse {
@@ -57,4 +76,16 @@ message RejectFriendRequest {
 
 message RejectFriendResponse {
   Error error = 1;
+}
+
+message GetLastMessageRequest {
+  int64 friend_id = 1;
+}
+
+message GetLastMessageResponse {
+  Error error = 1;
+  int64 sender_id = 2;
+  int64 receiver_id = 3;
+  int64 message = 4;
+  int64 timestamp = 5;
 }

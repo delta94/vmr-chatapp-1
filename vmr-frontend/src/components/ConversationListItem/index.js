@@ -1,18 +1,24 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Avatar} from 'antd';
-import shave from 'shave';
-import {connect} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import './ConversationListItem.css';
 import {setSideBarActive} from "../../redux/vmr-action";
 import {getFirstLetter} from "../../util/string-util";
-import {randColor} from "../../util/ui-util";
+import {getColor} from "../../util/ui-util";
+import {getUserId} from "../../util/auth-util";
 
 const {useHistory} = require('react-router-dom');
 
-function ConversationListItem(props) {
+export default function ConversationListItem(props) {
   let history = useHistory();
+  let currentUserId = getUserId();
+  let currentConversationId = useSelector(state => state.users.currentConversationId);
+  let userMapHolder = useSelector(state => state.users.userMapHolder);
+  let dispatch = useDispatch();
 
-  let [avatarStyle, setAvatarStyle] = useState({});
+  let hideSideBar = () => {
+    dispatch(setSideBarActive(false));
+  };
 
   let itemStyle = {
     borderRadius: "5px",
@@ -20,15 +26,9 @@ function ConversationListItem(props) {
     marginRight: "10px"
   };
 
-  useEffect(() => {
-    shave('.conversation-snippet', 20);
-    setAvatarStyle({
-      backgroundColor: randColor()
-    });
-  }, []);
-
-  const {name, text, id, isCurrentUser} = props.data;
-  let online = props.userMap.get(id).online;
+  let user = userMapHolder.userMap.get(props.friendId);
+  let {online, id} = user;
+  let isCurrentUser = id === currentUserId;
 
   let onlineStyle = "dot";
   if (isCurrentUser) {
@@ -37,42 +37,36 @@ function ConversationListItem(props) {
     onlineStyle = "dot online";
   }
 
-  if (props.currentConversationId === id) {
+  let avatarStyle = {
+    backgroundColor: getColor(user.id)
+  }
+
+  if (currentConversationId === user.id) {
     itemStyle.backgroundColor = 'rgba(0, 0, 0, .05)';
+  }
+
+  let textMsg = `@${user.username}`;
+  if (user.lastMsg) {
+    textMsg = ((user.lastMsgSender === currentUserId) ? 'Bạn: ' : '') + user.lastMsg;
+    if (textMsg.length > 30) {
+      textMsg = textMsg.substr(0, 27) + '...';
+    }
   }
 
   let clickHandle = () => {
     history.push('/t/' + id);
-    props.hideSideBar();
+    hideSideBar();
   }
 
   return (
     <div className="conversation-list-item" onClick={clickHandle} style={itemStyle}>
       <Avatar style={avatarStyle} size={50}>
-        {getFirstLetter(name)}
+        {getFirstLetter(user.name)}
       </Avatar>
       <div className="conversation-info" style={{paddingLeft: "10px"}}>
-        <h1 className="conversation-title"><span className={onlineStyle}/>{name}</h1>
-        <p className="conservation-text" style={{marginBottom: 0, color: '#888'}}>{text}</p>
+        <h1 className="conversation-title"><span className={onlineStyle}/>{user.name}</h1>
+        <p className="conservation-text" style={{marginBottom: 0, color: '#888'}}>{textMsg}</p>
       </div>
     </div>
   );
 }
-
-function mapStateToProps(state) {
-  return {
-    currentConversationId: state.users.currentConversationId,
-    userMap: state.users.userMapHolder.userMap,
-    userMapHolder: state.users.userMapHolder
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    hideSideBar: () => {
-      dispatch(setSideBarActive(false));
-    }
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ConversationListItem);

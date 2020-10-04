@@ -1,6 +1,6 @@
 package com.anhvan.vmr.database;
 
-import com.anhvan.vmr.entity.UserWithStatus;
+import com.anhvan.vmr.entity.GrpcUserResponse;
 import com.anhvan.vmr.util.RowMapperUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -19,20 +19,24 @@ import java.util.List;
 
 @Log4j2
 public class FriendDatabaseServiceImpl implements FriendDatabaseService {
-  private static final String ADD_FRIEND_QUERY =
+  private static final String ADD_FRIEND =
       "insert into friends(user_id, friend_id, status) values(?,?,?)";
 
-  private static final String GET_LIST_FRIEND_QUERY =
-      "select user.id, user.username, user.name, friend.status from users user inner join friends friend "
-          + "on user.id = friend.friend_id "
-          + "where friend.user_id = ?";
+  private static final String GET_FRIEND_LIST =
+      "select users.id, users.username, users.name, friends.status "
+          + "from users "
+          + "inner join friends on users.id = friends.friend_id "
+          + "where friends.user_id = ?";
 
   private static final String GET_CHAT_LIST_FRIEND_QUERY =
-      "select user.id, user.username, user.name from users user inner join friends friend "
-          + "on user.id = friend.friend_id "
-          + "where friend.user_id = ? and friend.status='ACCEPTED'";
+      "select users.id, users.username, users.name, messages.message as last_message, "
+          + "messages.sender as last_message_sender "
+          + "from users inner join friends "
+          + "on users.id = friends.friend_id "
+          + "left join messages on messages.id = friends.last_message_id "
+          + "where friends.user_id = ? and friends.status='ACCEPTED'";
 
-  public static final String ACCEPT_FRIEND_REQUEST =
+  public static final String ACCEPT_FRIEND =
       "update friends set status='ACCEPTED' where user_id=? and friend_id=?";
 
   private MySQLPool pool;
@@ -50,33 +54,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
         ar -> {
           if (ar.succeeded()) {
             Transaction transaction = ar.result();
-            transaction
-                .preparedQuery(ADD_FRIEND_QUERY)
-                .executeBatch(
-                    Arrays.asList(
-                        Tuple.of(userId, friendId, "WAITING"),
-                        Tuple.of(friendId, userId, "NOT_ANSWER")),
-                    rowSetAsyncResult -> {
-                      if (rowSetAsyncResult.succeeded()) {
-                        RowSet<Row> rs = rowSetAsyncResult.result();
-                        transaction.commit(
-                            transactionAr -> {
-                              if (transactionAr.succeeded()) {
-                                addFriendIdPromise.complete(
-                                    rs.property(MySQLClient.LAST_INSERTED_ID));
-                              } else {
-                                log.error("Error when commit transaction ", transactionAr.cause());
-                              }
-                            });
-                      } else {
-                        log.error(
-                            "Error when add friend userId:{}, friendId:{}",
-                            userId,
-                            friendId,
-                            rowSetAsyncResult.cause());
-                        addFriendIdPromise.fail(rowSetAsyncResult.cause());
-                      }
-                    });
+            internalAddFriend(transaction, addFriendIdPromise, userId, friendId);
           } else {
             log.error("Error when start a transaction", ar.cause());
             addFriendIdPromise.fail(ar.cause());
@@ -86,19 +64,51 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
     return addFriendIdPromise.future();
   }
 
-  @Override
-  public Future<List<UserWithStatus>> getFriendList(long userId) {
-    Promise<List<UserWithStatus>> friendListPromise = Promise.promise();
+  private void internalAddFriend(
+      Transaction transaction, Promise<Long> addFriendPromise, long userId, long friendId) {
+    List<Tuple> tuples =
+        Arrays.asList(
+            Tuple.of(userId, friendId, "WAITING"), Tuple.of(friendId, userId, "NOT_ANSWER"));
 
-    pool.preparedQuery(GET_LIST_FRIEND_QUERY)
+    transaction
+        .preparedQuery(ADD_FRIEND)
+        .executeBatch(
+            tuples,
+            queryAr -> {
+              if (queryAr.succeeded()) {
+                RowSet<Row> rs = queryAr.result();
+                transaction.commit(
+                    transactionAr -> {
+                      if (transactionAr.succeeded()) {
+                        addFriendPromise.complete(rs.property(MySQLClient.LAST_INSERTED_ID));
+                      } else {
+                        log.error("Error when commit transaction ", transactionAr.cause());
+                      }
+                    });
+              } else {
+                log.error(
+                    "Error when add friend userId:{}, friendId:{}",
+                    userId,
+                    friendId,
+                    queryAr.cause());
+                addFriendPromise.fail(queryAr.cause());
+              }
+            });
+  }
+
+  @Override
+  public Future<List<GrpcUserResponse>> getFriendList(long userId) {
+    Promise<List<GrpcUserResponse>> friendListPromise = Promise.promise();
+
+    pool.preparedQuery(GET_FRIEND_LIST)
         .execute(
             Tuple.of(userId),
             rowSetAsyncRs -> {
               if (rowSetAsyncRs.succeeded()) {
                 RowSet<Row> rowSet = rowSetAsyncRs.result();
-                List<UserWithStatus> userList = new ArrayList<>();
+                List<GrpcUserResponse> userList = new ArrayList<>();
                 for (Row row : rowSet) {
-                  userList.add(RowMapperUtil.mapRow(row, UserWithStatus.class));
+                  userList.add(RowMapperUtil.mapRow(row, GrpcUserResponse.class));
                 }
                 friendListPromise.complete(userList);
               } else {
@@ -115,7 +125,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   public Future<String> acceptFriend(long invitorId, long userId) {
     Promise<String> statusPromise = Promise.promise();
 
-    pool.preparedQuery(ACCEPT_FRIEND_REQUEST)
+    pool.preparedQuery(ACCEPT_FRIEND)
         .executeBatch(
             Arrays.asList(Tuple.of(invitorId, userId), Tuple.of(userId, invitorId)),
             ar -> {
@@ -152,8 +162,8 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   }
 
   @Override
-  public Future<List<UserWithStatus>> getChatFriendList(long userId) {
-    Promise<List<UserWithStatus>> friendListPromise = Promise.promise();
+  public Future<List<GrpcUserResponse>> getChatFriendList(long userId) {
+    Promise<List<GrpcUserResponse>> friendListPromise = Promise.promise();
 
     pool.preparedQuery(GET_CHAT_LIST_FRIEND_QUERY)
         .execute(
@@ -161,9 +171,9 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
             rowSetAsyncRs -> {
               if (rowSetAsyncRs.succeeded()) {
                 RowSet<Row> rowSet = rowSetAsyncRs.result();
-                List<UserWithStatus> userList = new ArrayList<>();
+                List<GrpcUserResponse> userList = new ArrayList<>();
                 for (Row row : rowSet) {
-                  userList.add(RowMapperUtil.mapRow(row, UserWithStatus.class));
+                  userList.add(RowMapperUtil.mapRow(row, GrpcUserResponse.class));
                 }
                 friendListPromise.complete(userList);
               } else {
