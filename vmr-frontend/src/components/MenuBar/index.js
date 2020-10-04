@@ -25,9 +25,9 @@ export default function MenuBar(props) {
                    onClick={() => setCurrentTab("chat")}
                    tab="chat"/>
       <IconWrapper icon={<CreditCardOutlined className="menubar-icon" style={{color: "#cc4d53"}}/>}
-                   onClick={() => setCurrentTab("home")}
+                   onClick={() => setCurrentTab("wallet")}
                    isMid
-                   tab="home"/>
+                   tab="wallet"/>
       <IconWrapper icon={<TeamOutlined className="menubar-icon" style={{color: "#7474ed"}}/>}
                    onClick={() => setCurrentTab("friend")}
                    isMid

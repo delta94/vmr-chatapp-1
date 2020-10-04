@@ -9,6 +9,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {friendReload, setSideBarActive} from "../../redux/vmr-action";
 
 import "./friend-tab.css";
+import {Link} from "react-router-dom";
 
 const {useHistory} = require("react-router-dom");
 const {FriendStatus} = require('../../proto/vmr/friend_pb');
@@ -119,7 +120,7 @@ function FriendListItem(props) {
             {getFirstLetter(item.getName())}
           </Avatar>
         }
-        title={<a href="https://ant.design">{item.getName()}</a>}
+        title={<Link to={"/t/" + item.getId()}>{item.getName()}</Link>}
         description={description}
       />
       <div>{button}</div>

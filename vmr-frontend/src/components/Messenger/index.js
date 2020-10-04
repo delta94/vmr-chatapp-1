@@ -1,7 +1,7 @@
 import React from 'react';
 import LeftSideBar from '../LeftSideBar';
 import './Messenger.css';
-import MessageListWrapper from '../MessageListWrapper';
+import MainArea from '../MainArea';
 import AddFriendModal from "../AddFriendModal";
 
 function Messenger() {
@@ -10,7 +10,7 @@ function Messenger() {
 
       <LeftSideBar/>
 
-      <MessageListWrapper/>
+      <MainArea/>
 
       <AddFriendModal/>
     </div>
