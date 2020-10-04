@@ -27,15 +27,6 @@ create table friends
     unique key user_friend_unique (user_id, friend_id)
 );
 
-create table messages
-(
-    id        bigint primary key auto_increment,
-    sender    bigint not null,
-    receiver  bigint not null,
-    send_time bigint not null,
-    message   text   not null,
-    index sender_receiver (sender, receiver)
-);
 
 create table transfers
 (
@@ -51,6 +42,20 @@ create table transfers
     foreign key (receiver) references users (id)
 );
 
+create table messages
+(
+    id          bigint primary key auto_increment,
+    sender      bigint                    not null,
+    receiver    bigint                    not null,
+    send_time   bigint                    not null,
+    message     text                      not null,
+    type        enum ('CHAT', 'TRANSFER') not null default 'CHAT',
+    transfer_id bigint,
+    foreign key (transfer_id) references transfers (id),
+    index sender_receiver (sender, receiver)
+);
+
+
 create table account_logs
 (
     id       bigint primary key auto_increment,
@@ -61,3 +66,20 @@ create table account_logs
     foreign key (user) references users (id),
     foreign key (transfer) references transfers (id)
 );
+
+insert into users (username, name, password, last_updated)
+values ('danganhvan', 'Đặng Anh Văn', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.', UNIX_TIMESTAMP()),
+       ('dangduymanh', 'Đặng Duy Mạnh', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+        UNIX_TIMESTAMP()),
+       ('phamanhtuan', 'Phạm Anh Tuấn', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+        UNIX_TIMESTAMP()),
+       ('lengocphuong', 'e Ngoc Phuong', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+        UNIX_TIMESTAMP()),
+       ('nguyenvana', 'Nguyen Van A', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+        UNIX_TIMESTAMP()),
+       ('nguyenthithuylinh', 'Nguyen Thi Thuy Linh', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+        UNIX_TIMESTAMP()),
+       ('dangphuongthao', 'Đặng Phương Thảo', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+        UNIX_TIMESTAMP()),
+       ('dangtunglam', 'Đặng Tùng Lâm', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+        UNIX_TIMESTAMP());

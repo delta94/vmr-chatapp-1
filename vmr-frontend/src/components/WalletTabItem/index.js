@@ -21,7 +21,7 @@ export default function WalletTabItem(props) {
 
   return (
     <Row className={itemClassName} onClick={clickHandle}>
-      <Col className="content-container" span={20}>
+      <Col className="content-container" span={22}>
         {icon}
         <Col className="text-content">
           <h1 className="conversation-title">{title}</h1>
