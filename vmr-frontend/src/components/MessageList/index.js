@@ -9,17 +9,21 @@ import renderMessageNew from './message-render';
 
 import './MessageList.css';
 
-import {ArrowLeftOutlined, MoreOutlined, SendOutlined} from '@ant-design/icons';
+import {ArrowLeftOutlined, MoreOutlined, SendOutlined, DollarCircleOutlined} from '@ant-design/icons';
+import TransferMoneyModal from "../TransferMoneyModal";
 
 let MessageListInternal = props => {
-  let {scrollFlag, currentConversationId, receiverId, receiver, webSocket} = props;
+  let {scrollFlag, currentConversationId, receiverId, receiver, webSocket, chatMessages} = props;
 
   // Use to scroll message
   let endOfMsgList = useRef(null);
   let msgList = useRef(null);
+  let inputRef = useRef(null);
+  let [sendButtonActive, setSendBtnActive] = useState(false);
+  let [moneyTransferActive, setMoneyTransferActive] = useState(true);
 
-  let messageList = props.chatMessages;
-  let messages = messageList.map(x => {
+  // Message list
+  let messages = chatMessages.map(x => {
     return {
       id: x.timestamp,
       message: x.message,
@@ -33,8 +37,8 @@ let MessageListInternal = props => {
   useEffect(
     () => {
       props.updateConversationId(receiverId);
-      if (messageList.length === 0) {
-        getMessageList(receiverId, messageList.length).then((data) => {
+      if (chatMessages.length === 0) {
+        getMessageList(receiverId, chatMessages.length).then((data) => {
           props.updateMessageList(data, receiverId);
           let {current} = endOfMsgList;
           if (current) {
@@ -63,7 +67,7 @@ let MessageListInternal = props => {
     let msgList = event.target;
     let offset = msgList.scrollTop;
     if (offset === 0) {
-      getMessageList(receiverId, messageList.length).then((data) => {
+      getMessageList(receiverId, chatMessages.length).then((data) => {
         let oldHeight = msgList.scrollHeight;
         props.updateMessageList(data, receiverId);
         let newHeight = msgList.scrollHeight;
@@ -72,9 +76,7 @@ let MessageListInternal = props => {
     }
   };
 
-  let inputRef = useRef(null);
-  let [sendButtonActive, setSendBtnActive] = useState(false);
-
+  // Send btn handle
   let handleSendButtonClick = () => {
     let {value} = inputRef.current;
     if (value !== '') {
@@ -84,9 +86,12 @@ let MessageListInternal = props => {
     setSendBtnActive(false);
   };
 
+  // Handle text change
   let onChangeText = (event) => {
     if (event.target.value !== '') {
       setSendBtnActive(true);
+    } else {
+      setSendBtnActive(false);
     }
     if (event.keyCode === 13 && event.target.value !== '') {
       handleSendButtonClick();
@@ -95,6 +100,10 @@ let MessageListInternal = props => {
 
   let toggleSideBar = () => {
     props.openSideBar();
+  };
+
+  let openTransferModal = () => {
+    setMoneyTransferActive(true);
   };
 
   return (
@@ -117,13 +126,27 @@ let MessageListInternal = props => {
 
       <Compose
         rightItems={[
-          <ToolbarButton key="emoji" icon={<SendOutlined/>}
-                         onClick={handleSendButtonClick}
-                         active={sendButtonActive}
-                         type="compose-btn"/>
+          <ToolbarButton
+            key="transfer"
+            icon={<DollarCircleOutlined />}
+            onClick={openTransferModal}
+            type="compose-btn"
+            style={{color:'red'}}
+          />,
+          <ToolbarButton
+            key="send" icon={<SendOutlined/>}
+            onClick={handleSendButtonClick}
+            active={sendButtonActive}
+            type="compose-btn"/>
         ]}
         onKeyUp={onChangeText}
         inputRef={inputRef}
+      />
+
+      <TransferMoneyModal
+        active={moneyTransferActive}
+        setActive={setMoneyTransferActive}
+        receiverName={receiver.name}
       />
     </div>
   );
