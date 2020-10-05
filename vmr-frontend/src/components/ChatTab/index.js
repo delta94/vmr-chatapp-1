@@ -15,7 +15,6 @@ export default function ChatTab() {
   useEffect(() => {
     getChatFriendList().then(result => {
       dispatch(updateUserList(result.getFriendinfoList().map(x => {
-        console.log(x.getLastMessage());
         return {
           id: x.getId(),
           name: x.getName(),

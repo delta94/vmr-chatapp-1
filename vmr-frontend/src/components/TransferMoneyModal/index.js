@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Col, Modal, Row, Typography, InputNumber, Input, Button, Steps} from "antd";
+import React, {useState, useEffect} from 'react';
+import {Col, Modal, Row, Typography, InputNumber, Input, Button, Steps, Form} from "antd";
 import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
@@ -10,6 +10,7 @@ import {
 
 import "./TransferMoneyModal.css";
 import {moneyFormat} from "../../util/string-util";
+import {getBalance} from "../../service/wallet";
 
 const {Title} = Typography;
 const {TextArea, Password} = Input;
@@ -17,18 +18,64 @@ const {Step} = Steps;
 
 export default function TransferMoneyModal(props) {
   let {active, setActive, receiverName} = props;
-
+  let [balance, setBalance] = useState();
   let [step, setStep] = useState(0);
+  let [amount, setAmount] = useState(0);
+  let [message, setMessage] = useState('');
+  let [password, setPassword] = useState('');
+  let [form] = Form.useForm();
+  let [form2] = Form.useForm();
+  let [valid, setValid] = useState(false);
+
+  useEffect(() => {
+    form.resetFields();
+    setStep(0);
+    setAmount(0);
+    setValid(false);
+    setMessage('Chuyển tiền');
+  }, [active]);
+
+  useEffect(() => {
+    getBalance().then(result => {
+      setBalance(result.getBalance());
+    });
+  }, [step, active]);
 
   let closeModal = () => {
     setActive(false);
   };
 
+  let validateAndMoveNext = () => {
+    setAmount(form.getFieldValue('amount'));
+    setMessage(form.getFieldValue('message'));
+    setStep(1);
+  };
+
+  let checkAmount = (rule, value, callback) => {
+    if (value < 1000) {
+      callback('Số tiền chuyển phải từ 1000đ trở lên');
+    } else if (value > balance) {
+      callback('Số tiền không được vượt quá balance')
+    }
+  };
+
+  function handleFieldChange(changedFields, allFields) {
+    if (allFields.amount < 1000 || allFields.amount > balance) {
+      setValid(false);
+    } else {
+      setValid(true);
+    }
+  }
+
+  function handlePasswordChange(changedFields, allFields) {
+    setPassword(allFields.password);
+  }
+
   let footerButton = [
     <Button key="back" onClick={closeModal}>
       <CloseOutlined/> Hủy
     </Button>,
-    <Button key="submit" type="primary" onClick={() => setStep(1)}>
+    <Button key="submit" type="primary" onClick={validateAndMoveNext} disabled={!valid}>
       Tiếp theo <ArrowRightOutlined/>
     </Button>,
   ];
@@ -38,7 +85,7 @@ export default function TransferMoneyModal(props) {
       <Button key="back" onClick={() => setStep(0)}>
         <ArrowLeftOutlined/>Quay lại
       </Button>,
-      <Button key="submit" type="primary" onClick={() => setStep(3)}>
+      <Button key="submit" type="primary" onClick={() => setStep(3)} disabled={password.length === 0}>
         Chuyển tiền <CheckCircleOutlined/>
       </Button>,
     ]
@@ -46,6 +93,7 @@ export default function TransferMoneyModal(props) {
 
   return (
     <Modal
+      destroyOnClose={true}
       visible={active}
       onCancel={closeModal}
       footer={footerButton}
@@ -62,53 +110,88 @@ export default function TransferMoneyModal(props) {
 
       {step === 0 &&
       <div className="transfer-step">
-        <Row className="transfer-row">
-          <Col span={12}>Số dư khả dụng:</Col>
-          <Col span={12}>100 000 VNĐ</Col>
-        </Row>
-        <Row className="transfer-row">
-          <Col span={12}>Nhập số tiền (VNĐ):</Col>
-          <Col span={12}>
-            <InputNumber
-              className="left-input"
-              formatter={value => moneyFormat(value)}
-            />
-          </Col>
-        </Row>
-        <Row className="transfer-row">
-          <Col span={12}>Nhập tin nhắn:</Col>
-          <Col span={12}>
-            <TextArea className="left-input"/>
-          </Col>
-        </Row>
+        <Form
+          form={form}
+          initialValues={{
+            'message': 'Chuyển tiền'
+          }}
+          onValuesChange={handleFieldChange}>
+          <Row className="transfer-row">
+            <Col span={12}>Số dư khả dụng:</Col>
+            <Col span={12}>
+              <Form.Item>
+                {moneyFormat(balance)} VNĐ
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row className="transfer-row">
+            <Col span={12}>Nhập số tiền (VNĐ):</Col>
+            <Col span={12}>
+              <Form.Item
+                name="amount"
+                rules={[{required: true, message: 'Vui lòng nhập số tiền'}, {validator: checkAmount}]}>
+                <InputNumber
+                  className="left-input"
+                  formatter={value => moneyFormat(value)}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row className="transfer-row">
+            <Col span={12}>Nhập tin nhắn:</Col>
+            <Col span={12}>
+              <Form.Item name="message">
+                <TextArea className="left-input"/>
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
       </div>
       }
 
       {step === 1 &&
       <div className="transfer-step">
-        <Row className="transfer-row">
-          <Col span={12}>Số dư khả dụng:</Col>
-          <Col span={12}>100 000 VNĐ</Col>
-        </Row>
-        <Row className="transfer-row">
-          <Col span={12}>Số tiền chuyển:</Col>
-          <Col span={12}>100 000 VNĐ</Col>
-        </Row>
-        <Row className="transfer-row">
-          <Col span={12}>Tin nhắn:</Col>
-          <Col span={12}>Set nội dung tin nhắn</Col>
-        </Row>
-        <Row className="transfer-row">
-          <Col span={12}>Xác minh mật khẩu:</Col>
-          <Col span={12}><Password/></Col>
-        </Row>
+        <Form form={form2} onValuesChange={handlePasswordChange}>
+          <Row className="transfer-row">
+            <Col span={12}>Số dư khả dụng:</Col>
+            <Col span={12}>
+              <Form.Item>
+                <Col span={12}>100 000 VNĐ</Col>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row className="transfer-row">
+            <Col span={12}>Nhập số tiền (VNĐ):</Col>
+            <Col span={12}>
+              <Form.Item>
+                <Col>{amount} VNĐ</Col>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row className="transfer-row">
+            <Col span={12}>Nhập tin nhắn:</Col>
+            <Col span={12}>
+              <Form.Item>
+                {message}
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row className="transfer-row">
+            <Col span={12}>Xác thực mật khẩu:</Col>
+            <Col span={12}>
+              <Form.Item name="password">
+                <Password/>
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
       </div>
       }
 
       {step === 3 &&
-        <div className="transfer-step">
+      <div className="transfer-step">
 
-        </div>
+      </div>
       }
     </Modal>
   );

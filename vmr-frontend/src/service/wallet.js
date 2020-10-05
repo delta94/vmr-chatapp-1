@@ -12,14 +12,11 @@ export function getBalance() {
   return new Promise((resolve, reject) => {
     wallet.getBalance(new Empty(), getGrpcTokenMetadata(), (err, res) => {
       if (err) {
-        console.log(err);
         reject(err);
       } else {
         if (res.getError()) {
-          console.log(res.getError());
           reject(res.getError());
         } else {
-          console.log(res.getData());
           resolve(res.getData());
         }
       }
