@@ -10,22 +10,29 @@ import {
 
 import "./TransferMoneyModal.css";
 import {moneyFormat} from "../../util/string-util";
-import {getBalance} from "../../service/wallet";
+import {getBalance, transfer} from "../../service/wallet";
+import useWindowSize from "../../hooks/window";
 
 const {Title} = Typography;
 const {TextArea, Password} = Input;
 const {Step} = Steps;
 
+const layout = {
+  labelCol: {span: 8},
+  wrapperCol: {span: 16},
+};
+
 export default function TransferMoneyModal(props) {
-  let {active, setActive, receiverName} = props;
+  let {active, setActive, receiverName, receiverId} = props;
   let [balance, setBalance] = useState();
-  let [step, setStep] = useState(0);
+  let [step, setStep] = useState(2);
   let [amount, setAmount] = useState(0);
   let [message, setMessage] = useState('');
   let [password, setPassword] = useState('');
   let [form] = Form.useForm();
   let [form2] = Form.useForm();
   let [valid, setValid] = useState(false);
+  let windowSize = useWindowSize();
 
   useEffect(() => {
     form.resetFields();
@@ -71,6 +78,13 @@ export default function TransferMoneyModal(props) {
     setPassword(allFields.password);
   }
 
+  let handleTransfer = () => {
+    transfer(receiverId, amount, password, message, Math.round(Math.random() * 1000)).then(data=>{
+      console.log(data);
+      setStep(2);
+    });
+  };
+
   let footerButton = [
     <Button key="back" onClick={closeModal}>
       <CloseOutlined/> Hủy
@@ -85,8 +99,8 @@ export default function TransferMoneyModal(props) {
       <Button key="back" onClick={() => setStep(0)}>
         <ArrowLeftOutlined/>Quay lại
       </Button>,
-      <Button key="submit" type="primary" onClick={() => setStep(3)} disabled={password.length === 0}>
-        Chuyển tiền <CheckCircleOutlined/>
+      <Button key="submit" type="primary" onClick={handleTransfer} disabled={password.length === 0}>
+        Chuyển tiền
       </Button>,
     ]
   }
@@ -96,101 +110,81 @@ export default function TransferMoneyModal(props) {
       destroyOnClose={true}
       visible={active}
       onCancel={closeModal}
+      centered
       footer={footerButton}
+      className="transfer-modal"
     >
       <Title level={4} className="vmr-modal-title">
-        <DollarCircleOutlined className="transfer-money-icon" style={{color: 'red'}}/>
+        <DollarCircleOutlined className="transfer-money-icon" style={{color: 'red', fontSize: '34px'}}/>
         Chuyển tiền tới <span style={{color: 'green'}}>{receiverName}</span>
       </Title>
 
-      <Steps current={step} style={{paddingTop: '10px'}}>
+
+      {windowSize >= 768 &&
+      <Steps current={step} style={{paddingTop: '10px'}} size="small">
         <Step title="Nhập số tiền"/>
         <Step title="Xác thực"/>
+        <Step title="Hoàn tất"/>
       </Steps>
+      }
 
       {step === 0 &&
       <div className="transfer-step">
-        <Form
-          form={form}
-          initialValues={{
-            'message': 'Chuyển tiền'
-          }}
-          onValuesChange={handleFieldChange}>
-          <Row className="transfer-row">
-            <Col span={12}>Số dư khả dụng:</Col>
-            <Col span={12}>
-              <Form.Item>
-                {moneyFormat(balance)} VNĐ
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row className="transfer-row">
-            <Col span={12}>Nhập số tiền (VNĐ):</Col>
-            <Col span={12}>
-              <Form.Item
-                name="amount"
-                rules={[{required: true, message: 'Vui lòng nhập số tiền'}, {validator: checkAmount}]}>
-                <InputNumber
-                  className="left-input"
-                  formatter={value => moneyFormat(value)}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row className="transfer-row">
-            <Col span={12}>Nhập tin nhắn:</Col>
-            <Col span={12}>
-              <Form.Item name="message">
-                <TextArea className="left-input"/>
-              </Form.Item>
-            </Col>
-          </Row>
+        <Form {...layout} form={form} initialValues={{'message': 'Chuyển tiền'}} onValuesChange={handleFieldChange}>
+          <Form.Item label={"Số dư khả dụng"}>
+            {moneyFormat(balance)} VNĐ
+          </Form.Item>
+          <Form.Item label={"Nhập số tiền"} name="amount"
+                     rules={[{required: true, message: 'Vui lòng nhập số tiền'}, {validator: checkAmount}]}>
+            <InputNumber className="left-input" formatter={value => moneyFormat(value)}/>
+          </Form.Item>
+          <Form.Item name="message" label={"Nhập lời nhắn"}
+                     rules={[{required: true, message: 'Vui lòng nhập lời nhắn'}]}>
+            <TextArea className="left-input"/>
+          </Form.Item>
         </Form>
       </div>
       }
 
       {step === 1 &&
       <div className="transfer-step">
-        <Form form={form2} onValuesChange={handlePasswordChange}>
-          <Row className="transfer-row">
-            <Col span={12}>Số dư khả dụng:</Col>
-            <Col span={12}>
-              <Form.Item>
-                <Col span={12}>100 000 VNĐ</Col>
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row className="transfer-row">
-            <Col span={12}>Nhập số tiền (VNĐ):</Col>
-            <Col span={12}>
-              <Form.Item>
-                <Col>{amount} VNĐ</Col>
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row className="transfer-row">
-            <Col span={12}>Nhập tin nhắn:</Col>
-            <Col span={12}>
-              <Form.Item>
-                {message}
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row className="transfer-row">
-            <Col span={12}>Xác thực mật khẩu:</Col>
-            <Col span={12}>
-              <Form.Item name="password">
-                <Password/>
-              </Form.Item>
-            </Col>
-          </Row>
+        <Form {...layout} form={form2} onValuesChange={handlePasswordChange}>
+          <Form.Item label={"Số dư khả dụng"}>
+            {moneyFormat(balance)} VNĐ
+          </Form.Item>
+          <Form.Item label={"Số tiền chuyển"}>
+            {moneyFormat(amount)} VNĐ
+          </Form.Item>
+          <Form.Item label={"Lời nhắn"}>
+            {message}
+          </Form.Item>
+          <Form.Item name="password" label={"Xác thực mật khẩu"}>
+            <Password/>
+          </Form.Item>
         </Form>
       </div>
       }
 
-      {step === 3 &&
+      {step === 2 &&
       <div className="transfer-step">
-
+        <Row>
+          <Col className="status-container" xs={24} md={8}><CheckCircleOutlined
+            style={{color: 'green', fontSize: '100px'}}/></Col>
+          <Col xs={24} md={16}>
+            <Row className="status-row">
+              <Col span={12}>Trạng thái:</Col>
+              <Col span={12}>Thành công</Col>
+            </Row>
+            <Row className="status-row">
+              <Col span={12}>Số tiền trừ:</Col>
+              <Col span={12}>- 100 000 VNĐ</Col>
+            </Row>
+            <Row className="status-row">
+              <Col span={12}>Số dư còn lại:</Col>
+              <Col span={12}>0 VNĐ</Col>
+            </Row>
+          </Col>
+        </Row>
       </div>
       }
     </Modal>

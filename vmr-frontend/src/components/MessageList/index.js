@@ -144,6 +144,7 @@ let MessageListInternal = props => {
       />
 
       <TransferMoneyModal
+        receiverId={receiver.id}
         active={moneyTransferActive}
         setActive={setMoneyTransferActive}
         receiverName={receiver.name}

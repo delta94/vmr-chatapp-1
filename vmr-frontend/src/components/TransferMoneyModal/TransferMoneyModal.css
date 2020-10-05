@@ -1,12 +1,27 @@
-.transfer-money-icon {
+.transfer-modal .transfer-money-icon {
   margin-right: 15px;
   color: red;
 }
 
-.transfer-step {
+.transfer-modal .transfer-step {
   padding-top: 20px;
 }
 
-.transfer-row .left-input {
+.transfer-modal .status-row {
+  margin-top: 14px;
+  margin-bottom: 14px;
+}
+
+.transfer-modal .left-input {
   width: 100%;
+}
+
+.transfer-modal .ant-form-item-label {
+  text-align: left;
+}
+
+.transfer-modal .status-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
