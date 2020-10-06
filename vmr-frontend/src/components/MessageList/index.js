@@ -3,7 +3,7 @@ import Compose from '../Compose';
 import Toolbar from '../Toolbar';
 import ToolbarButton from '../ToolbarButton';
 import {connect} from 'react-redux';
-import {getMessageFromAPI, setSideBarActive, updateActiveConservationId} from '../../redux/vmr-action';
+import {getMessageFromAPI, updateActiveConservationId} from '../../redux/vmr-action';
 import {getMessageList} from '../../service/message-list';
 import renderMessageNew from './message-render';
 
@@ -11,6 +11,7 @@ import './MessageList.css';
 
 import {ArrowLeftOutlined, MoreOutlined, SendOutlined, DollarCircleOutlined} from '@ant-design/icons';
 import TransferMoneyModal from "../TransferMoneyModal";
+import {useOpenSideBar} from "../../hooks/ui";
 
 let MessageListInternal = props => {
   let {scrollFlag, currentConversationId, receiverId, receiver, webSocket, chatMessages} = props;
@@ -98,9 +99,7 @@ let MessageListInternal = props => {
     }
   };
 
-  let toggleSideBar = () => {
-    props.openSideBar();
-  };
+  let toggleSideBar = useOpenSideBar();
 
   let openTransferModal = () => {
     setMoneyTransferActive(true);
@@ -128,10 +127,10 @@ let MessageListInternal = props => {
         rightItems={[
           <ToolbarButton
             key="transfer"
-            icon={<DollarCircleOutlined />}
+            icon={<DollarCircleOutlined/>}
             onClick={openTransferModal}
             type="compose-btn"
-            style={{color:'red'}}
+            style={{color: 'red'}}
           />,
           <ToolbarButton
             key="send" icon={<SendOutlined/>}
@@ -195,9 +194,6 @@ let dispatchToProps = (dispatch) => {
     },
     updateConversationId: (id) => {
       dispatch(updateActiveConservationId(id));
-    },
-    openSideBar: () => {
-      dispatch(setSideBarActive(true));
     }
   };
 };

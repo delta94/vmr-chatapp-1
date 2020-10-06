@@ -3,7 +3,7 @@ import {Row, Col} from 'antd';
 
 import './WalletTabItem.css';
 import {useDispatch, useSelector} from 'react-redux';
-import {setWalletTab} from "../../redux/vmr-action";
+import {setSideBarActive, setWalletTab} from "../../redux/vmr-action";
 
 const {useHistory} = require('react-router-dom');
 
@@ -20,6 +20,7 @@ export default function WalletTabItem(props) {
 
   let clickHandle = () => {
     dispatch(setWalletTab(tabName));
+    dispatch(setSideBarActive(false));
     history.push(path);
   };
 

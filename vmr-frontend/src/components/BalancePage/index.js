@@ -3,14 +3,28 @@ import React from 'react';
 import './BalancePage.css';
 import {Col, Row} from "antd";
 import {moneyFormat} from "../../util/string-util";
-import {CalendarTwoTone, SmileTwoTone, UserOutlined} from '@ant-design/icons';
+import {ArrowLeftOutlined, CalendarTwoTone, MoreOutlined, SmileTwoTone, UserOutlined} from '@ant-design/icons';
 import {useBalance} from "../../hooks/wallet";
+import ToolbarButton from "../ToolbarButton";
+import Toolbar from "../Toolbar";
+import {useOpenSideBar} from "../../hooks/ui";
 
 export default function BalancePage() {
   let balance = useBalance();
+  let openSideBar = useOpenSideBar();
 
   return (
     <div className={'balance-page'}>
+      <Toolbar
+        title={"Số dư"}
+        className="chat-title-bar"
+        rightItems={[
+          <ToolbarButton key="info" icon={<MoreOutlined/>} type="top-bar-btn"/>
+        ]}
+        leftItems={[
+          <ToolbarButton key="info" icon={<ArrowLeftOutlined/>} onClick={openSideBar} type={"top-bar-btn"}/>
+        ]}
+      />
       <Row className="balance-row">
         <Col xs={24} className="balance-col left">
           <div className="balance-container">
@@ -33,7 +47,7 @@ export default function BalancePage() {
 
           <Row justify="center" className="info-row">
             <Col xs={12} className="key"><CalendarTwoTone twoToneColor="#eb2f96" style={{fontSize: '30px'}}/> Ngày cập
-              nhật gần nhất: </Col>
+              nhật: </Col>
             <Col xs={12} className="value">01/10/2020</Col>
           </Row>
         </Col>
