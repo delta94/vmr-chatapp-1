@@ -7,11 +7,13 @@
   padding-bottom: 10px;
   padding-left: 10px;
   border-radius: 5px;
+  border: 1px solid white;
 }
 
-.wallet-tab-item .content-container {
+.wallet-tab-item .icon-content {
   display: flex;
-  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 
 .wallet-tab-item .anticon {
@@ -22,6 +24,10 @@
 .wallet-tab-item:hover, .wallet-tab-item.active {
   background-color: #ededed;
   cursor: pointer;
+}
+
+.wallet-tab-item.active {
+  border: 1px solid #8fbee9;
 }
 
 .wallet-tab-item .text-content {

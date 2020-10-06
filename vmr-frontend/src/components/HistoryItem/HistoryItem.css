@@ -1,0 +1,43 @@
+.history-item {
+  padding: 10px;
+  background-color: #eef2f5;
+  font-size: 16px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #8fbee9;
+}
+
+.history-item .icon-col {
+  display: flex;
+}
+
+.history-item p {
+  margin-bottom: 5px;
+}
+
+.history-item .content {
+  font-weight: bolder;
+}
+
+.history-item .message {
+  font-weight: lighter;
+}
+
+.history-item .money-col {
+  text-align: right;
+}
+
+@media screen and (max-width: 768px) {
+  .history-item .money-col {
+    text-align: left;
+  }
+}
+
+.history-item .time {
+  color: #9d9999;
+}
+
+.history-item .amount {
+  font-weight: bold;
+  color: darkred;
+}

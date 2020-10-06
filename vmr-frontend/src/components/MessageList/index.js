@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import Compose from '../Compose';
-import Toolbar from '../Toolbar';
 import ToolbarButton from '../ToolbarButton';
+import TitleBar from '../TitleBar';
 import {connect} from 'react-redux';
 import {getMessageFromAPI, updateActiveConservationId} from '../../redux/vmr-action';
 import {getMessageList} from '../../service/message-list';
@@ -9,9 +9,8 @@ import renderMessageNew from './message-render';
 
 import './MessageList.css';
 
-import {ArrowLeftOutlined, MoreOutlined, SendOutlined, DollarCircleOutlined} from '@ant-design/icons';
+import {SendOutlined, DollarCircleOutlined} from '@ant-design/icons';
 import TransferMoneyModal from "../TransferMoneyModal";
-import {useOpenSideBar} from "../../hooks/ui";
 
 let MessageListInternal = props => {
   let {scrollFlag, currentConversationId, receiverId, receiver, webSocket, chatMessages} = props;
@@ -21,7 +20,7 @@ let MessageListInternal = props => {
   let msgList = useRef(null);
   let inputRef = useRef(null);
   let [sendButtonActive, setSendBtnActive] = useState(false);
-  let [moneyTransferActive, setMoneyTransferActive] = useState(true);
+  let [moneyTransferActive, setMoneyTransferActive] = useState(false);
 
   // Message list
   let messages = chatMessages.map(x => {
@@ -99,24 +98,13 @@ let MessageListInternal = props => {
     }
   };
 
-  let toggleSideBar = useOpenSideBar();
-
   let openTransferModal = () => {
     setMoneyTransferActive(true);
   };
 
   return (
     <div className="message-list">
-      <Toolbar
-        title={receiver.name}
-        className="chat-title-bar"
-        rightItems={[
-          <ToolbarButton key="info" icon={<MoreOutlined/>} type="top-bar-btn"/>
-        ]}
-        leftItems={[
-          <ToolbarButton key="info" icon={<ArrowLeftOutlined/>} onClick={toggleSideBar} type={"top-bar-btn"}/>
-        ]}
-      />
+      <TitleBar title={receiver.name}/>
 
       <div className="message-list-container" ref={msgList} onScroll={msgScrollHandle}>
         {renderMessageNew(messages)}

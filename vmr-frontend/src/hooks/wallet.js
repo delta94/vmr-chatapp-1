@@ -8,7 +8,7 @@ export function useBalance(...dependencies) {
       console.log(result.getBalance());
       setBalance(result.getBalance());
     });
-    // eslint-disable-next-line 
+    // eslint-disable-next-line
   }, [...dependencies])
   return balance;
 }

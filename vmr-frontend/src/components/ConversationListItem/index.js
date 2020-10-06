@@ -23,7 +23,8 @@ export default function ConversationListItem(props) {
   let itemStyle = {
     borderRadius: "5px",
     marginLeft: "10px",
-    marginRight: "10px"
+    marginRight: "10px",
+    border: '1px solid white'
   };
 
   let user = userMapHolder.userMap.get(props.friendId);
@@ -43,6 +44,7 @@ export default function ConversationListItem(props) {
 
   if (currentConversationId === user.id) {
     itemStyle.backgroundColor = 'rgba(0, 0, 0, .05)';
+    itemStyle.border = '1px solid #8fbee9';
   }
 
   let textMsg = `@${user.username}`;

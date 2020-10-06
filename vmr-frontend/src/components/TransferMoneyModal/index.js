@@ -29,8 +29,8 @@ export default function TransferMoneyModal(props) {
   let [amount, setAmount] = useState(0);
   let [message, setMessage] = useState('');
   let [password, setPassword] = useState('');
-  let [form] = Form.useForm();
-  let [form2] = Form.useForm();
+  let [form] = Form.useForm(null);
+  let [form2] = Form.useForm(null);
   let [valid, setValid] = useState(false);
   let windowSize = useWindowSize();
   let balance = useBalance(step, active);
