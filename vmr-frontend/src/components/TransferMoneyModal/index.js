@@ -40,7 +40,9 @@ export default function TransferMoneyModal(props) {
     setStep(0);
     setAmount(0);
     setValid(false);
+    setPassword('');
     setMessage('Chuyển tiền');
+    // eslint-disable-next-line
   }, [active]);
 
   let closeModal = () => {
@@ -61,17 +63,17 @@ export default function TransferMoneyModal(props) {
     }
   };
 
-  function handleFieldChange(changedFields, allFields) {
+  let handleFieldChange = (changedFields, allFields) => {
     if (allFields.amount < 1000 || allFields.amount > balance) {
       setValid(false);
     } else {
       setValid(true);
     }
-  }
+  };
 
-  function handlePasswordChange(changedFields, allFields) {
+  let handlePasswordChange = (changedFields, allFields) => {
     setPassword(allFields.password);
-  }
+  };
 
   let handleTransfer = () => {
     transfer(receiverId, amount, password, message, Math.round(Math.random() * 1000)).then(data => {
