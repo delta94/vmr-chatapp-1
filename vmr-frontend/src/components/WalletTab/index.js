@@ -10,12 +10,14 @@ export default function WalletTab() {
         icon={<WalletOutlined style={{color: '#ce353d'}}/>}
         title="Số Dư"
         description="Xem số dư, thông tin tài khoản"
-        tabName="balance"/>
+        tabName="balance"
+        path="/w/balance"/>
       <WalletTabItem
         icon={<HistoryOutlined style={{color: '#1c79dd'}}/>}
         title="Lịch sử"
         description="Xem lịch sử giao dịch"
-        tabName="history"/>
+        tabName="history"
+        path="/w/history"/>
     </div>
   );
 }

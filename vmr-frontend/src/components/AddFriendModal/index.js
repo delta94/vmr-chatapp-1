@@ -43,7 +43,7 @@ function AddFriendModal() {
     >
       <Title level={2} className="vmr-modal-title">
         <SearchOutlined className="friend-search-icon"/>
-        Tìm user
+        Tìm bạn
       </Title>
       <Search placeholder="Nhập username hoặc name" onChange={searchHandle}/>
       <div className="user-list-search">

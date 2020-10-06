@@ -1,3 +1,4 @@
+set names 'utf8mb4';
 drop database if exists vmrchat;
 create database vmrchat character set utf8mb4 collate utf8mb4_unicode_ci;
 use vmrchat;
@@ -73,7 +74,7 @@ values ('danganhvan', 'Đặng Anh Văn', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bz
         UNIX_TIMESTAMP()),
        ('phamanhtuan', 'Phạm Anh Tuấn', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
         UNIX_TIMESTAMP()),
-       ('lengocphuong', 'e Ngoc Phuong', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+       ('lengocphuong', 'Le Ngoc Phuong', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
         UNIX_TIMESTAMP()),
        ('nguyenvana', 'Nguyen Van A', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
         UNIX_TIMESTAMP()),
@@ -83,3 +84,17 @@ values ('danganhvan', 'Đặng Anh Văn', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bz
         UNIX_TIMESTAMP()),
        ('dangtunglam', 'Đặng Tùng Lâm', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
         UNIX_TIMESTAMP());
+
+insert into friends (user_id, friend_id, status)
+values (1, 2, 'ACCEPTED'),
+       (1, 3, 'ACCEPTED'),
+       (1, 4, 'ACCEPTED'),
+       (1, 5, 'ACCEPTED'),
+       (5, 1, 'ACCEPTED'),
+       (3, 1, 'ACCEPTED'),
+       (2, 1, 'ACCEPTED'),
+       (4, 1, 'ACCEPTED'),
+       (1, 6, 'WAITING'),
+       (6, 1, 'NOT_ANSWER'),
+       (1, 7, 'NOT_ANSWER'),
+       (7, 1, 'WAITING');
