@@ -10,8 +10,9 @@ import {
 
 import "./TransferMoneyModal.css";
 import {moneyFormat} from "../../util/string-util";
-import {getBalance, transfer} from "../../service/wallet";
+import {transfer} from "../../service/wallet";
 import useWindowSize from "../../hooks/window";
+import {useBalance} from "../../hooks/wallet";
 
 const {Title} = Typography;
 const {TextArea, Password} = Input;
@@ -24,7 +25,6 @@ const layout = {
 
 export default function TransferMoneyModal(props) {
   let {active, setActive, receiverName, receiverId} = props;
-  let [balance, setBalance] = useState();
   let [step, setStep] = useState(2);
   let [amount, setAmount] = useState(0);
   let [message, setMessage] = useState('');
@@ -33,6 +33,7 @@ export default function TransferMoneyModal(props) {
   let [form2] = Form.useForm();
   let [valid, setValid] = useState(false);
   let windowSize = useWindowSize();
+  let balance = useBalance(step, active);
 
   useEffect(() => {
     form.resetFields();
@@ -41,12 +42,6 @@ export default function TransferMoneyModal(props) {
     setValid(false);
     setMessage('Chuyển tiền');
   }, [active]);
-
-  useEffect(() => {
-    getBalance().then(result => {
-      setBalance(result.getBalance());
-    });
-  }, [step, active]);
 
   let closeModal = () => {
     setActive(false);
@@ -79,7 +74,7 @@ export default function TransferMoneyModal(props) {
   }
 
   let handleTransfer = () => {
-    transfer(receiverId, amount, password, message, Math.round(Math.random() * 1000)).then(data=>{
+    transfer(receiverId, amount, password, message, Math.round(Math.random() * 1000)).then(data => {
       console.log(data);
       setStep(2);
     });

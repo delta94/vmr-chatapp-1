@@ -7,11 +7,8 @@ import AddFriendModal from "../AddFriendModal";
 function Messenger() {
   return (
     <div className="scrollable messenger">
-
       <LeftSideBar/>
-
       <MainArea/>
-
       <AddFriendModal/>
     </div>
   );
