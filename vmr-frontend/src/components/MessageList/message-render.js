@@ -56,7 +56,6 @@ export default function (messages) {
         endsSequence={endsSequence}
         showTimestamp={showTimestamp}
         data={current}
-        transfer={current.transfer}
       />
     );
     i += 1;

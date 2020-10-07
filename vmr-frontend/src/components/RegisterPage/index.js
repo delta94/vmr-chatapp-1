@@ -53,17 +53,15 @@ function RegisterPage() {
     />;
   }
 
-  let checkValidatePassword = (rule, value, callback) => {
+  let checkValidatePassword = async (rule, value) => {
     if (!value) {
-      callback();
       return;
     }
+
     if (value.length < 8 && value.length > 0) {
-      callback('Password not valid');
+      throw new Error('Password not valid');
     } else if (value !== form.getFieldValue('password')) {
-      callback('Password not match');
-    } else {
-      callback();
+      throw new Error('Password not match');
     }
   };
 

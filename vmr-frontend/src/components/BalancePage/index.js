@@ -23,7 +23,7 @@ export default function BalancePage() {
 
         <Col xs={24}>
           <Row justify="center" className="info-row">
-            <Col span={3}><UserOutlined style={{color: 'red', fontSize: '30px'}}/></Col>
+            <Col span={3}><UserOutlined style={{color: 'rgb(204, 77, 83)', fontSize: '30px'}}/></Col>
             <Col span={9} className="key">Tên tài khoản:</Col>
             <Col span={12} className="value">{info.userName} </Col>
           </Row>

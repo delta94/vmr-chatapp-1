@@ -10,10 +10,10 @@ export default function Message(props) {
     isMine,
     startsSequence,
     endsSequence,
-    showTimestamp,
-    transfer,
-    amount, message
+    showTimestamp
   } = props;
+
+  const {transfer} = data;
 
   const friendlyTimestamp = moment(data.timestamp).format('LLLL');
 

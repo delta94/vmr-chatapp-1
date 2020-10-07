@@ -39,8 +39,6 @@ export default function TransferMoneyModal(props) {
   let [cause, setCause] = useState('');
 
   useEffect(() => {
-    form.resetFields();
-    form2.resetFields();
     setStep(0);
     setAmount(0);
     setValid(false);
@@ -50,6 +48,8 @@ export default function TransferMoneyModal(props) {
   }, [active]);
 
   let closeModal = () => {
+    form.resetFields();
+    form2.resetFields();
     setActive(false);
   };
 
@@ -59,13 +59,13 @@ export default function TransferMoneyModal(props) {
     setStep(1);
   };
 
-  let checkAmount = (rule, value, callback) => {
+  let checkAmount = async (rule, value) => {
     if (value < 1000) {
-      callback('Số tiền chuyển phải từ 1000đ trở lên');
+      throw new Error('Số tiền chuyển phải từ 1000đ trở lên');
     } else if (value > balance) {
-      callback('Số tiền không được vượt quá balance')
+      throw new Error('Số tiền không được vượt quá balance')
     } else if (Math.round(value) !== value) {
-      callback('Số tiền không được là số lẻ');
+      throw new Error('Số tiền không được là số lẻ');
     }
   };
 
@@ -137,6 +137,13 @@ export default function TransferMoneyModal(props) {
     ]
   }
 
+  let setDisplay = (targetStep) => {
+    if (step === targetStep) {
+      return {};
+    }
+    return {display: 'none'};
+  };
+
   return (
     <Modal
       destroyOnClose={true}
@@ -160,8 +167,7 @@ export default function TransferMoneyModal(props) {
       </Steps>
       }
 
-      {step === 0 &&
-      <div className="transfer-step">
+      <div className="transfer-step" style={setDisplay(0)}>
         <Form {...layout} form={form} initialValues={{'message': 'Chuyển tiền'}} onValuesChange={handleFieldChange}>
           <Form.Item label={"Số dư khả dụng"}>
             {moneyFormat(balance)} VNĐ
@@ -176,11 +182,9 @@ export default function TransferMoneyModal(props) {
           </Form.Item>
         </Form>
       </div>
-      }
 
-      {step === 1 &&
-      <div className="transfer-step">
-        <Form {...layout} form={form2} onValuesChange={handlePasswordChange} destroyOnClose={true}>
+      <div className="transfer-step" style={setDisplay(1)}>
+        <Form {...layout} form={form2} onValuesChange={handlePasswordChange}>
           <Form.Item label={"Số dư khả dụng"}>
             {moneyFormat(balance)} VNĐ
           </Form.Item>
@@ -195,10 +199,8 @@ export default function TransferMoneyModal(props) {
           </Form.Item>
         </Form>
       </div>
-      }
 
-      {step === 2 &&
-      <div className="transfer-step">
+      <div className="transfer-step" style={setDisplay(2)}>
         <Row>
           <Col className="status-container" xs={24} md={8}><CheckCircleOutlined
             style={{color: 'green', fontSize: '100px'}}/></Col>
@@ -218,9 +220,8 @@ export default function TransferMoneyModal(props) {
           </Col>
         </Row>
       </div>
-      }
-      {step === 3 &&
-      <div className="transfer-step">
+
+      <div className="transfer-step" style={setDisplay(3)}>
         <Row>
           <Col className="status-container" xs={24} md={8}><StopOutlined
             style={{color: 'red', fontSize: '100px'}}/></Col>
@@ -244,7 +245,7 @@ export default function TransferMoneyModal(props) {
           </Col>
         </Row>
       </div>
-      }
+
     </Modal>
   );
 }

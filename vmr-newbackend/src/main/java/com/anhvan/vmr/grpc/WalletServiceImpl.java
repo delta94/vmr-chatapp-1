@@ -50,7 +50,7 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
                 Common.Error error =
                     Common.Error.newBuilder()
                         .setCode(Common.ErrorCode.INTERNAL_SERVER_ERROR)
-                        .setMessage("Cannot get " + "balance")
+                        .setMessage("Could not get balance")
                         .build();
                 responseBuilder.setError(error);
               }

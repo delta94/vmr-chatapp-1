@@ -51,6 +51,10 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   public static final String CREATE_ACCOUNT_LOG_QUERY =
       "insert into account_logs (user, transfer, balance, type) values (?,?,?,?)";
 
+  public static final String WRITE_CHAT_STMT =
+      "insert into messages (sender, receiver, send_time, message, type, transfer_id) "
+          + "values (?,?,?,?,?,?)";
+
   private MySQLPool pool;
   private PasswordUtil passwordUtil;
 
@@ -375,5 +379,36 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
             });
 
     return accountLogPromise.future();
+  }
+
+  Future<TransferStateHolder> writeChatMessage(TransferStateHolder holder) {
+    Promise<TransferStateHolder> chatPromise = Promise.promise();
+
+    Tuple chatTuple =
+        Tuple.of(
+            holder.getSenderId(),
+            holder.getReceiverId(),
+            holder.getLastUpdated(),
+            holder.getMessage(),
+            "TRANSFER",
+            holder.getTransferId());
+
+    holder
+        .getConn()
+        .preparedQuery(WRITE_CHAT_STMT)
+        .execute(
+            chatTuple,
+            ar -> {
+              if (ar.failed()) {
+                chatPromise.fail(ar.cause());
+                return;
+              }
+
+              chatPromise.complete(holder);
+            });
+
+    // TODO
+
+    return chatPromise.future();
   }
 }
