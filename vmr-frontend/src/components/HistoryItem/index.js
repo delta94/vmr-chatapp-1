@@ -2,8 +2,16 @@ import React from 'react';
 import './HistoryItem.css';
 import {Col, Row} from "antd";
 import UserAvatar from "../UserAvatar";
+import {moneyFormat, timestampSecond2String} from "../../util/string-util";
 
 export default function HistoryItem(props) {
+  let {type, friendName, amount, timestamp, message} = props;
+  let msg = "Chuyển tiền tới";
+  let sign = "-";
+  if (type === 'receive') {
+    msg = "Nhận tiền từ";
+    sign = "+";
+  }
   return (
     <div className={'history-item'}>
       <Row>
@@ -13,12 +21,12 @@ export default function HistoryItem(props) {
         <Col span={20}>
           <Row>
             <Col xs={24} md={18}>
-              <p className={'content'}>Chuyển tiền tới Nguyễn Văn A</p>
-              <p className={'time'}>13:58 - 01/10/2020</p>
-              <p className={'message'}>Nội dung message</p>
+              <p className={'content'}>{msg} {friendName}</p>
+              <p className={'time'}>{timestampSecond2String(timestamp)}</p>
+              <p className={'message'}>{message}</p>
             </Col>
             <Col xs={24} md={6} className={'money-col'}>
-              <span className={'amount'}>+ 100 000 VNĐ</span>
+              <span className={'amount'}>{sign} {moneyFormat(amount)} VNĐ</span>
             </Col>
           </Row>
         </Col>
