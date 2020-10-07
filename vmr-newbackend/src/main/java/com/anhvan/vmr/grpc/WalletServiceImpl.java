@@ -41,6 +41,8 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
                     BalanceResponse.Data.newBuilder()
                         .setBalance(user.getBalance())
                         .setLastUpdated(user.getLastUpdated())
+                        .setName(user.getName())
+                        .setUserName(user.getUsername())
                         .build();
                 responseBuilder.setData(data);
               } else {

@@ -1,6 +1,8 @@
 import React from 'react';
 import moment from 'moment';
 import './Message.css';
+import {Col, Row} from "antd";
+import {CheckCircleFilled, DollarCircleFilled} from '@ant-design/icons';
 
 export default function Message(props) {
   const {
@@ -8,10 +10,13 @@ export default function Message(props) {
     isMine,
     startsSequence,
     endsSequence,
-    showTimestamp
+    showTimestamp,
+    transfer,
+    amount, message
   } = props;
 
   const friendlyTimestamp = moment(data.timestamp).format('LLLL');
+
   return (
     <div className={[
       'message',
@@ -19,6 +24,7 @@ export default function Message(props) {
       `${startsSequence ? 'start' : ''}`,
       `${endsSequence ? 'end' : ''}`
     ].join(' ')}>
+
       {
         showTimestamp &&
         <div className="timestamp">
@@ -27,9 +33,34 @@ export default function Message(props) {
       }
 
       <div className="bubble-container">
-        <div className="bubble" title={friendlyTimestamp}>
-          {data.message}
-        </div>
+        {
+          !transfer &&
+          <div className="bubble" title={friendlyTimestamp}>
+            {data.message}
+          </div>
+        }
+        {
+          transfer && isMine &&
+          <div className="bubble transfer" title={friendlyTimestamp}>
+            <Row gutter={[8, 8]}>
+              <Col span={4}><CheckCircleFilled style={{fontSize: '30px'}}/></Col>
+              <Col span={20}>Chuyển <span className={'amount'}>100 000</span> VNĐ
+                <br/><span>Test tính năng chuyển tiền</span>
+              </Col>
+            </Row>
+          </div>
+        }
+        {
+          transfer && !isMine &&
+          <div className="bubble receive" title={friendlyTimestamp}>
+            <Row gutter={[8, 8]}>
+              <Col span={4}><DollarCircleFilled style={{fontSize: '30px'}}/></Col>
+              <Col span={20}>Chuyển <span className={'amount'}>100 000</span> VNĐ cho bạn
+                <br/>Test tính năng chuyển tiền
+              </Col>
+            </Row>
+          </div>
+        }
       </div>
     </div>
   );

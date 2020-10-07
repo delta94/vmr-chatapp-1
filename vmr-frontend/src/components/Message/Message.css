@@ -67,3 +67,17 @@
   border-top-right-radius: 2px;
   border-bottom-right-radius: 2px;
 }
+
+.message .bubble-container .bubble.transfer {
+  background-color: #52c41a;
+  width: 75%;
+}
+
+.message .bubble-container .bubble.receive {
+  width: 75%;
+  color: green;
+}
+
+.message .bubble-container .amount {
+  font-size: 18px;
+}

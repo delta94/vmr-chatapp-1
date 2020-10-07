@@ -962,7 +962,9 @@ proto.vmr.BalanceResponse.Data.prototype.toObject = function(opt_includeInstance
 proto.vmr.BalanceResponse.Data.toObject = function(includeInstance, msg) {
   var f, obj = {
     balance: msg.getBalance(),
-    lastUpdated: msg.getLastUpdated()
+    lastUpdated: msg.getLastUpdated(),
+    userName: msg.getUserName(),
+    name: msg.getName()
   };
 
   if (includeInstance) {
@@ -1006,6 +1008,14 @@ proto.vmr.BalanceResponse.Data.deserializeBinaryFromReader = function(msg, reade
     case 2:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setLastUpdated(value);
+      break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setUserName(value);
+      break;
+    case 4:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setName(value);
       break;
     default:
       reader.skipField();
@@ -1059,6 +1069,20 @@ proto.vmr.BalanceResponse.Data.prototype.serializeBinaryToWriter = function (wri
       f
     );
   }
+  f = this.getUserName();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
+  f = this.getName();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
+      f
+    );
+  }
 };
 
 
@@ -1098,6 +1122,36 @@ proto.vmr.BalanceResponse.Data.prototype.getLastUpdated = function() {
 /** @param {number} value  */
 proto.vmr.BalanceResponse.Data.prototype.setLastUpdated = function(value) {
   jspb.Message.setField(this, 2, value);
+};
+
+
+/**
+ * optional string user_name = 3;
+ * @return {string}
+ */
+proto.vmr.BalanceResponse.Data.prototype.getUserName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 3, ""));
+};
+
+
+/** @param {string} value  */
+proto.vmr.BalanceResponse.Data.prototype.setUserName = function(value) {
+  jspb.Message.setField(this, 3, value);
+};
+
+
+/**
+ * optional string name = 4;
+ * @return {string}
+ */
+proto.vmr.BalanceResponse.Data.prototype.getName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 4, ""));
+};
+
+
+/** @param {string} value  */
+proto.vmr.BalanceResponse.Data.prototype.setName = function(value) {
+  jspb.Message.setField(this, 4, value);
 };
 
 

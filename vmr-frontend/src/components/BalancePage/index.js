@@ -2,13 +2,13 @@ import React from 'react';
 
 import './BalancePage.css';
 import {Col, Row} from "antd";
-import {moneyFormat} from "../../util/string-util";
+import {moneyFormat, timestampSecond2String} from "../../util/string-util";
 import {CalendarTwoTone, SmileTwoTone, UserOutlined} from '@ant-design/icons';
-import {useBalance} from "../../hooks/wallet";
+import {useInfoWithBalance} from "../../hooks/wallet";
 import TitleBar from '../TitleBar';
 
 export default function BalancePage() {
-  let balance = useBalance();
+  let info = useInfoWithBalance();
 
   return (
     <div className={'balance-page'}>
@@ -17,7 +17,7 @@ export default function BalancePage() {
         <Col xs={24} className="balance-col left">
           <div className="balance-container">
             <p>Số dư</p>
-            <p><span className={"balance-number"}>{moneyFormat(balance)}</span> VNĐ</p>
+            <p><span className={"balance-number"}>{moneyFormat(info.balance)}</span> VNĐ</p>
           </div>
         </Col>
 
@@ -25,19 +25,19 @@ export default function BalancePage() {
           <Row justify="center" className="info-row">
             <Col span={3}><UserOutlined style={{color: 'red', fontSize: '30px'}}/></Col>
             <Col span={9} className="key">Tên tài khoản:</Col>
-            <Col span={12} className="value">anhvan1999 </Col>
+            <Col span={12} className="value">{info.userName} </Col>
           </Row>
 
           <Row justify="center" className="info-row">
             <Col span={3}><SmileTwoTone twoToneColor="#52c41a" style={{fontSize: '30px'}}/></Col>
             <Col xs={9} className="key">Họ & Tên:</Col>
-            <Col xs={12} className="value">Đặng Anh Văn</Col>
+            <Col xs={12} className="value">{info.name}</Col>
           </Row>
 
           <Row justify="center" className="info-row">
             <Col span={3}><CalendarTwoTone twoToneColor="#eb2f96" style={{fontSize: '30px'}}/></Col>
             <Col xs={9} className="key">Ngày cập nhật:</Col>
-            <Col xs={12} className="value">01/10/2020</Col>
+            <Col xs={12} className="value">{timestampSecond2String(info.lastUpdated)}</Col>
           </Row>
         </Col>
 

@@ -11,6 +11,7 @@ import './MessageList.css';
 
 import {SendOutlined, DollarCircleOutlined} from '@ant-design/icons';
 import TransferMoneyModal from "../TransferMoneyModal";
+import {getUserId} from "../../util/auth-util";
 
 let MessageListInternal = props => {
   let {scrollFlag, currentConversationId, receiverId, receiver, webSocket, chatMessages} = props;
@@ -31,6 +32,25 @@ let MessageListInternal = props => {
       timestamp: x.timestamp * 1000,
       isMine: x.isMine
     };
+  });
+
+  // For test
+  messages.push({
+    id: 1928,
+    message: 'Chuyển tiền cho ....',
+    author: getUserId(),
+    timestamp: 19293838,
+    isMine: true,
+    transfer: true
+  });
+
+  messages.push({
+    id: 1930,
+    message: 'Chuyển tiền cho ....',
+    timestamp: 19293838,
+    author: receiverId,
+    isMine: false,
+    transfer: true
   });
 
   // Load message

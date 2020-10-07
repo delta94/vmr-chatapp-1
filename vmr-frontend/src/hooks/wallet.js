@@ -5,10 +5,26 @@ export function useBalance(...dependencies) {
   let [balance, setBalance] = useState(0);
   useEffect(() => {
     getBalance().then(result => {
-      console.log(result.getBalance());
       setBalance(result.getBalance());
     });
     // eslint-disable-next-line
   }, [...dependencies])
   return balance;
+}
+
+export function useInfoWithBalance(...dependencies) {
+  let [info, setInfo] = useState({});
+  useEffect(() => {
+    getBalance().then(result => {
+      console.log(result.getBalance());
+      setInfo({
+        balance: result.getBalance(),
+        userName: result.getUserName(),
+        lastUpdated: result.getLastUpdated(),
+        name: result.getName()
+      });
+    });
+    // eslint-disable-next-line
+  }, [...dependencies]);
+  return info;
 }
