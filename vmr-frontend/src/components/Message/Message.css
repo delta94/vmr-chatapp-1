@@ -9,7 +9,7 @@
   color: #999;
   font-weight: 600;
   font-size: 12px;
-  margin: 10px 0px;
+  margin: 10px 0;
   text-transform: uppercase;
 }
 
@@ -75,6 +75,7 @@
 .message .bubble-container .bubble.transfer {
   background-color: #e7ffdc;
   width: 75%;
+  color: green;
 }
 
 .message .bubble-container .bubble.receive {
@@ -84,4 +85,8 @@
 
 .message .bubble-container .amount {
   font-size: 18px;
+}
+
+.message .bubble-container .msg {
+  color: black;
 }

@@ -45,7 +45,7 @@ export default function Message(props) {
             <Row gutter={[8, 8]}>
               <Col span={4}><CheckCircleFilled style={{fontSize: '30px'}}/></Col>
               <Col span={20}>Chuyển <span className={'amount'}>100 000</span> VNĐ
-                <br/><span>Test tính năng chuyển tiền</span>
+                <br/><span className={'msg'}>Test tính năng chuyển tiền</span>
               </Col>
             </Row>
           </div>
@@ -56,7 +56,7 @@ export default function Message(props) {
             <Row gutter={[8, 8]}>
               <Col span={4}><DollarCircleFilled style={{fontSize: '30px'}}/></Col>
               <Col span={20}>Chuyển <span className={'amount'}>100 000</span> VNĐ cho bạn
-                <br/>Test tính năng chuyển tiền
+                <br/><span className={'msg'}>Test tính năng chuyển tiền</span>
               </Col>
             </Row>
           </div>
