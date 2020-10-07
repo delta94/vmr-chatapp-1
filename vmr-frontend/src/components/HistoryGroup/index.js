@@ -1,30 +1,26 @@
 import React from 'react';
 import HistoryItem from "../HistoryItem";
-import moment from "moment";
+import {getUserId} from "../../util/auth-util";
 
-export default function HistoryGroup() {
-  console.log(moment().seconds());
+export default function HistoryGroup(props) {
+  let userId = getUserId();
+  let {month, items} = props;
+
   return (
     <div className={'history-group'}>
-      <p>Tháng 10/2020</p>
-      <HistoryItem
-        type={'transfer'}
-        friendName={'Nguyễn Văn A'}
-        amount={10000}
-        timestamp={moment().unix()}
-        message={'Chuyển tiền'}/>
-      <HistoryItem
-        type={'receive'}
-        friendName={'Nguyễn Văn A'}
-        timestamp={moment().unix()}
-        amount={27000}
-        message={'Chuyển tiền'}/>
-      <HistoryItem
-        type={'transfer'}
-        friendName={'Nguyễn Văn A'}
-        amount={1245}
-        timestamp={moment().unix()}
-        message={'Chuyển tiền'}/>
+      <p>Tháng {month}</p>
+      {
+        items.map(x => (
+          <HistoryItem
+            type={x.type}
+            friendId={((x.senderId === userId) ? x.receiverId : x.senderId)}
+            amount={x.amount}
+            timestamp={x.timestamp}
+            key={x.timestamp}
+            message={x.message}
+          />
+        ))
+      }
     </div>
   );
 }

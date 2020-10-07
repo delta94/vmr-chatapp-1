@@ -5,10 +5,13 @@ import MenuBar from "../MenuBar";
 import FriendTab from "../FriendTab";
 import ChatTab from "../ChatTab";
 import WalletTab from "../WalletTab";
+import {useFriendList} from "../../hooks/friend";
 
 export default function ConversationList() {
   let tab = useSelector(state => state.ui.currentTab);
   let sideBarActive = useSelector(state => state.ui.sideBarActive);
+
+  useFriendList();
 
   let className = "left-sidebar";
   if (sideBarActive) {

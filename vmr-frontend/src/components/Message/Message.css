@@ -19,8 +19,13 @@
 }
 
 .message .bubble {
-  max-width: 300px !important;
+  max-width: 400px !important;
   word-wrap: break-word;
+  border: 1px solid #bfbfbfd6;
+}
+
+.message.mine .bubble {
+
 }
 
 .message.mine .bubble-container {
@@ -29,21 +34,21 @@
 
 .message.start .bubble-container .bubble {
   /* margin-top: 10px; */
-  border-top-left-radius: 20px;
+  border-top-left-radius: 10px;
 }
 
 .message.end .bubble-container .bubble {
-  border-bottom-left-radius: 20px;
+  border-bottom-left-radius: 10px;
   /* margin-bottom: 10px; */
 }
 
 .message.mine.start .bubble-container .bubble {
   margin-top: 10px;
-  border-top-right-radius: 20px;
+  border-top-right-radius: 10px;
 }
 
 .message.mine.end .bubble-container .bubble {
-  border-bottom-right-radius: 20px;
+  border-bottom-right-radius: 10px;
   margin-bottom: 10px;
 }
 
@@ -51,25 +56,24 @@
   margin: 1px 0px;
   background: #f4f4f8;
   padding: 10px 15px;
-  border-radius: 20px;
+  border-radius: 10px;
   max-width: 75%;
   border-top-left-radius: 2px;
   border-bottom-left-radius: 2px;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 .message.mine .bubble-container .bubble {
-  background: #007aff;
-  color: white;
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
+  background: #b6dcff;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
   border-top-right-radius: 2px;
   border-bottom-right-radius: 2px;
 }
 
 .message .bubble-container .bubble.transfer {
-  background-color: #52c41a;
+  background-color: #e7ffdc;
   width: 75%;
 }
 

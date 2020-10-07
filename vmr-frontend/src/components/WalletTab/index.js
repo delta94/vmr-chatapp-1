@@ -7,7 +7,7 @@ export default function WalletTab() {
   return (
     <div className="conversation-list-scroll">
       <WalletTabItem
-        icon={<WalletOutlined style={{color: '#ce353d'}}/>}
+        icon={<WalletOutlined style={{color: '#cc4d53'}}/>}
         title="Số Dư"
         description="Xem số dư, thông tin tài khoản"
         tabName="balance"

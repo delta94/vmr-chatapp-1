@@ -12,3 +12,7 @@ export function moneyFormat(value) {
 export function timestampSecond2String(timestamp) {
   return moment(timestamp * 1000).format('HH:mm - DD/MM/YYYY');
 }
+
+export function timestampSecond2Month(timestamp) {
+  return moment(timestamp * 1000).format('MM/YYYY');
+}

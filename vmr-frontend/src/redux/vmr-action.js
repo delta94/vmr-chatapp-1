@@ -11,9 +11,9 @@ export function login(jwt, userId) {
   }
 }
 
-export function updateUserList(userList) {
+export function updateFriendList(userList) {
   return {
-    type: 'UPDATE_USER_LIST',
+    type: 'UPDATE_FRIEND_LIST',
     data: userList
   }
 }

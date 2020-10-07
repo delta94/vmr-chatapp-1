@@ -9,6 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class History {
   public enum Type {
     TRANSFER,
@@ -30,9 +31,9 @@ public class History {
 
     // Set type
     String typeString = row.getString("type_string");
-    if (typeString.equals("transfer")) {
+    if (typeString.equals("TRANSFER")) {
       history.setType(History.Type.TRANSFER);
-    } else if (typeString.equals("receive")) {
+    } else if (typeString.equals("RECEIVE")) {
       history.setType(History.Type.RECEIVE);
     }
 

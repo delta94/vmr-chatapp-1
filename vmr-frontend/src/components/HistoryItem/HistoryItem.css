@@ -7,6 +7,15 @@
   border: 1px solid #8fbee9;
 }
 
+.history-item.receive {
+  background-color: #f3e4e4;
+  border: 1px solid #ea7e7e;
+}
+
+.history-item:hover {
+  cursor: pointer;
+}
+
 .history-item .icon-col {
   display: flex;
 }

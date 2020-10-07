@@ -1,22 +1,35 @@
 import React from 'react';
 import './HistoryItem.css';
-import {Col, Row} from "antd";
-import UserAvatar from "../UserAvatar";
-import {moneyFormat, timestampSecond2String} from "../../util/string-util";
+import {Col, Row} from 'antd';
+import UserAvatar from '../UserAvatar';
+import {moneyFormat, timestampSecond2String} from '../../util/string-util';
+import {useSelector} from 'react-redux';
+
+const {HistoryResponse} = require('../../proto/vmr/wallet_pb');
 
 export default function HistoryItem(props) {
-  let {type, friendName, amount, timestamp, message} = props;
-  let msg = "Chuyển tiền tới";
-  let sign = "-";
-  if (type === 'receive') {
+  let {type, amount, timestamp, message, friendId} = props;
+  let msg = 'Chuyển tiền tới';
+  let sign = '-';
+  let className = 'history-item';
+  let userMapHolder = useSelector(state => state.users.userMapHolder);
+  let friend = userMapHolder.userMap.get(friendId);
+  if (!friend) {
+    return null;
+  }
+  let friendName = userMapHolder.userMap.get(friendId).name;
+
+  if (type === HistoryResponse.Type.RECEIVE) {
     msg = "Nhận tiền từ";
     sign = "+";
+    className += ' receive';
   }
+
   return (
-    <div className={'history-item'}>
+    <div className={className}>
       <Row>
         <Col span={4} className={'icon-col'}>
-          <UserAvatar name={"Dang Anh Van"} size={40}/>
+          <UserAvatar name={friendName} size={40}/>
         </Col>
         <Col span={20}>
           <Row>

@@ -138,7 +138,7 @@ let MessageListInternal = props => {
             icon={<DollarCircleOutlined/>}
             onClick={openTransferModal}
             type="compose-btn"
-            style={{color: 'red'}}
+            style={{color: '#cc4d53'}}
           />,
           <ToolbarButton
             key="send" icon={<SendOutlined/>}

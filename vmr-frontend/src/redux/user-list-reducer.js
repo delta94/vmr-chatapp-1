@@ -12,7 +12,7 @@ export default function userListReducer(state = initState, action) {
   let data = action.data;
 
   switch (action.type) {
-    case 'UPDATE_USER_LIST':
+    case 'UPDATE_FRIEND_LIST':
       state = updateUserList(state, data);
       break;
     case 'ONOFF':

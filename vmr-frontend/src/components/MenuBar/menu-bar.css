@@ -33,6 +33,10 @@
   cursor: pointer;
 }
 
+.icon-wrapper-active {
+  border: 1px solid #8fbee9;
+}
+
 .menubar-icon {
   font-size: 28px;
   padding-top: 10px;

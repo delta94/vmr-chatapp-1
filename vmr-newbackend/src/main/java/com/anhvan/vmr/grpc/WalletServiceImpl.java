@@ -71,6 +71,7 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
             ar -> {
               if (ar.succeeded()) {
                 List<History> historyList = ar.result();
+                log.debug("historyList: {}", historyList);
                 for (History history : historyList) {
                   historyResponseBuilder.addItem(history2HistoryResponseItem(history));
                 }

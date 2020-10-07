@@ -27,6 +27,7 @@ export default function FriendTab() {
       console.log(err);
     });
   }, [friendReloadFlag]);
+
   return (
     <div className="conversation-list-scroll">
       <ConversationSearch/>

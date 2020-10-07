@@ -1,5 +1,5 @@
 let initialState = {
-  sideBarActive: true,
+  sideBarActive: false,
   searchUserActive: false,
   currentTab: 'chat',
   friendReloadFlag: true,
