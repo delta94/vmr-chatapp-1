@@ -163,6 +163,7 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
         .setAmount(history.getAmount())
         .setBalance(history.getBalance())
         .setMessage(history.getMessage())
+        .setTimestamp(history.getTimestamp())
         .setType(type)
         .build();
   }
