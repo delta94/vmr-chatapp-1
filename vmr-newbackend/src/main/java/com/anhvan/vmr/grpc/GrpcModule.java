@@ -38,10 +38,13 @@ public class GrpcModule {
   @IntoSet
   @Singleton
   public BindableService provideWalletServiceImpl(
-      UserDatabaseService userDatabaseService, WalletDatabaseService walletDatabaseService) {
+      UserDatabaseService userDatabaseService,
+      WalletDatabaseService walletDatabaseService,
+      WebSocketService webSocketService) {
     return WalletServiceImpl.builder()
         .userDbService(userDatabaseService)
         .walletDatabaseService(walletDatabaseService)
+        .webSocketService(webSocketService)
         .build();
   }
 }

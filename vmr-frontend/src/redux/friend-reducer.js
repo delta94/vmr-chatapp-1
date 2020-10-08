@@ -1,4 +1,5 @@
 import {getUserId} from "../util/auth-util";
+import {actionType} from "./vmr-action";
 
 let initState = {
   friends: {},
@@ -9,26 +10,26 @@ export default function friendReducer(state = initState, action) {
   let data = action.data;
 
   switch (action.type) {
-    case 'UPDATE_FRIEND_LIST':
+    case actionType.UPDATE_FRIEND_LIST:
       state = updateUserList(state, data);
       break;
-    case 'ONOFF':
+    case actionType.ONOFF:
       state = handleOnOffLine(state, data);
       break;
-    case 'SET_CURRENT_CONVERSATION_ID':
-      state = setCurrentConservationId(state, data);
+    case actionType.SET_CURRENT_FRIEND:
+      state = setCurrentFriend(state, data);
       break;
-    case 'LOGOUT':
+    case actionType.LOGOUT:
       state = initState;
       break;
-    case 'CHAT_RECEIVE':
+    case actionType.CHAT_RECEIVE:
       state = handleChatReceive(state, data);
       break;
-    case 'CHAT_SENDBACK':
+    case actionType.CHAT_SENDBACK:
       state = handleChatSendback(state, data);
       break;
     default:
-
+    // do nothing
   }
 
   return state;
@@ -78,8 +79,8 @@ function handleOnOffLine(state, data) {
   });
 }
 
-function setCurrentConservationId(state, id) {
-  return Object.assign({}, state, {
-    currentFriendId: id
-  });
+function setCurrentFriend(state, id) {
+  return {
+    ...state, currentFriendId: id
+  }
 }

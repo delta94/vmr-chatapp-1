@@ -1,5 +1,5 @@
 import store from '../redux/vmr-store';
-import {webSocketConnected, receiveMessage, sendbackMessage, onOffline, newUser} from "../redux/vmr-action";
+import {webSocketConnected, receiveMessage, sendbackMessage, onOffline} from "../redux/vmr-action";
 import {getJwtToken, getUserId} from "../util/auth-util";
 
 const WEB_SOCKET_ROOT = process.env.REACT_APP_WS_ROOT;
@@ -71,6 +71,7 @@ function internalConnect() {
     if (type === 'CHAT') {
       // Handle chat
       store.dispatch(receiveMessage(data));
+      console.log(data);
     } else if (type === 'SEND_BACK') {
       // Handle sendback
       if (data.receiverId === senderId) {
@@ -81,8 +82,6 @@ function internalConnect() {
       store.dispatch(onOffline(data, true));
     } else if (type === 'OFFLINE') {
       store.dispatch(onOffline(data, false));
-    } else if (type === 'NEW_USER') {
-      store.dispatch(newUser(data));
     }
   };
 

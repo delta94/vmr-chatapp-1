@@ -1,3 +1,5 @@
+import {actionType} from "./vmr-action";
+
 let initialState = {
   webSocketManager: null,
   send: null,
@@ -8,10 +10,10 @@ export default function appReducer(state = initialState, action) {
   let data = action.data;
 
   switch (action.type) {
-    case 'WS_CONNECTED':
+    case actionType.WS_CONNECTED:
       state = handleWsConnected(state, data);
       break;
-    case 'LOGOUT':
+    case actionType.LOGOUT:
       if (state.close) {
         state.close();
       }

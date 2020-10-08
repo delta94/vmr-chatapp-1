@@ -27,7 +27,7 @@ public class LoginController extends BaseController {
   private JwtUtil jwtUtil;
   private UserCacheService userCacheService;
 
-  protected Future<BaseResponse> handlePost(BaseRequest baseRequest) {
+  public Future<BaseResponse> handlePost(BaseRequest baseRequest) {
     // Get response promise
     Promise<BaseResponse> responsePromise = Promise.promise();
 

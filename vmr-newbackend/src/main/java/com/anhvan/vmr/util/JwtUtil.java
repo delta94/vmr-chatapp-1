@@ -11,12 +11,10 @@ import io.vertx.ext.auth.JWTOptions;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.web.RoutingContext;
 import lombok.NonNull;
-import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-@Log4j2
 @Singleton
 public class JwtUtil {
   private JWTAuth jwtAuth;
@@ -38,10 +36,7 @@ public class JwtUtil {
     Promise<String> tokenPromise = Promise.promise();
 
     workerUtil.execute(
-        () -> {
-          tokenPromise.complete(jwtAuth.generateToken(new JsonObject().put("userId", userId)));
-          log.debug("Generate token for user {}", userId);
-        });
+        () -> tokenPromise.complete(jwtAuth.generateToken(new JsonObject().put("userId", userId))));
 
     return tokenPromise.future();
   }
@@ -50,13 +45,11 @@ public class JwtUtil {
     Promise<String> tokenPromise = Promise.promise();
 
     workerUtil.execute(
-        () -> {
-          tokenPromise.complete(
-              jwtAuth.generateToken(
-                  new JsonObject().put("userId", userId),
-                  new JWTOptions().setExpiresInSeconds(timeToLive)));
-          log.debug("Generate token for user {} with ttl {}", userId, timeToLive);
-        });
+        () ->
+            tokenPromise.complete(
+                jwtAuth.generateToken(
+                    new JsonObject().put("userId", userId),
+                    new JWTOptions().setExpiresInSeconds(timeToLive))));
 
     return tokenPromise.future();
   }
@@ -70,9 +63,7 @@ public class JwtUtil {
           if (userAsyncResult.succeeded()) {
             long userId = userAsyncResult.result().principal().getLong("userId");
             userIdPromise.complete(userId);
-            log.info("Parse jwt for user {} successfully", userId);
           } else {
-            log.info("Parse jwt fail", userAsyncResult.cause());
             userIdPromise.fail(userAsyncResult.cause());
           }
         });
@@ -82,8 +73,6 @@ public class JwtUtil {
 
   public long authenticateBlocking(@NonNull String token) {
     DecodedJWT jwt = JWT.require(algorithm).build().verify(token);
-    long value = jwt.getClaim("userId").asLong();
-    log.debug("Get user id from jwt {}", value);
-    return value;
+    return jwt.getClaim("userId").asLong();
   }
 }

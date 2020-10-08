@@ -1,3 +1,5 @@
+import {actionType} from "./vmr-action";
+
 let initState = {
   messages: {},
   scrollFlag: false
@@ -7,19 +9,19 @@ export default function messageReducer(state = initState, action) {
   let data = action.data;
 
   switch (action.type) {
-    case 'UPDATE_FRIEND_LIST':
+    case actionType.UPDATE_FRIEND_LIST:
       state = initMessages(state, data);
       break;
-    case 'CHAT_RECEIVE':
+    case actionType.CHAT_RECEIVE:
       state = handleChatReceive(state, data);
       break;
-    case 'CHAT_SENDBACK':
+    case actionType.CHAT_SENDBACK:
       state = handleChatSendback(state, data);
       break;
-    case 'GET_MSG_FROM_API':
+    case actionType.GET_MSG_FROM_API:
       state = handleGetMsgFromAPI(state, data);
       break;
-    case 'LOGOUT':
+    case actionType.LOGOUT:
       state = initState;
       break;
     default:

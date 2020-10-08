@@ -3,7 +3,7 @@ import Compose from '../Compose';
 import ToolbarButton from '../ToolbarButton';
 import TitleBar from '../TitleBar';
 import {useDispatch, useSelector} from 'react-redux';
-import {getMessageFromAPI, updateActiveConservationId} from '../../redux/vmr-action';
+import {getMessageFromAPI, updateCurrentFriend} from '../../redux/vmr-action';
 import {getMessageList} from '../../service/message-list';
 import renderMessageNew from './message-render';
 import {SendOutlined, DollarCircleOutlined} from '@ant-design/icons';
@@ -29,7 +29,7 @@ function MessageListInternal(props) {
   };
 
   let updateConversationId = (id) => {
-    dispatch(updateActiveConservationId(id));
+    dispatch(updateCurrentFriend(id));
   };
 
   // Use to scroll message

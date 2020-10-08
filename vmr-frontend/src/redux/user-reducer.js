@@ -1,4 +1,5 @@
 import {getJwtToken, getUserId} from "../util/auth-util";
+import {actionType} from "./vmr-action";
 
 let initialUser = {
   jwt: getJwtToken(),
@@ -9,7 +10,7 @@ export default function userReducer(state = initialUser, action) {
   let data = action.data;
 
   switch (action.type) {
-    case 'LOGIN_SUCCESS':
+    case actionType.LOGIN_SUCCESS:
       state = handleLogin(state, data);
       break;
     case 'LOGOUT':

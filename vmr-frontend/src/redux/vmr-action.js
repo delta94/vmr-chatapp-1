@@ -2,101 +2,75 @@ function createAction(type, data) {
   return {type, data};
 }
 
+export const actionType = {
+  LOGIN_SUCCESS: 'LOGIN_SUCCESS',
+  UPDATE_FRIEND_LIST: 'UPDATE_FRIEND_LIST',
+  SET_CURRENT_FRIEND: 'SET_CURRENT_FRIEND',
+  LOGOUT: 'LOGOUT',
+  WS_CONNECTED: 'WS_CONNECTED',
+  CHAT_RECEIVE: 'CHAT_RECEIVE',
+  CHAT_SENDBACK: 'CHAT_SENDBACK',
+  GET_MSG_FROM_API: 'GET_MSG_FROM_API',
+  ONOFF: 'ONOFF',
+  SET_SIDE_BAR: 'SIDEBAR_SET',
+  SET_SEARCH_MODAL: 'SET_SEARCH_MODAL',
+  SET_TAB: 'SET_TAB',
+  FRIEND_RELOAD: 'FRIEND_RELOAD',
+  SET_WALLET_TAB: 'SET_WALLET_TAB'
+};
+
 export function login(jwt, userId) {
-  return {
-    type: 'LOGIN_SUCCESS',
-    data: {
-      jwt, userId
-    }
-  }
+  return createAction(actionType.LOGIN_SUCCESS, {jwt, userId});
 }
 
 export function updateFriendList(userList) {
-  return {
-    type: 'UPDATE_FRIEND_LIST',
-    data: userList
-  }
+  return createAction(actionType.UPDATE_FRIEND_LIST, userList);
 }
 
-export function updateActiveConservationId(id) {
-  return {
-    type: 'SET_CURRENT_CONVERSATION_ID',
-    data: id
-  }
+export function updateCurrentFriend(id) {
+  return createAction(actionType.SET_CURRENT_FRIEND, id);
 }
 
 export function logout() {
-  return {
-    type: 'LOGOUT'
-  }
+  return createAction(actionType.LOGOUT);
 }
 
 export function webSocketConnected(webSocket, send, close) {
-  return {
-    type: 'WS_CONNECTED',
-    data: {
-      webSocket,
-      send,
-      close
-    }
-  }
+  return createAction(actionType.WS_CONNECTED, {webSocket, send, close});
 }
 
 export function receiveMessage(message) {
-  return {
-    type: 'CHAT_RECEIVE',
-    data: message
-  }
+  return createAction(actionType.CHAT_RECEIVE, message);
 }
 
 export function sendbackMessage(message) {
-  return {
-    type: 'CHAT_SENDBACK',
-    data: message
-  }
+  return createAction(actionType.CHAT_SENDBACK, message);
 }
 
 export function getMessageFromAPI(data, friendId) {
-  data.friendId = friendId;
-  return {
-    type: 'GET_MSG_FROM_API',
-    data
-  }
+  return createAction(actionType.GET_MSG_FROM_API, {...data, friendId});
 }
 
 export function onOffline(userId, status) {
-  return {
-    type: 'ONOFF',
-    data: {
-      userId, status
-    }
-  }
-}
-
-export function newUser(user) {
-  return createAction('NEW_USER', user);
+  return createAction(actionType.ONOFF, {userId, status});
 }
 
 export function setSideBarActive(active) {
-  return createAction("SIDEBAR_SET_ACTIVE", active);
-}
-
-export function toggleSideBar() {
-  return createAction("TOGGLE_SIDE_BAR");
+  return createAction(actionType.SET_SIDE_BAR, active);
 }
 
 export function setSearchUserModalActive(active) {
-  return createAction("SET_SEARCH_USER_MODAL_ACTIVE", active);
+  return createAction(actionType.SET_SEARCH_MODAL, active);
 }
 
 export function setTab(tab) {
-  return createAction("SET_TAB", tab);
+  return createAction(actionType.SET_TAB, tab);
 }
 
 export function friendReload() {
-  return createAction('FRIEND_RELOAD');
+  return createAction(actionType.FRIEND_RELOAD);
 }
 
 export function setWalletTab(tab) {
-  return createAction('SET_WALLET_TAB', tab);
+  return createAction(actionType.SET_WALLET_TAB, tab);
 }
