@@ -11,7 +11,6 @@ import './MessageList.css';
 
 import {SendOutlined, DollarCircleOutlined} from '@ant-design/icons';
 import TransferMoneyModal from "../TransferMoneyModal";
-import {getUserId} from "../../util/auth-util";
 
 let MessageListInternal = props => {
   let {scrollFlag, currentConversationId, receiverId, receiver, webSocket, chatMessages} = props;
@@ -161,11 +160,11 @@ let stateToProps = (state, ownProp) => {
 
   try {
     return {
-      chatMessages: state.chat.chatMessagesHolder.chatMessages.get(receiverId),
-      receiver: state.users.userMapHolder.userMap.get(receiverId),
+      chatMessages: state.chat.messages[receiverId],
+      receiver: state.friends.friends[receiverId],
       webSocket: state.webSocket.webSocket,
       scrollFlag: state.chat.scrollFlag,
-      currentConversationId: state.users.currentConversationId,
+      currentConversationId: state.friends.currentConversationId,
       isValid: function () {
         return this.chatMessages != null && this.receiver != null;
       }

@@ -1,15 +1,15 @@
 import {createStore, combineReducers} from 'redux';
 import userReducer from "./user-reducer";
 import websocketReducer from "./websocket-reducer";
-import userListReducer from "./user-list-reducer";
-import chatListReducer from "./chat-list-reducer";
+import friendReducer from "./friend-reducer";
+import messageReducer from "./message-reducer";
 import uiReducer from "./ui-reducer";
 
 let reducer = combineReducers({
   user: userReducer,
   webSocket: websocketReducer,
-  users: userListReducer,
-  chat: chatListReducer,
+  friends: friendReducer,
+  chat: messageReducer,
   ui: uiReducer
 });
 

@@ -12,8 +12,8 @@ const {useHistory} = require('react-router-dom');
 export default function ConversationListItem(props) {
   let history = useHistory();
   let currentUserId = getUserId();
-  let currentConversationId = useSelector(state => state.users.currentConversationId);
-  let userMapHolder = useSelector(state => state.users.userMapHolder);
+  let currentFriendId = useSelector(state => state.friends.currentFriendId);
+  let user = useSelector(state => state.friends.friends[props.friendId]);
   let dispatch = useDispatch();
 
   let hideSideBar = () => {
@@ -27,7 +27,6 @@ export default function ConversationListItem(props) {
     border: '1px solid white'
   };
 
-  let user = userMapHolder.userMap.get(props.friendId);
   let {online, id} = user;
   let isCurrentUser = id === currentUserId;
 
@@ -42,7 +41,7 @@ export default function ConversationListItem(props) {
     backgroundColor: getColor(user.id)
   }
 
-  if (currentConversationId === user.id) {
+  if (currentFriendId === user.id) {
     itemStyle.backgroundColor = 'rgba(0, 0, 0, .05)';
     itemStyle.border = '1px solid #8fbee9';
   }

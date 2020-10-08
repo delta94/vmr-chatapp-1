@@ -4,16 +4,16 @@ import {useSelector} from "react-redux";
 import ConversationSearch from "../ConversationSearch";
 
 export default function ChatTab() {
-  let userList = useSelector(state => state.users.userList);
+  let friendList = useSelector(state => state.friends.friends);
 
   return (
     <div className="conversation-list-scroll">
       <ConversationSearch/>
       {
-        userList.map(user =>
+        Object.keys(friendList).map(x =>
           <ConversationListItem
-            key={user.id}
-            friendId={user.id}
+            key={x}
+            friendId={x}
           />
         )
       }
