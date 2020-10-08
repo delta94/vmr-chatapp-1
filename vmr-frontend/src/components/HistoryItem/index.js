@@ -12,12 +12,11 @@ export default function HistoryItem(props) {
   let msg = 'Chuyển tiền tới';
   let sign = '-';
   let className = 'history-item';
-  let userMapHolder = useSelector(state => state.users.userMapHolder);
-  let friend = userMapHolder.userMap.get(friendId);
+  let friend = useSelector(state=>state.friends.friends[friendId]);
   if (!friend) {
     return null;
   }
-  let friendName = userMapHolder.userMap.get(friendId).name;
+  let friendName = friend.name;
 
   if (type === HistoryResponse.Type.RECEIVE) {
     msg = "Nhận tiền từ";

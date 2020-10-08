@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 import {Form, Input, Button, Row, Col, Card, Alert} from "antd";
 import {UserOutlined, LockOutlined, SmileOutlined, PlusCircleOutlined} from '@ant-design/icons';
+import {register} from "../../service/user";
+
 import bg from '../resource/registerbg.jpg';
 import "./Register.css";
-import {register} from "../../service/user";
 
 const {useHistory, Link} = require('react-router-dom');
 

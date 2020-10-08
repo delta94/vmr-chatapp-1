@@ -5,17 +5,17 @@ import {
   ArrowRightOutlined,
   CheckCircleOutlined,
   CloseOutlined,
-  DollarCircleOutlined, StopOutlined
+  DollarCircleOutlined,
+  StopOutlined
 } from "@ant-design/icons";
-
-import "./TransferMoneyModal.css";
 import {moneyFormat} from "../../util/string-util";
 import {transfer} from "../../service/wallet";
 import useWindowSize from "../../hooks/window";
 import {useBalance} from "../../hooks/wallet";
 
-const {ErrorCode} = require('../../proto/vmr/common_pb');
+import "./TransferMoneyModal.css";
 
+const {ErrorCode} = require('../../proto/vmr/common_pb');
 const {Title} = Typography;
 const {TextArea, Password} = Input;
 const {Step} = Steps;

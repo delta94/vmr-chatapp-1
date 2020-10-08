@@ -1,11 +1,13 @@
-import React from 'react';
+import React, {Suspense} from 'react';
 import Messenger from '../Messenger';
 import store from '../../redux/vmr-store';
 import {Provider, useSelector} from 'react-redux';
 import {BrowserRouter as Router} from 'react-router-dom';
-import RegisterPage from "../RegisterPage";
+
 import 'antd/dist/antd.css';
-import LoginPage from "../LoginPage";
+
+const RegisterPage = React.lazy(() => import('../RegisterPage'));
+const LoginPage = React.lazy(() => import('../LoginPage'));
 
 const {Switch, Route, Redirect} = require('react-router-dom');
 
@@ -22,11 +24,13 @@ export default function App() {
     <Provider store={store}>
       <div className="App">
         <Router>
-          <Switch>
-            <Route path="/register" component={RegisterPage}/>
-            <Route path="/login" component={LoginPage}/>
-            <Route path="/" component={AuthFragment}/>
-          </Switch>
+          <Suspense fallback={<div/>}>
+            <Switch>
+              <Route path="/register" component={RegisterPage}/>
+              <Route path="/login" component={LoginPage}/>
+              <Route path="/" component={AuthFragment}/>
+            </Switch>
+          </Suspense>
         </Router>
       </div>
     </Provider>

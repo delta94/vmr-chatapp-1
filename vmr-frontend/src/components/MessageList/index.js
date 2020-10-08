@@ -2,18 +2,35 @@ import React, {useEffect, useRef, useState} from 'react';
 import Compose from '../Compose';
 import ToolbarButton from '../ToolbarButton';
 import TitleBar from '../TitleBar';
-import {connect} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {getMessageFromAPI, updateActiveConservationId} from '../../redux/vmr-action';
 import {getMessageList} from '../../service/message-list';
 import renderMessageNew from './message-render';
-
-import './MessageList.css';
-
 import {SendOutlined, DollarCircleOutlined} from '@ant-design/icons';
 import TransferMoneyModal from "../TransferMoneyModal";
 
-let MessageListInternal = props => {
-  let {scrollFlag, currentConversationId, receiverId, receiver, webSocket, chatMessages} = props;
+import './MessageList.css';
+
+function MessageListInternal(props) {
+  let {receiverId} = props;
+
+  // Selectors
+  let scrollFlag = useSelector(state => state.chat.scrollFlag);
+  let webSocket = useSelector(state => state.webSocket);
+  let currentFriendId = useSelector(state => state.friends.currentFriendId);
+  let chatMessages = useSelector(state => state.chat.messages[receiverId]);
+  let receiver = useSelector(state => state.friends.friends[receiverId]);
+
+  // Dispatch
+  let dispatch = useDispatch();
+
+  let updateMessageList = (data, friendId) => {
+    dispatch(getMessageFromAPI(data, friendId));
+  };
+
+  let updateConversationId = (id) => {
+    dispatch(updateActiveConservationId(id));
+  };
 
   // Use to scroll message
   let endOfMsgList = useRef(null);
@@ -37,13 +54,13 @@ let MessageListInternal = props => {
   // Load message
   useEffect(
     () => {
-      props.updateConversationId(receiverId);
+      updateConversationId(receiverId);
       if (chatMessages.length === 0) {
         getMessageList(receiverId, chatMessages.length).then((data) => {
-          props.updateMessageList(data, receiverId);
+          updateMessageList(data, receiverId);
           let {current} = endOfMsgList;
           if (current) {
-            current.scrollIntoView({behavior: 'smooth'});
+            current.scrollIntoView();
           }
         });
       }
@@ -57,10 +74,10 @@ let MessageListInternal = props => {
     () => {
       let {current} = endOfMsgList;
       if (current) {
-        current.scrollIntoView({behavior: 'smooth'});
+        current.scrollIntoView();
       }
     },
-    [scrollFlag, currentConversationId]
+    [scrollFlag, currentFriendId]
   );
 
   // Load more message
@@ -70,7 +87,7 @@ let MessageListInternal = props => {
     if (offset === 0) {
       getMessageList(receiverId, chatMessages.length).then((data) => {
         let oldHeight = msgList.scrollHeight;
-        props.updateMessageList(data, receiverId);
+        updateMessageList(data, receiverId);
         let newHeight = msgList.scrollHeight;
         msgList.scrollTo(0, newHeight - oldHeight);
       });
@@ -139,52 +156,21 @@ let MessageListInternal = props => {
       />
     </div>
   );
-};
+}
 
-let MessageList = props => {
-  // Check valid status of props
-  if (!props.isValid()) {
-    return null;
-  }
-
+export default function MessageList(props) {
   // Get receiver
   let receiverId = Number(props.match.params.receiverId);
 
-  // Render internal component
-  return <MessageListInternal {...props} receiverId={receiverId}/>
-};
+  // Check receiver
+  let chatMessages = useSelector(state => state.chat.messages[receiverId]);
+  let receiver = useSelector(state => state.friends.friends[receiverId]);
 
-// Map from redux to props
-let stateToProps = (state, ownProp) => {
-  let receiverId = Number(ownProp.match.params.receiverId);
-
-  try {
-    return {
-      chatMessages: state.chat.messages[receiverId],
-      receiver: state.friends.friends[receiverId],
-      webSocket: state.webSocket.webSocket,
-      scrollFlag: state.chat.scrollFlag,
-      currentConversationId: state.friends.currentConversationId,
-      isValid: function () {
-        return this.chatMessages != null && this.receiver != null;
-      }
-    };
-  } catch (e) {
-    return {
-      showFlag: false
-    }
+  // If chat message and recevier not exist in redux
+  if (!chatMessages || !receiver) {
+    return null;
   }
-};
 
-let dispatchToProps = (dispatch) => {
-  return {
-    updateMessageList: (data, friendId) => {
-      dispatch(getMessageFromAPI(data, friendId));
-    },
-    updateConversationId: (id) => {
-      dispatch(updateActiveConservationId(id));
-    }
-  };
+  // Render internal component
+  return <MessageListInternal receiverId={receiverId}/>
 };
-
-export default connect(stateToProps, dispatchToProps)(MessageList);
