@@ -36,9 +36,28 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
     pool = databaseService.getPool();
   }
 
+  @Override
   public Future<Long> addChat(Message msg) {
+    Promise<Long> idPromise = Promise.promise();
     log.debug("Add chat message {} to database", msg);
 
+    internalAddChat(msg)
+        .compose(id -> updateLastMessageId(id, msg.getSenderId(), msg.getReceiverId()))
+        .onComplete(
+            ar -> {
+              if (ar.failed()) {
+                log.debug("Add chat message failed {}", msg, ar.cause());
+                idPromise.fail(ar.cause());
+                return;
+              }
+
+              idPromise.complete(ar.result());
+            });
+
+    return idPromise.future();
+  }
+
+  private Future<Long> internalAddChat(Message msg) {
     Promise<Long> idPromise = Promise.promise();
 
     pool.preparedQuery(INSERT_MESSAGE_STMT)
@@ -56,9 +75,8 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
     return idPromise.future();
   }
 
-  @Override
-  public Future<Void> updateLastMessageId(long userId, long friendId, long messageId) {
-    Promise<Void> updatedPromise = Promise.promise();
+  private Future<Long> updateLastMessageId(long userId, long friendId, long messageId) {
+    Promise<Long> updatedPromise = Promise.promise();
 
     pool.preparedQuery("update friends set last_message_id=? where user_id=? and friend_id=?")
         .executeBatch(
@@ -66,7 +84,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
                 Tuple.of(messageId, userId, friendId), Tuple.of(messageId, friendId, userId)),
             ar -> {
               if (ar.succeeded()) {
-                updatedPromise.complete();
+                updatedPromise.complete(userId);
               } else {
                 log.error(
                     "Error when update last message between user {}-{}, lastmsgid: {}",
@@ -74,6 +92,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
                     friendId,
                     messageId,
                     ar.cause());
+                updatedPromise.fail(ar.cause());
               }
             });
 

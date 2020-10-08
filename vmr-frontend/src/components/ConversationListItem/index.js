@@ -28,14 +28,6 @@ export default function ConversationListItem(props) {
   };
 
   let {online, id} = user;
-  let isCurrentUser = id === currentUserId;
-
-  let onlineStyle = "dot";
-  if (isCurrentUser) {
-    onlineStyle = "dot current-user"
-  } else if (online) {
-    onlineStyle = "dot online";
-  }
 
   let avatarStyle = {
     backgroundColor: getColor(user.id)
@@ -61,11 +53,14 @@ export default function ConversationListItem(props) {
 
   return (
     <div className="conversation-list-item" onClick={clickHandle} style={itemStyle}>
-      <Avatar style={avatarStyle} size={50}>
-        {getFirstLetter(user.name)}
-      </Avatar>
+      <div className="avatar">
+        <Avatar style={avatarStyle} size={50}>
+          {getFirstLetter(user.name)}
+        </Avatar>
+        {online && <span className={"badge "}/>}
+      </div>
       <div className="conversation-info" style={{paddingLeft: "10px"}}>
-        <h1 className="conversation-title"><span className={onlineStyle}/>{user.name}</h1>
+        <h1 className="conversation-title">{user.name}</h1>
         <p className="conservation-text" style={{marginBottom: 0, color: '#888'}}>{textMsg}</p>
       </div>
     </div>
