@@ -30,27 +30,9 @@ let MessageListInternal = props => {
       message: x.message,
       author: x.senderId,
       timestamp: x.timestamp * 1000,
-      isMine: x.isMine
+      isMine: x.isMine,
+      transfer: x.type === 'TRANSFER'
     };
-  });
-
-  // For test
-  messages.push({
-    id: 1928,
-    message: 'Chuyển tiền cho ....',
-    author: getUserId(),
-    timestamp: 19293838,
-    isMine: true,
-    transfer: true
-  });
-
-  messages.push({
-    id: 1930,
-    message: 'Chuyển tiền cho ....',
-    timestamp: 19293838,
-    author: receiverId,
-    isMine: false,
-    transfer: true
   });
 
   // Load message

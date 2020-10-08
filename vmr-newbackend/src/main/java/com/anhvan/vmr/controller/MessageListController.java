@@ -32,40 +32,41 @@ public class MessageListController extends BaseController {
     int friendId = Integer.parseInt(request.getParam("friendId"));
     int offset = Integer.parseInt(request.getParam("offset"));
 
-    if (offset == 0) {
-      // First load
-      Future<List<Message>> chatMessages = chatCacheService.getCacheMessage(userId, friendId);
-
-      // Cache hit
-      chatMessages.onSuccess(
-          wsMessages -> {
-            log.debug("Get chat messages - cache hit userId1:{} - userId2:{}", userId, friendId);
-            JsonObject jsonResponse = new JsonObject();
-            jsonResponse.put("messages", wsMessages);
-            jsonResponse.put("newOffset", offset + wsMessages.size());
-            responsePromise.complete(
-                BaseResponse.builder()
-                    .message("Get chat messages successfully")
-                    .statusCode(HttpResponseStatus.OK.code())
-                    .data(jsonResponse)
-                    .build());
-          });
-
-      // Cache miss
-      chatMessages.onFailure(
-          throwable -> {
-            log.debug(
-                "Fail to load chat messages from cache user1:{}-user2:{}",
-                userId,
-                friendId,
-                throwable);
-            getFromDB(userId, friendId, offset, responsePromise, true);
-          });
-    } else {
-      // Load more
-      getFromDB(userId, friendId, offset, responsePromise, false);
-    }
-
+    //    if (offset == 0) {
+    //      // First load
+    //      Future<List<Message>> chatMessages = chatCacheService.getCacheMessage(userId, friendId);
+    //
+    //      // Cache hit
+    //      chatMessages.onSuccess(
+    //          wsMessages -> {
+    //            log.debug("Get chat messages - cache hit userId1:{} - userId2:{}", userId,
+    // friendId);
+    //            JsonObject jsonResponse = new JsonObject();
+    //            jsonResponse.put("messages", wsMessages);
+    //            jsonResponse.put("newOffset", offset + wsMessages.size());
+    //            responsePromise.complete(
+    //                BaseResponse.builder()
+    //                    .message("Get chat messages successfully")
+    //                    .statusCode(HttpResponseStatus.OK.code())
+    //                    .data(jsonResponse)
+    //                    .build());
+    //          });
+    //
+    //      // Cache miss
+    //      chatMessages.onFailure(
+    //          throwable -> {
+    //            log.debug(
+    //                "Fail to load chat messages from cache user1:{}-user2:{}",
+    //                userId,
+    //                friendId,
+    //                throwable);
+    //            getFromDB(userId, friendId, offset, responsePromise, true);
+    //          });
+    //    } else {
+    //      // Load more
+    //      getFromDB(userId, friendId, offset, responsePromise, false);
+    //    }
+    getFromDB(userId, friendId, offset, responsePromise, false);
     return responsePromise.future();
   }
 
@@ -80,27 +81,29 @@ public class MessageListController extends BaseController {
         .getChatMessages(userId, friendId, offset)
         .onComplete(
             result -> {
-              if (result.succeeded()) {
-                List<Message> listMessage = result.result();
-
-                JsonObject jsonResponse = new JsonObject();
-                jsonResponse.put("messages", listMessage);
-                jsonResponse.put("newOffset", offset + listMessage.size());
-
-                responsePromise.complete(
-                    BaseResponse.builder()
-                        .statusCode(HttpResponseStatus.OK.code())
-                        .data(jsonResponse)
-                        .message("Get chat mesages successfully")
-                        .build());
-
-                // Cache
-                if (isCached) {
-                  chatCacheService.cacheListMessage(listMessage, userId, friendId);
-                }
-              } else {
+              if (result.failed()) {
                 log.error("Error when get chat messages", result.cause());
                 responsePromise.fail(result.cause());
+                return;
+              }
+
+              // Get the messages from databases
+              List<Message> listMessage = result.result();
+
+              JsonObject jsonResponse = new JsonObject();
+              jsonResponse.put("messages", listMessage);
+              jsonResponse.put("newOffset", offset + listMessage.size());
+
+              responsePromise.complete(
+                  BaseResponse.builder()
+                      .statusCode(HttpResponseStatus.OK.code())
+                      .data(jsonResponse)
+                      .message("Get chat mesages successfully")
+                      .build());
+
+              // Cache
+              if (isCached) {
+                chatCacheService.cacheListMessage(listMessage, userId, friendId);
               }
             });
   }

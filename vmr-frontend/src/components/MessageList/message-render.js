@@ -27,7 +27,7 @@ export default function (messages) {
       let previousDuration = moment.duration(currentMoment.diff(previousMoment));
       prevBySameAuthor = previous.author === current.author;
 
-      if (current.transfer) {
+      if (current.transfer || previous.transfer) {
         startsSequence = true;
       } else if (prevBySameAuthor && previousDuration.as('hours') < 1) {
         startsSequence = false;
@@ -43,7 +43,10 @@ export default function (messages) {
       let nextDuration = moment.duration(nextMoment.diff(currentMoment));
       nextBySameAuthor = next.author === current.author;
 
-      if (nextBySameAuthor && nextDuration.as('hours') < 1 && !next.transfer) {
+      if (next.transfer) {
+        endsSequence = true;
+      } else if (!current.transfer &&
+        nextBySameAuthor && nextDuration.as('hours') < 1) {
         endsSequence = false;
       }
     }

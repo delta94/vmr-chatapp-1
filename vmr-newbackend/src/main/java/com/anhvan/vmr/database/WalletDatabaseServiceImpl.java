@@ -107,6 +107,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
         .compose(this::updateAccountBalance)
         .compose(this::writeTransfer)
         .compose(this::writeAccountLog)
+        .compose(this::writeChatMessage)
         .onComplete(
             ar -> {
               if (ar.succeeded()) {
@@ -389,7 +390,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
             holder.getSenderId(),
             holder.getReceiverId(),
             holder.getLastUpdated(),
-            holder.getMessage(),
+            holder.getAmount() + ";" + holder.getMessage(),
             "TRANSFER",
             holder.getTransferId());
 
@@ -406,8 +407,6 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 
               chatPromise.complete(holder);
             });
-
-    // TODO
 
     return chatPromise.future();
   }

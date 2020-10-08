@@ -3,6 +3,7 @@ import moment from 'moment';
 import './Message.css';
 import {Col, Row} from "antd";
 import {CheckCircleFilled, DollarCircleFilled} from '@ant-design/icons';
+import {moneyFormat} from "../../util/string-util";
 
 export default function Message(props) {
   const {
@@ -13,7 +14,8 @@ export default function Message(props) {
     showTimestamp
   } = props;
 
-  const {transfer} = data;
+  const {transfer, message} = data;
+  let msgGroup = message.match(/(\d+);(.+)/);
 
   const friendlyTimestamp = moment(data.timestamp).format('LLLL');
 
@@ -44,8 +46,8 @@ export default function Message(props) {
           <div className="bubble transfer" title={friendlyTimestamp}>
             <Row gutter={[8, 8]}>
               <Col span={4}><CheckCircleFilled style={{fontSize: '30px'}}/></Col>
-              <Col span={20}>Chuyển <span className={'amount'}>100 000</span> VNĐ
-                <br/><span className={'msg'}>Test tính năng chuyển tiền</span>
+              <Col span={20}>Chuyển <span className={'amount'}>{moneyFormat(Number(msgGroup[1]))}</span> VNĐ
+                <br/><span className={'msg'}>{msgGroup[2]}</span>
               </Col>
             </Row>
           </div>
@@ -55,8 +57,8 @@ export default function Message(props) {
           <div className="bubble receive" title={friendlyTimestamp}>
             <Row gutter={[8, 8]}>
               <Col span={4}><DollarCircleFilled style={{fontSize: '30px'}}/></Col>
-              <Col span={20}>Chuyển <span className={'amount'}>100 000</span> VNĐ cho bạn
-                <br/><span className={'msg'}>Test tính năng chuyển tiền</span>
+              <Col span={20}>Chuyển cho bạn <span className={'amount'}>{moneyFormat(Number(msgGroup[1]))}</span> VNĐ
+                <br/><span className={'msg'}>{msgGroup[2]}</span>
               </Col>
             </Row>
           </div>

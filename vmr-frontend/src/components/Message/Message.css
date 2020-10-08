@@ -42,34 +42,33 @@
   /* margin-bottom: 10px; */
 }
 
+.message.start .bubble-container .bubble {
+  margin-top: 5px;
+}
+
+.message.end .bubble-container .bubble {
+  margin-bottom: 5px;
+}
+
 .message.mine.start .bubble-container .bubble {
-  margin-top: 10px;
   border-top-right-radius: 10px;
 }
 
 .message.mine.end .bubble-container .bubble {
   border-bottom-right-radius: 10px;
-  margin-bottom: 10px;
 }
 
 .message .bubble-container .bubble {
-  margin: 1px 0px;
+  margin: 1px;
   background: #f4f4f8;
   padding: 10px 15px;
-  border-radius: 10px;
   max-width: 75%;
-  border-top-left-radius: 2px;
-  border-bottom-left-radius: 2px;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
+  border-radius: 2px 10px 10px 2px;
 }
 
 .message.mine .bubble-container .bubble {
   background: #b6dcff;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
-  border-top-right-radius: 2px;
-  border-bottom-right-radius: 2px;
+  border-radius: 10px 2px 2px 10px;
 }
 
 .message .bubble-container .bubble.transfer {

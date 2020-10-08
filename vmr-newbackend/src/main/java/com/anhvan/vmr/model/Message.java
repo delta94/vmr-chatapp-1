@@ -23,4 +23,10 @@ public class Message {
 
   @ColName("send_time")
   private long timestamp;
+
+  @ColName("type")
+  private String type;
+
+  @ColName("transfer_id")
+  private long transferId;
 }
