@@ -16,7 +16,8 @@ export const actionType = {
   SET_SEARCH_MODAL: 'SET_SEARCH_MODAL',
   SET_TAB: 'SET_TAB',
   FRIEND_RELOAD: 'FRIEND_RELOAD',
-  SET_WALLET_TAB: 'SET_WALLET_TAB'
+  SET_WALLET_TAB: 'SET_WALLET_TAB',
+  CLEAR_NOTI: 'CLEAR_NOTI'
 };
 
 export function login(jwt, userId) {
@@ -73,4 +74,8 @@ export function friendReload() {
 
 export function setWalletTab(tab) {
   return createAction(actionType.SET_WALLET_TAB, tab);
+}
+
+export function clearNotifications(friendId) {
+  return createAction(actionType.CLEAR_NOTI, friendId);
 }

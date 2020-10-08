@@ -29,6 +29,9 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
   public static final String INSERT_MESSAGE_STMT =
       "insert into messages (sender, receiver, message, send_time) values (?, ?, ?, ?)";
 
+  public static final String UPDATE_LAST_MESSAGE_STMT =
+      "update friends set last_message_id=? where user_id=? and friend_id=?";
+
   private MySQLPool pool;
 
   @Inject
@@ -78,7 +81,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
   private Future<Long> updateLastMessageId(long userId, long friendId, long messageId) {
     Promise<Long> updatedPromise = Promise.promise();
 
-    pool.preparedQuery("update friends set last_message_id=? where user_id=? and friend_id=?")
+    pool.preparedQuery(UPDATE_LAST_MESSAGE_STMT)
         .executeBatch(
             Arrays.asList(
                 Tuple.of(messageId, userId, friendId), Tuple.of(messageId, friendId, userId)),
