@@ -17,7 +17,7 @@ export default function Message(props) {
   const {transfer, message} = data;
   let msgGroup = message.match(/(\d+);(.+)/);
 
-  const friendlyTimestamp = moment(data.timestamp).format('LLLL');
+  const friendlyTimestamp = moment(data.timestamp).format('hh:mm DD-MM-YYYY');
 
   return (
     <div className={[

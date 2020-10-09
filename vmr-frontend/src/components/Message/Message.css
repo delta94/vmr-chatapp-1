@@ -10,7 +10,7 @@
   font-weight: 600;
   font-size: 12px;
   margin: 10px 0;
-  text-transform: uppercase;
+  /*text-transform: uppercase;*/
 }
 
 .message .bubble-container {

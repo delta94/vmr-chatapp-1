@@ -154,7 +154,7 @@ export default function TransferMoneyModal(props) {
       className="transfer-modal"
     >
       <Title level={4} className="vmr-modal-title">
-        <DollarCircleOutlined className="transfer-money-icon" style={{color: 'red', fontSize: '34px'}}/>
+        <DollarCircleOutlined className="transfer-money-icon" style={{color: '#d49311', fontSize: '34px'}}/>
         Chuyển tiền tới <span style={{color: 'green'}}>{receiverName}</span>
       </Title>
 

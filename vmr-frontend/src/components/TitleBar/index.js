@@ -1,6 +1,6 @@
 import React from 'react';
 import ToolbarButton from "../ToolbarButton";
-import {ArrowLeftOutlined, MoreOutlined} from "@ant-design/icons";
+import {CaretLeftOutlined, MoreOutlined} from "@ant-design/icons";
 import Toolbar from "../Toolbar";
 import {useOpenSideBar} from "../../hooks/ui";
 
@@ -16,7 +16,7 @@ export default function (props) {
         <ToolbarButton key="info" icon={<MoreOutlined/>} type="top-bar-btn"/>
       ]}
       leftItems={[
-        <ToolbarButton key="info" icon={<ArrowLeftOutlined/>} onClick={openSideBar} type={"top-bar-btn"}/>
+        <ToolbarButton key="info" icon={<CaretLeftOutlined />} onClick={openSideBar} type={"top-bar-btn"}/>
       ]}
     />
   );

@@ -1,6 +1,6 @@
 .balance-page {
   position: fixed;
-  top: 0;
+  top: 65px;
   right: 0;
   left: 350px;
   bottom: 0;
@@ -36,7 +36,6 @@
   justify-content: center;
   align-items: center;
   font-size: 20px;
-  margin-top: 60px;
 }
 
 .balance-page .balance-number {
