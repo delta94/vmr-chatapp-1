@@ -176,6 +176,7 @@ public class FriendServiceImpl extends FriendServiceImplBase {
                   if (usr.getLastMessage() != null) {
                     friendInfoBuidler
                         .setLastMessage(usr.getLastMessage())
+                        .setLastMessageTimestamp(usr.getLastMessageTimestamp())
                         .setLastMessageSender(usr.getLastMessageSenderId())
                         .setLastMessageType(usr.getLastMessageType());
                   }

@@ -1412,6 +1412,7 @@ proto.vmr.FriendInfo.toObject = function(includeInstance, msg) {
     lastMessage: msg.getLastMessage(),
     lastMessageType: msg.getLastMessageType(),
     lastMessageSender: msg.getLastMessageSender(),
+    lastMessageTimestamp: msg.getLastMessageTimestamp(),
     friendStatus: msg.getFriendStatus()
   };
 
@@ -1478,6 +1479,10 @@ proto.vmr.FriendInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setLastMessageSender(value);
       break;
     case 8:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setLastMessageTimestamp(value);
+      break;
+    case 9:
       var value = /** @type {!proto.vmr.FriendStatus} */ (reader.readEnum());
       msg.setFriendStatus(value);
       break;
@@ -1568,10 +1573,17 @@ proto.vmr.FriendInfo.prototype.serializeBinaryToWriter = function (writer) {
       f
     );
   }
+  f = this.getLastMessageTimestamp();
+  if (f !== 0) {
+    writer.writeInt64(
+      8,
+      f
+    );
+  }
   f = this.getFriendStatus();
   if (f !== 0.0) {
     writer.writeEnum(
-      8,
+      9,
       f
     );
   }
@@ -1695,17 +1707,32 @@ proto.vmr.FriendInfo.prototype.setLastMessageSender = function(value) {
 
 
 /**
- * optional FriendStatus friend_status = 8;
+ * optional int64 last_message_timestamp = 8;
+ * @return {number}
+ */
+proto.vmr.FriendInfo.prototype.getLastMessageTimestamp = function() {
+  return /** @type {number} */ (jspb.Message.getFieldProto3(this, 8, 0));
+};
+
+
+/** @param {number} value  */
+proto.vmr.FriendInfo.prototype.setLastMessageTimestamp = function(value) {
+  jspb.Message.setField(this, 8, value);
+};
+
+
+/**
+ * optional FriendStatus friend_status = 9;
  * @return {!proto.vmr.FriendStatus}
  */
 proto.vmr.FriendInfo.prototype.getFriendStatus = function() {
-  return /** @type {!proto.vmr.FriendStatus} */ (jspb.Message.getFieldProto3(this, 8, 0));
+  return /** @type {!proto.vmr.FriendStatus} */ (jspb.Message.getFieldProto3(this, 9, 0));
 };
 
 
 /** @param {!proto.vmr.FriendStatus} value  */
 proto.vmr.FriendInfo.prototype.setFriendStatus = function(value) {
-  jspb.Message.setField(this, 8, value);
+  jspb.Message.setField(this, 9, value);
 };
 
 

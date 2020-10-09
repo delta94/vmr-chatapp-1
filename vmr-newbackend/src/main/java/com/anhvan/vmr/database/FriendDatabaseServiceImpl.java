@@ -30,7 +30,8 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
 
   private static final String GET_CHAT_LIST_FRIEND_QUERY =
       "select users.id, users.username, users.name, messages.message as last_message, "
-          + "messages.sender as last_message_sender, messages.type as last_message_type "
+          + "messages.sender as last_message_sender, messages.type as last_message_type, "
+          + "messages.send_time as last_message_timestamp "
           + "from users inner join friends "
           + "on users.id = friends.friend_id "
           + "left join messages on messages.id = friends.last_message_id "

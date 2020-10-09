@@ -64,7 +64,8 @@ message FriendInfo {
   string last_message = 5;
   string last_message_type = 6;
   int64 last_message_sender = 7;
-  FriendStatus friend_status = 8;
+  int64 last_message_timestamp = 8;
+  FriendStatus friend_status = 9;
 }
 
 message FriendListResponse {

@@ -18,7 +18,8 @@ export function useFriendList() {
           online: x.getOnline(),
           lastMsg: x.getLastMessage(),
           lastMsgSender: x.getLastMessageSender(),
-          lastMsgType: x.getLastMessageType()
+          lastMsgType: x.getLastMessageType(),
+          lastMsgTimestamp: x.getLastMessageTimestamp()
         }
       })));
 

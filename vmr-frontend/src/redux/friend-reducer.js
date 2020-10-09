@@ -45,9 +45,17 @@ function handleClearNotifications(state, friendId) {
 }
 
 function handleChatSendback(state, data) {
-  let friends = state.friends;
+  let friends = {...state.friends};
+
   let friend = friends[data.receiverId];
-  friends[data.receiverId] = {...friend, lastMsg: data.message, lastMsgSender: getUserId(), lastMsgType: data.type};
+
+  friends[data.receiverId] = {
+    ...friend,
+    lastMsg: data.message,
+    lastMsgSender: getUserId(),
+    lastMsgType: data.type,
+    lastMsgTimestamp: data.timestamp
+  };
 
   return {
     ...state,
@@ -56,10 +64,19 @@ function handleChatSendback(state, data) {
 }
 
 function handleChatReceive(state, data) {
-  let friends = state.friends;
+  let friends = {...state.friends};
+
   let friend = friends[data.senderId];
   friend.numNotifications += 1;
-  friends[data.senderId] = {...friend, lastMsg: data.message, lastMsgSender: data.senderId, lastMsgType: data.type};
+
+  friends[data.senderId] = {
+    ...friend,
+    lastMsg: data.message,
+    lastMsgSender: data.senderId,
+    lastMsgType: data.type,
+    lastMsgTimestamp: data.timestamp
+  };
+
   return {
     ...state,
     friends: friends
@@ -68,10 +85,12 @@ function handleChatReceive(state, data) {
 
 function updateUserList(state, userList) {
   let friends = {};
+
   for (let user of userList) {
     user.numNotifications = 0;
     friends[user.id] = user;
   }
+  
   return Object.assign({}, state, {
     friends
   });
@@ -80,6 +99,7 @@ function updateUserList(state, userList) {
 function handleOnOffLine(state, data) {
   let friend = state.friends[data.userId];
   let newFriends = state.friends;
+
   if (friend) {
     newFriends[data.userId] = {...friend, online: data.status};
   }
