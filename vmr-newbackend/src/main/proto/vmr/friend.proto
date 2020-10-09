@@ -12,7 +12,6 @@ service FriendService {
   rpc AcceptFriend(AcceptFriendRequest) returns (AcceptFriendResponse);
   rpc RejectFriend(RejectFriendRequest) returns (RejectFriendResponse);
   rpc GetChatFriendList(Empty) returns (FriendListResponse);
-  rpc GetLastMessage(GetLastMessageRequest) returns (GetLastMessageResponse);
   rpc QueryUser(UserListRequest) returns (UserListResponse);
   rpc GetFriendInfo(FriendInfoRequest) returns (UserResponse);
 }
@@ -63,8 +62,9 @@ message FriendInfo {
   string name = 3;
   bool online = 4;
   string last_message = 5;
-  int64 last_message_sender = 6;
-  FriendStatus friend_status = 7;
+  string last_message_type = 6;
+  int64 last_message_sender = 7;
+  FriendStatus friend_status = 8;
 }
 
 message FriendListResponse {
@@ -86,16 +86,4 @@ message RejectFriendRequest {
 
 message RejectFriendResponse {
   Error error = 1;
-}
-
-message GetLastMessageRequest {
-  int64 friend_id = 1;
-}
-
-message GetLastMessageResponse {
-  Error error = 1;
-  int64 sender_id = 2;
-  int64 receiver_id = 3;
-  int64 message = 4;
-  int64 timestamp = 5;
 }

@@ -47,7 +47,7 @@ function handleClearNotifications(state, friendId) {
 function handleChatSendback(state, data) {
   let friends = state.friends;
   let friend = friends[data.receiverId];
-  friends[data.receiverId] = {...friend, lastMsg: data.message, lastMsgSender: getUserId()};
+  friends[data.receiverId] = {...friend, lastMsg: data.message, lastMsgSender: getUserId(), lastMsgType: data.type};
 
   return {
     ...state,
@@ -59,7 +59,7 @@ function handleChatReceive(state, data) {
   let friends = state.friends;
   let friend = friends[data.senderId];
   friend.numNotifications += 1;
-  friends[data.senderId] = {...friend, lastMsg: data.message, lastMsgSender: data.senderId};
+  friends[data.senderId] = {...friend, lastMsg: data.message, lastMsgSender: data.senderId, lastMsgType: data.type};
   return {
     ...state,
     friends: friends

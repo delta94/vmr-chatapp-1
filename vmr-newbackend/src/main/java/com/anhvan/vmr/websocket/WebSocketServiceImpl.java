@@ -54,14 +54,18 @@ public class WebSocketServiceImpl implements WebSocketService {
         connections.remove(userId);
       }
     }
+    log.debug("Remove connection {}, connection set: {}", userId, connections);
   }
 
   @Override
   public void sendTo(long userId, WebSocketMessage msg) {
+    log.debug("Send to {}: {}", userId, msg);
     String msgString = Json.encode(msg);
     Set<ServerWebSocket> receiverConn = connections.get(userId);
-    for (ServerWebSocket conn : receiverConn) {
-      conn.writeTextMessage(msgString);
+    if (receiverConn != null) {
+      for (ServerWebSocket conn : receiverConn) {
+        conn.writeTextMessage(msgString);
+      }
     }
   }
 

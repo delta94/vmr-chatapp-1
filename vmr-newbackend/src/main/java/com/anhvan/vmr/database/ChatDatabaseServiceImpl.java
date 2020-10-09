@@ -45,7 +45,8 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
     log.debug("Add chat message {} to database", msg);
 
     internalAddChat(msg)
-        .compose(id -> updateLastMessageId(id, msg.getSenderId(), msg.getReceiverId()))
+        .compose(
+            insertedId -> updateLastMessageId(msg.getSenderId(), msg.getReceiverId(), insertedId))
         .onComplete(
             ar -> {
               if (ar.failed()) {
@@ -81,6 +82,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
   private Future<Long> updateLastMessageId(long userId, long friendId, long messageId) {
     Promise<Long> updatedPromise = Promise.promise();
 
+    log.debug("Update last message u1:{}-u2:{}-msgId:{}", userId, friendId, messageId);
     pool.preparedQuery(UPDATE_LAST_MESSAGE_STMT)
         .executeBatch(
             Arrays.asList(

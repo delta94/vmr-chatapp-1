@@ -108,6 +108,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
         .compose(this::writeTransfer)
         .compose(this::writeAccountLog)
         .compose(this::writeChatMessage)
+        .compose(this::updateLastMessage)
         .onComplete(
             ar -> {
               if (ar.succeeded()) {
@@ -404,10 +405,37 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
                 chatPromise.fail(ar.cause());
                 return;
               }
-
+              holder.setLastMessageId(ar.result().property(MySQLClient.LAST_INSERTED_ID));
               chatPromise.complete(holder);
             });
 
     return chatPromise.future();
+  }
+
+  Future<TransferStateHolder> updateLastMessage(TransferStateHolder holder) {
+    Promise<TransferStateHolder> lastMsgPromise = Promise.promise();
+
+    long lastMsgId = holder.getLastMessageId();
+    long senderId = holder.getSenderId();
+    long receiverId = holder.getReceiverId();
+
+    List<Tuple> tuples =
+        Arrays.asList(
+            Tuple.of(lastMsgId, senderId, receiverId), Tuple.of(lastMsgId, receiverId, senderId));
+
+    holder
+        .getConn()
+        .preparedQuery("update friends set last_message_id = ? where user_id=? and friend_id=?")
+        .executeBatch(
+            tuples,
+            ar -> {
+              if (ar.failed()) {
+                lastMsgPromise.fail(ar.cause());
+                return;
+              }
+              lastMsgPromise.complete(holder);
+            });
+
+    return lastMsgPromise.future();
   }
 }

@@ -36,9 +36,20 @@ export default function ConversationListItem(props) {
 
   let textMsg = `@${friend.username}`;
   if (friend.lastMsg) {
-    textMsg = ((friend.lastMsgSender === currentUserId) ? 'Bạn: ' : '') + friend.lastMsg;
-    if (textMsg.length > 30) {
-      textMsg = textMsg.substr(0, 27) + '...';
+    if (friend.lastMsgType === 'TRANSFER') {
+      if (friend.lastMsgSender !== currentUserId) {
+        textMsg = friend.name + ' đã chuyển tiền cho bạn';
+      } else {
+        textMsg = 'Bạn đã chuyển tiền cho ' + friend.name;
+      }
+      if (textMsg.length > 30) {
+        textMsg = textMsg.substr(0, 27) + '...';
+      }
+    } else {
+      textMsg = ((friend.lastMsgSender === currentUserId) ? 'Bạn: ' : '') + friend.lastMsg;
+      if (textMsg.length > 30) {
+        textMsg = textMsg.substr(0, 27) + '...';
+      }
     }
   }
 

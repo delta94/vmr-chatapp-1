@@ -139,11 +139,14 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
                         .type("TRANSFER")
                         .build();
 
+                log.debug("Send message to receiver {}", message);
+
                 // Send to receiver
                 webSocketService.sendTo(
                     request.getReceiver(),
                     WebSocketMessage.builder().type("CHAT").data(message).build());
 
+                log.debug("Send message to sender {}", message);
                 // Sendback to sender
                 webSocketService.sendTo(
                     userId, WebSocketMessage.builder().type("SEND_BACK").data(message).build());

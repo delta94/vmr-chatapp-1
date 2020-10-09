@@ -24,4 +24,5 @@ class TransferStateHolder {
   private String message;
   private long transferId;
   private String password;
+  private long lastMessageId;
 }

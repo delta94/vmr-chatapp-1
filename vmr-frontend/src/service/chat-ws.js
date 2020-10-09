@@ -1,6 +1,6 @@
 import store from '../redux/vmr-store';
 import {webSocketConnected, receiveMessage, sendbackMessage, onOffline} from "../redux/vmr-action";
-import {getJwtToken, getUserId} from "../util/auth-util";
+import {getJwtToken} from "../util/auth-util";
 
 const WEB_SOCKET_ROOT = process.env.REACT_APP_WS_ROOT;
 
@@ -8,6 +8,13 @@ function createMessage(type, data) {
   return {
     type, data
   };
+}
+
+const messageType = {
+  CHAT: 'CHAT',
+  SEND_BACK: 'SEND_BACK',
+  ONLINE: 'ONLINE',
+  OFFLINE: "OFFLINE"
 }
 
 let webSocketManager = {
@@ -34,8 +41,6 @@ export function wsConnect() {
 }
 
 function internalConnect() {
-  // Get senderId
-  let senderId = getUserId();
   let token = getJwtToken();
 
   if (!token) {
@@ -51,7 +56,7 @@ function internalConnect() {
 
     // Function to send chat message
     let send = function (receiverId, message) {
-      let msg = createMessage('CHAT', {
+      let msg = createMessage(messageType.CHAT, {
         receiverId, message
       });
       webSocket.send(JSON.stringify(msg));
@@ -68,19 +73,15 @@ function internalConnect() {
     let jsonMessage = JSON.parse(messageEvent.data);
     let {type, data} = jsonMessage;
 
-    if (type === 'CHAT') {
+    if (type === messageType.CHAT) {
       // Handle chat
       store.dispatch(receiveMessage(data));
       console.log(data);
-    } else if (type === 'SEND_BACK') {
-      // Handle sendback
-      if (data.receiverId === senderId) {
-        return;
-      }
+    } else if (type === messageType.SEND_BACK) {
       store.dispatch(sendbackMessage(data));
-    } else if (type === 'ONLINE') {
+    } else if (type === messageType.ONLINE) {
       store.dispatch(onOffline(data, true));
-    } else if (type === 'OFFLINE') {
+    } else if (type === messageType.OFFLINE) {
       store.dispatch(onOffline(data, false));
     }
   };
@@ -97,6 +98,5 @@ function internalConnect() {
 
   webSocket.onerror = () => {
     webSocketManager.clean();
-    webSocket.close();
   }
 }

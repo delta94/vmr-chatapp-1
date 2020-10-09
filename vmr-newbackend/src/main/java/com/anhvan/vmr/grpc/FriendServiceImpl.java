@@ -166,6 +166,7 @@ public class FriendServiceImpl extends FriendServiceImplBase {
               log.debug("Connection set: {} ", webSocketService.getOnlineIds());
               if (ar.succeeded()) {
                 for (GrpcUserResponse usr : ar.result()) {
+                  log.debug("--->{}", usr.toString());
                   FriendInfo.Builder friendInfoBuidler =
                       FriendInfo.newBuilder()
                           .setId(usr.getId())
@@ -175,7 +176,8 @@ public class FriendServiceImpl extends FriendServiceImplBase {
                   if (usr.getLastMessage() != null) {
                     friendInfoBuidler
                         .setLastMessage(usr.getLastMessage())
-                        .setLastMessageSender(usr.getLastMessageSenderId());
+                        .setLastMessageSender(usr.getLastMessageSenderId())
+                        .setLastMessageType(usr.getLastMessageType());
                   }
 
                   responseBuilder.addFriendInfo(friendInfoBuidler.build());

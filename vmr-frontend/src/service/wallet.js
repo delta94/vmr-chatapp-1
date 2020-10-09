@@ -61,7 +61,6 @@ export function transfer(receiver, amount, password, message, requestId) {
           console.log(res.getError());
           reject(res.getError());
         } else {
-          console.log(res.getData());
           resolve(res.getData());
         }
       }
