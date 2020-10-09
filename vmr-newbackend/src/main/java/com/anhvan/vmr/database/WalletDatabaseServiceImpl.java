@@ -5,6 +5,7 @@ import com.anhvan.vmr.entity.DatabaseTransferResponse;
 import com.anhvan.vmr.entity.History;
 import com.anhvan.vmr.exception.TransferException;
 import com.anhvan.vmr.exception.TransferException.ErrorCode;
+import com.anhvan.vmr.model.Message;
 import com.anhvan.vmr.util.PasswordUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -13,6 +14,7 @@ import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import java.time.Instant;
@@ -22,6 +24,7 @@ import java.util.List;
 
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Log4j2
 public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   public static final String HISTORY_QUERY =
@@ -57,6 +60,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 
   private MySQLPool pool;
   private PasswordUtil passwordUtil;
+  private ChatDatabaseService chatDatabaseService;
 
   @Override
   public Future<List<History>> getHistory(long userId) {
@@ -107,8 +111,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
         .compose(this::updateAccountBalance)
         .compose(this::writeTransfer)
         .compose(this::writeAccountLog)
-        .compose(this::writeChatMessage)
-        .compose(this::updateLastMessage)
+        .compose(this::addChatMessage)
         .onComplete(
             ar -> {
               if (ar.succeeded()) {
@@ -383,59 +386,32 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     return accountLogPromise.future();
   }
 
-  Future<TransferStateHolder> writeChatMessage(TransferStateHolder holder) {
+  Future<TransferStateHolder> addChatMessage(TransferStateHolder holder) {
     Promise<TransferStateHolder> chatPromise = Promise.promise();
 
-    Tuple chatTuple =
-        Tuple.of(
-            holder.getSenderId(),
-            holder.getReceiverId(),
-            holder.getLastUpdated(),
-            holder.getAmount() + ";" + holder.getMessage(),
-            "TRANSFER",
-            holder.getTransferId());
+    Message message =
+        Message.builder()
+            .senderId(holder.getSenderId())
+            .receiverId(holder.getReceiverId())
+            .message(holder.getAmount() + ";" + holder.getMessage())
+            .timestamp(holder.getLastUpdated())
+            .transferId(holder.getTransferId())
+            .type("TRANSFER")
+            .build();
 
-    holder
-        .getConn()
-        .preparedQuery(WRITE_CHAT_STMT)
-        .execute(
-            chatTuple,
+    chatDatabaseService
+        .addChat(message)
+        .onComplete(
             ar -> {
               if (ar.failed()) {
                 chatPromise.fail(ar.cause());
                 return;
               }
-              holder.setLastMessageId(ar.result().property(MySQLClient.LAST_INSERTED_ID));
+
+              holder.setLastMessageId(ar.result());
               chatPromise.complete(holder);
             });
 
     return chatPromise.future();
-  }
-
-  Future<TransferStateHolder> updateLastMessage(TransferStateHolder holder) {
-    Promise<TransferStateHolder> lastMsgPromise = Promise.promise();
-
-    long lastMsgId = holder.getLastMessageId();
-    long senderId = holder.getSenderId();
-    long receiverId = holder.getReceiverId();
-
-    List<Tuple> tuples =
-        Arrays.asList(
-            Tuple.of(lastMsgId, senderId, receiverId), Tuple.of(lastMsgId, receiverId, senderId));
-
-    holder
-        .getConn()
-        .preparedQuery("update friends set last_message_id = ? where user_id=? and friend_id=?")
-        .executeBatch(
-            tuples,
-            ar -> {
-              if (ar.failed()) {
-                lastMsgPromise.fail(ar.cause());
-                return;
-              }
-              lastMsgPromise.complete(holder);
-            });
-
-    return lastMsgPromise.future();
   }
 }

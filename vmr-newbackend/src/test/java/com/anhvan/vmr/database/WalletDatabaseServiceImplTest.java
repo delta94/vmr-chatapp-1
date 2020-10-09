@@ -28,7 +28,7 @@ public class WalletDatabaseServiceImplTest {
   void setUp() {
     pool = Mockito.mock(MySQLPool.class);
     passwordUtil = Mockito.mock(PasswordUtil.class);
-    walletDatabaseService = new WalletDatabaseServiceImpl(pool, passwordUtil);
+    walletDatabaseService = new WalletDatabaseServiceImpl(pool, passwordUtil, null);
   }
 
   @Test

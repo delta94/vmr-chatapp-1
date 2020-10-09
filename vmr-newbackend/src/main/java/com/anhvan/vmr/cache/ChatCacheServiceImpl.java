@@ -15,6 +15,8 @@ import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class ChatCacheServiceImpl implements ChatCacheService {
+  private static final String MESSAGES_LIST_KEY = "vmr:chat:%d:%d";
+
   private RedissonClient redis;
   private AsyncWorkerUtil workerUtil;
   private CacheConfig cacheConfig;
@@ -28,11 +30,10 @@ public class ChatCacheServiceImpl implements ChatCacheService {
   }
 
   private String getKey(long id1, long id2) {
-    String formatString = "vmr:chat:%d:%d";
     if (id1 < id2) {
-      return String.format(formatString, id1, id2);
+      return String.format(MESSAGES_LIST_KEY, id1, id2);
     } else {
-      return String.format(formatString, id2, id1);
+      return String.format(MESSAGES_LIST_KEY, id2, id1);
     }
   }
 

@@ -27,7 +27,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
           + "limit ?, 20";
 
   public static final String INSERT_MESSAGE_STMT =
-      "insert into messages (sender, receiver, message, send_time) values (?, ?, ?, ?)";
+      "insert into messages (sender, receiver, message, send_time, type) values (?, ?, ?, ?, ?)";
 
   public static final String UPDATE_LAST_MESSAGE_STMT =
       "update friends set last_message_id=? where user_id=? and friend_id=?";
@@ -64,9 +64,15 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
   private Future<Long> internalAddChat(Message msg) {
     Promise<Long> idPromise = Promise.promise();
 
+    String type = msg.getType();
+    if (type == null) {
+      type = "CHAT";
+    }
+
     pool.preparedQuery(INSERT_MESSAGE_STMT)
         .execute(
-            Tuple.of(msg.getSenderId(), msg.getReceiverId(), msg.getMessage(), msg.getTimestamp()),
+            Tuple.of(
+                msg.getSenderId(), msg.getReceiverId(), msg.getMessage(), msg.getTimestamp(), type),
             rs -> {
               if (!rs.succeeded()) {
                 log.error("Error when add chat {}", msg.toString(), rs.cause());

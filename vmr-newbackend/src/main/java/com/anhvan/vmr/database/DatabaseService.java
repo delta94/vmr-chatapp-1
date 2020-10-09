@@ -74,6 +74,7 @@ public class DatabaseService {
             Transaction transaction = connection.begin();
             futureStateHolder.set(CONN_KEY, connection);
             futureStateHolder.set(TX_KEY, transaction);
+            promise.complete(futureStateHolder);
           } else {
             promise.fail(ar.cause());
           }

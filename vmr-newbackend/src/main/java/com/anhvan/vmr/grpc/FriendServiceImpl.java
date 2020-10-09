@@ -32,15 +32,14 @@ public class FriendServiceImpl extends FriendServiceImplBase {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
     long friendId = request.getUserId();
 
+    // Check if friendId is valid
     if (userId == friendId) {
-      responseObserver.onNext(
-          AddFriendResponse.newBuilder()
-              .setError(
-                  Error.newBuilder()
-                      .setCode(ErrorCode.FAILUE)
-                      .setMessage("You cannot add yourself as friend")
-                      .build())
-              .build());
+      Error error =
+          Error.newBuilder()
+              .setCode(ErrorCode.FAILUE)
+              .setMessage("You cannot add yourself as friend")
+              .build();
+      responseObserver.onNext(AddFriendResponse.newBuilder().setError(error).build());
       responseObserver.onCompleted();
       return;
     }
@@ -49,19 +48,20 @@ public class FriendServiceImpl extends FriendServiceImplBase {
         .addFriend(userId, friendId)
         .onComplete(
             ar -> {
+              AddFriendResponse.Builder responseBuilder = AddFriendResponse.newBuilder();
               if (ar.succeeded()) {
-                responseObserver.onNext(AddFriendResponse.newBuilder().build());
+                // Add friend succeeded
+                responseObserver.onNext(responseBuilder.build());
               } else {
+                // Add friend failed
                 log.error(
                     "Fail to add friend userId: {}, friendId: {}", userId, friendId, ar.cause());
-                responseObserver.onNext(
-                    AddFriendResponse.newBuilder()
-                        .setError(
-                            Error.newBuilder()
-                                .setCode(ErrorCode.FAILUE)
-                                .setMessage("Fail to add friend")
-                                .build())
-                        .build());
+                Error error =
+                    Error.newBuilder()
+                        .setCode(ErrorCode.FAILUE)
+                        .setMessage("Fail to add friend")
+                        .build();
+                responseObserver.onNext(responseBuilder.setError(error).build());
               }
               responseObserver.onCompleted();
             });
@@ -79,13 +79,14 @@ public class FriendServiceImpl extends FriendServiceImplBase {
                 FriendListResponse.Builder response = FriendListResponse.newBuilder();
                 List<GrpcUserResponse> grpcUserResponseList = ar.result();
                 for (GrpcUserResponse user : grpcUserResponseList) {
-                  response.addFriendInfo(
+                  FriendInfo info =
                       FriendInfo.newBuilder()
                           .setUsername(user.getUsername())
                           .setName(user.getName())
                           .setId(user.getId())
                           .setFriendStatus(GrpcUtil.string2FriendStatus(user.getFriendStatus()))
-                          .build());
+                          .build();
+                  response.addFriendInfo(info);
                 }
                 responseObserver.onNext(response.build());
               } else {
@@ -163,16 +164,15 @@ public class FriendServiceImpl extends FriendServiceImplBase {
         .getChatFriendList(userId)
         .onComplete(
             ar -> {
-              log.debug("Connection set: {} ", webSocketService.getOnlineIds());
               if (ar.succeeded()) {
                 for (GrpcUserResponse usr : ar.result()) {
-                  log.debug("--->{}", usr.toString());
                   FriendInfo.Builder friendInfoBuidler =
                       FriendInfo.newBuilder()
                           .setId(usr.getId())
                           .setName(usr.getName())
                           .setUsername(usr.getUsername())
                           .setOnline(webSocketService.checkOnline(usr.getId()));
+
                   if (usr.getLastMessage() != null) {
                     friendInfoBuidler
                         .setLastMessage(usr.getLastMessage())

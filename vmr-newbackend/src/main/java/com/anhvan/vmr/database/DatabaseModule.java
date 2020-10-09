@@ -29,10 +29,13 @@ public class DatabaseModule {
   @Provides
   @Singleton
   public WalletDatabaseService provideWalletDatabaseService(
-      DatabaseService dbService, PasswordUtil passwordUtil) {
+      DatabaseService dbService,
+      PasswordUtil passwordUtil,
+      ChatDatabaseService chatDatabaseService) {
     return WalletDatabaseServiceImpl.builder()
         .pool(dbService.getPool())
         .passwordUtil(passwordUtil)
+        .chatDatabaseService(chatDatabaseService)
         .build();
   }
 }
