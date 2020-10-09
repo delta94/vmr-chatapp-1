@@ -69,7 +69,7 @@ function handleChatSendback(state, data) {
 
 function handleGetMsgFromAPI(state, data) {
   let messages = state.messages;
-  let msgList = messages[data.friendId];
-  messages[data.friendId] = [...data.messages, ...msgList,];
+  let msgList = messages[data.friendId] || [];
+  messages[data.friendId] = [...data.messages, ...msgList];
   return Object.assign({}, state, {messages});
 }

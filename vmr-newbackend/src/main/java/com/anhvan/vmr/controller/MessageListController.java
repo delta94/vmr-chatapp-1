@@ -32,41 +32,40 @@ public class MessageListController extends BaseController {
     int friendId = Integer.parseInt(request.getParam("friendId"));
     int offset = Integer.parseInt(request.getParam("offset"));
 
-    //    if (offset == 0) {
-    //      // First load
-    //      Future<List<Message>> chatMessages = chatCacheService.getCacheMessage(userId, friendId);
-    //
-    //      // Cache hit
-    //      chatMessages.onSuccess(
-    //          wsMessages -> {
-    //            log.debug("Get chat messages - cache hit userId1:{} - userId2:{}", userId,
-    // friendId);
-    //            JsonObject jsonResponse = new JsonObject();
-    //            jsonResponse.put("messages", wsMessages);
-    //            jsonResponse.put("newOffset", offset + wsMessages.size());
-    //            responsePromise.complete(
-    //                BaseResponse.builder()
-    //                    .message("Get chat messages successfully")
-    //                    .statusCode(HttpResponseStatus.OK.code())
-    //                    .data(jsonResponse)
-    //                    .build());
-    //          });
-    //
-    //      // Cache miss
-    //      chatMessages.onFailure(
-    //          throwable -> {
-    //            log.debug(
-    //                "Fail to load chat messages from cache user1:{}-user2:{}",
-    //                userId,
-    //                friendId,
-    //                throwable);
-    //            getFromDB(userId, friendId, offset, responsePromise, true);
-    //          });
-    //    } else {
-    //      // Load more
-    //      getFromDB(userId, friendId, offset, responsePromise, false);
-    //    }
-    getFromDB(userId, friendId, offset, responsePromise, false);
+    if (offset == 0) {
+      // First load
+      Future<List<Message>> chatMessages = chatCacheService.getCacheMessage(userId, friendId);
+
+      // Cache hit
+      chatMessages.onSuccess(
+          wsMessages -> {
+            log.debug("Get chat messages - cache hit userId1:{} - userId2:{}", userId, friendId);
+            JsonObject jsonResponse = new JsonObject();
+            jsonResponse.put("messages", wsMessages);
+            jsonResponse.put("newOffset", offset + wsMessages.size());
+            responsePromise.complete(
+                BaseResponse.builder()
+                    .message("Get chat messages successfully")
+                    .statusCode(HttpResponseStatus.OK.code())
+                    .data(jsonResponse)
+                    .build());
+          });
+
+      // Cache miss
+      chatMessages.onFailure(
+          throwable -> {
+            log.debug(
+                "Fail to load chat messages from cache user1:{}-user2:{}",
+                userId,
+                friendId,
+                throwable);
+            getFromDB(userId, friendId, offset, responsePromise, true);
+          });
+    } else {
+      // Load more
+      getFromDB(userId, friendId, offset, responsePromise, false);
+    }
+    //getFromDB(userId, friendId, offset, responsePromise, false);
     return responsePromise.future();
   }
 

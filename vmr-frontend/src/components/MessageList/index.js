@@ -44,6 +44,13 @@ function MessageListInternal(props) {
   let [sendButtonActive, setSendBtnActive] = useState(false);
   let [moneyTransferActive, setMoneyTransferActive] = useState(false);
 
+  let scrollToBottom = () => {
+    let {current} = endOfMsgList;
+    if (current) {
+      current.scrollIntoView();
+    }
+  };
+
   // Message list
   let messages = chatMessages.map(x => {
     return {
@@ -57,15 +64,21 @@ function MessageListInternal(props) {
   });
 
   // Load message
-  useEffect(
-    () => {
+  useEffect(() => {
+      console.log('Load message, current length =', chatMessages.length);
       updateConversationId(receiverId);
       if (chatMessages.length === 0) {
-        getMessageList(receiverId, chatMessages.length).then((data) => {
+        getMessageList(receiverId, 0).then((data) => {
           updateMessageList(data, receiverId);
-          let {current} = endOfMsgList;
-          if (current) {
-            current.scrollIntoView();
+          return data.messages.length;
+        }).then(length => {
+          if (length + chatMessages.length < 20) {
+            getMessageList(receiverId, chatMessages.length + length).then((data) => {
+              updateMessageList(data, receiverId);
+              scrollToBottom();
+            });
+          } else {
+            scrollToBottom();
           }
         });
       }
