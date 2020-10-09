@@ -171,7 +171,8 @@ public class FriendServiceImpl extends FriendServiceImplBase {
                           .setId(usr.getId())
                           .setName(usr.getName())
                           .setUsername(usr.getUsername())
-                          .setOnline(webSocketService.checkOnline(usr.getId()));
+                          .setOnline(webSocketService.checkOnline(usr.getId()))
+                          .setNumUnreadMessage(usr.getNumUnreadMessage());
 
                   if (usr.getLastMessage() != null) {
                     friendInfoBuidler
@@ -225,5 +226,34 @@ public class FriendServiceImpl extends FriendServiceImplBase {
 
     userListFuture.onFailure(
         event -> responseObserver.onError(new Exception("Internal server error")));
+  }
+
+  @Override
+  public void clearUnreadMessage(
+      ClearUnreadMessageRequest request,
+      StreamObserver<ClearUnreadMessageResponse> responseObserver) {
+    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+
+    friendDbService
+        .clearUnreadMessage(userId, request.getFriendId())
+        .onComplete(
+            ar -> {
+              ClearUnreadMessageResponse.Builder builder = ClearUnreadMessageResponse.newBuilder();
+              if (ar.failed()) {
+                log.error(
+                    "Error when clear unread message: user={}, friend={} l",
+                    userId,
+                    request.getFriendId(),
+                    ar.cause());
+                responseObserver.onNext(
+                    builder
+                        .setError(
+                            Error.newBuilder().setCode(ErrorCode.INTERNAL_SERVER_ERROR).build())
+                        .build());
+              } else {
+                responseObserver.onNext(builder.build());
+              }
+              responseObserver.onCompleted();
+            });
   }
 }

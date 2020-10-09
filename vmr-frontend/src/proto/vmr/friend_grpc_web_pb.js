@@ -632,4 +632,84 @@ proto.vmr.FriendServicePromiseClient.prototype.getFriendInfo =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.vmr.ClearUnreadMessageRequest,
+ *   !proto.vmr.ClearUnreadMessageResponse>}
+ */
+const methodDescriptor_FriendService_ClearUnreadMessage = new grpc.web.MethodDescriptor(
+  '/vmr.FriendService/ClearUnreadMessage',
+  grpc.web.MethodType.UNARY,
+  proto.vmr.ClearUnreadMessageRequest,
+  proto.vmr.ClearUnreadMessageResponse,
+  /**
+   * @param {!proto.vmr.ClearUnreadMessageRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.ClearUnreadMessageResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.vmr.ClearUnreadMessageRequest,
+ *   !proto.vmr.ClearUnreadMessageResponse>}
+ */
+const methodInfo_FriendService_ClearUnreadMessage = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.vmr.ClearUnreadMessageResponse,
+  /**
+   * @param {!proto.vmr.ClearUnreadMessageRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.ClearUnreadMessageResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.vmr.ClearUnreadMessageRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.vmr.ClearUnreadMessageResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.vmr.ClearUnreadMessageResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.vmr.FriendServiceClient.prototype.clearUnreadMessage =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/vmr.FriendService/ClearUnreadMessage',
+      request,
+      metadata || {},
+      methodDescriptor_FriendService_ClearUnreadMessage,
+      callback);
+};
+
+
+/**
+ * @param {!proto.vmr.ClearUnreadMessageRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.vmr.ClearUnreadMessageResponse>}
+ *     Promise that resolves to the response
+ */
+proto.vmr.FriendServicePromiseClient.prototype.clearUnreadMessage =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/vmr.FriendService/ClearUnreadMessage',
+      request,
+      metadata || {},
+      methodDescriptor_FriendService_ClearUnreadMessage);
+};
+
+
 module.exports = proto.vmr;

@@ -24,4 +24,7 @@ public class GrpcUserResponse extends User {
 
   @ColName("last_message_timestamp")
   private long lastMessageTimestamp;
+
+  @ColName("num_unread_message")
+  private int numUnreadMessage;
 }

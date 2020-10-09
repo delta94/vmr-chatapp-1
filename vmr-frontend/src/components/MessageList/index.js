@@ -10,6 +10,7 @@ import {SendOutlined, DollarCircleOutlined} from '@ant-design/icons';
 import TransferMoneyModal from "../TransferMoneyModal";
 
 import './MessageList.css';
+import {clearUnreadMessage} from "../../service/friend";
 
 function MessageListInternal(props) {
   let {receiverId} = props;
@@ -68,6 +69,7 @@ function MessageListInternal(props) {
           }
         });
       }
+      clearUnreadMessage(receiverId);
     },
     // eslint-disable-next-line
     [receiverId]

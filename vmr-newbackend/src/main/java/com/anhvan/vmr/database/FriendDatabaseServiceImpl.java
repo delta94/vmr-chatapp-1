@@ -31,7 +31,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   private static final String GET_CHAT_LIST_FRIEND_QUERY =
       "select users.id, users.username, users.name, messages.message as last_message, "
           + "messages.sender as last_message_sender, messages.type as last_message_type, "
-          + "messages.send_time as last_message_timestamp "
+          + "messages.send_time as last_message_timestamp, friends.num_unread_message "
           + "from users inner join friends "
           + "on users.id = friends.friend_id "
           + "left join messages on messages.id = friends.last_message_id "
@@ -39,6 +39,9 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
 
   public static final String ACCEPT_FRIEND =
       "update friends set status='ACCEPTED' where user_id=? and friend_id=?";
+
+  public static final String CLEAR_UNREAD_MESSAGE_STMT =
+      "update friends set num_unread_message=0 where user_id=? and friend_id=?";
 
   private MySQLPool pool;
 
@@ -185,5 +188,24 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
             });
 
     return friendListPromise.future();
+  }
+
+  @Override
+  public Future<Void> clearUnreadMessage(long userId, long friendId) {
+    Promise<Void> queryPromise = Promise.promise();
+
+    pool.preparedQuery(CLEAR_UNREAD_MESSAGE_STMT)
+        .execute(
+            Tuple.of(userId, friendId),
+            ar -> {
+              if (ar.failed()) {
+                queryPromise.fail(ar.cause());
+                return;
+              }
+
+              queryPromise.complete();
+            });
+
+    return queryPromise.future();
   }
 }

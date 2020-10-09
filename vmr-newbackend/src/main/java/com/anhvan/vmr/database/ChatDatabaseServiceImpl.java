@@ -30,7 +30,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
       "insert into messages (sender, receiver, message, send_time, type) values (?, ?, ?, ?, ?)";
 
   public static final String UPDATE_LAST_MESSAGE_STMT =
-      "update friends set last_message_id=? where user_id=? and friend_id=?";
+      "update friends set last_message_id=? where " + "user_id=? and friend_id=?";
 
   private MySQLPool pool;
 
@@ -42,11 +42,13 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
   @Override
   public Future<Long> addChat(Message msg) {
     Promise<Long> idPromise = Promise.promise();
+
     log.debug("Add chat message {} to database", msg);
 
     internalAddChat(msg)
         .compose(
             insertedId -> updateLastMessageId(msg.getSenderId(), msg.getReceiverId(), insertedId))
+        .compose(id -> increaseUnreadMessage(msg.getSenderId(), msg.getReceiverId(), id))
         .onComplete(
             ar -> {
               if (ar.failed()) {
@@ -105,6 +107,31 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
                     ar.cause());
                 updatedPromise.fail(ar.cause());
               }
+            });
+
+    return updatedPromise.future();
+  }
+
+  private Future<Long> increaseUnreadMessage(long senderId, long receiverId, long messageId) {
+    Promise<Long> updatedPromise = Promise.promise();
+
+    pool.preparedQuery(
+            "update friends set num_unread_message=num_unread_message+1 "
+                + "where user_id=? and friend_id=?")
+        .execute(
+            Tuple.of(receiverId, senderId),
+            ar -> {
+              if (ar.failed()) {
+                log.error(
+                    "Fail to update number of unread message userId: {}, friendId: {}",
+                    receiverId,
+                    senderId,
+                    ar.cause());
+                updatedPromise.fail(ar.cause());
+                return;
+              }
+
+              updatedPromise.complete(messageId);
             });
 
     return updatedPromise.future();

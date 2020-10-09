@@ -87,7 +87,6 @@ function updateUserList(state, userList) {
   let friends = {};
 
   for (let user of userList) {
-    user.numNotifications = 0;
     friends[user.id] = user;
   }
 

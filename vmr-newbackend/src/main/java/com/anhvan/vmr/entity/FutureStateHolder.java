@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FutureStateHolder {
-  @Builder.Default Map<String, Object> objectMap = new HashMap<>();
+  @Builder.Default private Map<String, Object> objectMap = new HashMap<>();
 
   public void set(String key, Object value) {
     objectMap.put(key, value);

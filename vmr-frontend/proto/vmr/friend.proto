@@ -14,6 +14,7 @@ service FriendService {
   rpc GetChatFriendList(Empty) returns (FriendListResponse);
   rpc QueryUser(UserListRequest) returns (UserListResponse);
   rpc GetFriendInfo(FriendInfoRequest) returns (UserResponse);
+  rpc ClearUnreadMessage(ClearUnreadMessageRequest) returns (ClearUnreadMessageResponse);
 }
 
 message FriendInfoRequest {
@@ -65,7 +66,8 @@ message FriendInfo {
   string last_message_type = 6;
   int64 last_message_sender = 7;
   int64 last_message_timestamp = 8;
-  FriendStatus friend_status = 9;
+  int64 num_unread_message = 9;
+  FriendStatus friend_status = 10;
 }
 
 message FriendListResponse {
@@ -86,5 +88,13 @@ message RejectFriendRequest {
 }
 
 message RejectFriendResponse {
+  Error error = 1;
+}
+
+message ClearUnreadMessageRequest {
+  int64  friend_id = 1;
+}
+
+message ClearUnreadMessageResponse {
   Error error = 1;
 }

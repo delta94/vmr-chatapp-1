@@ -15,4 +15,6 @@ public interface FriendDatabaseService {
   Future<String> acceptFriend(long invitorId, long userId);
 
   Future<String> rejectFriend(long invitorId, long userId);
+
+  Future<Void> clearUnreadMessage(long userId, long friendId);
 }

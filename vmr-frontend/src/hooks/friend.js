@@ -19,7 +19,8 @@ export function useFriendList() {
           lastMsg: x.getLastMessage(),
           lastMsgSender: x.getLastMessageSender(),
           lastMsgType: x.getLastMessageType(),
-          lastMsgTimestamp: x.getLastMessageTimestamp()
+          lastMsgTimestamp: x.getLastMessageTimestamp(),
+          numNotifications: x.getNumUnreadMessage()
         }
       })));
 
