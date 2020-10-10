@@ -1,4 +1,4 @@
-package com.anhvan.vmr.util;
+package com.anhvan.vmr.service;
 
 import io.vertx.core.Vertx;
 import lombok.NonNull;
@@ -9,11 +9,11 @@ import javax.inject.Singleton;
 
 @Singleton
 @Log4j2
-public class AsyncWorkerUtil {
+public class AsyncWorkerService {
   private Vertx vertx;
 
   @Inject
-  public AsyncWorkerUtil(Vertx vertx) {
+  public AsyncWorkerService(Vertx vertx) {
     this.vertx = vertx;
   }
 

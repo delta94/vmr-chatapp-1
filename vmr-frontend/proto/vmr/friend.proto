@@ -6,6 +6,7 @@ option java_package = "com.anhvan.vmr.proto";
 
 import "vmr/common.proto";
 
+// Friend services
 service FriendService {
   rpc AddFriend(AddFriendRequest) returns (AddFriendResponse);
   rpc GetFriendList(Empty) returns (FriendListResponse);
@@ -13,35 +14,10 @@ service FriendService {
   rpc RejectFriend(RejectFriendRequest) returns (RejectFriendResponse);
   rpc GetChatFriendList(Empty) returns (FriendListResponse);
   rpc QueryUser(UserListRequest) returns (UserListResponse);
-  rpc GetFriendInfo(FriendInfoRequest) returns (UserResponse);
   rpc ClearUnreadMessage(ClearUnreadMessageRequest) returns (ClearUnreadMessageResponse);
 }
 
-message FriendInfoRequest {
-  int64 id = 1;
-}
-
-message UserListRequest {
-  string query_string = 1;
-}
-
-message UserResponse {
-  int64 id = 1;
-  string username = 2;
-  string name = 3;
-  FriendStatus friendStatus = 4;
-}
-
-message UserListResponse {
-  Error error = 1;
-  repeated UserResponse user = 2;
-}
-
-message FriendInfoResponse {
-  Error error = 1;
-  UserResponse info = 2;
-}
-
+// Add friends
 message AddFriendRequest {
   int64 user_id = 1;
 }
@@ -50,11 +26,27 @@ message AddFriendResponse {
   Error error = 1;
 }
 
-enum FriendStatus {
-  FRIEND = 0;
-  WAITING = 1;
-  NOT_ANSWER = 2;
-  NOTHING = 3;
+// Get friend list
+message FriendListResponse {
+  Error error = 1;
+  repeated FriendInfo friendInfo = 2;
+}
+
+// Get user list (find friend)
+message UserListRequest {
+  string query_string = 1;
+}
+
+message UserListResponse {
+  Error error = 1;
+  repeated UserResponse user = 2;
+}
+
+message UserResponse {
+  int64 id = 1;
+  string username = 2;
+  string name = 3;
+  FriendStatus friendStatus = 4;
 }
 
 message FriendInfo {
@@ -70,11 +62,14 @@ message FriendInfo {
   FriendStatus friend_status = 10;
 }
 
-message FriendListResponse {
-  Error error = 1;
-  repeated FriendInfo friendInfo = 2;
+enum FriendStatus {
+  FRIEND = 0;
+  WAITING = 1;
+  NOT_ANSWER = 2;
+  NOTHING = 3;
 }
 
+// Accept friend
 message AcceptFriendRequest {
   int64 friend_id = 1;
 }
@@ -83,6 +78,7 @@ message AcceptFriendResponse {
   Error error = 1;
 }
 
+// Reject friend
 message RejectFriendRequest {
   int64 friend_id = 1;
 }
@@ -91,6 +87,7 @@ message RejectFriendResponse {
   Error error = 1;
 }
 
+// Clear un read message
 message ClearUnreadMessageRequest {
   int64  friend_id = 1;
 }

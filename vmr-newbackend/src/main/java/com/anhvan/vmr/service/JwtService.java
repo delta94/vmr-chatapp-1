@@ -1,4 +1,4 @@
-package com.anhvan.vmr.util;
+package com.anhvan.vmr.service;
 
 import com.anhvan.vmr.config.AuthConfig;
 import com.auth0.jwt.JWT;
@@ -16,13 +16,13 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class JwtUtil {
+public class JwtService {
   private JWTAuth jwtAuth;
-  private AsyncWorkerUtil workerUtil;
+  private AsyncWorkerService workerUtil;
   private Algorithm algorithm;
 
   @Inject
-  public JwtUtil(AsyncWorkerUtil workerUtil, JWTAuth jwtAuth, AuthConfig authConfig) {
+  public JwtService(AsyncWorkerService workerUtil, JWTAuth jwtAuth, AuthConfig authConfig) {
     this.jwtAuth = jwtAuth;
     this.workerUtil = workerUtil;
     algorithm = Algorithm.HMAC256(authConfig.getToken());

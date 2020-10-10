@@ -5,7 +5,7 @@ import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.entity.BaseRequest;
 import com.anhvan.vmr.entity.BaseResponse;
 import com.anhvan.vmr.model.User;
-import com.anhvan.vmr.util.JwtUtil;
+import com.anhvan.vmr.service.JwtService;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -24,7 +24,7 @@ import java.util.function.Function;
 @Builder
 public class LoginController extends BaseController {
   private UserDatabaseService userDBService;
-  private JwtUtil jwtUtil;
+  private JwtService jwtService;
   private UserCacheService userCacheService;
 
   public Future<BaseResponse> handlePost(BaseRequest baseRequest) {
@@ -52,7 +52,7 @@ public class LoginController extends BaseController {
               && BCrypt.checkpw(user.getPassword(), dbUser.getPassword())) {
             data.put("userId", dbUser.getId());
             userCacheService.setUserCache(dbUser);
-            return jwtUtil.generate(dbUser.getId());
+            return jwtService.generate(dbUser.getId());
           }
 
           // Password not valid

@@ -2,7 +2,7 @@ package com.anhvan.vmr.cache;
 
 import com.anhvan.vmr.config.CacheConfig;
 import com.anhvan.vmr.model.User;
-import com.anhvan.vmr.util.AsyncWorkerUtil;
+import com.anhvan.vmr.service.AsyncWorkerService;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import org.junit.jupiter.api.Assertions;
@@ -30,7 +30,7 @@ public class UserCacheServiceImplTest {
     RedisCache redisCache = Mockito.mock(RedisCache.class);
     Mockito.when(redisCache.getRedissonClient()).thenReturn(redissonClient);
 
-    AsyncWorkerUtil workerUtil = Mockito.mock(AsyncWorkerUtil.class);
+    AsyncWorkerService workerUtil = Mockito.mock(AsyncWorkerService.class);
     Mockito.doAnswer(
             invocationOnMock -> {
               Runnable job = invocationOnMock.getArgument(0);

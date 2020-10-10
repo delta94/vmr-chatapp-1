@@ -1,6 +1,8 @@
 /* eslint-disable */ /**
  * @fileoverview
  * @enhanceable
+ * @suppress {messageConventions} JS Compiler reports an error if a variable or
+ *     field starts with 'MSG_' and isn't a translatable message.
  * @public
  */
 // GENERATED CODE -- DO NOT EDIT!
@@ -54,10 +56,11 @@ proto.vmr.SampleRequest.prototype.toObject = function(opt_includeInstance) {
  *     http://goto/soy-param-migration
  * @param {!proto.vmr.SampleRequest} msg The msg instance to transform.
  * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.vmr.SampleRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    content: msg.getContent()
+    content: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -108,35 +111,26 @@ proto.vmr.SampleRequest.deserializeBinaryFromReader = function(msg, reader) {
 
 
 /**
- * Class method variant: serializes the given message to binary data
- * (in protobuf wire format), writing to the given BinaryWriter.
- * @param {!proto.vmr.SampleRequest} message
- * @param {!jspb.BinaryWriter} writer
- */
-proto.vmr.SampleRequest.serializeBinaryToWriter = function(message, writer) {
-  message.serializeBinaryToWriter(writer);
-};
-
-
-/**
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
 proto.vmr.SampleRequest.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  this.serializeBinaryToWriter(writer);
+  proto.vmr.SampleRequest.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
 
 /**
- * Serializes the message to binary data (in protobuf wire format),
- * writing to the given BinaryWriter.
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.vmr.SampleRequest} message
  * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.SampleRequest.prototype.serializeBinaryToWriter = function (writer) {
+proto.vmr.SampleRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = this.getContent();
+  f = message.getContent();
   if (f.length > 0) {
     writer.writeString(
       1,
@@ -147,26 +141,17 @@ proto.vmr.SampleRequest.prototype.serializeBinaryToWriter = function (writer) {
 
 
 /**
- * Creates a deep clone of this proto. No data is shared with the original.
- * @return {!proto.vmr.SampleRequest} The clone.
- */
-proto.vmr.SampleRequest.prototype.cloneMessage = function() {
-  return /** @type {!proto.vmr.SampleRequest} */ (jspb.Message.cloneMessage(this));
-};
-
-
-/**
  * optional string content = 1;
  * @return {string}
  */
 proto.vmr.SampleRequest.prototype.getContent = function() {
-  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 1, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
-/** @param {string} value  */
+/** @param {string} value */
 proto.vmr.SampleRequest.prototype.setContent = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -213,10 +198,11 @@ proto.vmr.SampleResponse.prototype.toObject = function(opt_includeInstance) {
  *     http://goto/soy-param-migration
  * @param {!proto.vmr.SampleResponse} msg The msg instance to transform.
  * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.vmr.SampleResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    content: msg.getContent()
+    content: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -267,35 +253,26 @@ proto.vmr.SampleResponse.deserializeBinaryFromReader = function(msg, reader) {
 
 
 /**
- * Class method variant: serializes the given message to binary data
- * (in protobuf wire format), writing to the given BinaryWriter.
- * @param {!proto.vmr.SampleResponse} message
- * @param {!jspb.BinaryWriter} writer
- */
-proto.vmr.SampleResponse.serializeBinaryToWriter = function(message, writer) {
-  message.serializeBinaryToWriter(writer);
-};
-
-
-/**
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
 proto.vmr.SampleResponse.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  this.serializeBinaryToWriter(writer);
+  proto.vmr.SampleResponse.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
 
 /**
- * Serializes the message to binary data (in protobuf wire format),
- * writing to the given BinaryWriter.
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.vmr.SampleResponse} message
  * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.SampleResponse.prototype.serializeBinaryToWriter = function (writer) {
+proto.vmr.SampleResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = this.getContent();
+  f = message.getContent();
   if (f.length > 0) {
     writer.writeString(
       1,
@@ -306,26 +283,17 @@ proto.vmr.SampleResponse.prototype.serializeBinaryToWriter = function (writer) {
 
 
 /**
- * Creates a deep clone of this proto. No data is shared with the original.
- * @return {!proto.vmr.SampleResponse} The clone.
- */
-proto.vmr.SampleResponse.prototype.cloneMessage = function() {
-  return /** @type {!proto.vmr.SampleResponse} */ (jspb.Message.cloneMessage(this));
-};
-
-
-/**
  * optional string content = 1;
  * @return {string}
  */
 proto.vmr.SampleResponse.prototype.getContent = function() {
-  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 1, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
-/** @param {string} value  */
+/** @param {string} value */
 proto.vmr.SampleResponse.prototype.setContent = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 

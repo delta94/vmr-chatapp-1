@@ -43,16 +43,16 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
   public Future<Long> addChat(Message msg) {
     Promise<Long> idPromise = Promise.promise();
 
-    log.debug("Add chat message {} to database", msg);
+    long senderId = msg.getSenderId();
+    long receiverId = msg.getReceiverId();
 
     internalAddChat(msg)
-        .compose(
-            insertedId -> updateLastMessageId(msg.getSenderId(), msg.getReceiverId(), insertedId))
-        .compose(id -> increaseUnreadMessage(msg.getSenderId(), msg.getReceiverId(), id))
+        .compose(insertedId -> updateLastMessageId(senderId, receiverId, insertedId))
+        .compose(id -> increaseUnreadMessage(senderId, receiverId, id))
         .onComplete(
             ar -> {
               if (ar.failed()) {
-                log.debug("Add chat message failed {}", msg, ar.cause());
+                log.error("Add chat message failed: message={}", msg, ar.cause());
                 idPromise.fail(ar.cause());
                 return;
               }
@@ -77,7 +77,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
                 msg.getSenderId(), msg.getReceiverId(), msg.getMessage(), msg.getTimestamp(), type),
             rs -> {
               if (!rs.succeeded()) {
-                log.error("Error when add chat {}", msg.toString(), rs.cause());
+                log.error("Error when add chat {}", msg, rs.cause());
                 idPromise.fail(rs.cause());
                 return;
               }
@@ -90,7 +90,6 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
   private Future<Long> updateLastMessageId(long userId, long friendId, long messageId) {
     Promise<Long> updatedPromise = Promise.promise();
 
-    log.debug("Update last message u1:{}-u2:{}-msgId:{}", userId, friendId, messageId);
     pool.preparedQuery(UPDATE_LAST_MESSAGE_STMT)
         .executeBatch(
             Arrays.asList(
@@ -100,7 +99,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
                 updatedPromise.complete(userId);
               } else {
                 log.error(
-                    "Error when update last message between user {}-{}, lastmsgid: {}",
+                    "Error when update last message: user1={}, user2={}, last message id ={}",
                     userId,
                     friendId,
                     messageId,

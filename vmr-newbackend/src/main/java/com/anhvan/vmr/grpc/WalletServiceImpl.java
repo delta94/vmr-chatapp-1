@@ -13,6 +13,7 @@ import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.proto.Common;
 import com.anhvan.vmr.proto.Wallet.*;
 import com.anhvan.vmr.proto.WalletServiceGrpc;
+import com.anhvan.vmr.util.GrpcUtil;
 import com.anhvan.vmr.websocket.WebSocketService;
 import io.grpc.stub.StreamObserver;
 import lombok.AllArgsConstructor;
@@ -78,10 +79,11 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
             ar -> {
               if (ar.succeeded()) {
                 List<HistoryItemResponse> historyList = ar.result();
-                log.debug("historyList: {}", historyList);
+                HistoryResponse.Data.Builder dataBuilder = HistoryResponse.Data.newBuilder();
                 for (HistoryItemResponse history : historyList) {
-                  historyResponseBuilder.addItem(history2HistoryResponseItem(history));
+                  dataBuilder.addItem(GrpcUtil.history2HistoryResponseItem(history));
                 }
+                historyResponseBuilder.setData(dataBuilder.build());
               } else {
                 Common.Error error =
                     Common.Error.newBuilder()
@@ -100,19 +102,33 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
   public void transfer(TransferRequest request, StreamObserver<TransferResponse> responseObserver) {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
 
+    // Extract info
+    long receiverId = request.getReceiver();
+    long amount = request.getAmount();
+
+    // Create response builder object
+    TransferResponse.Builder responseBuilder = TransferResponse.newBuilder();
+
+    // Check amount is valid
+    if (amount < 1000) {
+      Common.Error err =
+          Common.Error.newBuilder().setCode(Common.ErrorCode.AMOUNT_NOT_VALID).build();
+      responseBuilder.setError(err);
+      responseObserver.onNext(responseBuilder.build());
+      responseObserver.onCompleted();
+      return;
+    }
+
     // Create database transfer request to update database
     DatabaseTransferRequest transferRequest =
         DatabaseTransferRequest.builder()
             .sender(userId)
-            .receiver(request.getReceiver())
-            .amount(request.getAmount())
+            .receiver(receiverId)
+            .amount(amount)
             .password(request.getPassword())
             .message(request.getMessage())
             .requestId(request.getRequestId())
             .build();
-
-    // Create response builder object
-    TransferResponse.Builder responseBuilder = TransferResponse.newBuilder();
 
     walletDatabaseService
         .transfer(transferRequest)
@@ -136,8 +152,8 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
                     Message.builder()
                         .timestamp(dbResponse.getLastUpdated())
                         .senderId(userId)
-                        .receiverId(request.getReceiver())
-                        .message(request.getAmount() + ";" + request.getMessage())
+                        .receiverId(receiverId)
+                        .message(amount + ";" + request.getMessage())
                         .type("TRANSFER")
                         .build();
 
@@ -161,14 +177,14 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
                 log.error(
                     "Error when transfer: sender={}, recevier={}, amount={}",
                     userId,
-                    request.getReceiver(),
-                    request.getAmount(),
+                    receiverId,
+                    amount,
                     cause);
 
                 // Get error and response to user
                 if (cause instanceof TransferException) {
                   TransferException transferException = (TransferException) cause;
-                  errorResBuilder.setCode(transferException2ErrorCode(transferException));
+                  errorResBuilder.setCode(GrpcUtil.transferException2ErrorCode(transferException));
                 } else {
                   errorResBuilder.setCode(Common.ErrorCode.INTERNAL_SERVER_ERROR);
                 }
@@ -179,40 +195,5 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
                 responseObserver.onCompleted();
               }
             });
-  }
-
-  // This method convert database transfer exception into error code
-  private Common.ErrorCode transferException2ErrorCode(TransferException exception) {
-    switch (exception.getErrorCode()) {
-      case BALANCE_NOT_ENOUGHT:
-        return Common.ErrorCode.BALANCE_NOT_ENOUGH;
-      case RECEIVER_INVALID:
-        return Common.ErrorCode.RECEIVER_NOT_EXIST;
-      case REQUEST_EXISTED:
-        return Common.ErrorCode.REQUEST_EXISTED;
-      case PASSWORD_INVALID:
-        return Common.ErrorCode.PASSWORD_INVALID;
-    }
-    return Common.ErrorCode.INTERNAL_SERVER_ERROR;
-  }
-
-  // Convert history model object into grpc history response
-  private HistoryResponse.Item history2HistoryResponseItem(HistoryItemResponse history) {
-    HistoryResponse.Type type = HistoryResponse.Type.TRANSFER;
-
-    if (history.getType() == HistoryItemResponse.Type.RECEIVE) {
-      type = HistoryResponse.Type.RECEIVE;
-    }
-
-    return HistoryResponse.Item.newBuilder()
-        .setId(history.getId())
-        .setSender(history.getSender())
-        .setReceiver(history.getReceiver())
-        .setAmount(history.getAmount())
-        .setBalance(history.getBalance())
-        .setMessage(history.getMessage())
-        .setTimestamp(history.getTimestamp())
-        .setType(type)
-        .build();
   }
 }

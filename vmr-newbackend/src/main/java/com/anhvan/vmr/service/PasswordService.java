@@ -1,4 +1,4 @@
-package com.anhvan.vmr.util;
+package com.anhvan.vmr.service;
 
 import com.anhvan.vmr.database.UserDatabaseService;
 import io.vertx.core.Future;
@@ -9,13 +9,13 @@ import lombok.extern.log4j.Log4j2;
 import javax.inject.Inject;
 
 @Log4j2
-public class PasswordUtil {
-  private AsyncWorkerUtil workerUtil;
+public class PasswordService {
+  private AsyncWorkerService workerUtil;
   private UserDatabaseService userDatabaseService;
 
   @Inject
-  public PasswordUtil(AsyncWorkerUtil asyncWorkerUtil, UserDatabaseService userDatabaseService) {
-    this.workerUtil = asyncWorkerUtil;
+  public PasswordService(AsyncWorkerService asyncWorkerService, UserDatabaseService userDatabaseService) {
+    this.workerUtil = asyncWorkerService;
     this.userDatabaseService = userDatabaseService;
   }
 

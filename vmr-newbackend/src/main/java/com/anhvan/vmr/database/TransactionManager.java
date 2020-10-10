@@ -15,11 +15,6 @@ public class TransactionManager {
   private Transaction transaction;
   private SqlConnection connection;
 
-  public TransactionManager(MySQLPool pool) {
-    this.pool = pool;
-    stateHolder = new FutureStateHolder();
-  }
-
   public TransactionManager(MySQLPool pool, FutureStateHolder holder) {
     this.pool = pool;
     this.stateHolder = holder;
@@ -57,8 +52,9 @@ public class TransactionManager {
     transaction.commit(
         ar -> {
           if (ar.failed()) {
-            log.error("Error when commit transaction: ", ar.cause());
-            promise.fail(ar.cause());
+            Throwable cause = ar.cause();
+            log.error("Error when commit transaction: ", cause);
+            promise.fail(cause);
           } else {
             promise.complete(this);
           }

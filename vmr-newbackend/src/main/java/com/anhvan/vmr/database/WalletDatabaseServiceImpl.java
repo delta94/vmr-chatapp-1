@@ -6,7 +6,7 @@ import com.anhvan.vmr.entity.HistoryItemResponse;
 import com.anhvan.vmr.exception.TransferException;
 import com.anhvan.vmr.exception.TransferException.ErrorCode;
 import com.anhvan.vmr.model.Message;
-import com.anhvan.vmr.util.PasswordUtil;
+import com.anhvan.vmr.service.PasswordService;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.mysqlclient.MySQLClient;
@@ -59,7 +59,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
           + "values (?,?,?,?,?,?)";
 
   private MySQLPool pool;
-  private PasswordUtil passwordUtil;
+  private PasswordService passwordService;
   private ChatDatabaseService chatDatabaseService;
 
   @Override
@@ -149,7 +149,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   Future<TransferStateHolder> checkPassword(TransferStateHolder holder) {
     Promise<TransferStateHolder> passwordPromise = Promise.promise();
 
-    passwordUtil
+    passwordService
         .checkPassword(holder.getSenderId(), holder.getPassword())
         .onComplete(
             ar -> {

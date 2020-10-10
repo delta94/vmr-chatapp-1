@@ -1,6 +1,6 @@
 package com.anhvan.vmr.database;
 
-import com.anhvan.vmr.util.PasswordUtil;
+import com.anhvan.vmr.service.PasswordService;
 import dagger.Module;
 import dagger.Provides;
 
@@ -30,11 +30,11 @@ public class DatabaseModule {
   @Singleton
   public WalletDatabaseService provideWalletDatabaseService(
       DatabaseService dbService,
-      PasswordUtil passwordUtil,
+      PasswordService passwordService,
       ChatDatabaseService chatDatabaseService) {
     return WalletDatabaseServiceImpl.builder()
         .pool(dbService.getPool())
-        .passwordUtil(passwordUtil)
+        .passwordService(passwordService)
         .chatDatabaseService(chatDatabaseService)
         .build();
   }

@@ -35,7 +35,7 @@ export function getHistory() {
           console.log(res.getError());
           reject(res.getError());
         } else {
-          resolve(res.getItemList());
+          resolve(res.getData().getItemList());
         }
       }
     });

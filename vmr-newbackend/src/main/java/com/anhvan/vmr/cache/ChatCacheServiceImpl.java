@@ -2,7 +2,7 @@ package com.anhvan.vmr.cache;
 
 import com.anhvan.vmr.config.CacheConfig;
 import com.anhvan.vmr.model.Message;
-import com.anhvan.vmr.util.AsyncWorkerUtil;
+import com.anhvan.vmr.service.AsyncWorkerService;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import org.redisson.api.RList;
@@ -18,12 +18,12 @@ public class ChatCacheServiceImpl implements ChatCacheService {
   private static final String MESSAGES_LIST_KEY = "vmr:chat:%d:%d";
 
   private RedissonClient redis;
-  private AsyncWorkerUtil workerUtil;
+  private AsyncWorkerService workerUtil;
   private CacheConfig cacheConfig;
 
   @Inject
   public ChatCacheServiceImpl(
-      RedisCache redisCache, AsyncWorkerUtil workerUtil, CacheConfig cacheConfig) {
+      RedisCache redisCache, AsyncWorkerService workerUtil, CacheConfig cacheConfig) {
     this.redis = redisCache.getRedissonClient();
     this.workerUtil = workerUtil;
     this.cacheConfig = cacheConfig;

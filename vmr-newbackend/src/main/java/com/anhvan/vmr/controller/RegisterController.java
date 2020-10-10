@@ -6,7 +6,7 @@ import com.anhvan.vmr.entity.BaseRequest;
 import com.anhvan.vmr.entity.BaseResponse;
 import com.anhvan.vmr.entity.WebSocketMessage;
 import com.anhvan.vmr.model.User;
-import com.anhvan.vmr.util.JwtUtil;
+import com.anhvan.vmr.service.JwtService;
 import com.anhvan.vmr.websocket.WebSocketService;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Future;
@@ -21,7 +21,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class RegisterController extends BaseController {
   private UserDatabaseService userDBService;
-  private JwtUtil jwtUtil;
+  private JwtService jwtService;
   private UserCacheService userCacheService;
   private WebSocketService webSocketService;
 
@@ -77,7 +77,7 @@ public class RegisterController extends BaseController {
               userCacheService.addUserList(user);
               webSocketService.broadCast(
                   WebSocketMessage.builder().type("NEW_USER").data(user).build());
-              return jwtUtil.generate(userId);
+              return jwtService.generate(userId);
             });
 
     // When generate token successful
