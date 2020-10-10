@@ -4,11 +4,9 @@ import com.anhvan.vmr.entity.GrpcUserResponse;
 import com.anhvan.vmr.util.RowMapperUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import io.vertx.mysqlclient.MySQLClient;
 import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.RowSet;
-import io.vertx.sqlclient.Transaction;
 import io.vertx.sqlclient.Tuple;
 import lombok.extern.log4j.Log4j2;
 
@@ -42,66 +40,64 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
 
   public static final String CLEAR_UNREAD_MESSAGE_STMT =
       "update friends set num_unread_message=0 where user_id=? and friend_id=?";
+  public static final String REJECT_FRIEND_STMT =
+      "delete from friends where (user_id=? and friend_id=?)";
 
   private MySQLPool pool;
+  private DatabaseService dbService;
 
   @Inject
   public FriendDatabaseServiceImpl(DatabaseService databaseService) {
     pool = databaseService.getPool();
+    dbService = databaseService;
   }
 
   @Override
-  public Future<Long> addFriend(long userId, long friendId) {
-    Promise<Long> addFriendIdPromise = Promise.promise();
+  public Future<Void> addFriend(long userId, long friendId) {
+    Promise<Void> addFriendPromise = Promise.promise();
 
-    pool.begin(
-        ar -> {
-          if (ar.succeeded()) {
-            // Start new transaction
-            Transaction transaction = ar.result();
-
-            // Add friend
-            internalAddFriend(transaction, addFriendIdPromise, userId, friendId);
-          } else {
-            log.error("Error when start a transaction", ar.cause());
-            addFriendIdPromise.fail(ar.cause());
-          }
-        });
-
-    return addFriendIdPromise.future();
-  }
-
-  private void internalAddFriend(
-      Transaction transaction, Promise<Long> addFriendPromise, long userId, long friendId) {
     // Prepared tuples
     List<Tuple> tuples =
         Arrays.asList(
             Tuple.of(userId, friendId, "WAITING"), Tuple.of(friendId, userId, "NOT_ANSWER"));
 
-    transaction
-        .preparedQuery(ADD_FRIEND_STMT)
-        .executeBatch(
-            tuples,
-            queryAr -> {
-              if (queryAr.succeeded()) {
-                RowSet<Row> rs = queryAr.result();
-                transaction.commit(
-                    transactionAr -> {
-                      if (transactionAr.succeeded()) {
-                        addFriendPromise.complete(rs.property(MySQLClient.LAST_INSERTED_ID));
-                      } else {
-                        log.error("Error when add friend: commit error ", transactionAr.cause());
-                      }
-                    });
-              } else {
+    TransactionManager transactionManager = dbService.getTransactionManager();
+
+    transactionManager
+        .begin()
+        .compose(
+            manager -> {
+              Promise<TransactionManager> promise = Promise.promise();
+
+              manager
+                  .getTransaction()
+                  .preparedQuery(ADD_FRIEND_STMT)
+                  .executeBatch(
+                      tuples,
+                      ar -> {
+                        if (ar.failed()) {
+                          promise.fail(ar.cause());
+                        } else {
+                          promise.complete(manager);
+                        }
+                      });
+
+              return promise.future();
+            })
+        .compose(TransactionManager::commit)
+        .onComplete(
+            ar -> {
+              transactionManager.close();
+              if (ar.failed()) {
                 log.error(
-                    "Error when add friend userId:{}, friendId:{}",
-                    userId,
-                    friendId,
-                    queryAr.cause());
-                addFriendPromise.fail(queryAr.cause());
+                    "Error when add friend userId:{}, friendId:{}", userId, friendId, ar.cause());
+                addFriendPromise.fail(ar.cause());
+              } else {
+                addFriendPromise.complete();
               }
             });
+
+    return addFriendPromise.future();
   }
 
   @Override
@@ -130,19 +126,41 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   }
 
   @Override
-  public Future<String> acceptFriend(long invitorId, long userId) {
-    Promise<String> statusPromise = Promise.promise();
+  public Future<Void> acceptFriend(long invitorId, long userId) {
+    Promise<Void> statusPromise = Promise.promise();
 
-    pool.preparedQuery(ACCEPT_FRIEND)
-        .executeBatch(
-            Arrays.asList(Tuple.of(invitorId, userId), Tuple.of(userId, invitorId)),
+    // Get transaction manager object
+    TransactionManager transactionManager = dbService.getTransactionManager();
+
+    transactionManager
+        .begin()
+        .compose(
+            manager -> {
+              Promise<TransactionManager> promise = Promise.promise();
+              manager
+                  .getTransaction()
+                  .preparedQuery(ACCEPT_FRIEND)
+                  .executeBatch(
+                      Arrays.asList(Tuple.of(invitorId, userId), Tuple.of(userId, invitorId)),
+                      ar -> {
+                        if (ar.succeeded()) {
+                          promise.complete(manager);
+                        } else {
+                          promise.fail(ar.cause());
+                        }
+                      });
+              return promise.future();
+            })
+        .compose(TransactionManager::commit)
+        .onComplete(
             ar -> {
               if (ar.succeeded()) {
-                statusPromise.complete("ACCEPTED");
+                log.debug("Accept friend successfully");
+                statusPromise.complete();
               } else {
-                Throwable cause = ar.cause();
-                log.error("Error when accept friend request", cause);
-                statusPromise.fail(cause);
+                log.debug("Error when add friend", ar.cause());
+                transactionManager.close();
+                statusPromise.fail(ar.cause());
               }
             });
 
@@ -150,19 +168,41 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   }
 
   @Override
-  public Future<String> rejectFriend(long invitorId, long userId) {
-    Promise<String> statusPromise = Promise.promise();
+  public Future<Void> rejectFriend(long invitorId, long userId) {
+    Promise<Void> statusPromise = Promise.promise();
 
-    pool.preparedQuery("delete from friends where (user_id=? and friend_id=?)")
-        .executeBatch(
-            Arrays.asList(Tuple.of(userId, invitorId), Tuple.of(invitorId, userId)),
+    // Get transaction manager object
+    TransactionManager transactionManager = dbService.getTransactionManager();
+
+    transactionManager
+        .begin()
+        .compose(
+            manager -> {
+              Promise<TransactionManager> promise = Promise.promise();
+              manager
+                  .getTransaction()
+                  .preparedQuery(REJECT_FRIEND_STMT)
+                  .executeBatch(
+                      Arrays.asList(Tuple.of(invitorId, userId), Tuple.of(userId, invitorId)),
+                      ar -> {
+                        if (ar.succeeded()) {
+                          promise.complete(manager);
+                        } else {
+                          promise.fail(ar.cause());
+                        }
+                      });
+              return promise.future();
+            })
+        .compose(TransactionManager::commit)
+        .onComplete(
             ar -> {
               if (ar.succeeded()) {
-                statusPromise.complete("OK");
+                log.debug("Accept friend successfully");
+                statusPromise.complete();
               } else {
-                Throwable cause = ar.cause();
-                log.error("Error when remove friend", cause);
-                statusPromise.fail(cause);
+                log.debug("Error when reject friend", ar.cause());
+                transactionManager.close();
+                statusPromise.fail(ar.cause());
               }
             });
 
@@ -206,7 +246,6 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
                 queryPromise.fail(ar.cause());
                 return;
               }
-
               queryPromise.complete();
             });
 

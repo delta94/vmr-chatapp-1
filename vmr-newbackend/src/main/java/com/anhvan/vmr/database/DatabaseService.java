@@ -56,4 +56,8 @@ public class DatabaseService {
   public TransactionManager getTransactionManager(FutureStateHolder futureStateHolder) {
     return new TransactionManager(pool, futureStateHolder);
   }
+
+  public TransactionManager getTransactionManager() {
+    return getTransactionManager(new FutureStateHolder());
+  }
 }

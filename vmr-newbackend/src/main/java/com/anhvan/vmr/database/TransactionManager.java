@@ -59,26 +59,16 @@ public class TransactionManager {
           if (ar.failed()) {
             log.error("Error when commit transaction: ", ar.cause());
             promise.fail(ar.cause());
+          } else {
+            promise.complete(this);
           }
-          connection.close();
         });
 
     return promise.future();
   }
 
-  public Future<TransactionManager> rollback() {
-    Promise<TransactionManager> promise = Promise.promise();
-
-    transaction.rollback(
-        ar -> {
-          if (ar.failed()) {
-            log.error("Error when rollback transaction: ", ar.cause());
-            promise.fail(ar.cause());
-          }
-          connection.close();
-        });
-
-    return promise.future();
+  public void close() {
+    connection.close();
   }
 
   public Transaction getTransaction() {
