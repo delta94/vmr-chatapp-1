@@ -65,7 +65,6 @@ function MessageListInternal(props) {
 
   // Load message
   useEffect(() => {
-      console.log('Load message, current length =', chatMessages.length);
       updateConversationId(receiverId);
       if (chatMessages.length === 0) {
         getMessageList(receiverId, 0).then((data) => {

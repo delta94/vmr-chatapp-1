@@ -1,9 +1,13 @@
 import {actionType} from "./vmr-action";
 
-let initState = {
-  messages: {},
-  scrollFlag: false
-};
+function createInitState() {
+  return {
+    messages: {},
+    scrollFlag: false
+  };
+}
+
+let initState = createInitState();
 
 export default function messageReducer(state = initState, action) {
   let data = action.data;
@@ -22,7 +26,7 @@ export default function messageReducer(state = initState, action) {
       state = handleGetMsgFromAPI(state, data);
       break;
     case actionType.LOGOUT:
-      state = initState;
+      state = createInitState();
       break;
     default:
     // Do nothing

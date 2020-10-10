@@ -1,10 +1,14 @@
 import {getJwtToken, getUserId} from "../util/auth-util";
 import {actionType} from "./vmr-action";
 
-let initialUser = {
-  jwt: getJwtToken(),
-  userId: getUserId()
-};
+function getInitState() {
+  return {
+    jwt: getJwtToken(),
+    userId: getUserId()
+  }
+}
+
+let initialUser = getInitState();
 
 export default function userReducer(state = initialUser, action) {
   let data = action.data;
@@ -13,8 +17,8 @@ export default function userReducer(state = initialUser, action) {
     case actionType.LOGIN_SUCCESS:
       state = handleLogin(state, data);
       break;
-    case 'LOGOUT':
-      state = handleLogout(state)
+    case actionType.LOGOUT:
+      state = getInitState();
       break;
     default:
     // Do notthing
@@ -27,12 +31,5 @@ function handleLogin(state, data) {
   return Object.assign({}, state, {
     jwt: data.jwt,
     userId: data.userId
-  });
-}
-
-function handleLogout(state) {
-  return Object.assign({}, state, {
-    jwt: null,
-    userId: null
   });
 }

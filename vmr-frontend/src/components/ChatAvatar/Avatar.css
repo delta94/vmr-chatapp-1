@@ -1,0 +1,15 @@
+.vmr-avatar {
+  position: relative;
+}
+
+.vmr-avatar .badge {
+  display: block;
+  position: absolute;
+  height: 15px;
+  width: 15px;
+  border-radius: 7px;
+  top: 37px;
+  left: 37px;
+  background-color: greenyellow;
+  border: 2px solid white;
+}

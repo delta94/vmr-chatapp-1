@@ -1,10 +1,14 @@
 import {getUserId} from "../util/auth-util";
 import {actionType} from "./vmr-action";
 
-let initState = {
-  friends: {},
-  currentFriendId: null,
+function createInitState() {
+  return {
+    friends: {},
+    currentFriendId: null
+  };
 }
+
+let initState = createInitState();
 
 export default function friendReducer(state = initState, action) {
   let data = action.data;
@@ -20,7 +24,7 @@ export default function friendReducer(state = initState, action) {
       state = setCurrentFriend(state, data);
       break;
     case actionType.LOGOUT:
-      state = initState;
+      state = createInitState();
       break;
     case actionType.CHAT_RECEIVE:
       state = handleChatReceive(state, data);

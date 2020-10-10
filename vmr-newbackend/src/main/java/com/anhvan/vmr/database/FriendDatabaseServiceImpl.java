@@ -19,16 +19,16 @@ import java.util.List;
 
 @Log4j2
 public class FriendDatabaseServiceImpl implements FriendDatabaseService {
-  private static final String ADD_FRIEND =
+  private static final String ADD_FRIEND_STMT =
       "insert into friends(user_id, friend_id, status) values(?,?,?)";
 
-  private static final String GET_FRIEND_LIST =
+  private static final String GET_FRIENDS_STMT =
       "select users.id, users.username, users.name, friends.status "
           + "from users "
           + "inner join friends on users.id = friends.friend_id "
           + "where friends.user_id = ?";
 
-  private static final String GET_CHAT_LIST_FRIEND_QUERY =
+  private static final String GET_FRIENDS_WITH_MESSAGE_STMT =
       "select users.id, users.username, users.name, messages.message as last_message, "
           + "messages.sender as last_message_sender, messages.type as last_message_type, "
           + "messages.send_time as last_message_timestamp, friends.num_unread_message "
@@ -57,7 +57,10 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
     pool.begin(
         ar -> {
           if (ar.succeeded()) {
+            // Start new transaction
             Transaction transaction = ar.result();
+
+            // Add friend
             internalAddFriend(transaction, addFriendIdPromise, userId, friendId);
           } else {
             log.error("Error when start a transaction", ar.cause());
@@ -70,12 +73,13 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
 
   private void internalAddFriend(
       Transaction transaction, Promise<Long> addFriendPromise, long userId, long friendId) {
+    // Prepared tuples
     List<Tuple> tuples =
         Arrays.asList(
             Tuple.of(userId, friendId, "WAITING"), Tuple.of(friendId, userId, "NOT_ANSWER"));
 
     transaction
-        .preparedQuery(ADD_FRIEND)
+        .preparedQuery(ADD_FRIEND_STMT)
         .executeBatch(
             tuples,
             queryAr -> {
@@ -86,7 +90,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
                       if (transactionAr.succeeded()) {
                         addFriendPromise.complete(rs.property(MySQLClient.LAST_INSERTED_ID));
                       } else {
-                        log.error("Error when commit transaction ", transactionAr.cause());
+                        log.error("Error when add friend: commit error ", transactionAr.cause());
                       }
                     });
               } else {
@@ -104,7 +108,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   public Future<List<GrpcUserResponse>> getFriendList(long userId) {
     Promise<List<GrpcUserResponse>> friendListPromise = Promise.promise();
 
-    pool.preparedQuery(GET_FRIEND_LIST)
+    pool.preparedQuery(GET_FRIENDS_STMT)
         .execute(
             Tuple.of(userId),
             rowSetAsyncRs -> {
@@ -169,7 +173,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   public Future<List<GrpcUserResponse>> getChatFriendList(long userId) {
     Promise<List<GrpcUserResponse>> friendListPromise = Promise.promise();
 
-    pool.preparedQuery(GET_CHAT_LIST_FRIEND_QUERY)
+    pool.preparedQuery(GET_FRIENDS_WITH_MESSAGE_STMT)
         .execute(
             Tuple.of(userId),
             rowSetAsyncRs -> {

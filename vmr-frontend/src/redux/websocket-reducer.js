@@ -1,10 +1,14 @@
 import {actionType} from "./vmr-action";
 
-let initialState = {
-  webSocketManager: null,
-  send: null,
-  close: null
-};
+function createInitialState() {
+  return {
+    webSocketManager: null,
+    send: null,
+    close: null
+  };
+}
+
+let initialState = createInitialState();
 
 export default function appReducer(state = initialState, action) {
   let data = action.data;
@@ -17,7 +21,7 @@ export default function appReducer(state = initialState, action) {
       if (state.close) {
         state.close();
       }
-      state = initialState;
+      state = createInitialState();
       break;
     default:
     // DO nothing
@@ -33,4 +37,3 @@ function handleWsConnected(state, data) {
     close: data.close
   };
 }
-

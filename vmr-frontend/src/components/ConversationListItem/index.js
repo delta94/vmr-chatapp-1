@@ -1,11 +1,10 @@
 import React from 'react';
-import {Badge, Avatar} from 'antd';
+import {Badge} from 'antd';
 import {useDispatch, useSelector} from 'react-redux';
 import './ConversationListItem.css';
 import {clearNotifications, setSideBarActive} from "../../redux/vmr-action";
-import {getFirstLetter} from "../../util/string-util";
-import {getColor} from "../../util/ui-util";
 import {getUserId} from "../../util/auth-util";
+import ChatAvatar from "../ChatAvatar";
 
 const {useHistory} = require('react-router-dom');
 
@@ -20,10 +19,6 @@ export default function ConversationListItem(props) {
   let hideSideBar = () => {
     dispatch(setSideBarActive(false));
   };
-
-  let avatarStyle = {
-    backgroundColor: getColor(friendId)
-  }
 
   let className = "conversation-list-item";
   let textClassName = "conversation-text";
@@ -61,12 +56,7 @@ export default function ConversationListItem(props) {
 
   return (
     <div className={className} onClick={clickHandle}>
-      <div className="avatar">
-        <Avatar style={avatarStyle} size={50}>
-          {getFirstLetter(friend.name)}
-        </Avatar>
-        {online && <span className={"badge "}/>}
-      </div>
+      <ChatAvatar name={friend.name} onlineStatus={online}/>
       <div className="conversation-info" style={{paddingLeft: "10px"}}>
         <h1 className="conversation-title">{friend.name} <Badge size="small" count={friend.numNotifications}/></h1>
         <p className={textClassName}>{textMsg}</p>

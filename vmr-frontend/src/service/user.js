@@ -26,8 +26,8 @@ export function login(username, password) {
 
 export function logout() {
   protectedPost("/logout").then(() => {
-    store.dispatch(logoutAction());
     localStorageLogout();
+    store.dispatch(logoutAction());
   });
 }
 

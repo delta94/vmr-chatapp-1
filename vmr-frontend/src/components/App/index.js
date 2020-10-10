@@ -12,7 +12,7 @@ const LoginPage = React.lazy(() => import('../LoginPage'));
 const {Switch, Route, Redirect} = require('react-router-dom');
 
 function AuthFragment() {
-  let authStatus = useSelector(state => state.user.jwt != null);
+  let authStatus = useSelector(state => state.user.jwt !== null);
   if (authStatus) {
     return <Messenger/>;
   }

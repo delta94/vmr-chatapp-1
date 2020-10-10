@@ -16,7 +16,6 @@ export function useInfoWithBalance(...dependencies) {
   let [info, setInfo] = useState({});
   useEffect(() => {
     getBalance().then(result => {
-      console.log(result.getBalance());
       setInfo({
         balance: result.getBalance(),
         userName: result.getUserName(),

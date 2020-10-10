@@ -1,12 +1,16 @@
 import {actionType} from "./vmr-action";
 
-let initialState = {
-  sideBarActive: false,
-  searchUserActive: false,
-  currentTab: 'chat',
-  friendReloadFlag: true,
-  currentWalletTab: 'balance'
+function createInitState() {
+  return {
+    sideBarActive: false,
+    searchUserActive: false,
+    currentTab: 'chat',
+    friendReloadFlag: true,
+    currentWalletTab: 'balance'
+  };
 }
+
+let initialState = createInitState();
 
 export default function uiReducer(state = initialState, action) {
   let {type, data} = action;
