@@ -11,6 +11,7 @@ enum ErrorCode {
   INTERNAL_SERVER_ERROR = 3;
   REQUEST_EXISTED = 4;
   FAILUE = 5;
+  AMOUNT_NOT_VALID = 6;
 }
 
 message Error {

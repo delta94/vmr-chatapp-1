@@ -1,23 +1,27 @@
-let initialState = {
-  webSocket: {
+import {actionType} from "./vmr-action";
+
+function createInitialState() {
+  return {
     webSocketManager: null,
     send: null,
     close: null
-  }
-};
+  };
+}
+
+let initialState = createInitialState();
 
 export default function appReducer(state = initialState, action) {
   let data = action.data;
 
   switch (action.type) {
-    case 'WS_CONNECTED':
+    case actionType.WS_CONNECTED:
       state = handleWsConnected(state, data);
       break;
-    case 'LOGOUT':
-      if (state.webSocket.close) {
-        state.webSocket.close();
+    case actionType.LOGOUT:
+      if (state.close) {
+        state.close();
       }
-      state = initialState;
+      state = createInitialState();
       break;
     default:
     // DO nothing
@@ -27,12 +31,9 @@ export default function appReducer(state = initialState, action) {
 }
 
 function handleWsConnected(state, data) {
-  return Object.assign({}, state, {
-    webSocket: {
-      webSocketManager: data.webSocketManager,
-      send: data.send,
-      close: data.close
-    }
-  });
+  return {
+    webSocketManager: data.webSocketManager,
+    send: data.send,
+    close: data.close
+  };
 }
-

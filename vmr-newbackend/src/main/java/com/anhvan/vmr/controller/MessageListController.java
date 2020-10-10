@@ -65,7 +65,7 @@ public class MessageListController extends BaseController {
       // Load more
       getFromDB(userId, friendId, offset, responsePromise, false);
     }
-
+    //getFromDB(userId, friendId, offset, responsePromise, false);
     return responsePromise.future();
   }
 
@@ -80,27 +80,29 @@ public class MessageListController extends BaseController {
         .getChatMessages(userId, friendId, offset)
         .onComplete(
             result -> {
-              if (result.succeeded()) {
-                List<Message> listMessage = result.result();
-
-                JsonObject jsonResponse = new JsonObject();
-                jsonResponse.put("messages", listMessage);
-                jsonResponse.put("newOffset", offset + listMessage.size());
-
-                responsePromise.complete(
-                    BaseResponse.builder()
-                        .statusCode(HttpResponseStatus.OK.code())
-                        .data(jsonResponse)
-                        .message("Get chat mesages successfully")
-                        .build());
-
-                // Cache
-                if (isCached) {
-                  chatCacheService.cacheListMessage(listMessage, userId, friendId);
-                }
-              } else {
+              if (result.failed()) {
                 log.error("Error when get chat messages", result.cause());
                 responsePromise.fail(result.cause());
+                return;
+              }
+
+              // Get the messages from databases
+              List<Message> listMessage = result.result();
+
+              JsonObject jsonResponse = new JsonObject();
+              jsonResponse.put("messages", listMessage);
+              jsonResponse.put("newOffset", offset + listMessage.size());
+
+              responsePromise.complete(
+                  BaseResponse.builder()
+                      .statusCode(HttpResponseStatus.OK.code())
+                      .data(jsonResponse)
+                      .message("Get chat mesages successfully")
+                      .build());
+
+              // Cache
+              if (isCached) {
+                chatCacheService.cacheListMessage(listMessage, userId, friendId);
               }
             });
   }

@@ -1,5 +1,6 @@
 package com.anhvan.vmr.grpc;
 
+import com.anhvan.vmr.cache.ChatCacheService;
 import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.database.WalletDatabaseService;
@@ -38,10 +39,15 @@ public class GrpcModule {
   @IntoSet
   @Singleton
   public BindableService provideWalletServiceImpl(
-      UserDatabaseService userDatabaseService, WalletDatabaseService walletDatabaseService) {
+      UserDatabaseService userDatabaseService,
+      WalletDatabaseService walletDatabaseService,
+      WebSocketService webSocketService,
+      ChatCacheService chatCacheService) {
     return WalletServiceImpl.builder()
         .userDbService(userDatabaseService)
         .walletDatabaseService(walletDatabaseService)
+        .webSocketService(webSocketService)
+        .chatCacheService(chatCacheService)
         .build();
   }
 }

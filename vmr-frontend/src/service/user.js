@@ -1,4 +1,4 @@
-import {post} from './axios-wrapper';
+import {post, protectedPost} from './axios-wrapper';
 import {login as loginAction, logout as logoutAction} from "../redux/vmr-action";
 import store from '../redux/vmr-store';
 import {jwtLogin, logout as localStorageLogout} from "../util/auth-util";
@@ -25,8 +25,10 @@ export function login(username, password) {
 }
 
 export function logout() {
-  store.dispatch(logoutAction());
-  localStorageLogout();
+  protectedPost("/logout").then(() => {
+    localStorageLogout();
+    store.dispatch(logoutAction());
+  });
 }
 
 export function register(username, name, password) {

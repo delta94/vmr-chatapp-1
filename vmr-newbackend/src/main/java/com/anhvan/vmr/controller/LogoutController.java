@@ -17,17 +17,23 @@ public class LogoutController extends BaseController {
   private TokenCacheService tokenCacheService;
 
   @Override
-  protected Future<BaseResponse> handlePost(BaseRequest baseRequest) {
+  public Future<BaseResponse> handlePost(BaseRequest baseRequest) {
     Promise<BaseResponse> logoutPromise = Promise.promise();
 
+    // Get token from header
     String jwtToken = baseRequest.getRequest().getHeader("Authorization").substring(7);
+
+    // Add to blacklist
     tokenCacheService.addToBlackList(jwtToken);
+
+    // Response to user
     logoutPromise.complete(
         BaseResponse.builder()
             .statusCode(HttpResponseStatus.OK.code())
             .message("Logout successfully")
             .build());
 
+    // Write log
     log.info("Logout user with token {}", jwtToken);
 
     return logoutPromise.future();

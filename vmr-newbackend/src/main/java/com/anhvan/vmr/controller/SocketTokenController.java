@@ -2,7 +2,7 @@ package com.anhvan.vmr.controller;
 
 import com.anhvan.vmr.entity.BaseRequest;
 import com.anhvan.vmr.entity.BaseResponse;
-import com.anhvan.vmr.util.JwtUtil;
+import com.anhvan.vmr.service.JwtService;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -13,14 +13,14 @@ import lombok.Builder;
 @AllArgsConstructor
 @Builder
 public class SocketTokenController extends BaseController {
-  private JwtUtil jwtUtil;
+  private JwtService jwtService;
 
   @Override
   protected Future<BaseResponse> handleGet(BaseRequest baseRequest) {
     Promise<BaseResponse> responsePromise = Promise.promise();
 
     int userId = baseRequest.getPrincipal().getInteger("userId");
-    jwtUtil
+    jwtService
         .generate(userId, 90)
         .onSuccess(
             token -> {

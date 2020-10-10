@@ -21,6 +21,7 @@
   display: flex;
   justify-content: center;
   border-radius: 5px;
+  border: 1px solid white;
 }
 
 .icon-wrapper.mid {
@@ -31,6 +32,10 @@
 .icon-wrapper-active, .icon-wrapper:hover {
   background-color: #eef2f5;
   cursor: pointer;
+}
+
+.icon-wrapper-active {
+  border: 1px solid #8fbee9;
 }
 
 .menubar-icon {

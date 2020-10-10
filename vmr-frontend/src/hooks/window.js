@@ -4,9 +4,14 @@ export default function useWindowSize() {
   let [size, setSize] = useState(window.innerWidth);
 
   useEffect(() => {
-    window.addEventListener('resize', () => {
+    let listener = () => {
       setSize(window.innerWidth);
-    });
+    };
+    window.addEventListener('resize', listener);
+
+    return () => {
+      window.removeEventListener('resize', listener);
+    };
   }, []);
 
   return size;

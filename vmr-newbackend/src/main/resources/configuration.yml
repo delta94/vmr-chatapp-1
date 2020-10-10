@@ -12,7 +12,7 @@ mysql:
   username: root
   password: password
   database: vmrchat
-  poolSize: 15
+  poolSize: 40
 cache:
   timeToLive: 600
   numMessagesCached: 20

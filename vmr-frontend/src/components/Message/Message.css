@@ -9,8 +9,8 @@
   color: #999;
   font-weight: 600;
   font-size: 12px;
-  margin: 10px 0px;
-  text-transform: uppercase;
+  margin: 10px 0;
+  /*text-transform: uppercase;*/
 }
 
 .message .bubble-container {
@@ -19,8 +19,13 @@
 }
 
 .message .bubble {
-  max-width: 300px !important;
+  max-width: 400px !important;
   word-wrap: break-word;
+  border: 1px solid #bfbfbfd6;
+}
+
+.message.mine .bubble {
+
 }
 
 .message.mine .bubble-container {
@@ -29,41 +34,58 @@
 
 .message.start .bubble-container .bubble {
   /* margin-top: 10px; */
-  border-top-left-radius: 20px;
+  border-top-left-radius: 10px;
 }
 
 .message.end .bubble-container .bubble {
-  border-bottom-left-radius: 20px;
+  border-bottom-left-radius: 10px;
   /* margin-bottom: 10px; */
 }
 
+.message.start .bubble-container .bubble {
+  margin-top: 5px;
+}
+
+.message.end .bubble-container .bubble {
+  margin-bottom: 5px;
+}
+
 .message.mine.start .bubble-container .bubble {
-  margin-top: 10px;
-  border-top-right-radius: 20px;
+  border-top-right-radius: 10px;
 }
 
 .message.mine.end .bubble-container .bubble {
-  border-bottom-right-radius: 20px;
-  margin-bottom: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 .message .bubble-container .bubble {
-  margin: 1px 0px;
+  margin: 1px;
   background: #f4f4f8;
   padding: 10px 15px;
-  border-radius: 20px;
   max-width: 75%;
-  border-top-left-radius: 2px;
-  border-bottom-left-radius: 2px;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
+  border-radius: 2px 10px 10px 2px;
 }
 
 .message.mine .bubble-container .bubble {
-  background: #007aff;
-  color: white;
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
-  border-top-right-radius: 2px;
-  border-bottom-right-radius: 2px;
+  background: #b6dcff;
+  border-radius: 10px 2px 2px 10px;
+}
+
+.message .bubble-container .bubble.transfer {
+  background-color: #e7ffdc;
+  width: 75%;
+  color: green;
+}
+
+.message .bubble-container .bubble.receive {
+  width: 75%;
+  color: green;
+}
+
+.message .bubble-container .amount {
+  font-size: 18px;
+}
+
+.message .bubble-container .msg {
+  color: black;
 }

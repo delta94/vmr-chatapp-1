@@ -1,8 +1,9 @@
 import React from 'react';
 import LeftSideBar from '../LeftSideBar';
-import './Messenger.css';
 import MainArea from '../MainArea';
 import AddFriendModal from "../AddFriendModal";
+
+import './Messenger.css';
 
 function Messenger() {
   return (

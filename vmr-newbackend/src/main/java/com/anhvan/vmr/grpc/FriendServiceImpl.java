@@ -32,15 +32,14 @@ public class FriendServiceImpl extends FriendServiceImplBase {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
     long friendId = request.getUserId();
 
+    // Check if friendId is valid
     if (userId == friendId) {
-      responseObserver.onNext(
-          AddFriendResponse.newBuilder()
-              .setError(
-                  Error.newBuilder()
-                      .setCode(ErrorCode.FAILUE)
-                      .setMessage("You cannot add yourself as friend")
-                      .build())
-              .build());
+      Error error =
+          Error.newBuilder()
+              .setCode(ErrorCode.FAILUE)
+              .setMessage("You cannot add yourself as friend")
+              .build();
+      responseObserver.onNext(AddFriendResponse.newBuilder().setError(error).build());
       responseObserver.onCompleted();
       return;
     }
@@ -49,19 +48,20 @@ public class FriendServiceImpl extends FriendServiceImplBase {
         .addFriend(userId, friendId)
         .onComplete(
             ar -> {
+              AddFriendResponse.Builder responseBuilder = AddFriendResponse.newBuilder();
               if (ar.succeeded()) {
-                responseObserver.onNext(AddFriendResponse.newBuilder().build());
+                // Add friend succeeded
+                responseObserver.onNext(responseBuilder.build());
               } else {
+                // Add friend failed
                 log.error(
                     "Fail to add friend userId: {}, friendId: {}", userId, friendId, ar.cause());
-                responseObserver.onNext(
-                    AddFriendResponse.newBuilder()
-                        .setError(
-                            Error.newBuilder()
-                                .setCode(ErrorCode.FAILUE)
-                                .setMessage("Fail to add friend")
-                                .build())
-                        .build());
+                Error error =
+                    Error.newBuilder()
+                        .setCode(ErrorCode.FAILUE)
+                        .setMessage("Fail to add friend")
+                        .build();
+                responseObserver.onNext(responseBuilder.setError(error).build());
               }
               responseObserver.onCompleted();
             });
@@ -79,13 +79,14 @@ public class FriendServiceImpl extends FriendServiceImplBase {
                 FriendListResponse.Builder response = FriendListResponse.newBuilder();
                 List<GrpcUserResponse> grpcUserResponseList = ar.result();
                 for (GrpcUserResponse user : grpcUserResponseList) {
-                  response.addFriendInfo(
+                  FriendInfo info =
                       FriendInfo.newBuilder()
                           .setUsername(user.getUsername())
                           .setName(user.getName())
                           .setId(user.getId())
                           .setFriendStatus(GrpcUtil.string2FriendStatus(user.getFriendStatus()))
-                          .build());
+                          .build();
+                  response.addFriendInfo(info);
                 }
                 responseObserver.onNext(response.build());
               } else {
@@ -163,7 +164,6 @@ public class FriendServiceImpl extends FriendServiceImplBase {
         .getChatFriendList(userId)
         .onComplete(
             ar -> {
-              log.debug("Connection set: {} ", webSocketService.getOnlineIds());
               if (ar.succeeded()) {
                 for (GrpcUserResponse usr : ar.result()) {
                   FriendInfo.Builder friendInfoBuidler =
@@ -171,11 +171,15 @@ public class FriendServiceImpl extends FriendServiceImplBase {
                           .setId(usr.getId())
                           .setName(usr.getName())
                           .setUsername(usr.getUsername())
-                          .setOnline(webSocketService.checkOnline(usr.getId()));
+                          .setOnline(webSocketService.checkOnline(usr.getId()))
+                          .setNumUnreadMessage(usr.getNumUnreadMessage());
+
                   if (usr.getLastMessage() != null) {
                     friendInfoBuidler
                         .setLastMessage(usr.getLastMessage())
-                        .setLastMessageSender(usr.getLastMessageSenderId());
+                        .setLastMessageTimestamp(usr.getLastMessageTimestamp())
+                        .setLastMessageSender(usr.getLastMessageSenderId())
+                        .setLastMessageType(usr.getLastMessageType());
                   }
 
                   responseBuilder.addFriendInfo(friendInfoBuidler.build());
@@ -198,7 +202,7 @@ public class FriendServiceImpl extends FriendServiceImplBase {
     String queryString = request.getQueryString();
 
     Future<List<GrpcUserResponse>> userListFuture =
-        userDbService.queryListUserWithFriend(queryString, userId);
+        userDbService.queryListUserWithFriendStatus(queryString, userId);
 
     userListFuture.onSuccess(
         userList -> {
@@ -222,5 +226,34 @@ public class FriendServiceImpl extends FriendServiceImplBase {
 
     userListFuture.onFailure(
         event -> responseObserver.onError(new Exception("Internal server error")));
+  }
+
+  @Override
+  public void clearUnreadMessage(
+      ClearUnreadMessageRequest request,
+      StreamObserver<ClearUnreadMessageResponse> responseObserver) {
+    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+
+    friendDbService
+        .clearUnreadMessage(userId, request.getFriendId())
+        .onComplete(
+            ar -> {
+              ClearUnreadMessageResponse.Builder builder = ClearUnreadMessageResponse.newBuilder();
+              if (ar.failed()) {
+                log.error(
+                    "Error when clear unread message: user={}, friend={} l",
+                    userId,
+                    request.getFriendId(),
+                    ar.cause());
+                responseObserver.onNext(
+                    builder
+                        .setError(
+                            Error.newBuilder().setCode(ErrorCode.INTERNAL_SERVER_ERROR).build())
+                        .build());
+              } else {
+                responseObserver.onNext(builder.build());
+              }
+              responseObserver.onCompleted();
+            });
   }
 }

@@ -5,15 +5,17 @@ import {
   ArrowRightOutlined,
   CheckCircleOutlined,
   CloseOutlined,
-  DollarCircleOutlined
+  DollarCircleOutlined,
+  StopOutlined
 } from "@ant-design/icons";
-
-import "./TransferMoneyModal.css";
 import {moneyFormat} from "../../util/string-util";
 import {transfer} from "../../service/wallet";
 import useWindowSize from "../../hooks/window";
 import {useBalance} from "../../hooks/wallet";
 
+import "./TransferMoneyModal.css";
+
+const {ErrorCode} = require('../../proto/vmr/common_pb');
 const {Title} = Typography;
 const {TextArea, Password} = Input;
 const {Step} = Steps;
@@ -29,14 +31,14 @@ export default function TransferMoneyModal(props) {
   let [amount, setAmount] = useState(0);
   let [message, setMessage] = useState('');
   let [password, setPassword] = useState('');
-  let [form] = Form.useForm();
-  let [form2] = Form.useForm();
+  let [form] = Form.useForm(null);
+  let [form2] = Form.useForm(null);
   let [valid, setValid] = useState(false);
   let windowSize = useWindowSize();
   let balance = useBalance(step, active);
+  let [cause, setCause] = useState('');
 
   useEffect(() => {
-    form.resetFields();
     setStep(0);
     setAmount(0);
     setValid(false);
@@ -46,6 +48,8 @@ export default function TransferMoneyModal(props) {
   }, [active]);
 
   let closeModal = () => {
+    form.resetFields();
+    form2.resetFields();
     setActive(false);
   };
 
@@ -55,16 +59,21 @@ export default function TransferMoneyModal(props) {
     setStep(1);
   };
 
-  let checkAmount = (rule, value, callback) => {
+  let checkAmount = async (rule, value) => {
     if (value < 1000) {
-      callback('Số tiền chuyển phải từ 1000đ trở lên');
+      throw new Error('Số tiền chuyển phải từ 1000đ trở lên');
     } else if (value > balance) {
-      callback('Số tiền không được vượt quá balance')
+      throw new Error('Số tiền không được vượt quá balance')
+    } else if (Math.round(value) !== value) {
+      throw new Error('Số tiền không được là số lẻ');
     }
   };
 
   let handleFieldChange = (changedFields, allFields) => {
-    if (allFields.amount < 1000 || allFields.amount > balance) {
+    let amountValue = allFields.amount;
+    if (isNaN(amountValue)) {
+      setValid(false);
+    } else if (Math.round(amountValue) !== amountValue || amountValue < 1000 || amountValue > balance) {
       setValid(false);
     } else {
       setValid(true);
@@ -77,8 +86,19 @@ export default function TransferMoneyModal(props) {
 
   let handleTransfer = () => {
     transfer(receiverId, amount, password, message, Math.round(Math.random() * 1000)).then(data => {
-      console.log(data);
+      console.log(data.getBalance());
       setStep(2);
+    }).catch(err => {
+      if (!err.getCode) {
+        setCause('Lỗi hệ thống')
+      } else if (err.getCode() === ErrorCode.PASSWORD_INVALID) {
+        setCause('Mật khẩu bạn nhập không hợp lệ');
+      } else if (err.getCode() === ErrorCode.BALANCE_NOT_ENOUGH) {
+        setCause('Số dư của bạn không đủ');
+      } else if (err.getCode() === ErrorCode.RECEIVER_NOT_EXIST) {
+        setCause('Người nhận không tồn tại');
+      }
+      setStep(3);
     });
   };
 
@@ -100,7 +120,29 @@ export default function TransferMoneyModal(props) {
         Chuyển tiền
       </Button>,
     ]
+  } else if (step === 2) {
+    footerButton = [
+      <Button key="submit" type="primary" onClick={closeModal}>
+        Thoát
+      </Button>
+    ];
+  } else if (step === 3) {
+    footerButton = [
+      <Button key="back" onClick={() => setStep(0)}>
+        <ArrowLeftOutlined/>Thử lại
+      </Button>,
+      <Button key="submit" type="primary" onClick={closeModal} disabled={password.length === 0}>
+        Thoát
+      </Button>,
+    ]
   }
+
+  let setDisplay = (targetStep) => {
+    if (step === targetStep) {
+      return {};
+    }
+    return {display: 'none'};
+  };
 
   return (
     <Modal
@@ -112,7 +154,7 @@ export default function TransferMoneyModal(props) {
       className="transfer-modal"
     >
       <Title level={4} className="vmr-modal-title">
-        <DollarCircleOutlined className="transfer-money-icon" style={{color: 'red', fontSize: '34px'}}/>
+        <DollarCircleOutlined className="transfer-money-icon" style={{color: '#d49311', fontSize: '34px'}}/>
         Chuyển tiền tới <span style={{color: 'green'}}>{receiverName}</span>
       </Title>
 
@@ -125,8 +167,7 @@ export default function TransferMoneyModal(props) {
       </Steps>
       }
 
-      {step === 0 &&
-      <div className="transfer-step">
+      <div className="transfer-step" style={setDisplay(0)}>
         <Form {...layout} form={form} initialValues={{'message': 'Chuyển tiền'}} onValuesChange={handleFieldChange}>
           <Form.Item label={"Số dư khả dụng"}>
             {moneyFormat(balance)} VNĐ
@@ -141,10 +182,8 @@ export default function TransferMoneyModal(props) {
           </Form.Item>
         </Form>
       </div>
-      }
 
-      {step === 1 &&
-      <div className="transfer-step">
+      <div className="transfer-step" style={setDisplay(1)}>
         <Form {...layout} form={form2} onValuesChange={handlePasswordChange}>
           <Form.Item label={"Số dư khả dụng"}>
             {moneyFormat(balance)} VNĐ
@@ -160,10 +199,8 @@ export default function TransferMoneyModal(props) {
           </Form.Item>
         </Form>
       </div>
-      }
 
-      {step === 2 &&
-      <div className="transfer-step">
+      <div className="transfer-step" style={setDisplay(2)}>
         <Row>
           <Col className="status-container" xs={24} md={8}><CheckCircleOutlined
             style={{color: 'green', fontSize: '100px'}}/></Col>
@@ -174,16 +211,41 @@ export default function TransferMoneyModal(props) {
             </Row>
             <Row className="status-row">
               <Col span={12}>Số tiền trừ:</Col>
-              <Col span={12}>- 100 000 VNĐ</Col>
+              <Col span={12}>{amount} VNĐ</Col>
             </Row>
             <Row className="status-row">
               <Col span={12}>Số dư còn lại:</Col>
-              <Col span={12}>0 VNĐ</Col>
+              <Col span={12}>{balance} VNĐ</Col>
             </Row>
           </Col>
         </Row>
       </div>
-      }
+
+      <div className="transfer-step" style={setDisplay(3)}>
+        <Row>
+          <Col className="status-container" xs={24} md={8}><StopOutlined
+            style={{color: 'red', fontSize: '100px'}}/></Col>
+          <Col xs={24} md={16}>
+            <Row className="status-row">
+              <Col span={12}>Trạng thái:</Col>
+              <Col span={12}>Thất bại</Col>
+            </Row>
+            <Row className="status-row">
+              <Col span={12}>Số tiền trừ:</Col>
+              <Col span={12}>0 VNĐ</Col>
+            </Row>
+            <Row className="status-row">
+              <Col span={12}>Số dư còn lại:</Col>
+              <Col span={12}>{balance} VNĐ</Col>
+            </Row>
+            <Row className="status-row">
+              <Col span={12}>Lý do:</Col>
+              <Col span={12}>{cause}</Col>
+            </Row>
+          </Col>
+        </Row>
+      </div>
+
     </Modal>
   );
 }

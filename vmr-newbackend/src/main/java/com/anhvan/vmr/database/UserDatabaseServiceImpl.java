@@ -2,7 +2,7 @@ package com.anhvan.vmr.database;
 
 import com.anhvan.vmr.entity.GrpcUserResponse;
 import com.anhvan.vmr.model.User;
-import com.anhvan.vmr.util.AsyncWorkerUtil;
+import com.anhvan.vmr.service.AsyncWorkerService;
 import com.anhvan.vmr.util.RowMapperUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -37,10 +37,10 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
           + "on t1.id = t2.friend_id";
 
   private MySQLPool pool;
-  private AsyncWorkerUtil workerUtil;
+  private AsyncWorkerService workerUtil;
 
   @Inject
-  public UserDatabaseServiceImpl(DatabaseService databaseService, AsyncWorkerUtil workerUtil) {
+  public UserDatabaseServiceImpl(DatabaseService databaseService, AsyncWorkerService workerUtil) {
     pool = databaseService.getPool();
     this.workerUtil = workerUtil;
   }
@@ -60,9 +60,6 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
           Tuple info =
               Tuple.of(
                   user.getUsername(), password, user.getName(), Instant.now().getEpochSecond());
-
-          // Trace
-          log.trace("Pool will execute query");
 
           // Execute query
           pool.preparedQuery(INSERT_USER_STMT)
@@ -155,7 +152,7 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
   }
 
   @Override
-  public Future<List<GrpcUserResponse>> queryListUserWithFriend(String query, long userId) {
+  public Future<List<GrpcUserResponse>> queryListUserWithFriendStatus(String query, long userId) {
     log.debug("Query user with full text search");
 
     Promise<List<GrpcUserResponse>> userListPromise = Promise.promise();

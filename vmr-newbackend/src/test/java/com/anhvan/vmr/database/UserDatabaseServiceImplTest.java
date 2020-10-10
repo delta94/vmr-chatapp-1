@@ -1,7 +1,7 @@
 package com.anhvan.vmr.database;
 
 import com.anhvan.vmr.model.User;
-import com.anhvan.vmr.util.AsyncWorkerUtil;
+import com.anhvan.vmr.service.AsyncWorkerService;
 import io.vertx.core.Vertx;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
@@ -26,14 +26,14 @@ import java.util.concurrent.TimeUnit;
 public class UserDatabaseServiceImplTest {
   static DatabaseService dbService = Mockito.mock(DatabaseService.class);
   static MySQLPool mySQLPool = Mockito.mock(MySQLPool.class);
-  static AsyncWorkerUtil asyncWorkerUtil;
+  static AsyncWorkerService asyncWorkerService;
   static UserDatabaseServiceImpl userDatabaseService;
 
   @BeforeAll
   static void setUp(Vertx vertx) {
     Mockito.when(dbService.getPool()).thenReturn(mySQLPool);
-    asyncWorkerUtil = new AsyncWorkerUtil(vertx);
-    userDatabaseService = new UserDatabaseServiceImpl(dbService, asyncWorkerUtil);
+    asyncWorkerService = new AsyncWorkerService(vertx);
+    userDatabaseService = new UserDatabaseServiceImpl(dbService, asyncWorkerService);
   }
 
   @Test

@@ -1,7 +1,7 @@
 package com.anhvan.vmr.cache;
 
 import com.anhvan.vmr.config.AuthConfig;
-import com.anhvan.vmr.util.AsyncWorkerUtil;
+import com.anhvan.vmr.service.AsyncWorkerService;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import org.junit.jupiter.api.Assertions;
@@ -31,17 +31,17 @@ public class TokenCacheServiceImplTest {
     AuthConfig authConfig = Mockito.mock(AuthConfig.class);
     Mockito.when(authConfig.getExpire()).thenReturn(20);
 
-    AsyncWorkerUtil asyncWorkerUtil = Mockito.mock(AsyncWorkerUtil.class);
+    AsyncWorkerService asyncWorkerService = Mockito.mock(AsyncWorkerService.class);
     Mockito.doAnswer(
             invocationOnMock -> {
               Runnable job = invocationOnMock.getArgument(0);
               job.run();
               return null;
             })
-        .when(asyncWorkerUtil)
+        .when(asyncWorkerService)
         .execute(ArgumentMatchers.any());
 
-    tokenCacheService = new TokenCacheServiceImpl(cache, authConfig, asyncWorkerUtil);
+    tokenCacheService = new TokenCacheServiceImpl(cache, authConfig, asyncWorkerService);
   }
 
   @Test

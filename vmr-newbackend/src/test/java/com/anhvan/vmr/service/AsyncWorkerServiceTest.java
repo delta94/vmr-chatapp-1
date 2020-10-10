@@ -1,4 +1,4 @@
-package com.anhvan.vmr.util;
+package com.anhvan.vmr.service;
 
 import io.vertx.core.Vertx;
 import io.vertx.junit5.VertxExtension;
@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(VertxExtension.class)
-public class AsyncWorkerUtilTest {
+public class AsyncWorkerServiceTest {
   @Test
   void testAsyncWorkerUtil(Vertx vertx, VertxTestContext vertxTestContext) {
-    AsyncWorkerUtil workerUtil = new AsyncWorkerUtil(vertx);
+    AsyncWorkerService workerUtil = new AsyncWorkerService(vertx);
     workerUtil.execute(vertxTestContext::completeNow);
   }
 }

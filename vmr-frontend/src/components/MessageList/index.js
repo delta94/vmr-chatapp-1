@@ -1,27 +1,55 @@
 import React, {useEffect, useRef, useState} from 'react';
 import Compose from '../Compose';
-import Toolbar from '../Toolbar';
 import ToolbarButton from '../ToolbarButton';
-import {connect} from 'react-redux';
-import {getMessageFromAPI, updateActiveConservationId} from '../../redux/vmr-action';
+import TitleBar from '../TitleBar';
+import {useDispatch, useSelector} from 'react-redux';
+import {clearNotifications, getMessageFromAPI, updateCurrentFriend} from '../../redux/vmr-action';
 import {getMessageList} from '../../service/message-list';
 import renderMessageNew from './message-render';
+import {SendOutlined, DollarCircleOutlined} from '@ant-design/icons';
+import TransferMoneyModal from "../TransferMoneyModal";
 
 import './MessageList.css';
+import {clearUnreadMessage} from "../../service/friend";
 
-import {ArrowLeftOutlined, MoreOutlined, SendOutlined, DollarCircleOutlined} from '@ant-design/icons';
-import TransferMoneyModal from "../TransferMoneyModal";
-import {useOpenSideBar} from "../../hooks/ui";
+function MessageListInternal(props) {
+  let {receiverId} = props;
 
-let MessageListInternal = props => {
-  let {scrollFlag, currentConversationId, receiverId, receiver, webSocket, chatMessages} = props;
+  // Selectors
+  let scrollFlag = useSelector(state => state.chat.scrollFlag);
+  let webSocket = useSelector(state => state.webSocket);
+  let currentFriendId = useSelector(state => state.friends.currentFriendId);
+  let chatMessages = useSelector(state => state.chat.messages[receiverId]);
+  let receiver = useSelector(state => state.friends.friends[receiverId]);
+
+  // Dispatch
+  let dispatch = useDispatch();
+
+  let updateMessageList = (data, friendId) => {
+    dispatch(getMessageFromAPI(data, friendId));
+  };
+
+  let updateConversationId = (id) => {
+    dispatch(updateCurrentFriend(id));
+  };
+
+  let clearChatNotifications = () => {
+    dispatch(clearNotifications(receiverId));
+  };
 
   // Use to scroll message
   let endOfMsgList = useRef(null);
   let msgList = useRef(null);
   let inputRef = useRef(null);
   let [sendButtonActive, setSendBtnActive] = useState(false);
-  let [moneyTransferActive, setMoneyTransferActive] = useState(true);
+  let [moneyTransferActive, setMoneyTransferActive] = useState(false);
+
+  let scrollToBottom = () => {
+    let {current} = endOfMsgList;
+    if (current) {
+      current.scrollIntoView();
+    }
+  };
 
   // Message list
   let messages = chatMessages.map(x => {
@@ -30,23 +58,30 @@ let MessageListInternal = props => {
       message: x.message,
       author: x.senderId,
       timestamp: x.timestamp * 1000,
-      isMine: x.isMine
+      isMine: x.isMine,
+      transfer: x.type === 'TRANSFER'
     };
   });
 
   // Load message
-  useEffect(
-    () => {
-      props.updateConversationId(receiverId);
+  useEffect(() => {
+      updateConversationId(receiverId);
       if (chatMessages.length === 0) {
-        getMessageList(receiverId, chatMessages.length).then((data) => {
-          props.updateMessageList(data, receiverId);
-          let {current} = endOfMsgList;
-          if (current) {
-            current.scrollIntoView({behavior: 'smooth'});
+        getMessageList(receiverId, 0).then((data) => {
+          updateMessageList(data, receiverId);
+          return data.messages.length;
+        }).then(length => {
+          if (length + chatMessages.length < 20) {
+            getMessageList(receiverId, chatMessages.length + length).then((data) => {
+              updateMessageList(data, receiverId);
+              scrollToBottom();
+            });
+          } else {
+            scrollToBottom();
           }
         });
       }
+      clearUnreadMessage(receiverId);
     },
     // eslint-disable-next-line
     [receiverId]
@@ -57,10 +92,10 @@ let MessageListInternal = props => {
     () => {
       let {current} = endOfMsgList;
       if (current) {
-        current.scrollIntoView({behavior: 'smooth'});
+        current.scrollIntoView();
       }
     },
-    [scrollFlag, currentConversationId]
+    [scrollFlag, currentFriendId]
   );
 
   // Load more message
@@ -70,7 +105,7 @@ let MessageListInternal = props => {
     if (offset === 0) {
       getMessageList(receiverId, chatMessages.length).then((data) => {
         let oldHeight = msgList.scrollHeight;
-        props.updateMessageList(data, receiverId);
+        updateMessageList(data, receiverId);
         let newHeight = msgList.scrollHeight;
         msgList.scrollTo(0, newHeight - oldHeight);
       });
@@ -99,24 +134,13 @@ let MessageListInternal = props => {
     }
   };
 
-  let toggleSideBar = useOpenSideBar();
-
   let openTransferModal = () => {
     setMoneyTransferActive(true);
   };
 
   return (
-    <div className="message-list">
-      <Toolbar
-        title={receiver.name}
-        className="chat-title-bar"
-        rightItems={[
-          <ToolbarButton key="info" icon={<MoreOutlined/>} type="top-bar-btn"/>
-        ]}
-        leftItems={[
-          <ToolbarButton key="info" icon={<ArrowLeftOutlined/>} onClick={toggleSideBar} type={"top-bar-btn"}/>
-        ]}
-      />
+    <div className="message-list" onFocus={clearChatNotifications}>
+      <TitleBar title={receiver.name}/>
 
       <div className="message-list-container" ref={msgList} onScroll={msgScrollHandle}>
         {renderMessageNew(messages)}
@@ -130,7 +154,7 @@ let MessageListInternal = props => {
             icon={<DollarCircleOutlined/>}
             onClick={openTransferModal}
             type="compose-btn"
-            style={{color: 'red'}}
+            style={{color: '#d49311'}}
           />,
           <ToolbarButton
             key="send" icon={<SendOutlined/>}
@@ -150,52 +174,21 @@ let MessageListInternal = props => {
       />
     </div>
   );
-};
+}
 
-let MessageList = props => {
-  // Check valid status of props
-  if (!props.isValid()) {
-    return null;
-  }
-
+export default function MessageList(props) {
   // Get receiver
   let receiverId = Number(props.match.params.receiverId);
 
-  // Render internal component
-  return <MessageListInternal {...props} receiverId={receiverId}/>
-};
+  // Check receiver
+  let chatMessages = useSelector(state => state.chat.messages[receiverId]);
+  let receiver = useSelector(state => state.friends.friends[receiverId]);
 
-// Map from redux to props
-let stateToProps = (state, ownProp) => {
-  let receiverId = Number(ownProp.match.params.receiverId);
-
-  try {
-    return {
-      chatMessages: state.chat.chatMessagesHolder.chatMessages.get(receiverId),
-      receiver: state.users.userMapHolder.userMap.get(receiverId),
-      webSocket: state.webSocket.webSocket,
-      scrollFlag: state.chat.scrollFlag,
-      currentConversationId: state.users.currentConversationId,
-      isValid: function () {
-        return this.chatMessages != null && this.receiver != null;
-      }
-    };
-  } catch (e) {
-    return {
-      showFlag: false
-    }
+  // If chat message and recevier not exist in redux
+  if (!chatMessages || !receiver) {
+    return null;
   }
-};
 
-let dispatchToProps = (dispatch) => {
-  return {
-    updateMessageList: (data, friendId) => {
-      dispatch(getMessageFromAPI(data, friendId));
-    },
-    updateConversationId: (id) => {
-      dispatch(updateActiveConservationId(id));
-    }
-  };
+  // Render internal component
+  return <MessageListInternal receiverId={receiverId}/>
 };
-
-export default connect(stateToProps, dispatchToProps)(MessageList);

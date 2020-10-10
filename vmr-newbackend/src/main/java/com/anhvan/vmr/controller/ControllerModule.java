@@ -5,7 +5,7 @@ import com.anhvan.vmr.cache.TokenCacheService;
 import com.anhvan.vmr.cache.UserCacheService;
 import com.anhvan.vmr.database.ChatDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
-import com.anhvan.vmr.util.JwtUtil;
+import com.anhvan.vmr.service.JwtService;
 import com.anhvan.vmr.websocket.WebSocketService;
 import dagger.Module;
 import dagger.Provides;
@@ -30,12 +30,12 @@ public class ControllerModule {
   @IntoMap
   @StringKey("/api/public/login")
   public Controller provideLoginController(
-      UserDatabaseService userDBService, UserCacheService userCacheService, JwtUtil jwtUtil) {
+      UserDatabaseService userDBService, UserCacheService userCacheService, JwtService jwtService) {
     log.info("Register login controller");
     return LoginController.builder()
         .userDBService(userDBService)
         .userCacheService(userCacheService)
-        .jwtUtil(jwtUtil)
+        .jwtService(jwtService)
         .build();
   }
 
@@ -44,13 +44,13 @@ public class ControllerModule {
   @StringKey("/api/public/register")
   public Controller provideRegisterController(
       UserDatabaseService userDBService,
-      JwtUtil jwtUtil,
+      JwtService jwtService,
       UserCacheService userCacheService,
       WebSocketService webSocketService) {
     log.info("Register registration controller");
     return RegisterController.builder()
         .userCacheService(userCacheService)
-        .jwtUtil(jwtUtil)
+        .jwtService(jwtService)
         .userDBService(userDBService)
         .webSocketService(webSocketService)
         .build();
@@ -82,9 +82,9 @@ public class ControllerModule {
   @Provides
   @IntoMap
   @StringKey("/api/protected/sockettoken")
-  public Controller provideSocketTokenController(JwtUtil jwtUtil) {
+  public Controller provideSocketTokenController(JwtService jwtService) {
     log.info("Register socket token controller");
-    return SocketTokenController.builder().jwtUtil(jwtUtil).build();
+    return SocketTokenController.builder().jwtService(jwtService).build();
   }
 
   @Provides

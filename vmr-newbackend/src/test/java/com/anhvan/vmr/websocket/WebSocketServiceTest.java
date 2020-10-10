@@ -1,7 +1,7 @@
 package com.anhvan.vmr.websocket;
 
 import com.anhvan.vmr.entity.WebSocketMessage;
-import com.anhvan.vmr.util.JwtUtil;
+import com.anhvan.vmr.service.JwtService;
 import io.vertx.core.Future;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.impl.NoStackTraceThrowable;
@@ -23,22 +23,22 @@ import java.util.concurrent.ConcurrentHashMap;
 @ExtendWith(VertxExtension.class)
 @Log4j2
 public class WebSocketServiceTest {
-  JwtUtil jwtUtil;
+  JwtService jwtService;
   WebSocketService webSocketService;
   Map<Long, Set<ServerWebSocket>> connections;
 
   @BeforeEach
   void setUp() {
-    jwtUtil = Mockito.mock(JwtUtil.class);
+    jwtService = Mockito.mock(JwtService.class);
     connections = Mockito.spy(new ConcurrentHashMap<>());
-    webSocketService = new WebSocketServiceImpl(jwtUtil, connections);
+    webSocketService = new WebSocketServiceImpl(jwtService, connections);
   }
 
   @Test
   void testAuthenticateSuccess(VertxTestContext testContext) {
     ServerWebSocket serverWebSocket = Mockito.mock(ServerWebSocket.class);
     Mockito.when(serverWebSocket.query()).thenReturn("token=123");
-    Mockito.when(jwtUtil.authenticate("123")).thenReturn(Future.succeededFuture(123L));
+    Mockito.when(jwtService.authenticate("123")).thenReturn(Future.succeededFuture(123L));
     webSocketService
         .authenticate(serverWebSocket)
         .onSuccess(
@@ -52,7 +52,7 @@ public class WebSocketServiceTest {
   void testAuthenticateFails(VertxTestContext testContext) {
     ServerWebSocket serverWebSocket = Mockito.mock(ServerWebSocket.class);
     Mockito.when(serverWebSocket.query()).thenReturn("token=123");
-    Mockito.when(jwtUtil.authenticate("123")).thenReturn(Future.failedFuture("Token not valid"));
+    Mockito.when(jwtService.authenticate("123")).thenReturn(Future.failedFuture("Token not valid"));
     webSocketService
         .authenticate(serverWebSocket)
         .onFailure(

@@ -1,7 +1,7 @@
 package com.anhvan.vmr.websocket;
 
 import com.anhvan.vmr.entity.WebSocketMessage;
-import com.anhvan.vmr.util.JwtUtil;
+import com.anhvan.vmr.service.JwtService;
 import io.vertx.core.Future;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.impl.ConcurrentHashSet;
@@ -15,23 +15,23 @@ import java.util.concurrent.ConcurrentHashMap;
 @Log4j2
 public class WebSocketServiceImpl implements WebSocketService {
   private volatile Map<Long, Set<ServerWebSocket>> connections;
-  private JwtUtil jwtUtil;
+  private JwtService jwtService;
 
-  public WebSocketServiceImpl(JwtUtil jwtUtil) {
+  public WebSocketServiceImpl(JwtService jwtService) {
     log.debug("Create concurent hash map instance");
     connections = new ConcurrentHashMap<>();
-    this.jwtUtil = jwtUtil;
+    this.jwtService = jwtService;
   }
 
-  public WebSocketServiceImpl(JwtUtil jwtUtil, Map<Long, Set<ServerWebSocket>> connections) {
-    this.jwtUtil = jwtUtil;
+  public WebSocketServiceImpl(JwtService jwtService, Map<Long, Set<ServerWebSocket>> connections) {
+    this.jwtService = jwtService;
     this.connections = connections;
   }
 
   @Override
   public Future<Long> authenticate(ServerWebSocket conn) {
     String token = conn.query().substring(6);
-    return jwtUtil.authenticate(token);
+    return jwtService.authenticate(token);
   }
 
   @Override
@@ -54,14 +54,18 @@ public class WebSocketServiceImpl implements WebSocketService {
         connections.remove(userId);
       }
     }
+    log.debug("Remove connection {}, connection set: {}", userId, connections);
   }
 
   @Override
   public void sendTo(long userId, WebSocketMessage msg) {
+    log.debug("Send to {}: {}", userId, msg);
     String msgString = Json.encode(msg);
     Set<ServerWebSocket> receiverConn = connections.get(userId);
-    for (ServerWebSocket conn : receiverConn) {
-      conn.writeTextMessage(msgString);
+    if (receiverConn != null) {
+      for (ServerWebSocket conn : receiverConn) {
+        conn.writeTextMessage(msgString);
+      }
     }
   }
 

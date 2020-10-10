@@ -1,4 +1,4 @@
-package com.anhvan.vmr.util;
+package com.anhvan.vmr.service;
 
 import com.anhvan.vmr.config.AuthConfig;
 import io.vertx.core.AsyncResult;
@@ -20,19 +20,19 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 @ExtendWith(VertxExtension.class)
-public class JwtUtilTest {
+public class JwtServiceTest {
   static JWTAuth jwtAuth;
-  static AsyncWorkerUtil workerUtil;
-  static JwtUtil jwtUtil;
+  static AsyncWorkerService workerUtil;
+  static JwtService jwtService;
   static AuthConfig config;
 
   @BeforeAll
   static void setUp(VertxTestContext testContext) {
     jwtAuth = Mockito.mock(JWTAuth.class);
-    workerUtil = Mockito.mock(AsyncWorkerUtil.class);
+    workerUtil = Mockito.mock(AsyncWorkerService.class);
     config = Mockito.mock(AuthConfig.class);
     Mockito.when(config.getToken()).thenReturn("12345");
-    jwtUtil = new JwtUtil(workerUtil, jwtAuth, config);
+    jwtService = new JwtService(workerUtil, jwtAuth, config);
 
     // Fake worker util object
     Mockito.doAnswer(
@@ -55,13 +55,13 @@ public class JwtUtilTest {
     RoutingContext routingContext = Mockito.mock(RoutingContext.class);
     Mockito.when(routingContext.request()).thenReturn(request);
 
-    Assertions.assertEquals("123", jwtUtil.getTokenFromHeader(routingContext));
+    Assertions.assertEquals("123", jwtService.getTokenFromHeader(routingContext));
   }
 
   @Test
   void testGenerateToken(VertxTestContext testContext) {
     Mockito.when(jwtAuth.generateToken(ArgumentMatchers.any())).thenReturn("Sample token");
-    Future<String> tokenFuture = jwtUtil.generate(1234);
+    Future<String> tokenFuture = jwtService.generate(1234);
     tokenFuture.onSuccess(
         token -> {
           Assertions.assertEquals("Sample token", token);
@@ -83,7 +83,7 @@ public class JwtUtilTest {
         .when(jwtAuth)
         .authenticate(ArgumentMatchers.any(), ArgumentMatchers.any());
 
-    jwtUtil
+    jwtService
         .authenticate("Sample token")
         .onComplete(
             integerAsyncResult -> {
@@ -107,7 +107,7 @@ public class JwtUtilTest {
         .when(jwtAuth)
         .authenticate(ArgumentMatchers.any(), ArgumentMatchers.any());
 
-    jwtUtil
+    jwtService
         .authenticate("Sample token")
         .onComplete(
             integerAsyncResult -> {

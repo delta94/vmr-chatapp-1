@@ -66,8 +66,6 @@ public class WebSocketHandler {
         .addChat(message)
         .onSuccess(
             id -> {
-              chatDatabaseService.updateLastMessageId(
-                  message.getSenderId(), message.getReceiverId(), id);
               chatCacheService.cacheMessage(message);
               webSocketService.sendTo(
                   userId, WebSocketMessage.builder().type("SEND_BACK").data(message).build());

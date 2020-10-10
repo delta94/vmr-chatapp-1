@@ -1,6 +1,6 @@
 package com.anhvan.vmr.grpc;
 
-import com.anhvan.vmr.util.JwtUtil;
+import com.anhvan.vmr.service.JwtService;
 import io.grpc.*;
 import io.grpc.Metadata.Key;
 import lombok.extern.log4j.Log4j2;
@@ -12,11 +12,12 @@ import javax.inject.Singleton;
 @Log4j2
 public class AuthInterceptor implements ServerInterceptor {
   public static final String TOKEN_HEADER_NAME = "x-jwt-token";
-  private JwtUtil jwtUtil;
+
+  private JwtService jwtService;
 
   @Inject
-  public AuthInterceptor(JwtUtil jwtUtil) {
-    this.jwtUtil = jwtUtil;
+  public AuthInterceptor(JwtService jwtService) {
+    this.jwtService = jwtService;
   }
 
   @Override
@@ -31,7 +32,7 @@ public class AuthInterceptor implements ServerInterceptor {
     }
 
     try {
-      long userId = jwtUtil.authenticateBlocking(token);
+      long userId = jwtService.authenticateBlocking(token);
       Context context = Context.current().withValue(GrpcKey.USER_ID_KEY, String.valueOf(userId));
       return Contexts.interceptCall(context, call, headers, next);
     } catch (Exception e) {

@@ -27,7 +27,10 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
           + "limit ?, 20";
 
   public static final String INSERT_MESSAGE_STMT =
-      "insert into messages (sender, receiver, message, send_time) values (?, ?, ?, ?)";
+      "insert into messages (sender, receiver, message, send_time, type) values (?, ?, ?, ?, ?)";
+
+  public static final String UPDATE_LAST_MESSAGE_STMT =
+      "update friends set last_message_id=? where " + "user_id=? and friend_id=?";
 
   private MySQLPool pool;
 
@@ -36,17 +39,45 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
     pool = databaseService.getPool();
   }
 
+  @Override
   public Future<Long> addChat(Message msg) {
-    log.debug("Add chat message {} to database", msg);
-
     Promise<Long> idPromise = Promise.promise();
+
+    long senderId = msg.getSenderId();
+    long receiverId = msg.getReceiverId();
+
+    internalAddChat(msg)
+        .compose(insertedId -> updateLastMessageId(senderId, receiverId, insertedId))
+        .compose(id -> increaseUnreadMessage(senderId, receiverId, id))
+        .onComplete(
+            ar -> {
+              if (ar.failed()) {
+                log.error("Add chat message failed: message={}", msg, ar.cause());
+                idPromise.fail(ar.cause());
+                return;
+              }
+
+              idPromise.complete(ar.result());
+            });
+
+    return idPromise.future();
+  }
+
+  private Future<Long> internalAddChat(Message msg) {
+    Promise<Long> idPromise = Promise.promise();
+
+    String type = msg.getType();
+    if (type == null) {
+      type = "CHAT";
+    }
 
     pool.preparedQuery(INSERT_MESSAGE_STMT)
         .execute(
-            Tuple.of(msg.getSenderId(), msg.getReceiverId(), msg.getMessage(), msg.getTimestamp()),
+            Tuple.of(
+                msg.getSenderId(), msg.getReceiverId(), msg.getMessage(), msg.getTimestamp(), type),
             rs -> {
               if (!rs.succeeded()) {
-                log.error("Error when add chat {}", msg.toString(), rs.cause());
+                log.error("Error when add chat {}", msg, rs.cause());
                 idPromise.fail(rs.cause());
                 return;
               }
@@ -56,25 +87,50 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
     return idPromise.future();
   }
 
-  @Override
-  public Future<Void> updateLastMessageId(long userId, long friendId, long messageId) {
-    Promise<Void> updatedPromise = Promise.promise();
+  private Future<Long> updateLastMessageId(long userId, long friendId, long messageId) {
+    Promise<Long> updatedPromise = Promise.promise();
 
-    pool.preparedQuery("update friends set last_message_id=? where user_id=? and friend_id=?")
+    pool.preparedQuery(UPDATE_LAST_MESSAGE_STMT)
         .executeBatch(
             Arrays.asList(
                 Tuple.of(messageId, userId, friendId), Tuple.of(messageId, friendId, userId)),
             ar -> {
               if (ar.succeeded()) {
-                updatedPromise.complete();
+                updatedPromise.complete(userId);
               } else {
                 log.error(
-                    "Error when update last message between user {}-{}, lastmsgid: {}",
+                    "Error when update last message: user1={}, user2={}, last message id ={}",
                     userId,
                     friendId,
                     messageId,
                     ar.cause());
+                updatedPromise.fail(ar.cause());
               }
+            });
+
+    return updatedPromise.future();
+  }
+
+  private Future<Long> increaseUnreadMessage(long senderId, long receiverId, long messageId) {
+    Promise<Long> updatedPromise = Promise.promise();
+
+    pool.preparedQuery(
+            "update friends set num_unread_message=num_unread_message+1 "
+                + "where user_id=? and friend_id=?")
+        .execute(
+            Tuple.of(receiverId, senderId),
+            ar -> {
+              if (ar.failed()) {
+                log.error(
+                    "Fail to update number of unread message userId: {}, friendId: {}",
+                    receiverId,
+                    senderId,
+                    ar.cause());
+                updatedPromise.fail(ar.cause());
+                return;
+              }
+
+              updatedPromise.complete(messageId);
             });
 
     return updatedPromise.future();

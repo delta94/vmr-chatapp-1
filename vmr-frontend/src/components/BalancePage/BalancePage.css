@@ -1,12 +1,13 @@
 .balance-page {
   position: fixed;
-  top: 0;
+  top: 65px;
   right: 0;
   left: 350px;
   bottom: 0;
   background-color: white;
   border-left: 1px solid #eeeef1 !important;
   padding: 10px;
+  overflow-y: auto;
 }
 
 @media screen and (max-width: 700px) {
@@ -26,7 +27,7 @@
 .balance-page .balance-container {
   width: 250px;
   height: 250px;
-  border: 2px solid #5f88b4;
+  border: 2px solid #8fbee9;
   color: #5f88b4;
   background-color: aliceblue;
   border-radius: 125px;
@@ -35,18 +36,18 @@
   justify-content: center;
   align-items: center;
   font-size: 20px;
-  margin-top: 60px;
 }
 
 .balance-page .balance-number {
   font-size: 25px;
   color: #ce353d;
+  font-weight: bold;
 }
 
 .balance-page .info-row {
   padding: 20px;
   background-color: #eef2f5;
-  font-size: 18px;
+  font-size: 15px;
   margin-left: 10px;
   margin-right: 10px;
   margin-bottom: 10px;
@@ -56,9 +57,10 @@
 
 .balance-page .info-row:hover {
   cursor: pointer;
-  background-color: #cfd1d3;
+  background-color: #dcedfa;
 }
 
 .balance-page .value {
   text-align: right;
+  font-weight: bold;
 }

@@ -2,7 +2,7 @@ package com.anhvan.vmr.server;
 
 import com.anhvan.vmr.cache.TokenCacheService;
 import com.anhvan.vmr.controller.ControllerFactory;
-import com.anhvan.vmr.util.JwtUtil;
+import com.anhvan.vmr.service.JwtService;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
@@ -26,7 +26,7 @@ public class RouterFactory {
   private Vertx vertx;
   private JWTAuth jwtAuth;
   private ControllerFactory controllerFactory;
-  private JwtUtil jwtUtil;
+  private JwtService jwtService;
   private TokenCacheService tokenCacheService;
 
   @Inject
@@ -34,12 +34,12 @@ public class RouterFactory {
       Vertx vertx,
       JWTAuth auth,
       ControllerFactory controllerFactory,
-      JwtUtil jwtUtil,
+      JwtService jwtService,
       TokenCacheService tokenCacheService) {
     this.vertx = vertx;
     this.jwtAuth = auth;
     this.controllerFactory = controllerFactory;
-    this.jwtUtil = jwtUtil;
+    this.jwtService = jwtService;
     this.tokenCacheService = tokenCacheService;
   }
 
@@ -59,7 +59,7 @@ public class RouterFactory {
         .handler(this::jwtBlackListHandler);
 
     // Register controller
-    controllerFactory.registerController(router);
+    controllerFactory.registerControllers(router);
 
     // Exception handling
     router.route().failureHandler(this::failueHandler);
@@ -77,7 +77,7 @@ public class RouterFactory {
 
   private void jwtBlackListHandler(RoutingContext routingContext) {
     // Get token
-    String jwtToken = jwtUtil.getTokenFromHeader(routingContext);
+    String jwtToken = jwtService.getTokenFromHeader(routingContext);
 
     // Check if token in blacklist
     Future<Boolean> existFuture = tokenCacheService.checkExistInBacklist(jwtToken);

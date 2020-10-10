@@ -2,10 +2,11 @@ package com.anhvan.vmr.database;
 
 import com.anhvan.vmr.entity.DatabaseTransferRequest;
 import com.anhvan.vmr.entity.DatabaseTransferResponse;
-import com.anhvan.vmr.entity.History;
+import com.anhvan.vmr.entity.HistoryItemResponse;
 import com.anhvan.vmr.exception.TransferException;
 import com.anhvan.vmr.exception.TransferException.ErrorCode;
-import com.anhvan.vmr.util.PasswordUtil;
+import com.anhvan.vmr.model.Message;
+import com.anhvan.vmr.service.PasswordService;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.mysqlclient.MySQLClient;
@@ -13,6 +14,7 @@ import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import java.time.Instant;
@@ -22,6 +24,7 @@ import java.util.List;
 
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Log4j2
 public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   public static final String HISTORY_QUERY =
@@ -51,12 +54,17 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   public static final String CREATE_ACCOUNT_LOG_QUERY =
       "insert into account_logs (user, transfer, balance, type) values (?,?,?,?)";
 
+  public static final String WRITE_CHAT_STMT =
+      "insert into messages (sender, receiver, send_time, message, type, transfer_id) "
+          + "values (?,?,?,?,?,?)";
+
   private MySQLPool pool;
-  private PasswordUtil passwordUtil;
+  private PasswordService passwordService;
+  private ChatDatabaseService chatDatabaseService;
 
   @Override
-  public Future<List<History>> getHistory(long userId) {
-    Promise<List<History>> historyPromise = Promise.promise();
+  public Future<List<HistoryItemResponse>> getHistory(long userId) {
+    Promise<List<HistoryItemResponse>> historyPromise = Promise.promise();
 
     pool.preparedQuery(HISTORY_QUERY)
         .execute(
@@ -64,9 +72,9 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
             ar -> {
               if (ar.succeeded()) {
                 RowSet<Row> rowSet = ar.result();
-                List<History> historyList = new ArrayList<>();
+                List<HistoryItemResponse> historyList = new ArrayList<>();
                 for (Row row : rowSet) {
-                  historyList.add(History.fromRow(row));
+                  historyList.add(HistoryItemResponse.fromRow(row));
                 }
                 historyPromise.complete(historyList);
               } else {
@@ -103,6 +111,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
         .compose(this::updateAccountBalance)
         .compose(this::writeTransfer)
         .compose(this::writeAccountLog)
+        .compose(this::addChatMessage)
         .onComplete(
             ar -> {
               if (ar.succeeded()) {
@@ -140,7 +149,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   Future<TransferStateHolder> checkPassword(TransferStateHolder holder) {
     Promise<TransferStateHolder> passwordPromise = Promise.promise();
 
-    passwordUtil
+    passwordService
         .checkPassword(holder.getSenderId(), holder.getPassword())
         .onComplete(
             ar -> {
@@ -375,5 +384,34 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
             });
 
     return accountLogPromise.future();
+  }
+
+  Future<TransferStateHolder> addChatMessage(TransferStateHolder holder) {
+    Promise<TransferStateHolder> chatPromise = Promise.promise();
+
+    Message message =
+        Message.builder()
+            .senderId(holder.getSenderId())
+            .receiverId(holder.getReceiverId())
+            .message(holder.getAmount() + ";" + holder.getMessage())
+            .timestamp(holder.getLastUpdated())
+            .transferId(holder.getTransferId())
+            .type("TRANSFER")
+            .build();
+
+    chatDatabaseService
+        .addChat(message)
+        .onComplete(
+            ar -> {
+              if (ar.failed()) {
+                chatPromise.fail(ar.cause());
+                return;
+              }
+
+              holder.setLastMessageId(ar.result());
+              chatPromise.complete(holder);
+            });
+
+    return chatPromise.future();
   }
 }

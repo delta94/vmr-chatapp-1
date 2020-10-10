@@ -6,6 +6,8 @@ export function getMessageList(friendId, offset) {
     protectedGet(path).then(result => {
       let data = result.data.data;
       resolve(data);
+    }).catch(error => {
+      console.log(error);
     });
   });
 }

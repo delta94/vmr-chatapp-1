@@ -1,6 +1,6 @@
 package com.anhvan.vmr.websocket;
 
-import com.anhvan.vmr.util.JwtUtil;
+import com.anhvan.vmr.service.JwtService;
 import dagger.Module;
 import dagger.Provides;
 
@@ -10,7 +10,7 @@ import javax.inject.Singleton;
 public class WebSocketModule {
   @Provides
   @Singleton
-  public WebSocketService provideWebsocketService(JwtUtil jwtUtil) {
-    return new WebSocketServiceImpl(jwtUtil);
+  public WebSocketService provideWebsocketService(JwtService jwtService) {
+    return new WebSocketServiceImpl(jwtService);
   }
 }

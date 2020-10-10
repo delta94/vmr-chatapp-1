@@ -22,8 +22,4 @@ public class RedisCache {
       log.fatal("Error when create redisson instance", e);
     }
   }
-
-  public void shutdown() {
-    redissonClient.shutdown();
-  }
 }

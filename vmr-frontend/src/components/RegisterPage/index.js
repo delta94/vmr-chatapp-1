@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 import {Form, Input, Button, Row, Col, Card, Alert} from "antd";
 import {UserOutlined, LockOutlined, SmileOutlined, PlusCircleOutlined} from '@ant-design/icons';
+import {register} from "../../service/user";
+
 import bg from '../resource/registerbg.jpg';
 import "./Register.css";
-import {register} from "../../service/user";
 
 const {useHistory, Link} = require('react-router-dom');
 
@@ -53,17 +54,15 @@ function RegisterPage() {
     />;
   }
 
-  let checkValidatePassword = (rule, value, callback) => {
+  let checkValidatePassword = async (rule, value) => {
     if (!value) {
-      callback();
       return;
     }
+
     if (value.length < 8 && value.length > 0) {
-      callback('Password not valid');
+      throw new Error('Password not valid');
     } else if (value !== form.getFieldValue('password')) {
-      callback('Password not match');
-    } else {
-      callback();
+      throw new Error('Password not match');
     }
   };
 

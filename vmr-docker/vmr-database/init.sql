@@ -18,9 +18,9 @@ create table users
 create table friends
 (
     id                 bigint primary key auto_increment,
-    user_id            bigint                                                 not null,
-    friend_id          bigint                                                 not null,
-    status             enum ('ACCEPTED', 'WAITING', 'NOT_ANSWER', 'REJECTED') not null,
+    user_id            bigint                                                not null,
+    friend_id          bigint                                                not null,
+    status             enum ('ACCEPTED', 'WAITING', 'NOT_ANSWER', 'REMOVED') not null,
     last_message_id    bigint,
     num_unread_message int default 0,
     foreign key (user_id) references users (id),

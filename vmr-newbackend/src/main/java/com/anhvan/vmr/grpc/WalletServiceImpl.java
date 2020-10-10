@@ -1,15 +1,20 @@
 package com.anhvan.vmr.grpc;
 
+import com.anhvan.vmr.cache.ChatCacheService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.database.WalletDatabaseService;
 import com.anhvan.vmr.entity.DatabaseTransferRequest;
 import com.anhvan.vmr.entity.DatabaseTransferResponse;
-import com.anhvan.vmr.entity.History;
+import com.anhvan.vmr.entity.HistoryItemResponse;
+import com.anhvan.vmr.entity.WebSocketMessage;
 import com.anhvan.vmr.exception.TransferException;
+import com.anhvan.vmr.model.Message;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.proto.Common;
 import com.anhvan.vmr.proto.Wallet.*;
 import com.anhvan.vmr.proto.WalletServiceGrpc;
+import com.anhvan.vmr.util.GrpcUtil;
+import com.anhvan.vmr.websocket.WebSocketService;
 import io.grpc.stub.StreamObserver;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,11 +28,14 @@ import java.util.List;
 public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
   private UserDatabaseService userDbService;
   private WalletDatabaseService walletDatabaseService;
+  private WebSocketService webSocketService;
+  private ChatCacheService chatCacheService;
 
   @Override
   public void getBalance(Common.Empty request, StreamObserver<BalanceResponse> responseObserver) {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
 
+    // Create response builder
     BalanceResponse.Builder responseBuilder = BalanceResponse.newBuilder();
 
     userDbService
@@ -41,6 +49,8 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
                     BalanceResponse.Data.newBuilder()
                         .setBalance(user.getBalance())
                         .setLastUpdated(user.getLastUpdated())
+                        .setName(user.getName())
+                        .setUserName(user.getUsername())
                         .build();
                 responseBuilder.setData(data);
               } else {
@@ -48,7 +58,7 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
                 Common.Error error =
                     Common.Error.newBuilder()
                         .setCode(Common.ErrorCode.INTERNAL_SERVER_ERROR)
-                        .setMessage("Cannot get " + "balance")
+                        .setMessage("Could not get balance")
                         .build();
                 responseBuilder.setError(error);
               }
@@ -68,10 +78,12 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
         .onComplete(
             ar -> {
               if (ar.succeeded()) {
-                List<History> historyList = ar.result();
-                for (History history : historyList) {
-                  historyResponseBuilder.addItem(history2HistoryResponseItem(history));
+                List<HistoryItemResponse> historyList = ar.result();
+                HistoryResponse.Data.Builder dataBuilder = HistoryResponse.Data.newBuilder();
+                for (HistoryItemResponse history : historyList) {
+                  dataBuilder.addItem(GrpcUtil.history2HistoryResponseItem(history));
                 }
+                historyResponseBuilder.setData(dataBuilder.build());
               } else {
                 Common.Error error =
                     Common.Error.newBuilder()
@@ -90,17 +102,33 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
   public void transfer(TransferRequest request, StreamObserver<TransferResponse> responseObserver) {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
 
+    // Extract info
+    long receiverId = request.getReceiver();
+    long amount = request.getAmount();
+
+    // Create response builder object
+    TransferResponse.Builder responseBuilder = TransferResponse.newBuilder();
+
+    // Check amount is valid
+    if (amount < 1000) {
+      Common.Error err =
+          Common.Error.newBuilder().setCode(Common.ErrorCode.AMOUNT_NOT_VALID).build();
+      responseBuilder.setError(err);
+      responseObserver.onNext(responseBuilder.build());
+      responseObserver.onCompleted();
+      return;
+    }
+
+    // Create database transfer request to update database
     DatabaseTransferRequest transferRequest =
         DatabaseTransferRequest.builder()
             .sender(userId)
-            .receiver(request.getReceiver())
-            .amount(request.getAmount())
+            .receiver(receiverId)
+            .amount(amount)
             .password(request.getPassword())
             .message(request.getMessage())
             .requestId(request.getRequestId())
             .build();
-
-    TransferResponse.Builder responseBuilder = TransferResponse.newBuilder();
 
     walletDatabaseService
         .transfer(transferRequest)
@@ -114,54 +142,58 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
                         .setBalance(dbResponse.getNewBalance())
                         .setLastUpdated(dbResponse.getLastUpdated())
                         .build());
+
+                // Response to user
+                responseObserver.onNext(responseBuilder.build());
+                responseObserver.onCompleted();
+
+                // Send message to websocket
+                Message message =
+                    Message.builder()
+                        .timestamp(dbResponse.getLastUpdated())
+                        .senderId(userId)
+                        .receiverId(receiverId)
+                        .message(amount + ";" + request.getMessage())
+                        .type("TRANSFER")
+                        .build();
+
+                // Cache the message
+                chatCacheService.cacheMessage(message);
+
+                // Send to receiver
+                webSocketService.sendTo(
+                    request.getReceiver(),
+                    WebSocketMessage.builder().type("CHAT").data(message).build());
+
+                // Sendback to sender
+                webSocketService.sendTo(
+                    userId, WebSocketMessage.builder().type("SEND_BACK").data(message).build());
               } else {
                 // Transfer failed
                 Throwable cause = ar.cause();
                 Common.Error.Builder errorResBuilder = Common.Error.newBuilder();
 
+                // Log the error
+                log.error(
+                    "Error when transfer: sender={}, recevier={}, amount={}",
+                    userId,
+                    receiverId,
+                    amount,
+                    cause);
+
+                // Get error and response to user
                 if (cause instanceof TransferException) {
                   TransferException transferException = (TransferException) cause;
-                  errorResBuilder.setCode(transferException2ErrorCode(transferException));
+                  errorResBuilder.setCode(GrpcUtil.transferException2ErrorCode(transferException));
                 } else {
                   errorResBuilder.setCode(Common.ErrorCode.INTERNAL_SERVER_ERROR);
                 }
                 responseBuilder.setError(errorResBuilder.build());
+
+                // Send the error
+                responseObserver.onNext(responseBuilder.build());
+                responseObserver.onCompleted();
               }
-
-              responseObserver.onNext(responseBuilder.build());
-              responseObserver.onCompleted();
             });
-  }
-
-  private Common.ErrorCode transferException2ErrorCode(TransferException exception) {
-    switch (exception.getErrorCode()) {
-      case BALANCE_NOT_ENOUGHT:
-        return Common.ErrorCode.BALANCE_NOT_ENOUGH;
-      case RECEIVER_INVALID:
-        return Common.ErrorCode.RECEIVER_NOT_EXIST;
-      case REQUEST_EXISTED:
-        return Common.ErrorCode.REQUEST_EXISTED;
-      case PASSWORD_INVALID:
-        return Common.ErrorCode.PASSWORD_INVALID;
-    }
-    return Common.ErrorCode.INTERNAL_SERVER_ERROR;
-  }
-
-  private HistoryResponse.Item history2HistoryResponseItem(History history) {
-    HistoryResponse.Type type = HistoryResponse.Type.TRANSFER;
-
-    if (history.getType() == History.Type.RECEIVE) {
-      type = HistoryResponse.Type.RECEIVE;
-    }
-
-    return HistoryResponse.Item.newBuilder()
-        .setId(history.getId())
-        .setSender(history.getSender())
-        .setReceiver(history.getReceiver())
-        .setAmount(history.getAmount())
-        .setBalance(history.getBalance())
-        .setMessage(history.getMessage())
-        .setType(type)
-        .build();
   }
 }

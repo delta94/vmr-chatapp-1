@@ -1,0 +1,18 @@
+.history-page {
+  position: fixed;
+  top: 65px;
+  right: 0;
+  left: 350px;
+  bottom: 0;
+  background-color: white;
+  border-left: 1px solid #eeeef1 !important;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+@media screen and (max-width: 700px) {
+  .history-page {
+    left: 0;
+    border-left: none;
+  }
+}
