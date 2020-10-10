@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class History {
+public class HistoryItemResponse {
   public enum Type {
     TRANSFER,
     RECEIVE
@@ -26,15 +26,15 @@ public class History {
   private String message;
   private Type type;
 
-  public static History fromRow(Row row) {
-    History history = RowMapperUtil.mapRow(row, History.class);
+  public static HistoryItemResponse fromRow(Row row) {
+    HistoryItemResponse history = RowMapperUtil.mapRow(row, HistoryItemResponse.class);
 
     // Set type
     String typeString = row.getString("type_string");
     if (typeString.equals("TRANSFER")) {
-      history.setType(History.Type.TRANSFER);
+      history.setType(HistoryItemResponse.Type.TRANSFER);
     } else if (typeString.equals("RECEIVE")) {
-      history.setType(History.Type.RECEIVE);
+      history.setType(HistoryItemResponse.Type.RECEIVE);
     }
 
     return history;

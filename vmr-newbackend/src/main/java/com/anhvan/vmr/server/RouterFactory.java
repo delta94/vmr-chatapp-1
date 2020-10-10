@@ -59,7 +59,7 @@ public class RouterFactory {
         .handler(this::jwtBlackListHandler);
 
     // Register controller
-    controllerFactory.registerController(router);
+    controllerFactory.registerControllers(router);
 
     // Exception handling
     router.route().failureHandler(this::failueHandler);

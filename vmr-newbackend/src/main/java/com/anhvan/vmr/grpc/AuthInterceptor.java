@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 @Log4j2
 public class AuthInterceptor implements ServerInterceptor {
   public static final String TOKEN_HEADER_NAME = "x-jwt-token";
+
   private JwtUtil jwtUtil;
 
   @Inject

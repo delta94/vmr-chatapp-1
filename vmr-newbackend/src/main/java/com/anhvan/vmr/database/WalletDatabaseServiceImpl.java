@@ -2,7 +2,7 @@ package com.anhvan.vmr.database;
 
 import com.anhvan.vmr.entity.DatabaseTransferRequest;
 import com.anhvan.vmr.entity.DatabaseTransferResponse;
-import com.anhvan.vmr.entity.History;
+import com.anhvan.vmr.entity.HistoryItemResponse;
 import com.anhvan.vmr.exception.TransferException;
 import com.anhvan.vmr.exception.TransferException.ErrorCode;
 import com.anhvan.vmr.model.Message;
@@ -63,8 +63,8 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   private ChatDatabaseService chatDatabaseService;
 
   @Override
-  public Future<List<History>> getHistory(long userId) {
-    Promise<List<History>> historyPromise = Promise.promise();
+  public Future<List<HistoryItemResponse>> getHistory(long userId) {
+    Promise<List<HistoryItemResponse>> historyPromise = Promise.promise();
 
     pool.preparedQuery(HISTORY_QUERY)
         .execute(
@@ -72,9 +72,9 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
             ar -> {
               if (ar.succeeded()) {
                 RowSet<Row> rowSet = ar.result();
-                List<History> historyList = new ArrayList<>();
+                List<HistoryItemResponse> historyList = new ArrayList<>();
                 for (Row row : rowSet) {
-                  historyList.add(History.fromRow(row));
+                  historyList.add(HistoryItemResponse.fromRow(row));
                 }
                 historyPromise.complete(historyList);
               } else {

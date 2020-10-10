@@ -1,7 +1,6 @@
 package com.anhvan.vmr.util;
 
 import com.anhvan.vmr.database.UserDatabaseService;
-import com.anhvan.vmr.model.User;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import jodd.crypt.BCrypt;

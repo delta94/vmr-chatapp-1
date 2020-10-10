@@ -155,7 +155,7 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
   }
 
   @Override
-  public Future<List<GrpcUserResponse>> queryListUserWithFriend(String query, long userId) {
+  public Future<List<GrpcUserResponse>> queryListUserWithFriendStatus(String query, long userId) {
     log.debug("Query user with full text search");
 
     Promise<List<GrpcUserResponse>> userListPromise = Promise.promise();

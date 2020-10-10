@@ -202,7 +202,7 @@ public class FriendServiceImpl extends FriendServiceImplBase {
     String queryString = request.getQueryString();
 
     Future<List<GrpcUserResponse>> userListFuture =
-        userDbService.queryListUserWithFriend(queryString, userId);
+        userDbService.queryListUserWithFriendStatus(queryString, userId);
 
     userListFuture.onSuccess(
         userList -> {

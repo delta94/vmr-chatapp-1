@@ -5,7 +5,7 @@ import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.database.WalletDatabaseService;
 import com.anhvan.vmr.entity.DatabaseTransferRequest;
 import com.anhvan.vmr.entity.DatabaseTransferResponse;
-import com.anhvan.vmr.entity.History;
+import com.anhvan.vmr.entity.HistoryItemResponse;
 import com.anhvan.vmr.entity.WebSocketMessage;
 import com.anhvan.vmr.exception.TransferException;
 import com.anhvan.vmr.model.Message;
@@ -77,9 +77,9 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
         .onComplete(
             ar -> {
               if (ar.succeeded()) {
-                List<History> historyList = ar.result();
+                List<HistoryItemResponse> historyList = ar.result();
                 log.debug("historyList: {}", historyList);
-                for (History history : historyList) {
+                for (HistoryItemResponse history : historyList) {
                   historyResponseBuilder.addItem(history2HistoryResponseItem(history));
                 }
               } else {
@@ -197,10 +197,10 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
   }
 
   // Convert history model object into grpc history response
-  private HistoryResponse.Item history2HistoryResponseItem(History history) {
+  private HistoryResponse.Item history2HistoryResponseItem(HistoryItemResponse history) {
     HistoryResponse.Type type = HistoryResponse.Type.TRANSFER;
 
-    if (history.getType() == History.Type.RECEIVE) {
+    if (history.getType() == HistoryItemResponse.Type.RECEIVE) {
       type = HistoryResponse.Type.RECEIVE;
     }
 

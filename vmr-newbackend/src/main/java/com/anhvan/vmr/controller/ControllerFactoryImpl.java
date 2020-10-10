@@ -17,7 +17,7 @@ public class ControllerFactoryImpl implements ControllerFactory {
   }
 
   @Override
-  public void registerController(Router router) {
+  public void registerControllers(Router router) {
     for (Map.Entry<String, Controller> controllerEntry : controllerMap.entrySet()) {
       router.mountSubRouter(controllerEntry.getKey(), controllerEntry.getValue().getRouter(vertx));
     }
