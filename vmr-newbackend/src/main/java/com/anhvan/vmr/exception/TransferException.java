@@ -1,10 +1,8 @@
 package com.anhvan.vmr.exception;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 public class TransferException extends RuntimeException {
   public enum ErrorCode {
     RECEIVER_INVALID,
@@ -13,7 +11,7 @@ public class TransferException extends RuntimeException {
     PASSWORD_INVALID
   }
 
-  private ErrorCode errorCode;
+  private final ErrorCode errorCode;
 
   public TransferException(String message, ErrorCode errorCode) {
     super(message);

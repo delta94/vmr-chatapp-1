@@ -1,6 +1,7 @@
 package com.anhvan.vmr.database;
 
 import com.anhvan.vmr.entity.GrpcUserResponse;
+import com.anhvan.vmr.exception.AddFriendException;
 import com.anhvan.vmr.util.RowMapperUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -40,8 +41,12 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
 
   public static final String CLEAR_UNREAD_MESSAGE_STMT =
       "update friends set num_unread_message=0 where user_id=? and friend_id=?";
+
   public static final String REJECT_FRIEND_STMT =
       "delete from friends where (user_id=? and friend_id=?)";
+
+  public static final String UPDATE_FRIEND_STMT =
+      "update friends set status=? where user_id=? and friend_id=?";
 
   private MySQLPool pool;
   private DatabaseService dbService;
@@ -66,12 +71,72 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
     transactionManager
         .begin()
         .compose(
+            // Check current friend status
             manager -> {
               Promise<TransactionManager> promise = Promise.promise();
 
               manager
                   .getTransaction()
-                  .preparedQuery(ADD_FRIEND_STMT)
+                  .preparedQuery("select status from friends where user_id=? and friend_id=?")
+                  .execute(
+                      Tuple.of(userId, friendId),
+                      ar -> {
+                        // Fail to execute query
+                        if (ar.failed()) {
+                          promise.fail(ar.cause());
+                          return;
+                        }
+
+                        // Not add friend yet
+                        if (ar.result().size() == 0) {
+                          manager.set("STATUS", "NOTHING");
+                          promise.complete(manager);
+                          return;
+                        }
+
+                        // Aldready exist in table
+                        Row result = RowMapperUtil.firstRow(ar.result());
+                        if (result != null) {
+                          String status = result.getString("status");
+                          switch (status) {
+                            case "ACCEPTED":
+                              promise.fail(
+                                  new AddFriendException(
+                                      "Aldready added", AddFriendException.ErrorCode.ACCEPTED));
+                              break;
+                            case "WAITING":
+                              promise.fail(
+                                  new AddFriendException(
+                                      "Waiting", AddFriendException.ErrorCode.WAITING));
+                              break;
+                            case "NOT_ANSWER":
+                              promise.fail(
+                                  new AddFriendException(
+                                      "Wait for accepted",
+                                      AddFriendException.ErrorCode.NOT_ANSWER));
+                              break;
+                            default:
+                              manager.set("STATUS", "REMOVED");
+                              promise.complete(manager);
+                              break;
+                          }
+                        }
+                      });
+
+              return promise.future();
+            })
+        .compose(
+            manager -> {
+              Promise<TransactionManager> promise = Promise.promise();
+
+              String stmt = ADD_FRIEND_STMT;
+              if (manager.get("STATUS").equals("REMOVED")) {
+                stmt = UPDATE_FRIEND_STMT;
+              }
+
+              manager
+                  .getTransaction()
+                  .preparedQuery(stmt)
                   .executeBatch(
                       tuples,
                       ar -> {
