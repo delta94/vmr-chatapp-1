@@ -1,9 +1,6 @@
 import {getGrpcTokenMetadata, getJwtToken} from "../util/auth-util";
 
 const {
-  AddFriendRequest,
-  AcceptFriendRequest,
-  RejectFriendRequest,
   UserListRequest,
   ClearUnreadMessageRequest,
   SetFriendStatusRequest
@@ -27,28 +24,6 @@ export function queryUser(queryString) {
         console.log(err);
       } else {
         resolve(res.getUserList());
-      }
-    });
-  });
-}
-
-
-export function addFriend(friendId) {
-  return new Promise((resolve, reject) => {
-    let addFriendRequest = new AddFriendRequest();
-    addFriendRequest.setUserId(friendId);
-    friendServiceClient.addFriend(addFriendRequest, {'x-jwt-token': getJwtToken()}, (err, res) => {
-      if (err) {
-        console.log('Connection error');
-        reject(err);
-      } else {
-        let error = res.getError();
-        if (error) {
-          console.log(error);
-          reject(error);
-        } else {
-          resolve('Add friend successfully');
-        }
       }
     });
   });
@@ -94,48 +69,6 @@ export function getChatFriendList() {
   });
 }
 
-export function acceptFriend(friendId) {
-  return new Promise((resolve, reject) => {
-    let acceptRequest = new AcceptFriendRequest();
-    acceptRequest.setFriendId(friendId);
-    friendServiceClient.acceptFriend(acceptRequest, getGrpcTokenMetadata(), (err, res) => {
-      if (err) {
-        console.log('Connection error');
-        reject(err);
-      } else {
-        let error = res.getError();
-        if (error) {
-          console.log(error);
-          reject(error);
-        } else {
-          resolve(res);
-        }
-      }
-    });
-  });
-}
-
-export function rejectFriend(friendId) {
-  return new Promise((resolve, reject) => {
-    let rejectRequest = new RejectFriendRequest();
-    rejectRequest.setFriendId(friendId);
-    friendServiceClient.rejectFriend(rejectRequest, getGrpcTokenMetadata(), (err, res) => {
-      if (err) {
-        console.log('Connection error');
-        reject(err);
-      } else {
-        let error = res.getError();
-        if (error) {
-          console.log(error);
-          reject(error);
-        } else {
-          resolve(res);
-        }
-      }
-    });
-  });
-}
-
 export function clearUnreadMessage(friendId) {
   let request = new ClearUnreadMessageRequest();
   request.setFriendId(friendId);
@@ -159,6 +92,12 @@ export function setFriendStatus(friendId, action) {
 
     if (action === 'REMOVE') {
       request.setType(SetFriendStatusRequest.Type.REMOVE_FRIEND);
+    } else if (action === 'ADD') {
+      request.setType(SetFriendStatusRequest.Type.ADD_FRIEND);
+    } else if (action === 'ACCEPT') {
+      request.setType(SetFriendStatusRequest.Type.ACCEPT_FRIEND);
+    } else if (action === 'REJECT') {
+      request.setType(SetFriendStatusRequest.Type.REJECT_FRIEND);
     }
 
     friendServiceClient.setFriendStatus(request, getGrpcTokenMetadata(), (err, res) => {

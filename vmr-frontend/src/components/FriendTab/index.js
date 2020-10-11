@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {acceptFriend, getFriendList, rejectFriend, setFriendStatus} from "../../service/friend";
+import {getFriendList, setFriendStatus} from "../../service/friend";
 import ConversationSearch from "../FriendSearch";
 import {Avatar, Button, List, Menu, Dropdown} from "antd";
 import {CloseOutlined} from "@ant-design/icons";
@@ -10,6 +10,7 @@ import {friendReload, setSideBarActive} from "../../redux/vmr-action";
 
 import "./friend-tab.css";
 import {Link} from "react-router-dom";
+import AddFriendModal from "../AddFriendModal";
 
 const {useHistory} = require("react-router-dom");
 const {FriendStatus} = require('../../proto/vmr/friend_pb');
@@ -36,6 +37,8 @@ export default function FriendTab() {
         renderItem={item => <FriendListItem item={item}/>}
       >
       </List>
+
+      <AddFriendModal/>
     </div>
   );
 }
@@ -51,7 +54,7 @@ function FriendListItem(props) {
 
   let acceptFriendBtnHandle = (e) => {
     e.preventDefault();
-    acceptFriend(item.getId()).then(res => {
+    setFriendStatus(item.getId(), 'ACCEPT').then(res => {
       console.log(res);
       dispatch(friendReload());
     }).catch(err => {
@@ -61,7 +64,7 @@ function FriendListItem(props) {
 
   let rejectFriendHandle = (e) => {
     e.preventDefault();
-    rejectFriend(item.getId()).then(res => {
+    setFriendStatus(item.getId(), 'REJECT').then(res => {
       console.log(res);
       dispatch(friendReload());
     }).catch(err => {

@@ -43,7 +43,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
       "update friends set num_unread_message=0 where user_id=? and friend_id=?";
 
   public static final String REJECT_FRIEND_STMT =
-      "delete from friends where (user_id=? and friend_id=?)";
+      "update friends set status='REMOVED' where (user_id=? and friend_id=?)";
 
   public static final String UPDATE_FRIEND_STMT =
       "update friends set status=? where user_id=? and friend_id=?";

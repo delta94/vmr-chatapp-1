@@ -8,23 +8,11 @@ import "vmr/common.proto";
 
 // Friend services
 service FriendService {
-  rpc AddFriend(AddFriendRequest) returns (AddFriendResponse);
   rpc GetFriendList(Empty) returns (FriendListResponse);
-  rpc AcceptFriend(AcceptFriendRequest) returns (AcceptFriendResponse);
-  rpc RejectFriend(RejectFriendRequest) returns (RejectFriendResponse);
   rpc GetChatFriendList(Empty) returns (FriendListResponse);
   rpc QueryUser(UserListRequest) returns (UserListResponse);
   rpc ClearUnreadMessage(ClearUnreadMessageRequest) returns (ClearUnreadMessageResponse);
   rpc SetFriendStatus(SetFriendStatusRequest) returns (SetFriendStatusResponse);
-}
-
-// Add friends
-message AddFriendRequest {
-  int64 user_id = 1;
-}
-
-message AddFriendResponse {
-  Error error = 1;
 }
 
 // Get friend list
@@ -69,24 +57,6 @@ enum FriendStatus {
   NOT_ANSWER = 2;
   NOTHING = 3;
   REMOVED = 4;
-}
-
-// Accept friend
-message AcceptFriendRequest {
-  int64 friend_id = 1;
-}
-
-message AcceptFriendResponse {
-  Error error = 1;
-}
-
-// Reject friend
-message RejectFriendRequest {
-  int64 friend_id = 1;
-}
-
-message RejectFriendResponse {
-  Error error = 1;
 }
 
 // Clear un read message

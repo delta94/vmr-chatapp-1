@@ -32,6 +32,10 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
   public static final String UPDATE_LAST_MESSAGE_STMT =
       "update friends set last_message_id=? where " + "user_id=? and friend_id=?";
 
+  public static final String INCREASE_UNREAD_MSG_STMT =
+      "update friends set num_unread_message=num_unread_message+1 "
+          + "where user_id=? and friend_id=?";
+
   private MySQLPool pool;
 
   @Inject
@@ -52,7 +56,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
         .onComplete(
             ar -> {
               if (ar.failed()) {
-                log.error("Add chat message failed: message={}", msg, ar.cause());
+                log.error("Error when add chat, message={}", msg, ar.cause());
                 idPromise.fail(ar.cause());
                 return;
               }
@@ -77,7 +81,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
                 msg.getSenderId(), msg.getReceiverId(), msg.getMessage(), msg.getTimestamp(), type),
             rs -> {
               if (!rs.succeeded()) {
-                log.error("Error when add chat {}", msg, rs.cause());
+                log.error("Error when add chat message={}", msg, rs.cause());
                 idPromise.fail(rs.cause());
                 return;
               }
@@ -114,15 +118,13 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
   private Future<Long> increaseUnreadMessage(long senderId, long receiverId, long messageId) {
     Promise<Long> updatedPromise = Promise.promise();
 
-    pool.preparedQuery(
-            "update friends set num_unread_message=num_unread_message+1 "
-                + "where user_id=? and friend_id=?")
+    pool.preparedQuery(INCREASE_UNREAD_MSG_STMT)
         .execute(
             Tuple.of(receiverId, senderId),
             ar -> {
               if (ar.failed()) {
                 log.error(
-                    "Fail to update number of unread message userId: {}, friendId: {}",
+                    "Error when update number of unread message userId={}, friendId={}",
                     receiverId,
                     senderId,
                     ar.cause());
@@ -137,11 +139,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
   }
 
   public Future<List<Message>> getChatMessages(int user1, int user2, int offset) {
-    log.debug(
-        "Get chat message between user {} and {} from database with offset {}",
-        user1,
-        user2,
-        offset);
+    log.debug("Get chat message: user1={}, user2={}, offset={}", user1, user2, offset);
 
     Promise<List<Message>> listMsgPromise = Promise.promise();
 
@@ -158,7 +156,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
                 }
               } else {
                 log.error(
-                    "Get chat message between user {} and {} from database with offset {}",
+                    "Error when get chat message: user1={}, user2={}, offset={}",
                     user1,
                     user2,
                     offset,
