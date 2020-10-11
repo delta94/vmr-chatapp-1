@@ -25,7 +25,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
       "select users.id, users.username, users.name, friends.status "
           + "from users "
           + "inner join friends on users.id = friends.friend_id "
-          + "where friends.user_id = ?";
+          + "where friends.user_id = ? and friends.status != 'REMOVED'";
 
   private static final String GET_FRIENDS_WITH_MESSAGE_STMT =
       "select users.id, users.username, users.name, messages.message as last_message, "
@@ -48,6 +48,9 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   public static final String UPDATE_FRIEND_STMT =
       "update friends set status=? where user_id=? and friend_id=?";
 
+  public static final String REMOVE_FRIEND_STMT =
+      "update friends set status='REMOVED' where user_id=? and friend_id=?";
+
   private MySQLPool pool;
   private DatabaseService dbService;
 
@@ -60,11 +63,6 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   @Override
   public Future<Void> addFriend(long userId, long friendId) {
     Promise<Void> addFriendPromise = Promise.promise();
-
-    // Prepared tuples
-    List<Tuple> tuples =
-        Arrays.asList(
-            Tuple.of(userId, friendId, "WAITING"), Tuple.of(friendId, userId, "NOT_ANSWER"));
 
     TransactionManager transactionManager = dbService.getTransactionManager();
 
@@ -130,8 +128,18 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
               Promise<TransactionManager> promise = Promise.promise();
 
               String stmt = ADD_FRIEND_STMT;
+              // Prepared tuples
+              List<Tuple> tuples =
+                  Arrays.asList(
+                      Tuple.of(userId, friendId, "WAITING"),
+                      Tuple.of(friendId, userId, "NOT_ANSWER"));
+
               if (manager.get("STATUS").equals("REMOVED")) {
                 stmt = UPDATE_FRIEND_STMT;
+                tuples =
+                    Arrays.asList(
+                        Tuple.of("WAITING", userId, friendId),
+                        Tuple.of("NOT_ANSWER", friendId, userId));
               }
 
               manager
@@ -297,6 +305,54 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
             });
 
     return friendListPromise.future();
+  }
+
+  @Override
+  public Future<Void> removeFriend(long userId, long friendId) {
+    Promise<Void> removeFriendPromise = Promise.promise();
+
+    List<Tuple> tuples = Arrays.asList(Tuple.of(userId, friendId), Tuple.of(friendId, userId));
+
+    TransactionManager txManager = dbService.getTransactionManager();
+    txManager
+        .begin()
+        .compose(
+            manager -> {
+              Promise<TransactionManager> promise = Promise.promise();
+
+              manager
+                  .getTransaction()
+                  .preparedQuery(REMOVE_FRIEND_STMT)
+                  .executeBatch(
+                      tuples,
+                      ar -> {
+                        if (ar.failed()) {
+                          promise.fail(ar.cause());
+                          return;
+                        }
+
+                        promise.complete(manager);
+                      });
+
+              return promise.future();
+            })
+        .compose(TransactionManager::commit)
+        .onComplete(
+            ar -> {
+              if (ar.succeeded()) {
+                log.debug("Remove friend successfully: userId={}, friendId={}", userId, friendId);
+                removeFriendPromise.complete();
+              } else {
+                log.error(
+                    "Error when remove friend: userId={}, friendId={}",
+                    userId,
+                    friendId,
+                    ar.cause());
+                removeFriendPromise.fail(ar.cause());
+              }
+            });
+
+    return removeFriendPromise.future();
   }
 
   @Override

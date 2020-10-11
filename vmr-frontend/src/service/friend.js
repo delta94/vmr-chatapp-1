@@ -5,7 +5,8 @@ const {
   AcceptFriendRequest,
   RejectFriendRequest,
   UserListRequest,
-  ClearUnreadMessageRequest
+  ClearUnreadMessageRequest,
+  SetFriendStatusRequest
 } = require('../proto/vmr/friend_pb');
 const {Empty} = require('../proto/vmr/common_pb');
 const {FriendServiceClient} = require('../proto/vmr/friend_grpc_web_pb');
@@ -138,6 +139,7 @@ export function rejectFriend(friendId) {
 export function clearUnreadMessage(friendId) {
   let request = new ClearUnreadMessageRequest();
   request.setFriendId(friendId);
+
   friendServiceClient.clearUnreadMessage(request, getGrpcTokenMetadata(), (err, res) => {
     if (err) {
       console.log('Connection error');
@@ -147,5 +149,31 @@ export function clearUnreadMessage(friendId) {
         console.log(error);
       }
     }
+  });
+}
+
+export function setFriendStatus(friendId, action) {
+  return new Promise((resolve, reject) => {
+    let request = new SetFriendStatusRequest();
+    request.setFriendId(friendId);
+
+    if (action === 'REMOVE') {
+      request.setType(SetFriendStatusRequest.Type.REMOVE_FRIEND);
+    }
+
+    friendServiceClient.setFriendStatus(request, getGrpcTokenMetadata(), (err, res) => {
+      if (err) {
+        console.log('Connection error');
+        reject(err);
+      } else {
+        let error = res.getError();
+        if (error) {
+          console.log(error);
+          reject(error);
+        } else {
+          resolve(res);
+        }
+      }
+    });
   });
 }

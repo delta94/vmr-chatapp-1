@@ -632,4 +632,84 @@ proto.vmr.FriendServicePromiseClient.prototype.clearUnreadMessage =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.vmr.SetFriendStatusRequest,
+ *   !proto.vmr.SetFriendStatusResponse>}
+ */
+const methodDescriptor_FriendService_SetFriendStatus = new grpc.web.MethodDescriptor(
+  '/vmr.FriendService/SetFriendStatus',
+  grpc.web.MethodType.UNARY,
+  proto.vmr.SetFriendStatusRequest,
+  proto.vmr.SetFriendStatusResponse,
+  /**
+   * @param {!proto.vmr.SetFriendStatusRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.SetFriendStatusResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.vmr.SetFriendStatusRequest,
+ *   !proto.vmr.SetFriendStatusResponse>}
+ */
+const methodInfo_FriendService_SetFriendStatus = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.vmr.SetFriendStatusResponse,
+  /**
+   * @param {!proto.vmr.SetFriendStatusRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.SetFriendStatusResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.vmr.SetFriendStatusRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.vmr.SetFriendStatusResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.vmr.SetFriendStatusResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.vmr.FriendServiceClient.prototype.setFriendStatus =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/vmr.FriendService/SetFriendStatus',
+      request,
+      metadata || {},
+      methodDescriptor_FriendService_SetFriendStatus,
+      callback);
+};
+
+
+/**
+ * @param {!proto.vmr.SetFriendStatusRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.vmr.SetFriendStatusResponse>}
+ *     Promise that resolves to the response
+ */
+proto.vmr.FriendServicePromiseClient.prototype.setFriendStatus =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/vmr.FriendService/SetFriendStatus',
+      request,
+      metadata || {},
+      methodDescriptor_FriendService_SetFriendStatus);
+};
+
+
 module.exports = proto.vmr;

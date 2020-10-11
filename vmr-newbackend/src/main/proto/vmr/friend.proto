@@ -15,6 +15,7 @@ service FriendService {
   rpc GetChatFriendList(Empty) returns (FriendListResponse);
   rpc QueryUser(UserListRequest) returns (UserListResponse);
   rpc ClearUnreadMessage(ClearUnreadMessageRequest) returns (ClearUnreadMessageResponse);
+  rpc SetFriendStatus(SetFriendStatusRequest) returns (SetFriendStatusResponse);
 }
 
 // Add friends
@@ -67,6 +68,7 @@ enum FriendStatus {
   WAITING = 1;
   NOT_ANSWER = 2;
   NOTHING = 3;
+  REMOVED = 4;
 }
 
 // Accept friend
@@ -93,5 +95,22 @@ message ClearUnreadMessageRequest {
 }
 
 message ClearUnreadMessageResponse {
+  Error error = 1;
+}
+
+// Set friend status
+message SetFriendStatusRequest {
+  enum Type {
+    ADD_FRIEND = 0;
+    ACCEPT_FRIEND = 1;
+    REJECT_FRIEND = 2;
+    REMOVE_FRIEND = 3;
+  }
+
+  Type type = 1;
+  int64 friend_id = 2;
+}
+
+message SetFriendStatusResponse {
   Error error = 1;
 }

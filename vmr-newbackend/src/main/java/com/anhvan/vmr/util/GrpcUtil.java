@@ -17,6 +17,9 @@ public class GrpcUtil {
     if (status.equals("NOT_ANSWER")) {
       return Friend.FriendStatus.NOT_ANSWER;
     }
+    if (status.equals("REMOVED")) {
+      return Friend.FriendStatus.REMOVED;
+    }
     return Friend.FriendStatus.FRIEND;
   }
 

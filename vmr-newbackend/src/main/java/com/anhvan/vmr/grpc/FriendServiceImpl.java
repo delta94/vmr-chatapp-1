@@ -154,6 +154,51 @@ public class FriendServiceImpl extends FriendServiceImplBase {
   }
 
   @Override
+  public void setFriendStatus(
+      SetFriendStatusRequest request, StreamObserver<SetFriendStatusResponse> responseObserver) {
+    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+    long friendId = request.getFriendId();
+    SetFriendStatusRequest.Type type = request.getType();
+
+    Future<Void> setFriendStatusFuture = null;
+    if (type == SetFriendStatusRequest.Type.REMOVE_FRIEND) {
+      log.info("Hanlde remove friend request {}", request);
+      setFriendStatusFuture = friendDbService.removeFriend(userId, friendId);
+    }
+
+    SetFriendStatusResponse.Builder responseBuilder = SetFriendStatusResponse.newBuilder();
+
+    if (setFriendStatusFuture == null) {
+      responseObserver.onNext(
+          responseBuilder
+              .setError(Error.newBuilder().setCode(ErrorCode.INTERNAL_SERVER_ERROR).build())
+              .build());
+      responseObserver.onCompleted();
+      return;
+    }
+
+    setFriendStatusFuture.onComplete(
+        ar -> {
+          if (ar.succeeded()) {
+            responseObserver.onNext(responseBuilder.build());
+          } else {
+            log.error(
+                "Error when set friend status: user_id={}, friend_id={}",
+                userId,
+                friendId,
+                ar.cause());
+            Error error =
+                Error.newBuilder()
+                    .setCode(ErrorCode.INTERNAL_SERVER_ERROR)
+                    .setMessage("Error when set friend status")
+                    .build();
+            responseObserver.onNext(responseBuilder.setError(error).build());
+          }
+          responseObserver.onCompleted();
+        });
+  }
+
+  @Override
   public void getChatFriendList(
       Empty request, StreamObserver<FriendListResponse> responseObserver) {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());

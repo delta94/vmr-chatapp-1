@@ -16,5 +16,7 @@ public interface FriendDatabaseService {
 
   Future<Void> rejectFriend(long invitorId, long userId);
 
+  Future<Void> removeFriend(long userId, long friendId);
+
   Future<Void> clearUnreadMessage(long userId, long friendId);
 }
