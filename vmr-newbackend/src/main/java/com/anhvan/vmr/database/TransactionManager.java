@@ -49,22 +49,28 @@ public class TransactionManager {
   public Future<TransactionManager> commit() {
     Promise<TransactionManager> promise = Promise.promise();
 
-    transaction.commit(
-        ar -> {
-          if (ar.failed()) {
-            Throwable cause = ar.cause();
-            log.error("Error when commit transaction: ", cause);
-            promise.fail(cause);
-          } else {
-            promise.complete(this);
-          }
-        });
+    if (transaction != null) {
+      transaction.commit(
+          ar -> {
+            if (ar.failed()) {
+              Throwable cause = ar.cause();
+              log.error("Error when commit transaction: ", cause);
+              promise.fail(cause);
+            } else {
+              promise.complete(this);
+            }
+          });
+    } else {
+      promise.complete(this);
+    }
 
     return promise.future();
   }
 
   public void close() {
-    connection.close();
+    if (connection != null) {
+      connection.close();
+    }
   }
 
   public Transaction getTransaction() {
