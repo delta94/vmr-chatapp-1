@@ -16,7 +16,7 @@ export default function HistoryItem(props) {
   let className = 'history-item';
   let friend = useSelector(state => state.friends.friends[friendId]);
 
-  // eslint-disable-next-line 
+  // eslint-disable-next-line
   useEffect(() => {
     if (!friend) {
       getUserInfo(friendId).then(result => {
