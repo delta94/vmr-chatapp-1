@@ -3,7 +3,8 @@ import {getGrpcTokenMetadata, getJwtToken} from "../util/auth-util";
 const {
   UserListRequest,
   ClearUnreadMessageRequest,
-  SetFriendStatusRequest
+  SetFriendStatusRequest,
+  GetUserInfoRequest
 } = require('../proto/vmr/friend_pb');
 const {Empty} = require('../proto/vmr/common_pb');
 const {FriendServiceClient} = require('../proto/vmr/friend_grpc_web_pb');
@@ -112,6 +113,21 @@ export function setFriendStatus(friendId, action) {
         } else {
           resolve(res);
         }
+      }
+    });
+  });
+}
+
+export function getUserInfo(userId) {
+  return new Promise((resolve, reject) => {
+    let request = new GetUserInfoRequest();
+    request.setUserId(userId);
+    friendServiceClient.getUserInfo(request, getGrpcTokenMetadata(), (err, res) => {
+      if (err) {
+        console.log(err);
+        reject(err);
+      } else {
+        resolve(res.getUser());
       }
     });
   });

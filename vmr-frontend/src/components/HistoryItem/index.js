@@ -1,22 +1,31 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './HistoryItem.css';
 import {Col, Row} from 'antd';
 import UserAvatar from '../UserAvatar';
 import {moneyFormat, timestampSecond2String} from '../../util/string-util';
 import {useSelector} from 'react-redux';
+import {getUserInfo} from "../../service/friend";
 
 const {HistoryResponse} = require('../../proto/vmr/wallet_pb');
 
 export default function HistoryItem(props) {
   let {type, amount, timestamp, message, friendId} = props;
+  let [friendName, setFriendName] = useState('...');
   let msg = 'Chuyển tiền tới';
   let sign = '-';
   let className = 'history-item';
-  let friend = useSelector(state=>state.friends.friends[friendId]);
-  if (!friend) {
-    return null;
-  }
-  let friendName = friend.name;
+  let friend = useSelector(state => state.friends.friends[friendId]);
+
+  // eslint-disable-next-line 
+  useEffect(() => {
+    if (!friend) {
+      getUserInfo(friendId).then(result => {
+        setFriendName(result.getName());
+      });
+    } else {
+      setFriendName(friend.name);
+    }
+  });
 
   if (type === HistoryResponse.Type.RECEIVE) {
     msg = "Nhận tiền từ";

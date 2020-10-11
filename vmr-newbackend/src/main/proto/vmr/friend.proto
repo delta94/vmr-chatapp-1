@@ -13,12 +13,36 @@ service FriendService {
   rpc QueryUser(UserListRequest) returns (UserListResponse);
   rpc ClearUnreadMessage(ClearUnreadMessageRequest) returns (ClearUnreadMessageResponse);
   rpc SetFriendStatus(SetFriendStatusRequest) returns (SetFriendStatusResponse);
+  rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse);
+}
+
+// Get user info
+message GetUserInfoRequest {
+  int64 user_id = 1;
+}
+
+message GetUserInfoResponse {
+  Error error = 1;
+  UserResponse user = 2;
 }
 
 // Get friend list
 message FriendListResponse {
   Error error = 1;
   repeated FriendInfo friendInfo = 2;
+}
+
+message FriendInfo {
+  int64 id = 1;
+  string username = 2;
+  string name = 3;
+  bool online = 4;
+  string last_message = 5;
+  string last_message_type = 6;
+  int64 last_message_sender = 7;
+  int64 last_message_timestamp = 8;
+  int64 num_unread_message = 9;
+  FriendStatus friend_status = 10;
 }
 
 // Get user list (find friend)
@@ -38,19 +62,6 @@ message UserResponse {
   FriendStatus friendStatus = 4;
 }
 
-message FriendInfo {
-  int64 id = 1;
-  string username = 2;
-  string name = 3;
-  bool online = 4;
-  string last_message = 5;
-  string last_message_type = 6;
-  int64 last_message_sender = 7;
-  int64 last_message_timestamp = 8;
-  int64 num_unread_message = 9;
-  FriendStatus friend_status = 10;
-}
-
 enum FriendStatus {
   FRIEND = 0;
   WAITING = 1;
@@ -59,7 +70,7 @@ enum FriendStatus {
   REMOVED = 4;
 }
 
-// Clear un read message
+// Clear unread message
 message ClearUnreadMessageRequest {
   int64  friend_id = 1;
 }

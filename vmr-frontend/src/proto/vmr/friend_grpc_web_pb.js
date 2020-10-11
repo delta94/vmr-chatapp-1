@@ -472,4 +472,84 @@ proto.vmr.FriendServicePromiseClient.prototype.setFriendStatus =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.vmr.GetUserInfoRequest,
+ *   !proto.vmr.GetUserInfoResponse>}
+ */
+const methodDescriptor_FriendService_GetUserInfo = new grpc.web.MethodDescriptor(
+  '/vmr.FriendService/GetUserInfo',
+  grpc.web.MethodType.UNARY,
+  proto.vmr.GetUserInfoRequest,
+  proto.vmr.GetUserInfoResponse,
+  /**
+   * @param {!proto.vmr.GetUserInfoRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.GetUserInfoResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.vmr.GetUserInfoRequest,
+ *   !proto.vmr.GetUserInfoResponse>}
+ */
+const methodInfo_FriendService_GetUserInfo = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.vmr.GetUserInfoResponse,
+  /**
+   * @param {!proto.vmr.GetUserInfoRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.GetUserInfoResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.vmr.GetUserInfoRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.vmr.GetUserInfoResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.vmr.GetUserInfoResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.vmr.FriendServiceClient.prototype.getUserInfo =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/vmr.FriendService/GetUserInfo',
+      request,
+      metadata || {},
+      methodDescriptor_FriendService_GetUserInfo,
+      callback);
+};
+
+
+/**
+ * @param {!proto.vmr.GetUserInfoRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.vmr.GetUserInfoResponse>}
+ *     Promise that resolves to the response
+ */
+proto.vmr.FriendServicePromiseClient.prototype.getUserInfo =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/vmr.FriendService/GetUserInfo',
+      request,
+      metadata || {},
+      methodDescriptor_FriendService_GetUserInfo);
+};
+
+
 module.exports = proto.vmr;

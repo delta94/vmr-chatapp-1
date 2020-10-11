@@ -3,6 +3,7 @@ package com.anhvan.vmr.grpc;
 import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.entity.GrpcUserResponse;
+import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.proto.Common.Error;
 import com.anhvan.vmr.proto.Common.ErrorCode;
 import com.anhvan.vmr.proto.Common.Empty;
@@ -222,6 +223,36 @@ public class FriendServiceImpl extends FriendServiceImplBase {
               } else {
                 responseObserver.onNext(builder.build());
               }
+              responseObserver.onCompleted();
+            });
+  }
+
+  @Override
+  public void getUserInfo(
+      GetUserInfoRequest request, StreamObserver<GetUserInfoResponse> responseObserver) {
+    long userId = request.getUserId();
+
+    userDbService
+        .getUserById(userId)
+        .onComplete(
+            ar -> {
+              GetUserInfoResponse.Builder responseBuilder = GetUserInfoResponse.newBuilder();
+              if (ar.succeeded()) {
+                User user = ar.result();
+                responseBuilder
+                    .setUser(
+                        UserResponse.newBuilder()
+                            .setId(userId)
+                            .setName(user.getName())
+                            .setUsername(user.getUsername())
+                            .build())
+                    .build();
+              } else {
+                log.error("Error when get user info: userId={}", userId, ar.cause());
+                responseBuilder.setError(
+                    Error.newBuilder().setCode(ErrorCode.INTERNAL_SERVER_ERROR).build());
+              }
+              responseObserver.onNext(responseBuilder.build());
               responseObserver.onCompleted();
             });
   }
