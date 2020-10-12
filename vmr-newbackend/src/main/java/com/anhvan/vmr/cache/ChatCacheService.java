@@ -8,7 +8,7 @@ import java.util.List;
 public interface ChatCacheService {
   void cacheMessage(Message message);
 
-  void cacheListMessage(List<Message> messages, int user1, int user2);
+  void cacheListMessage(List<Message> messages, long user1, long user2);
 
-  Future<List<Message>> getCacheMessage(int userId1, int userId2);
+  Future<List<Message>> getCacheMessage(long userId1, long userId2);
 }

@@ -2,8 +2,8 @@ package com.anhvan.vmr;
 
 import com.anhvan.vmr.config.ConfigLoader;
 import com.anhvan.vmr.config.ConfigModule;
-import com.anhvan.vmr.dagger.DaggerServiceComponent;
-import com.anhvan.vmr.dagger.ServiceComponent;
+import com.anhvan.vmr.dagger.DaggerVmrComponent;
+import com.anhvan.vmr.dagger.VmrComponent;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import lombok.extern.log4j.Log4j2;
@@ -23,8 +23,7 @@ public class Runner {
     ConfigModule configModule = new ConfigModule(config);
 
     // Service component
-    ServiceComponent component =
-        DaggerServiceComponent.builder().configModule(configModule).build();
+    VmrComponent component = DaggerVmrComponent.builder().configModule(configModule).build();
 
     // Start webserver and websocket server
     Vertx vertx = component.getVertx();

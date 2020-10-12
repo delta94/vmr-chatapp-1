@@ -14,7 +14,6 @@ service FriendService {
   rpc ClearUnreadMessage(ClearUnreadMessageRequest) returns (ClearUnreadMessageResponse);
   rpc SetFriendStatus(SetFriendStatusRequest) returns (SetFriendStatusResponse);
   rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse);
-  rpc GetChatInfo(GetChatInfoRequest) returns (GetChatInfoResponse);
 }
 
 // Get user info
@@ -95,21 +94,4 @@ message SetFriendStatusRequest {
 
 message SetFriendStatusResponse {
   Error error = 1;
-}
-
-// Get last message request
-message GetChatInfoRequest {
-  int64 friend_id = 1;
-}
-
-message GetChatInfoResponse {
-  message Data {
-    string last_message = 1;
-    string last_message_sender = 2;
-    string last_message_type = 3;
-    int64 last_message_timestamp = 4;
-  }
-
-  Error error = 1;
-  Data data = 2;
 }

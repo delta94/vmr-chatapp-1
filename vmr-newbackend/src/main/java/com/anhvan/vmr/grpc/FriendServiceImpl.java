@@ -10,6 +10,7 @@ import com.anhvan.vmr.proto.Common.ErrorCode;
 import com.anhvan.vmr.proto.Common.Empty;
 import com.anhvan.vmr.proto.Friend.*;
 import com.anhvan.vmr.proto.FriendServiceGrpc.*;
+import com.anhvan.vmr.service.UserService;
 import com.anhvan.vmr.util.GrpcUtil;
 import com.anhvan.vmr.websocket.WebSocketService;
 import io.grpc.stub.StreamObserver;
@@ -28,6 +29,7 @@ public class FriendServiceImpl extends FriendServiceImplBase {
   private UserDatabaseService userDbService;
   private FriendDatabaseService friendDbService;
   private WebSocketService webSocketService;
+  private UserService userService;
 
   @Override
   public void getFriendList(Empty request, StreamObserver<FriendListResponse> responseObserver) {
@@ -243,7 +245,7 @@ public class FriendServiceImpl extends FriendServiceImplBase {
       GetUserInfoRequest request, StreamObserver<GetUserInfoResponse> responseObserver) {
     long userId = request.getUserId();
 
-    userDbService
+    userService
         .getUserById(userId)
         .onComplete(
             ar -> {

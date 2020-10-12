@@ -4,6 +4,7 @@ import com.anhvan.vmr.cache.ChatCacheService;
 import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.database.WalletDatabaseService;
+import com.anhvan.vmr.service.UserService;
 import com.anhvan.vmr.websocket.WebSocketService;
 import dagger.Module;
 import dagger.Provides;
@@ -27,11 +28,13 @@ public class GrpcModule {
   public BindableService provideFriendServiceImpl(
       UserDatabaseService userDatabaseService,
       FriendDatabaseService friendDatabaseService,
-      WebSocketService wsService) {
+      WebSocketService wsService,
+      UserService userService) {
     return FriendServiceImpl.builder()
         .userDbService(userDatabaseService)
         .friendDbService(friendDatabaseService)
         .webSocketService(wsService)
+        .userService(userService)
         .build();
   }
 

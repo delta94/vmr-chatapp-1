@@ -18,7 +18,7 @@ import javax.inject.Singleton;
 @Module
 @AllArgsConstructor
 @Log4j2
-public class ServiceModule {
+public class VmrModule {
   @Provides
   @Singleton
   @SuppressWarnings("deprecation")
