@@ -8,11 +8,5 @@ import java.util.List;
 public interface UserCacheService {
   void setUserCache(User user);
 
-  Future<User> getUserCache(int userId);
-
-  void setUserList(List<User> userList);
-
-  void addUserList(User user);
-
-  Future<List<User>> getUserList();
+  Future<User> getUserCache(long userId);
 }

@@ -74,7 +74,6 @@ public class RegisterController extends BaseController {
               jsonResponse.put("userId", userId);
               user.setId(userId);
               userCacheService.setUserCache(user);
-              userCacheService.addUserList(user);
               webSocketService.broadCast(
                   WebSocketMessage.builder().type("NEW_USER").data(user).build());
               return jwtService.generate(userId);

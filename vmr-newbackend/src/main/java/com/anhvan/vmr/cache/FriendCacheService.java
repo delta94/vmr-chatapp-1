@@ -1,5 +1,7 @@
 package com.anhvan.vmr.cache;
 
-public interface FriendCacheService {
+import java.util.List;
 
+public interface FriendCacheService {
+  void cacheFriendList(long userId, List<Integer> friendIdList);
 }

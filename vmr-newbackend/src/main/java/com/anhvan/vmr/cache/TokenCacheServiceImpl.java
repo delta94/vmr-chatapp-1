@@ -15,6 +15,8 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 @Log4j2
 public class TokenCacheServiceImpl implements TokenCacheService {
+  public static final String TOKEN_EXPIRE_KEY = "vmr:jwt:%s:expire";
+
   private RedissonClient redis;
   private AuthConfig authConfig;
   private AsyncWorkerService asyncWorkerService;
@@ -55,6 +57,6 @@ public class TokenCacheServiceImpl implements TokenCacheService {
   }
 
   private String getKey(String token) {
-    return String.format("vmr:jwt:%s:expire", token);
+    return String.format(TOKEN_EXPIRE_KEY, token);
   }
 }
