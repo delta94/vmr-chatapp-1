@@ -35,6 +35,9 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
   public void getBalance(Common.Empty request, StreamObserver<BalanceResponse> responseObserver) {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
 
+    // Log the request
+    log.info("Handle getBalance grpc call, userId={}", userId);
+
     // Create response builder
     BalanceResponse.Builder responseBuilder = BalanceResponse.newBuilder();
 
@@ -54,6 +57,9 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
                         .build();
                 responseBuilder.setData(data);
               } else {
+                // Write log
+                log.error("Error when get balance, userId={}", userId, ar.cause());
+
                 // Get info failue
                 Common.Error error =
                     Common.Error.newBuilder()
@@ -70,6 +76,8 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
   @Override
   public void getHistory(Common.Empty request, StreamObserver<HistoryResponse> responseObserver) {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+
+    log.info("Handle getHistory grpc call, userId={}", userId);
 
     HistoryResponse.Builder historyResponseBuilder = HistoryResponse.newBuilder();
 
@@ -91,7 +99,9 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
                         .setMessage("Fail to get history")
                         .build();
                 historyResponseBuilder.setError(error);
-                log.error("Error when get history list of user", ar.cause());
+
+                // Write log
+                log.error("Error when get history list, userId={}", userId, ar.cause());
               }
               responseObserver.onNext(historyResponseBuilder.build());
               responseObserver.onCompleted();
@@ -101,6 +111,8 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
   @Override
   public void transfer(TransferRequest request, StreamObserver<TransferResponse> responseObserver) {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+
+    log.info("Handle transfer grpc call, userId={}, request={}", userId, request);
 
     // Extract info
     long receiverId = request.getReceiver();
