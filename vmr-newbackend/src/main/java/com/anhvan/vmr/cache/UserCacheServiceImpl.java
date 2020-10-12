@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 @Log4j2
 public class UserCacheServiceImpl implements UserCacheService {
   public static final String USER_INFO_KEY = "vmr:user:%d:info";
+
   private RedissonClient redis;
   private AsyncWorkerService workerUtil;
   private CacheConfig cacheConfig;

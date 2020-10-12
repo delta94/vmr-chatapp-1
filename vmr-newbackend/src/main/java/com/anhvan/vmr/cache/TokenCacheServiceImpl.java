@@ -43,6 +43,7 @@ public class TokenCacheServiceImpl implements TokenCacheService {
   @Override
   public Future<Boolean> checkExistInBacklist(String token) {
     Promise<Boolean> existPromise = Promise.promise();
+
     asyncWorkerService.execute(
         () -> {
           try {
@@ -53,6 +54,7 @@ public class TokenCacheServiceImpl implements TokenCacheService {
             log.error("Error when get bucket from redis", e);
           }
         });
+
     return existPromise.future();
   }
 
