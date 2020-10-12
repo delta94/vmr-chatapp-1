@@ -3,6 +3,7 @@ package com.anhvan.vmr.grpc;
 import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.entity.GrpcUserResponse;
+import com.anhvan.vmr.entity.WebSocketMessage;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.proto.Common.Error;
 import com.anhvan.vmr.proto.Common.ErrorCode;
@@ -13,6 +14,7 @@ import com.anhvan.vmr.util.GrpcUtil;
 import com.anhvan.vmr.websocket.WebSocketService;
 import io.grpc.stub.StreamObserver;
 import io.vertx.core.Future;
+import io.vertx.core.json.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.log4j.Log4j2;
@@ -106,6 +108,15 @@ public class FriendServiceImpl extends FriendServiceImplBase {
         ar -> {
           if (ar.succeeded()) {
             responseObserver.onNext(responseBuilder.build());
+            responseObserver.onCompleted();
+            if (type == SetFriendStatusRequest.Type.ACCEPT_FRIEND) {
+              webSocketService.sendTo(
+                  friendId,
+                  WebSocketMessage.builder()
+                      .data(new JsonObject().put("userId", userId))
+                      .type("ACCEPT")
+                      .build());
+            }
           } else {
             log.error(
                 "Error when set friend status: user_id={}, friend_id={}",
@@ -118,8 +129,8 @@ public class FriendServiceImpl extends FriendServiceImplBase {
                     .setMessage("Error when set friend status")
                     .build();
             responseObserver.onNext(responseBuilder.setError(error).build());
+            responseObserver.onCompleted();
           }
-          responseObserver.onCompleted();
         });
   }
 

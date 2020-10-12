@@ -20,10 +20,6 @@ public class User {
   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   private String password;
 
-  @ColName("is_active")
-  @JsonIgnore
-  private boolean active;
-
   @ColName("balance")
   private long balance;
 

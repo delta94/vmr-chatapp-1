@@ -153,8 +153,6 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
 
   @Override
   public Future<List<GrpcUserResponse>> queryListUserWithFriendStatus(String query, long userId) {
-    log.debug("Query user with full text search");
-
     Promise<List<GrpcUserResponse>> userListPromise = Promise.promise();
 
     pool.preparedQuery(FIND_USER_FULL_TEXT_STMT)
@@ -168,7 +166,8 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
                     row -> userList.add(RowMapperUtil.mapRow(row, GrpcUserResponse.class)));
                 userListPromise.complete(userList);
               } else {
-                log.error("Fail to query user", rowSetRs.cause());
+                log.error(
+                    "Fail to query user: query={}, userId={}", query, userId, rowSetRs.cause());
               }
             });
 

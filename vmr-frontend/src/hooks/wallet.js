@@ -13,7 +13,12 @@ export function useBalance(...dependencies) {
 }
 
 export function useInfoWithBalance(...dependencies) {
-  let [info, setInfo] = useState({});
+  let [info, setInfo] = useState({
+    balance: null,
+    userName: null,
+    lastUpdated: null,
+    name: null
+  });
   useEffect(() => {
     getBalance().then(result => {
       setInfo({

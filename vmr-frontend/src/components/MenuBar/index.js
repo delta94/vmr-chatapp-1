@@ -3,7 +3,7 @@ import './menu-bar.css';
 import {useDispatch, useSelector} from "react-redux";
 import {setTab} from "../../redux/vmr-action";
 import {logout} from "../../service/user";
-
+import {Badge} from "antd";
 import {CreditCardOutlined, MessageOutlined, TeamOutlined, LogoutOutlined} from '@ant-design/icons';
 
 export default function MenuBar(props) {
@@ -19,10 +19,16 @@ export default function MenuBar(props) {
     className += ` ${props.className}`;
   }
 
+  let numChatNotifications = useSelector(state => {
+    return Object.values(state.friends.friends).map(x => x.numNotifications)
+      .reduce((x, y) => x + y, 0);
+  });
+
   return (
     <div className={className}>
       <IconWrapper icon={<MessageOutlined className="menubar-icon" style={{color: "green"}}/>}
                    onClick={() => setCurrentTab("chat")}
+                   numMsg={numChatNotifications}
                    tab="chat"/>
       <IconWrapper icon={<CreditCardOutlined className="menubar-icon" style={{color: "#cc4d53"}}/>}
                    onClick={() => setCurrentTab("wallet")}
@@ -41,7 +47,7 @@ export default function MenuBar(props) {
 function IconWrapper(props) {
   let currentTab = useSelector(state => state.ui.currentTab);
 
-  let {icon, onClick, tab, isMid} = props;
+  let {icon, onClick, tab, isMid, numMsg} = props;
 
   let className = "icon-wrapper ";
   if (isMid) {
@@ -52,7 +58,10 @@ function IconWrapper(props) {
   }
 
   return (
-    <div className={className}
-         onClick={onClick}>{icon}</div>
+    <div className={className} onClick={onClick}>
+      <Badge size="small" count={numMsg} offset={[0, 15]}>
+        {icon}
+      </Badge>
+    </div>
   );
 }

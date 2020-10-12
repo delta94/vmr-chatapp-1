@@ -9,7 +9,6 @@ create table users
     username     varchar(20) not null unique,
     password     varchar(60) not null,
     name         varchar(45) not null,
-    is_active    boolean     not null default true,
     balance      bigint      not null default 100000,
     last_updated bigint      not null,
     fulltext (username, name)
@@ -52,7 +51,6 @@ create table messages
     message     text                      not null,
     type        enum ('CHAT', 'TRANSFER') not null default 'CHAT',
     transfer_id bigint,
-    foreign key (transfer_id) references transfers (id),
     index sender_receiver (sender, receiver)
 );
 

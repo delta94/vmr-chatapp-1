@@ -75,7 +75,7 @@ public class UserCacheServiceImplTest {
   void testAddUserToCache() {
     RMap<String, String> userInfoMap = (RMap<String, String>) Mockito.mock(RMap.class);
     Mockito.when(redissonClient.<String, String>getMap("vmr:user:1:info")).thenReturn(userInfoMap);
-    User user = User.builder().id(1).active(true).username("Anh Van").name("Anh Van").build();
+    User user = User.builder().id(1).username("Anh Van").name("Anh Van").build();
 
     userCacheService.setUserCache(user);
 
