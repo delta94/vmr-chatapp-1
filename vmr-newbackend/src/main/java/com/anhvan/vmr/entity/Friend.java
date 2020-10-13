@@ -3,12 +3,16 @@ package com.anhvan.vmr.entity;
 import com.anhvan.vmr.model.ColName;
 import com.anhvan.vmr.model.User;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @ToString
+@SuperBuilder
+@NoArgsConstructor
 public class Friend extends User {
   @ColName("status")
   private String friendStatus;
