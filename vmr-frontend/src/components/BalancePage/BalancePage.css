@@ -28,7 +28,6 @@
   width: 250px;
   height: 250px;
   border: 2px solid #096dd9;
-  color: #096dd9;
   background-color: #e6f7ff;
   border-radius: 125px;
   display: flex;
@@ -40,7 +39,7 @@
 
 .balance-page .balance-number {
   font-size: 25px;
-  color: #f5222d;
+  color: #389e0d;
   font-weight: bold;
 }
 
