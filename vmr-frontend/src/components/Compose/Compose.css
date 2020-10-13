@@ -31,7 +31,7 @@
   border: none;
   font-size: 14px;
   height: 40px;
-  background-color: #eaeaea;
+  background-color: rgba(0, 0, 0, .05);;
   border-radius: 20px;
   padding-left: 10px;
   padding-right: 10px;
