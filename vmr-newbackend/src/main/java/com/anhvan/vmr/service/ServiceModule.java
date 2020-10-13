@@ -1,6 +1,8 @@
 package com.anhvan.vmr.service;
 
+import com.anhvan.vmr.cache.FriendCacheService;
 import com.anhvan.vmr.cache.UserCacheService;
+import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import dagger.Module;
 import dagger.Provides;
@@ -14,5 +16,12 @@ public class ServiceModule {
   public UserService provideUserService(
       UserDatabaseService dbService, UserCacheService cacheService) {
     return new UserServiceImpl(cacheService, dbService);
+  }
+
+  @Provides
+  @Singleton
+  public FriendService provideFriendService(
+      FriendDatabaseService friendDatabaseService, FriendCacheService friendCacheService) {
+    return new FriendServiceImpl(friendDatabaseService, friendCacheService);
   }
 }

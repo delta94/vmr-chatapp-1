@@ -1,6 +1,7 @@
 package com.anhvan.vmr.grpc;
 
 import com.anhvan.vmr.cache.ChatCacheService;
+import com.anhvan.vmr.cache.FriendCacheService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.database.WalletDatabaseService;
 import com.anhvan.vmr.entity.DatabaseTransferRequest;
@@ -30,6 +31,7 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
   private WalletDatabaseService walletDatabaseService;
   private WebSocketService webSocketService;
   private ChatCacheService chatCacheService;
+  private FriendCacheService friendCacheService;
 
   @Override
   public void getBalance(Common.Empty request, StreamObserver<BalanceResponse> responseObserver) {
@@ -171,6 +173,8 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
 
                 // Cache the message
                 chatCacheService.cacheMessage(message);
+                friendCacheService.updateLastMessage(userId, receiverId, message);
+                friendCacheService.updateLastMessage(receiverId, userId, message);
 
                 // Send to receiver
                 webSocketService.sendTo(

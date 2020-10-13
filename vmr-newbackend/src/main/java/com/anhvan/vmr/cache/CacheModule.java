@@ -1,6 +1,7 @@
 package com.anhvan.vmr.cache;
 
 import com.anhvan.vmr.config.CacheConfig;
+import com.anhvan.vmr.service.AsyncWorkerService;
 import dagger.Module;
 import dagger.Provides;
 
@@ -30,5 +31,16 @@ public class CacheModule {
   @Singleton
   public TokenCacheService provideTokenCacheService(TokenCacheServiceImpl impl) {
     return impl;
+  }
+
+  @Provides
+  @Singleton
+  FriendCacheService provideFriendCacheService(
+      RedisCache redisCache, AsyncWorkerService workerService, CacheConfig cacheConfig) {
+    return FriendCacheServiceImpl.builder()
+        .asyncWorkerService(workerService)
+        .cacheConfig(cacheConfig)
+        .redissonClient(redisCache.getRedissonClient())
+        .build();
   }
 }

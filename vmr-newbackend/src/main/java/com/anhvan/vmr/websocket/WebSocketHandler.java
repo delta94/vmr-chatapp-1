@@ -1,6 +1,7 @@
 package com.anhvan.vmr.websocket;
 
 import com.anhvan.vmr.cache.ChatCacheService;
+import com.anhvan.vmr.cache.FriendCacheService;
 import com.anhvan.vmr.database.ChatDatabaseService;
 import com.anhvan.vmr.entity.WebSocketMessage;
 import com.anhvan.vmr.model.Message;
@@ -23,6 +24,7 @@ public class WebSocketHandler {
   private WebSocketService webSocketService;
   private ChatDatabaseService chatDatabaseService;
   private ChatCacheService chatCacheService;
+  private FriendCacheService friendCacheService;
 
   public void handle() {
     // Add connection to hash map
@@ -66,7 +68,12 @@ public class WebSocketHandler {
         .addChat(message)
         .onSuccess(
             id -> {
+              message.setType("CHAT");
               chatCacheService.cacheMessage(message);
+              friendCacheService.updateLastMessage(
+                  message.getSenderId(), message.getReceiverId(), message);
+              friendCacheService.updateLastMessage(
+                  message.getReceiverId(), message.getSenderId(), message);
               webSocketService.sendTo(
                   userId, WebSocketMessage.builder().type("SEND_BACK").data(message).build());
               webSocketService.sendTo(

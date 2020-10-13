@@ -1,6 +1,6 @@
 package com.anhvan.vmr.database;
 
-import com.anhvan.vmr.entity.GrpcUserResponse;
+import com.anhvan.vmr.entity.Friend;
 import com.anhvan.vmr.exception.AddFriendException;
 import com.anhvan.vmr.util.RowMapperUtil;
 import io.vertx.core.Future;
@@ -174,8 +174,8 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   }
 
   @Override
-  public Future<List<GrpcUserResponse>> getFriendList(long userId) {
-    Promise<List<GrpcUserResponse>> friendListPromise = Promise.promise();
+  public Future<List<Friend>> getFriendList(long userId) {
+    Promise<List<Friend>> friendListPromise = Promise.promise();
 
     pool.preparedQuery(GET_FRIENDS_STMT)
         .execute(
@@ -183,9 +183,9 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
             rowSetAsyncRs -> {
               if (rowSetAsyncRs.succeeded()) {
                 RowSet<Row> rowSet = rowSetAsyncRs.result();
-                List<GrpcUserResponse> userList = new ArrayList<>();
+                List<Friend> userList = new ArrayList<>();
                 for (Row row : rowSet) {
-                  userList.add(RowMapperUtil.mapRow(row, GrpcUserResponse.class));
+                  userList.add(RowMapperUtil.mapRow(row, Friend.class));
                 }
                 friendListPromise.complete(userList);
               } else {
@@ -199,7 +199,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   }
 
   @Override
-  public Future<Void> acceptFriend(long invitorId, long userId) {
+  public Future<Void> acceptFriend(long userId, long friendId) {
     Promise<Void> statusPromise = Promise.promise();
 
     // Get transaction manager object
@@ -214,7 +214,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
                   .getTransaction()
                   .preparedQuery(ACCEPT_FRIEND)
                   .executeBatch(
-                      Arrays.asList(Tuple.of(invitorId, userId), Tuple.of(userId, invitorId)),
+                      Arrays.asList(Tuple.of(userId, userId), Tuple.of(userId, userId)),
                       ar -> {
                         if (ar.succeeded()) {
                           promise.complete(manager);
@@ -241,7 +241,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   }
 
   @Override
-  public Future<Void> rejectFriend(long invitorId, long userId) {
+  public Future<Void> rejectFriend(long userId, long friendId) {
     Promise<Void> statusPromise = Promise.promise();
 
     // Get transaction manager object
@@ -256,7 +256,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
                   .getTransaction()
                   .preparedQuery(REJECT_FRIEND_STMT)
                   .executeBatch(
-                      Arrays.asList(Tuple.of(invitorId, userId), Tuple.of(userId, invitorId)),
+                      Arrays.asList(Tuple.of(userId, userId), Tuple.of(userId, userId)),
                       ar -> {
                         if (ar.succeeded()) {
                           promise.complete(manager);
@@ -283,8 +283,8 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   }
 
   @Override
-  public Future<List<GrpcUserResponse>> getChatFriendList(long userId) {
-    Promise<List<GrpcUserResponse>> friendListPromise = Promise.promise();
+  public Future<List<Friend>> getChatFriendList(long userId) {
+    Promise<List<Friend>> friendListPromise = Promise.promise();
 
     pool.preparedQuery(GET_FRIENDS_WITH_MESSAGE_STMT)
         .execute(
@@ -292,9 +292,9 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
             rowSetAsyncRs -> {
               if (rowSetAsyncRs.succeeded()) {
                 RowSet<Row> rowSet = rowSetAsyncRs.result();
-                List<GrpcUserResponse> userList = new ArrayList<>();
+                List<Friend> userList = new ArrayList<>();
                 for (Row row : rowSet) {
-                  userList.add(RowMapperUtil.mapRow(row, GrpcUserResponse.class));
+                  userList.add(RowMapperUtil.mapRow(row, Friend.class));
                 }
                 friendListPromise.complete(userList);
               } else {

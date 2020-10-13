@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class GrpcUserResponse extends User {
+public class Friend extends User {
   @ColName("status")
   private String friendStatus;
 

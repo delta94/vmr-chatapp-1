@@ -2,7 +2,7 @@ package com.anhvan.vmr.grpc;
 
 import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
-import com.anhvan.vmr.entity.GrpcUserResponse;
+import com.anhvan.vmr.entity.Friend;
 import com.anhvan.vmr.entity.WebSocketMessage;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.proto.Common.Error;
@@ -10,6 +10,7 @@ import com.anhvan.vmr.proto.Common.ErrorCode;
 import com.anhvan.vmr.proto.Common.Empty;
 import com.anhvan.vmr.proto.Friend.*;
 import com.anhvan.vmr.proto.FriendServiceGrpc.*;
+import com.anhvan.vmr.service.FriendService;
 import com.anhvan.vmr.service.UserService;
 import com.anhvan.vmr.util.GrpcUtil;
 import com.anhvan.vmr.websocket.WebSocketService;
@@ -25,10 +26,11 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Log4j2
-public class FriendServiceImpl extends FriendServiceImplBase {
+public class GrpcFriendServiceImpl extends FriendServiceImplBase {
   private UserDatabaseService userDbService;
   private FriendDatabaseService friendDbService;
   private WebSocketService webSocketService;
+  private FriendService friendService;
   private UserService userService;
 
   @Override
@@ -41,8 +43,8 @@ public class FriendServiceImpl extends FriendServiceImplBase {
             ar -> {
               if (ar.succeeded()) {
                 FriendListResponse.Builder response = FriendListResponse.newBuilder();
-                List<GrpcUserResponse> grpcUserResponseList = ar.result();
-                for (GrpcUserResponse user : grpcUserResponseList) {
+                List<Friend> grpcUserResponseList = ar.result();
+                for (Friend user : grpcUserResponseList) {
                   FriendInfo info =
                       FriendInfo.newBuilder()
                           .setUsername(user.getUsername())
@@ -79,7 +81,7 @@ public class FriendServiceImpl extends FriendServiceImplBase {
     switch (type) {
       case REMOVE_FRIEND:
         log.info("Hanlde remove friend request {}", request);
-        setFriendStatusFuture = friendDbService.removeFriend(userId, friendId);
+        setFriendStatusFuture = friendService.removeFriend(userId, friendId);
         break;
       case ADD_FRIEND:
         log.info("Handle add friend request {}", request);
@@ -87,7 +89,7 @@ public class FriendServiceImpl extends FriendServiceImplBase {
         break;
       case ACCEPT_FRIEND:
         log.info("Handle accept friend request {}", request);
-        setFriendStatusFuture = friendDbService.acceptFriend(friendId, userId);
+        setFriendStatusFuture = friendService.acceptFriend(friendId, userId);
         break;
       case REJECT_FRIEND:
         log.info("Handle reject friend request {}", request);
@@ -143,12 +145,12 @@ public class FriendServiceImpl extends FriendServiceImplBase {
 
     FriendListResponse.Builder responseBuilder = FriendListResponse.newBuilder();
 
-    friendDbService
+    friendService
         .getChatFriendList(userId)
         .onComplete(
             ar -> {
               if (ar.succeeded()) {
-                for (GrpcUserResponse usr : ar.result()) {
+                for (Friend usr : ar.result()) {
                   FriendInfo.Builder friendInfoBuidler =
                       FriendInfo.newBuilder()
                           .setId(usr.getId())
@@ -184,7 +186,7 @@ public class FriendServiceImpl extends FriendServiceImplBase {
 
     String queryString = request.getQueryString();
 
-    Future<List<GrpcUserResponse>> userListFuture =
+    Future<List<Friend>> userListFuture =
         userDbService.queryListUserWithFriendStatus(queryString, userId);
 
     userListFuture.onSuccess(
@@ -192,7 +194,7 @@ public class FriendServiceImpl extends FriendServiceImplBase {
           UserListResponse.Builder response = UserListResponse.newBuilder();
 
           // Convert user object to response
-          for (GrpcUserResponse user : userList) {
+          for (Friend user : userList) {
             response.addUser(
                 UserResponse.newBuilder()
                     .setId(user.getId())
@@ -217,7 +219,7 @@ public class FriendServiceImpl extends FriendServiceImplBase {
       StreamObserver<ClearUnreadMessageResponse> responseObserver) {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
 
-    friendDbService
+    friendService
         .clearUnreadMessage(userId, request.getFriendId())
         .onComplete(
             ar -> {

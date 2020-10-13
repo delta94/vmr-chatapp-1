@@ -1,9 +1,11 @@
 package com.anhvan.vmr.grpc;
 
 import com.anhvan.vmr.cache.ChatCacheService;
+import com.anhvan.vmr.cache.FriendCacheService;
 import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.database.WalletDatabaseService;
+import com.anhvan.vmr.service.FriendService;
 import com.anhvan.vmr.service.UserService;
 import com.anhvan.vmr.websocket.WebSocketService;
 import dagger.Module;
@@ -29,12 +31,14 @@ public class GrpcModule {
       UserDatabaseService userDatabaseService,
       FriendDatabaseService friendDatabaseService,
       WebSocketService wsService,
+      FriendService friendService,
       UserService userService) {
-    return FriendServiceImpl.builder()
+    return GrpcFriendServiceImpl.builder()
         .userDbService(userDatabaseService)
         .friendDbService(friendDatabaseService)
         .webSocketService(wsService)
         .userService(userService)
+        .friendService(friendService)
         .build();
   }
 
@@ -45,12 +49,14 @@ public class GrpcModule {
       UserDatabaseService userDatabaseService,
       WalletDatabaseService walletDatabaseService,
       WebSocketService webSocketService,
-      ChatCacheService chatCacheService) {
+      ChatCacheService chatCacheService,
+      FriendCacheService friendCacheService) {
     return WalletServiceImpl.builder()
         .userDbService(userDatabaseService)
         .walletDatabaseService(walletDatabaseService)
         .webSocketService(webSocketService)
         .chatCacheService(chatCacheService)
+        .friendCacheService(friendCacheService)
         .build();
   }
 }
