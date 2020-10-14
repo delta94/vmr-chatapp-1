@@ -51,6 +51,9 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   public static final String REMOVE_FRIEND_STMT =
       "update friends set status='REMOVED' where user_id=? and friend_id=?";
 
+  public static final String CHECK_FRIEND_STATUS_STMT =
+      "select status from friends where user_id=? and friend_id=?";
+
   private MySQLPool pool;
   private DatabaseService dbService;
 
@@ -68,95 +71,8 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
 
     transactionManager
         .begin()
-        .compose(
-            // Check current friend status
-            manager -> {
-              Promise<TransactionManager> promise = Promise.promise();
-
-              manager
-                  .getTransaction()
-                  .preparedQuery("select status from friends where user_id=? and friend_id=?")
-                  .execute(
-                      Tuple.of(userId, friendId),
-                      ar -> {
-                        // Fail to execute query
-                        if (ar.failed()) {
-                          promise.fail(ar.cause());
-                          return;
-                        }
-
-                        // Not add friend yet
-                        if (ar.result().size() == 0) {
-                          manager.set("STATUS", "NOTHING");
-                          promise.complete(manager);
-                          return;
-                        }
-
-                        // Aldready exist in table
-                        Row result = RowMapperUtil.firstRow(ar.result());
-                        if (result != null) {
-                          String status = result.getString("status");
-                          switch (status) {
-                            case "ACCEPTED":
-                              promise.fail(
-                                  new AddFriendException(
-                                      "Aldready added", AddFriendException.ErrorCode.ACCEPTED));
-                              break;
-                            case "WAITING":
-                              promise.fail(
-                                  new AddFriendException(
-                                      "Waiting", AddFriendException.ErrorCode.WAITING));
-                              break;
-                            case "NOT_ANSWER":
-                              promise.fail(
-                                  new AddFriendException(
-                                      "Wait for accepted",
-                                      AddFriendException.ErrorCode.NOT_ANSWER));
-                              break;
-                            default:
-                              manager.set("STATUS", "REMOVED");
-                              promise.complete(manager);
-                              break;
-                          }
-                        }
-                      });
-
-              return promise.future();
-            })
-        .compose(
-            manager -> {
-              Promise<TransactionManager> promise = Promise.promise();
-
-              String stmt = ADD_FRIEND_STMT;
-              // Prepared tuples
-              List<Tuple> tuples =
-                  Arrays.asList(
-                      Tuple.of(userId, friendId, "WAITING"),
-                      Tuple.of(friendId, userId, "NOT_ANSWER"));
-
-              if (manager.get("STATUS").equals("REMOVED")) {
-                stmt = UPDATE_FRIEND_STMT;
-                tuples =
-                    Arrays.asList(
-                        Tuple.of("WAITING", userId, friendId),
-                        Tuple.of("NOT_ANSWER", friendId, userId));
-              }
-
-              manager
-                  .getTransaction()
-                  .preparedQuery(stmt)
-                  .executeBatch(
-                      tuples,
-                      ar -> {
-                        if (ar.failed()) {
-                          promise.fail(ar.cause());
-                        } else {
-                          promise.complete(manager);
-                        }
-                      });
-
-              return promise.future();
-            })
+        .compose(manager -> checkFriendStatus(userId, friendId, manager)) // check friend status
+        .compose(manager -> internalAddFriend(userId, friendId, manager)) // update to database
         .compose(TransactionManager::commit)
         .onComplete(
             ar -> {
@@ -171,6 +87,93 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
             });
 
     return addFriendPromise.future();
+  }
+
+  Future<TransactionManager> checkFriendStatus(
+      long userId, long friendId, TransactionManager manager) {
+    Promise<TransactionManager> promise = Promise.promise();
+
+    manager
+        .getTransaction()
+        .preparedQuery(CHECK_FRIEND_STATUS_STMT)
+        .execute(
+            Tuple.of(userId, friendId),
+            ar -> {
+              // Fail to execute query
+              if (ar.failed()) {
+                promise.fail(ar.cause());
+                return;
+              }
+
+              // Not add friend yet
+              if (ar.result().size() == 0) {
+                manager.set("STATUS", "NOTHING");
+                promise.complete(manager);
+                return;
+              }
+
+              // Aldready exist in table
+              Row result = RowMapperUtil.firstRow(ar.result());
+              if (result != null) {
+                String status = result.getString("status");
+                switch (status) {
+                  case "ACCEPTED":
+                    promise.fail(
+                        new AddFriendException(
+                            "Aldready added", AddFriendException.ErrorCode.ACCEPTED));
+                    break;
+                  case "WAITING":
+                    promise.fail(
+                        new AddFriendException("Waiting", AddFriendException.ErrorCode.WAITING));
+                    break;
+                  case "NOT_ANSWER":
+                    promise.fail(
+                        new AddFriendException(
+                            "Wait for accepted", AddFriendException.ErrorCode.NOT_ANSWER));
+                    break;
+                  default:
+                    manager.set("STATUS", "REMOVED");
+                    promise.complete(manager);
+                    break;
+                }
+              }
+            });
+
+    return promise.future();
+  }
+
+  Future<TransactionManager> internalAddFriend(
+      long userId, long friendId, TransactionManager manager) {
+    Promise<TransactionManager> promise = Promise.promise();
+
+    // Create if not exist
+    String stmt = ADD_FRIEND_STMT;
+    List<Tuple> tuples =
+        Arrays.asList(
+            Tuple.of(userId, friendId, "WAITING"), Tuple.of(friendId, userId, "NOT_ANSWER"));
+
+    // Update if existed
+    if (manager.get("STATUS").equals("REMOVED")) {
+      stmt = UPDATE_FRIEND_STMT;
+      tuples =
+          Arrays.asList(
+              Tuple.of("WAITING", userId, friendId), Tuple.of("NOT_ANSWER", friendId, userId));
+    }
+
+    manager
+        .getTransaction()
+        .preparedQuery(stmt)
+        .executeBatch(
+            tuples,
+            ar -> {
+              if (ar.failed()) {
+                promise.fail(ar.cause());
+              } else {
+                promise.complete(manager);
+              }
+            });
+
+    return promise.future();
   }
 
   @Override

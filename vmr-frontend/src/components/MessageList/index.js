@@ -8,9 +8,10 @@ import {getMessageList} from '../../service/message-list';
 import renderMessageNew from './message-render';
 import {SendOutlined, DollarCircleOutlined} from '@ant-design/icons';
 import TransferMoneyModal from "../TransferMoneyModal";
+import {clearUnreadMessage} from "../../service/friend";
+import {Empty} from "antd";
 
 import './MessageList.css';
-import {clearUnreadMessage} from "../../service/friend";
 
 function MessageListInternal(props) {
   let {receiverId} = props;
@@ -143,7 +144,8 @@ function MessageListInternal(props) {
       <TitleBar title={receiver.name}/>
 
       <div className="message-list-container" ref={msgList} onScroll={msgScrollHandle}>
-        {renderMessageNew(messages)}
+        {messages.length > 0 && renderMessageNew(messages)}
+        {messages.length === 0 && <Empty description={<span>Chat với {receiver.name} ngay!</span>}/>}
         <div ref={endOfMsgList} style={{height: '0px'}}/>
       </div>
 
@@ -161,7 +163,7 @@ function MessageListInternal(props) {
             onClick={handleSendButtonClick}
             active={sendButtonActive}
             type="compose-btn"
-            style={{color:'#1890ff'}}/>
+            style={{color: '#1890ff'}}/>
         ]}
         onKeyUp={onChangeText}
         inputRef={inputRef}
