@@ -76,7 +76,7 @@ public class FriendCacheServiceImplTest {
   }
 
   @Test
-  void testCacheFriend(VertxTestContext vertxTestContext) {
+  void testCacheFriend(VertxTestContext testContext) {
     RMap<Long, Friend> friendMap = Mockito.mock(RMap.class);
     Mockito.when(redissonClient.<Long, Friend>getMap("vmr:user:1:friends")).thenReturn(friendMap);
     Friend friend = Friend.builder().build();
@@ -89,7 +89,7 @@ public class FriendCacheServiceImplTest {
             ar -> {
               Mockito.verify(friendMap).put(2L, friend);
               Mockito.verify(friendMap).expire(20, TimeUnit.SECONDS);
-              vertxTestContext.completeNow();
+              testContext.completeNow();
             });
   }
 
@@ -133,7 +133,7 @@ public class FriendCacheServiceImplTest {
   }
 
   @Test
-  void testUpdateLastMessage(VertxTestContext vertxTestContext) {
+  void testUpdateLastMessage(VertxTestContext testContext) {
     RMap<Long, Friend> friendMap = Mockito.mock(RMap.class);
     Mockito.when(redissonClient.<Long, Friend>getMap("vmr:user:1:friends")).thenReturn(friendMap);
     Message message =
@@ -156,7 +156,54 @@ public class FriendCacheServiceImplTest {
               Mockito.verify(friend).setLastMessageTimestamp(ArgumentMatchers.anyLong());
               Mockito.verify(friend).setLastMessageSenderId(ArgumentMatchers.anyLong());
               Mockito.verify(friend).setLastMessageType(ArgumentMatchers.anyString());
-              vertxTestContext.completeNow();
+              testContext.completeNow();
+            });
+  }
+
+  @Test
+  void testRemoveFriend(VertxTestContext testContext) {
+    RMap<Long, Friend> friendMap = Mockito.mock(RMap.class);
+    Mockito.when(redissonClient.<Long, Friend>getMap("vmr:user:1:friends")).thenReturn(friendMap);
+    Mockito.when(friendMap.isExists()).thenReturn(true);
+
+    friendCacheService
+        .removeFriend(1, 2)
+        .onComplete(
+            ar -> {
+              Mockito.verify(friendMap).remove(2L);
+              testContext.completeNow();
+            });
+  }
+
+  @Test
+  void testRemoveFriendWhenCacheMiss(VertxTestContext testContext) {
+    RMap<Long, Friend> friendMap = Mockito.mock(RMap.class);
+    Mockito.when(redissonClient.<Long, Friend>getMap("vmr:user:1:friends")).thenReturn(friendMap);
+    Mockito.when(friendMap.isExists()).thenReturn(false);
+
+    friendCacheService
+        .removeFriend(1, 2)
+        .onComplete(
+            ar -> {
+              Mockito.verify(friendMap, Mockito.times(0)).remove(2L);
+              testContext.completeNow();
+            });
+  }
+
+  @Test
+  void testClearUnreadMessages(VertxTestContext testContext) {
+    RMap<Long, Friend> friendMap = Mockito.mock(RMap.class);
+    Mockito.when(redissonClient.<Long, Friend>getMap("vmr:user:1:friends")).thenReturn(friendMap);
+    Mockito.when(friendMap.isExists()).thenReturn(true);
+    Friend friend = Mockito.mock(Friend.class);
+    Mockito.when(friendMap.get(2L)).thenReturn(friend);
+
+    friendCacheService
+        .clearUnreadMessage(1, 2)
+        .onComplete(
+            ar -> {
+              Mockito.verify(friend, Mockito.times(1)).setNumUnreadMessage(0);
+              testContext.completeNow();
             });
   }
 }

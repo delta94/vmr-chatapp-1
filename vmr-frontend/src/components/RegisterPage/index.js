@@ -68,9 +68,13 @@ function RegisterPage() {
 
   return (
     <Row style={rowStyle} align="top">
-      <Col xs={{span: 22, offset: 1}} sm={{span: 16, offset: 4}} md={{span: 12, offset: 6}} lg={{span: 10, offset: 7}}
+      <Col xs={{span: 22, offset: 1}}
+           sm={{span: 16, offset: 4}}
+           md={{span: 10, offset: 7}}
+           lg={{span: 8, offset: 8}}
+           xl={{span: 6, offset: 9}}
            style={colStyle}>
-        <h1 style={{textAlign: "center"}}>Register</h1>
+        <h1 style={{textAlign: "center"}}>Đăng ký</h1>
         <Card bordered={false}>
           <Form
             name="basic"
@@ -83,45 +87,45 @@ function RegisterPage() {
             <Form.Item
               name="username"
               rules={[
-                {required: true, message: 'Please input your username!'},
-                {min: 8, message: 'Username length must greater than or equal 8'}
+                {required: true, message: 'Vui lòng nhập tên tài khoản'},
+                {min: 8, message: 'Tên tài khoản phải dài tối thiểu 8 ký tự'}
               ]}
             >
-              <Input prefix={<UserOutlined className="site-form-item-icon"/>} placeholder="Username"/>
+              <Input prefix={<UserOutlined className="site-form-item-icon"/>} placeholder="Tên tài khoản"/>
             </Form.Item>
 
             <Form.Item
               name="fullname"
-              rules={[{required: true, message: 'Please input your full name!'}]}
+              rules={[{required: true, message: 'Vui lòng nhập họ tên'}]}
             >
-              <Input prefix={<SmileOutlined className="site-form-item-icon"/>} placeholder="Full name"/>
+              <Input prefix={<SmileOutlined className="site-form-item-icon"/>} placeholder="Họ & tên"/>
             </Form.Item>
 
             <Form.Item
               name="password"
               type="password"
-              rules={[{required: true, message: 'Please input your password!'}, {
+              rules={[{required: true, message: 'Vui lòng nhập mật khẩu'}, {
                 min: 8,
-                message: 'Password length must greater than or equal to 8'
+                message: 'Mật khẩu phải dài tối thỉểu 8 ký tự'
               }]}
             >
-              <Input.Password prefix={<LockOutlined className="site-form-item-icon"/>} placeholder="Password"/>
+              <Input.Password prefix={<LockOutlined className="site-form-item-icon"/>} placeholder="Mật khẩu"/>
             </Form.Item>
 
             <Form.Item
               name="vpassword"
               type="password"
-              rules={[{required: true, message: 'Please validate your password!'},
+              rules={[{required: true, message: 'Vui lòng xác minh mật khẩu của bạn'},
                 {validator: checkValidatePassword}]}
             >
-              <Input.Password prefix={<LockOutlined className="site-form-item-icon"/>} placeholder="Validate password"/>
+              <Input.Password prefix={<LockOutlined className="site-form-item-icon"/>} placeholder="Nhập lại mật khẩu"/>
             </Form.Item>
 
             <Form.Item>
               <Button type="primary" htmlType="submit" style={{width: "100%"}}>
-                <PlusCircleOutlined/>Register
+                <PlusCircleOutlined/>Đăng ký
               </Button>
-              Or <Link to="/login">login now!</Link>
+              <p style={{paddingTop: '10px'}}>Đã có tài khoản? <Link to="/login">đăng nhập ngay</Link></p>
             </Form.Item>
           </Form>
           {msg}

@@ -14,7 +14,7 @@ export function useBalance(...dependencies) {
 
 export function useInfoWithBalance(...dependencies) {
   let [info, setInfo] = useState({
-    balance: null,
+    balance: -1,
     userName: null,
     lastUpdated: null,
     name: null

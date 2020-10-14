@@ -2,6 +2,7 @@ package com.anhvan.vmr.database;
 
 import com.anhvan.vmr.entity.FutureStateHolder;
 import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
@@ -128,5 +129,84 @@ public class TransactionManagerTest {
                           Assertions.assertTrue(ar2.succeeded());
                           vertxTestContext.completeNow();
                         }));
+  }
+
+  @Test
+  void testCloseConnection(VertxTestContext testContext) {
+    AsyncResult<SqlConnection> asyncResult = Mockito.mock(AsyncResult.class);
+    Mockito.when(asyncResult.failed()).thenReturn(false);
+    Mockito.when(asyncResult.result()).thenReturn(sqlConnection);
+    Mockito.when(sqlConnection.begin()).thenReturn(transaction);
+
+    AsyncResult<Void> commitAsyncResult = Mockito.mock(AsyncResult.class);
+    Mockito.when(asyncResult.failed()).thenReturn(false);
+
+    Mockito.doAnswer(
+            invocationOnMock -> {
+              Handler<AsyncResult<Void>> handler = invocationOnMock.getArgument(0);
+              handler.handle(commitAsyncResult);
+              return null;
+            })
+        .when(transaction)
+        .commit(ArgumentMatchers.any());
+
+    Mockito.doAnswer(
+            invocationOnMock -> {
+              Handler<AsyncResult<SqlConnection>> handler = invocationOnMock.getArgument(0);
+              handler.handle(asyncResult);
+              return null;
+            })
+        .when(pool)
+        .getConnection(ArgumentMatchers.any());
+
+    transactionManager
+        .begin()
+        .compose(Future::succeededFuture)
+        .onComplete(
+            ar -> {
+              transactionManager.close();
+              Mockito.verify(sqlConnection).close();
+              testContext.completeNow();
+            });
+  }
+
+  @Test
+  void testCommitIsNotCalled(VertxTestContext testContext) {
+    AsyncResult<SqlConnection> asyncResult = Mockito.mock(AsyncResult.class);
+    Mockito.when(asyncResult.failed()).thenReturn(false);
+    Mockito.when(asyncResult.result()).thenReturn(sqlConnection);
+    Mockito.when(sqlConnection.begin()).thenReturn(transaction);
+
+    AsyncResult<Void> commitAsyncResult = Mockito.mock(AsyncResult.class);
+    Mockito.when(asyncResult.failed()).thenReturn(false);
+
+    Mockito.doAnswer(
+            invocationOnMock -> {
+              Handler<AsyncResult<Void>> handler = invocationOnMock.getArgument(0);
+              handler.handle(commitAsyncResult);
+              return null;
+            })
+        .when(transaction)
+        .commit(ArgumentMatchers.any());
+
+    Mockito.doAnswer(
+            invocationOnMock -> {
+              Handler<AsyncResult<SqlConnection>> handler = invocationOnMock.getArgument(0);
+              handler.handle(asyncResult);
+              return null;
+            })
+        .when(pool)
+        .getConnection(ArgumentMatchers.any());
+
+    transactionManager
+        .begin()
+        .compose(result -> Future.failedFuture(new RuntimeException("example")))
+        .compose(result -> transactionManager.commit())
+        .onComplete(
+            ar -> {
+              Mockito.verify(transaction, Mockito.times(0)).commit();
+              Assertions.assertTrue(ar.cause() instanceof RuntimeException);
+              testContext.completeNow();
+            });
   }
 }

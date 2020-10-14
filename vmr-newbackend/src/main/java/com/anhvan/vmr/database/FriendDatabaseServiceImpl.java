@@ -214,7 +214,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
                   .getTransaction()
                   .preparedQuery(ACCEPT_FRIEND)
                   .executeBatch(
-                      Arrays.asList(Tuple.of(userId, userId), Tuple.of(userId, userId)),
+                      Arrays.asList(Tuple.of(userId, friendId), Tuple.of(friendId, userId)),
                       ar -> {
                         if (ar.succeeded()) {
                           promise.complete(manager);
@@ -228,13 +228,13 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
         .onComplete(
             ar -> {
               if (ar.succeeded()) {
-                log.debug("Accept friend successfully");
+                log.debug("Accept friend successfully, userId={}, friendId={}", userId, friendId);
                 statusPromise.complete();
               } else {
                 log.debug("Error when add friend", ar.cause());
-                transactionManager.close();
                 statusPromise.fail(ar.cause());
               }
+              transactionManager.close();
             });
 
     return statusPromise.future();
@@ -256,7 +256,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
                   .getTransaction()
                   .preparedQuery(REJECT_FRIEND_STMT)
                   .executeBatch(
-                      Arrays.asList(Tuple.of(userId, userId), Tuple.of(userId, userId)),
+                      Arrays.asList(Tuple.of(userId, friendId), Tuple.of(friendId, userId)),
                       ar -> {
                         if (ar.succeeded()) {
                           promise.complete(manager);
@@ -270,10 +270,14 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
         .onComplete(
             ar -> {
               if (ar.succeeded()) {
-                log.debug("Accept friend successfully");
+                log.debug("Reject friend successfully, userId={}, friendId={}", userId, friendId);
                 statusPromise.complete();
               } else {
-                log.debug("Error when reject friend", ar.cause());
+                log.debug(
+                    "Error when reject friend, userId={}, friendId={}",
+                    userId,
+                    friendId,
+                    ar.cause());
                 transactionManager.close();
                 statusPromise.fail(ar.cause());
               }

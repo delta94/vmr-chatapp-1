@@ -24,21 +24,25 @@ export default function MenuBar(props) {
       .reduce((x, y) => x + y, 0);
   });
 
+  let menuBarIconStyle = {
+    color: '#1890ff'
+  };
+
   return (
     <div className={className}>
-      <IconWrapper icon={<MessageOutlined className="menubar-icon" style={{color: '#1890ff'}}/>}
+      <IconWrapper icon={<MessageOutlined className="menubar-icon" style={menuBarIconStyle}/>}
                    onClick={() => setCurrentTab("chat")}
                    numMsg={numChatNotifications}
                    tab="chat"/>
-      <IconWrapper icon={<CreditCardOutlined className="menubar-icon" style={{color: '#1890ff'}}/>}
+      <IconWrapper icon={<CreditCardOutlined className="menubar-icon" style={menuBarIconStyle}/>}
                    onClick={() => setCurrentTab("wallet")}
                    isMid
                    tab="wallet"/>
-      <IconWrapper icon={<TeamOutlined className="menubar-icon" style={{color: '#1890ff'}}/>}
+      <IconWrapper icon={<TeamOutlined className="menubar-icon" style={menuBarIconStyle}/>}
                    onClick={() => setCurrentTab("friend")}
                    isMid
                    tab={"friend"}/>
-      <IconWrapper icon={<LogoutOutlined className="menubar-icon" style={{color: '#1890ff'}}/>}
+      <IconWrapper icon={<LogoutOutlined className="menubar-icon" style={menuBarIconStyle}/>}
                    onClick={logout}/>
     </div>
   );
