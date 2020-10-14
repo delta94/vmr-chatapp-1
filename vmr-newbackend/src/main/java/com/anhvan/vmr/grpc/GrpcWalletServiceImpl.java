@@ -7,12 +7,14 @@ import com.anhvan.vmr.database.WalletDatabaseService;
 import com.anhvan.vmr.entity.DatabaseTransferRequest;
 import com.anhvan.vmr.entity.DatabaseTransferResponse;
 import com.anhvan.vmr.entity.HistoryItemResponse;
-import com.anhvan.vmr.entity.WebSocketMessage;
 import com.anhvan.vmr.exception.TransferException;
 import com.anhvan.vmr.model.Message;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.proto.Common;
-import com.anhvan.vmr.proto.Wallet.*;
+import com.anhvan.vmr.proto.Wallet.BalanceResponse;
+import com.anhvan.vmr.proto.Wallet.HistoryResponse;
+import com.anhvan.vmr.proto.Wallet.TransferRequest;
+import com.anhvan.vmr.proto.Wallet.TransferResponse;
 import com.anhvan.vmr.proto.WalletServiceGrpc;
 import com.anhvan.vmr.util.GrpcUtil;
 import com.anhvan.vmr.websocket.WebSocketService;
@@ -26,7 +28,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Log4j2
-public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
+public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
   private UserDatabaseService userDbService;
   private WalletDatabaseService walletDatabaseService;
   private WebSocketService webSocketService;
@@ -114,11 +116,12 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
   public void transfer(TransferRequest request, StreamObserver<TransferResponse> responseObserver) {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
 
-    log.info("Handle transfer grpc call, userId={}, request={}", userId, request);
-
     // Extract info
     long receiverId = request.getReceiver();
     long amount = request.getAmount();
+
+    log.info(
+        "Handle transfer grpc call, userId={}, friendId={}, amount={}", userId, receiverId, amount);
 
     // Create response builder object
     TransferResponse.Builder responseBuilder = TransferResponse.newBuilder();
@@ -168,22 +171,13 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
                         .senderId(userId)
                         .receiverId(receiverId)
                         .message(amount + ";" + request.getMessage())
-                        .type("TRANSFER")
+                        .type(Message.Type.TRANSFER.name())
                         .build();
 
                 // Cache the message
                 chatCacheService.cacheMessage(message);
-                friendCacheService.updateLastMessage(userId, receiverId, message);
-                friendCacheService.updateLastMessage(receiverId, userId, message);
-
-                // Send to receiver
-                webSocketService.sendTo(
-                    request.getReceiver(),
-                    WebSocketMessage.builder().type("CHAT").data(message).build());
-
-                // Sendback to sender
-                webSocketService.sendTo(
-                    userId, WebSocketMessage.builder().type("SEND_BACK").data(message).build());
+                friendCacheService.updateLastMessageForBoth(userId, receiverId, message);
+                webSocketService.sendChatMessage(userId, receiverId, message);
               } else {
                 // Transfer failed
                 Throwable cause = ar.cause();

@@ -37,6 +37,8 @@ public class GrpcFriendServiceImpl extends FriendServiceImplBase {
   public void getFriendList(Empty request, StreamObserver<FriendListResponse> responseObserver) {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
 
+    log.info("Handle getFriendList, userId={}", userId);
+
     friendDbService
         .getFriendList(userId)
         .onComplete(
@@ -56,6 +58,7 @@ public class GrpcFriendServiceImpl extends FriendServiceImplBase {
                 }
                 responseObserver.onNext(response.build());
               } else {
+                log.error("Error when get friend list, userId={}", userId, ar.cause());
                 responseObserver.onNext(
                     FriendListResponse.newBuilder()
                         .setError(
@@ -80,19 +83,19 @@ public class GrpcFriendServiceImpl extends FriendServiceImplBase {
 
     switch (type) {
       case REMOVE_FRIEND:
-        log.info("Hanlde remove friend request {}", request);
+        log.info("Hanlde remove friend request: userId={}, friendId={}", userId, friendId);
         setFriendStatusFuture = friendService.removeFriend(userId, friendId);
         break;
       case ADD_FRIEND:
-        log.info("Handle add friend request {}", request);
+        log.info("Hanlde add friend request: userId={}, friendId={}", userId, friendId);
         setFriendStatusFuture = friendDbService.addFriend(userId, friendId);
         break;
       case ACCEPT_FRIEND:
-        log.info("Handle accept friend request {}", request);
+        log.info("Hanlde accept friend request: userId={}, friendId={}", userId, friendId);
         setFriendStatusFuture = friendService.acceptFriend(friendId, userId);
         break;
       case REJECT_FRIEND:
-        log.info("Handle reject friend request {}", request);
+        log.info("Hanlde reject friend request: userId={}, friendId={}", userId, friendId);
         setFriendStatusFuture = friendDbService.rejectFriend(friendId, userId);
         break;
     }
@@ -118,7 +121,7 @@ public class GrpcFriendServiceImpl extends FriendServiceImplBase {
                   friendId,
                   WebSocketMessage.builder()
                       .data(new JsonObject().put("userId", userId))
-                      .type("ACCEPT")
+                      .type(WebSocketMessage.Type.ACCEPT.name())
                       .build());
             }
           } else {

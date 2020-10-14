@@ -137,6 +137,12 @@ public class FriendCacheServiceImpl implements FriendCacheService {
   }
 
   @Override
+  public Future<Void> updateLastMessageForBoth(long userId, long friendId, Message message) {
+    return updateLastMessage(userId, friendId, message)
+        .compose(ignored -> updateLastMessage(friendId, userId, message));
+  }
+
+  @Override
   public Future<Void> clearFriendCache(long userId) {
     Promise<Void> cachePromise = Promise.promise();
 

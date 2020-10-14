@@ -1,11 +1,12 @@
 import React from 'react';
 
 import './BalancePage.css';
-import {Col, Row, Spin} from "antd";
+import {Col, Row} from "antd";
 import {moneyFormat, timestampSecond2String} from "../../util/string-util";
 import {CalendarTwoTone, SmileTwoTone, UserOutlined} from '@ant-design/icons';
 import {useInfoWithBalance} from "../../hooks/wallet";
 import TitleBar from '../TitleBar';
+import LoadingArea from "../LoadingArea";
 
 export default function BalancePage() {
   let info = useInfoWithBalance();
@@ -49,7 +50,7 @@ export default function BalancePage() {
       }
 
       {
-        !loaded && <div className={'balance-page loading'}><Spin size={'large'}/></div>
+        !loaded && <div className={'balance-page loading'}><LoadingArea/></div>
       }
     </div>
   );

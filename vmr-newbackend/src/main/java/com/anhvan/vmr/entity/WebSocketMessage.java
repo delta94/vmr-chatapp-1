@@ -6,8 +6,16 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
+@Builder(toBuilder = true)
 public class WebSocketMessage {
+  public enum Type {
+    CHAT,
+    SEND_BACK,
+    ONLINE,
+    OFFLINE,
+    ACCEPT
+  }
+
   private String type;
   private Object data;
 }

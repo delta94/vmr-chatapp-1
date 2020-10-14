@@ -8,7 +8,7 @@ import io.grpc.stub.StreamObserver;
 import javax.inject.Singleton;
 
 @Singleton
-public class SampleServiceImpl extends SampleServiceImplBase {
+public class GrpcSampleServiceImpl extends SampleServiceImplBase {
   @Override
   public void sampleCall(SampleRequest request, StreamObserver<SampleResponse> responseObserver) {
     SampleResponse response =

@@ -54,6 +54,8 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   public static final String CHECK_FRIEND_STATUS_STMT =
       "select status from friends where user_id=? and friend_id=?";
 
+  public static final String STATUS_KEY = "STATUS";
+
   private MySQLPool pool;
   private DatabaseService dbService;
 
@@ -107,7 +109,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
 
               // Not add friend yet
               if (ar.result().size() == 0) {
-                manager.set("STATUS", "NOTHING");
+                manager.set(STATUS_KEY, Friend.Status.NOTHING);
                 promise.complete(manager);
                 return;
               }
@@ -115,24 +117,24 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
               // Aldready exist in table
               Row result = RowMapperUtil.firstRow(ar.result());
               if (result != null) {
-                String status = result.getString("status");
+                Friend.Status status = Friend.Status.valueOf(result.getString("status"));
                 switch (status) {
-                  case "ACCEPTED":
+                  case ACCEPTED:
                     promise.fail(
                         new AddFriendException(
                             "Aldready added", AddFriendException.ErrorCode.ACCEPTED));
                     break;
-                  case "WAITING":
+                  case WAITING:
                     promise.fail(
                         new AddFriendException("Waiting", AddFriendException.ErrorCode.WAITING));
                     break;
-                  case "NOT_ANSWER":
+                  case NOT_ANSWER:
                     promise.fail(
                         new AddFriendException(
                             "Wait for accepted", AddFriendException.ErrorCode.NOT_ANSWER));
                     break;
                   default:
-                    manager.set("STATUS", "REMOVED");
+                    manager.set(STATUS_KEY, Friend.Status.REMOVED);
                     promise.complete(manager);
                     break;
                 }
@@ -150,14 +152,16 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
     String stmt = ADD_FRIEND_STMT;
     List<Tuple> tuples =
         Arrays.asList(
-            Tuple.of(userId, friendId, "WAITING"), Tuple.of(friendId, userId, "NOT_ANSWER"));
+            Tuple.of(userId, friendId, Friend.Status.WAITING.name()),
+            Tuple.of(friendId, userId, Friend.Status.NOT_ANSWER.name()));
 
     // Update if existed
-    if (manager.get("STATUS").equals("REMOVED")) {
+    if (manager.get(STATUS_KEY) == Friend.Status.REMOVED) {
       stmt = UPDATE_FRIEND_STMT;
       tuples =
           Arrays.asList(
-              Tuple.of("WAITING", userId, friendId), Tuple.of("NOT_ANSWER", friendId, userId));
+              Tuple.of(Friend.Status.WAITING.name(), userId, friendId),
+              Tuple.of(Friend.Status.NOT_ANSWER.name(), friendId, userId));
     }
 
     manager
@@ -306,7 +310,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
                 friendListPromise.complete(userList);
               } else {
                 Throwable cause = rowSetAsyncRs.cause();
-                log.error("Error when get friend list of user {}", userId, cause);
+                log.error("Error when get friend list, userId={}", userId, cause);
                 friendListPromise.fail(cause);
               }
             });

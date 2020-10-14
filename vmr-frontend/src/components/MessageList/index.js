@@ -12,6 +12,7 @@ import {clearUnreadMessage} from "../../service/friend";
 import {Empty} from "antd";
 
 import './MessageList.css';
+import LoadingArea from "../LoadingArea";
 
 function MessageListInternal(props) {
   let {receiverId} = props;
@@ -44,12 +45,14 @@ function MessageListInternal(props) {
   let inputRef = useRef(null);
   let [sendButtonActive, setSendBtnActive] = useState(false);
   let [moneyTransferActive, setMoneyTransferActive] = useState(false);
+  let [msgLoading, setMsgLoading] = useState(true);
 
   let scrollToBottom = () => {
     let {current} = endOfMsgList;
     if (current) {
       current.scrollIntoView();
     }
+    setMsgLoading(false);
   };
 
   // Message list
@@ -145,7 +148,8 @@ function MessageListInternal(props) {
 
       <div className="message-list-container" ref={msgList} onScroll={msgScrollHandle}>
         {messages.length > 0 && renderMessageNew(messages)}
-        {messages.length === 0 && <Empty description={<span>Chat với {receiver.name} ngay!</span>}/>}
+        {!msgLoading && messages.length === 0 && <Empty description={<span>Chat với {receiver.name} ngay!</span>}/>}
+        {msgLoading && messages.length === 0 && <LoadingArea/>}
         <div ref={endOfMsgList} style={{height: '0px'}}/>
       </div>
 

@@ -19,5 +19,7 @@ public interface FriendCacheService {
 
   Future<Void> updateLastMessage(long userId, long friendId, Message message);
 
+  Future<Void> updateLastMessageForBoth(long userId, long friendId, Message message);
+
   Future<Void> clearUnreadMessage(long userId, long friendId);
 }

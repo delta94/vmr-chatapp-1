@@ -14,6 +14,14 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 public class Friend extends User {
+  public enum Status {
+    WAITING,
+    NOT_ANSWER,
+    ACCEPTED,
+    NOTHING,
+    REMOVED
+  }
+
   @ColName("status")
   private String friendStatus;
 

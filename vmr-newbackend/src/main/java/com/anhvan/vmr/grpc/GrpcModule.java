@@ -21,7 +21,7 @@ public class GrpcModule {
   @IntoSet
   @Singleton
   public BindableService provideSampleServiceImpl() {
-    return new SampleServiceImpl();
+    return new GrpcSampleServiceImpl();
   }
 
   @Provides
@@ -51,7 +51,7 @@ public class GrpcModule {
       WebSocketService webSocketService,
       ChatCacheService chatCacheService,
       FriendCacheService friendCacheService) {
-    return WalletServiceImpl.builder()
+    return GrpcWalletServiceImpl.builder()
         .userDbService(userDatabaseService)
         .walletDatabaseService(walletDatabaseService)
         .webSocketService(webSocketService)

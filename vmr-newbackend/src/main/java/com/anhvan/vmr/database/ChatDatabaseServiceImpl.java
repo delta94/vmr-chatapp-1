@@ -72,7 +72,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
 
     String type = msg.getType();
     if (type == null) {
-      type = "CHAT";
+      type = Message.Type.CHAT.name();
     }
 
     pool.preparedQuery(INSERT_MESSAGE_STMT)
@@ -81,7 +81,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
                 msg.getSenderId(), msg.getReceiverId(), msg.getMessage(), msg.getTimestamp(), type),
             rs -> {
               if (!rs.succeeded()) {
-                log.error("Error when add chat message={}", msg, rs.cause());
+                log.error("Error when add chat, message={}", msg, rs.cause());
                 idPromise.fail(rs.cause());
                 return;
               }

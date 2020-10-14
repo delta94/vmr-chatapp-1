@@ -31,11 +31,7 @@ public class HistoryItemResponse {
 
     // Set type
     String typeString = row.getString("type_string");
-    if (typeString.equals("TRANSFER")) {
-      history.setType(HistoryItemResponse.Type.TRANSFER);
-    } else if (typeString.equals("RECEIVE")) {
-      history.setType(HistoryItemResponse.Type.RECEIVE);
-    }
+    history.setType(Type.valueOf(typeString));
 
     return history;
   }

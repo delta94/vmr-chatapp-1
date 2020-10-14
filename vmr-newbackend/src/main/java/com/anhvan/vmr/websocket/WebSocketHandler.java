@@ -19,6 +19,10 @@ import java.time.Instant;
 @NoArgsConstructor
 @Log4j2
 public class WebSocketHandler {
+  public static final String TYPE_KEY = "type";
+
+  public static final String DATA_KEY = "data";
+
   private ServerWebSocket conn;
   private long userId;
   private WebSocketService webSocketService;
@@ -31,7 +35,8 @@ public class WebSocketHandler {
     webSocketService.addConnection(userId, conn);
 
     // Broadcast online status
-    webSocketService.broadCast(WebSocketMessage.builder().type("ONLINE").data(userId).build());
+    webSocketService.broadCast(
+        WebSocketMessage.builder().type(WebSocketMessage.Type.ONLINE.name()).data(userId).build());
 
     // Remove on close
     conn.closeHandler(unused -> handleCloseConnection());
@@ -44,18 +49,22 @@ public class WebSocketHandler {
     // Remove connection from concurent hash map
     webSocketService.removeConnection(userId, conn);
     if (!webSocketService.checkOnline(userId)) {
-      webSocketService.broadCast(WebSocketMessage.builder().type("OFFLINE").data(userId).build());
+      webSocketService.broadCast(
+          WebSocketMessage.builder()
+              .type(WebSocketMessage.Type.OFFLINE.name())
+              .data(userId)
+              .build());
     }
   }
 
   private void handleMessage(String msg) {
     // Parse message
     JsonObject jsonMessage = new JsonObject(msg);
-    String type = jsonMessage.getString("type");
+    String type = jsonMessage.getString(TYPE_KEY);
 
     // Handle chat message
-    if (type.equals("CHAT")) {
-      JsonObject data = jsonMessage.getJsonObject("data");
+    if (type.equals(Message.Type.CHAT.name())) {
+      JsonObject data = jsonMessage.getJsonObject(DATA_KEY);
       Message message = data.mapTo(Message.class);
       message.setSenderId(userId);
       message.setTimestamp(Instant.now().getEpochSecond());
@@ -64,22 +73,22 @@ public class WebSocketHandler {
   }
 
   private void handleChat(Message message) {
+    long receiverId = message.getReceiverId();
     chatDatabaseService
         .addChat(message)
         .onSuccess(
             id -> {
-              message.setType("CHAT");
+              message.setType(Message.Type.CHAT.name());
               chatCacheService.cacheMessage(message);
-              friendCacheService.updateLastMessage(
-                  message.getSenderId(), message.getReceiverId(), message);
-              friendCacheService.updateLastMessage(
-                  message.getReceiverId(), message.getSenderId(), message);
-              webSocketService.sendTo(
-                  userId, WebSocketMessage.builder().type("SEND_BACK").data(message).build());
-              webSocketService.sendTo(
-                  message.getReceiverId(),
-                  WebSocketMessage.builder().type("CHAT").data(message).build());
+              friendCacheService.updateLastMessageForBoth(userId, receiverId, message);
+              webSocketService.sendChatMessage(userId, receiverId, message);
             })
-        .onFailure(throwable -> log.error("Error when at chat at WebSocketHandler", throwable));
+        .onFailure(
+            throwable ->
+                log.error(
+                    "Error when at chat: senderId={}, receiverId={}",
+                    userId,
+                    receiverId,
+                    throwable));
   }
 }
