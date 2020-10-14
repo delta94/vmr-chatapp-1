@@ -4,13 +4,18 @@ import io.vertx.core.Future;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import io.vertx.mysqlclient.MySQLPool;
+import io.vertx.sqlclient.PreparedQuery;
+import io.vertx.sqlclient.Row;
+import io.vertx.sqlclient.RowSet;
 import io.vertx.sqlclient.Transaction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 @ExtendWith(VertxExtension.class)
+@SuppressWarnings("unchecked")
 public class FriendDatabaseServiceImplTest {
   DatabaseService dbService;
   TransactionManager transactionManager;
@@ -34,12 +39,17 @@ public class FriendDatabaseServiceImplTest {
   }
 
   @Test
-  void testAddFriend(VertxTestContext testContext) {
-    friendDbService
-        .addFriend(0, 1)
-        .onComplete(
-            ar -> {
+  void testGetFriendList(VertxTestContext testContext) {
+    PreparedQuery<RowSet<Row>> preparedQuery = Mockito.mock(PreparedQuery.class);
+    Mockito.when(mySQLPool.preparedQuery(FriendDatabaseServiceImpl.GET_FRIENDS_STMT))
+        .thenReturn(preparedQuery);
+    Mockito.doAnswer(
+            invocationOnMock -> {
               testContext.completeNow();
-            });
+              return null;
+            })
+        .when(preparedQuery)
+        .execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+    friendDbService.getFriendList(1);
   }
 }

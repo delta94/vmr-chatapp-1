@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Form, Input, Button, Row, Col, Card, Alert, Checkbox} from "antd";
+import {Form, Input, Button, Row, Col, Card, Alert} from "antd";
 import {UserOutlined, LockOutlined, LoginOutlined} from '@ant-design/icons';
 import bg from '../resource/registerbg.jpg';
 import {login} from "../../service/user";

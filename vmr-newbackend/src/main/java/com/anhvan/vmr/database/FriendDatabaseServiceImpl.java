@@ -18,16 +18,16 @@ import java.util.List;
 
 @Log4j2
 public class FriendDatabaseServiceImpl implements FriendDatabaseService {
-  private static final String ADD_FRIEND_STMT =
+  public static final String ADD_FRIEND_STMT =
       "insert into friends(user_id, friend_id, status) values(?,?,?)";
 
-  private static final String GET_FRIENDS_STMT =
+  public static final String GET_FRIENDS_STMT =
       "select users.id, users.username, users.name, friends.status "
           + "from users "
           + "inner join friends on users.id = friends.friend_id "
           + "where friends.user_id = ? and friends.status != 'REMOVED'";
 
-  private static final String GET_FRIENDS_WITH_MESSAGE_STMT =
+  public static final String GET_FRIENDS_WITH_MESSAGE_STMT =
       "select users.id, users.username, users.name, messages.message as last_message, "
           + "messages.sender as last_message_sender, messages.type as last_message_type, "
           + "messages.send_time as last_message_timestamp, friends.num_unread_message "

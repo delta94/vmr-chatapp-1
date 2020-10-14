@@ -77,6 +77,7 @@ public class GrpcFriendServiceImpl extends FriendServiceImplBase {
       SetFriendStatusRequest request, StreamObserver<SetFriendStatusResponse> responseObserver) {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
     long friendId = request.getFriendId();
+
     SetFriendStatusRequest.Type type = request.getType();
 
     Future<Void> setFriendStatusFuture = null;
