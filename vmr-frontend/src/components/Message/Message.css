@@ -19,7 +19,7 @@
 }
 
 .message .bubble {
-  max-width: 400px !important;
+  max-width: min(75%, 400px) !important;
   word-wrap: break-word;
   border: 1px solid #bfbfbfd6;
 }
@@ -73,13 +73,13 @@
 
 .message .bubble-container .bubble.transfer {
   background-color: #e7ffdc;
-  width: 75%;
+  width: min(75%, 400px);
   color: green;
 }
 
 .message .bubble-container .bubble.receive {
-  width: 75%;
   color: green;
+  width: min(75%, 400px);
 }
 
 .message .bubble-container .amount {
