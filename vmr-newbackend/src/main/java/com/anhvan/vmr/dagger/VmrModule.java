@@ -51,7 +51,8 @@ public class VmrModule {
 
   @Provides
   @Singleton
-  public VertxOptions provideVertxOptions(VertxConfig vertxConfig, MicrometerMetricsOptions metricsOptions) {
+  public VertxOptions provideVertxOptions(
+      VertxConfig vertxConfig, MicrometerMetricsOptions metricsOptions) {
     return new VertxOptions()
         .setPreferNativeTransport(true)
         .setWorkerPoolSize(vertxConfig.getNumOfWorkerThread())

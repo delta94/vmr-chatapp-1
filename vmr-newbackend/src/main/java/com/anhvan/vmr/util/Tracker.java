@@ -17,10 +17,6 @@ public class Tracker {
 
   private static final Map<String, Timer> METRICS = new ConcurrentHashMap<>();
 
-  public static void initialize(String applicationName) {
-    METER_REGISTRY.config().commonTags("application", applicationName);
-  }
-
   private long startTime = 0;
   private String metricName;
   @Builder.Default private String step = "";
