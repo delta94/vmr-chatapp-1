@@ -1,17 +1,20 @@
 package com.anhvan.vmr.grpc;
 
 import com.anhvan.vmr.cache.ChatCacheService;
+import com.anhvan.vmr.cache.FriendCacheService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.database.WalletDatabaseService;
 import com.anhvan.vmr.entity.DatabaseTransferRequest;
 import com.anhvan.vmr.entity.DatabaseTransferResponse;
 import com.anhvan.vmr.entity.HistoryItemResponse;
-import com.anhvan.vmr.entity.WebSocketMessage;
 import com.anhvan.vmr.exception.TransferException;
 import com.anhvan.vmr.model.Message;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.proto.Common;
-import com.anhvan.vmr.proto.Wallet.*;
+import com.anhvan.vmr.proto.Wallet.BalanceResponse;
+import com.anhvan.vmr.proto.Wallet.HistoryResponse;
+import com.anhvan.vmr.proto.Wallet.TransferRequest;
+import com.anhvan.vmr.proto.Wallet.TransferResponse;
 import com.anhvan.vmr.proto.WalletServiceGrpc;
 import com.anhvan.vmr.util.GrpcUtil;
 import com.anhvan.vmr.websocket.WebSocketService;
@@ -25,15 +28,19 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Log4j2
-public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
+public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
   private UserDatabaseService userDbService;
   private WalletDatabaseService walletDatabaseService;
   private WebSocketService webSocketService;
   private ChatCacheService chatCacheService;
+  private FriendCacheService friendCacheService;
 
   @Override
   public void getBalance(Common.Empty request, StreamObserver<BalanceResponse> responseObserver) {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+
+    // Log the request
+    log.info("Handle getBalance grpc call, userId={}", userId);
 
     // Create response builder
     BalanceResponse.Builder responseBuilder = BalanceResponse.newBuilder();
@@ -54,6 +61,9 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
                         .build();
                 responseBuilder.setData(data);
               } else {
+                // Write log
+                log.error("Error when get balance, userId={}", userId, ar.cause());
+
                 // Get info failue
                 Common.Error error =
                     Common.Error.newBuilder()
@@ -70,6 +80,8 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
   @Override
   public void getHistory(Common.Empty request, StreamObserver<HistoryResponse> responseObserver) {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+
+    log.info("Handle getHistory grpc call, userId={}", userId);
 
     HistoryResponse.Builder historyResponseBuilder = HistoryResponse.newBuilder();
 
@@ -91,7 +103,9 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
                         .setMessage("Fail to get history")
                         .build();
                 historyResponseBuilder.setError(error);
-                log.error("Error when get history list of user", ar.cause());
+
+                // Write log
+                log.error("Error when get history list, userId={}", userId, ar.cause());
               }
               responseObserver.onNext(historyResponseBuilder.build());
               responseObserver.onCompleted();
@@ -105,6 +119,9 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
     // Extract info
     long receiverId = request.getReceiver();
     long amount = request.getAmount();
+
+    log.info(
+        "Handle transfer grpc call, userId={}, friendId={}, amount={}", userId, receiverId, amount);
 
     // Create response builder object
     TransferResponse.Builder responseBuilder = TransferResponse.newBuilder();
@@ -154,20 +171,13 @@ public class WalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBase {
                         .senderId(userId)
                         .receiverId(receiverId)
                         .message(amount + ";" + request.getMessage())
-                        .type("TRANSFER")
+                        .type(Message.Type.TRANSFER.name())
                         .build();
 
                 // Cache the message
                 chatCacheService.cacheMessage(message);
-
-                // Send to receiver
-                webSocketService.sendTo(
-                    request.getReceiver(),
-                    WebSocketMessage.builder().type("CHAT").data(message).build());
-
-                // Sendback to sender
-                webSocketService.sendTo(
-                    userId, WebSocketMessage.builder().type("SEND_BACK").data(message).build());
+                friendCacheService.updateLastMessageForBoth(userId, receiverId, message);
+                webSocketService.sendChatMessage(userId, receiverId, message);
               } else {
                 // Transfer failed
                 Throwable cause = ar.cause();

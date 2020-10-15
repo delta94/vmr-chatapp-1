@@ -2,16 +2,21 @@ package com.anhvan.vmr.grpc;
 
 import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
-import com.anhvan.vmr.entity.GrpcUserResponse;
+import com.anhvan.vmr.entity.Friend;
+import com.anhvan.vmr.entity.WebSocketMessage;
+import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.proto.Common.Error;
 import com.anhvan.vmr.proto.Common.ErrorCode;
 import com.anhvan.vmr.proto.Common.Empty;
 import com.anhvan.vmr.proto.Friend.*;
 import com.anhvan.vmr.proto.FriendServiceGrpc.*;
+import com.anhvan.vmr.service.FriendService;
+import com.anhvan.vmr.service.UserService;
 import com.anhvan.vmr.util.GrpcUtil;
 import com.anhvan.vmr.websocket.WebSocketService;
 import io.grpc.stub.StreamObserver;
 import io.vertx.core.Future;
+import io.vertx.core.json.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.log4j.Log4j2;
@@ -21,55 +26,18 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Log4j2
-public class FriendServiceImpl extends FriendServiceImplBase {
+public class GrpcFriendServiceImpl extends FriendServiceImplBase {
   private UserDatabaseService userDbService;
   private FriendDatabaseService friendDbService;
   private WebSocketService webSocketService;
-
-  @Override
-  public void addFriend(
-      AddFriendRequest request, StreamObserver<AddFriendResponse> responseObserver) {
-    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
-    long friendId = request.getUserId();
-
-    // Check if friendId is valid
-    if (userId == friendId) {
-      Error error =
-          Error.newBuilder()
-              .setCode(ErrorCode.FAILUE)
-              .setMessage("You cannot add yourself as friend")
-              .build();
-      responseObserver.onNext(AddFriendResponse.newBuilder().setError(error).build());
-      responseObserver.onCompleted();
-      return;
-    }
-
-    friendDbService
-        .addFriend(userId, friendId)
-        .onComplete(
-            ar -> {
-              AddFriendResponse.Builder responseBuilder = AddFriendResponse.newBuilder();
-              if (ar.succeeded()) {
-                // Add friend succeeded
-                responseObserver.onNext(responseBuilder.build());
-              } else {
-                // Add friend failed
-                log.error(
-                    "Fail to add friend userId: {}, friendId: {}", userId, friendId, ar.cause());
-                Error error =
-                    Error.newBuilder()
-                        .setCode(ErrorCode.FAILUE)
-                        .setMessage("Fail to add friend")
-                        .build();
-                responseObserver.onNext(responseBuilder.setError(error).build());
-              }
-              responseObserver.onCompleted();
-            });
-  }
+  private FriendService friendService;
+  private UserService userService;
 
   @Override
   public void getFriendList(Empty request, StreamObserver<FriendListResponse> responseObserver) {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+
+    log.info("Handle getFriendList, userId={}", userId);
 
     friendDbService
         .getFriendList(userId)
@@ -77,8 +45,8 @@ public class FriendServiceImpl extends FriendServiceImplBase {
             ar -> {
               if (ar.succeeded()) {
                 FriendListResponse.Builder response = FriendListResponse.newBuilder();
-                List<GrpcUserResponse> grpcUserResponseList = ar.result();
-                for (GrpcUserResponse user : grpcUserResponseList) {
+                List<Friend> grpcUserResponseList = ar.result();
+                for (Friend user : grpcUserResponseList) {
                   FriendInfo info =
                       FriendInfo.newBuilder()
                           .setUsername(user.getUsername())
@@ -90,6 +58,7 @@ public class FriendServiceImpl extends FriendServiceImplBase {
                 }
                 responseObserver.onNext(response.build());
               } else {
+                log.error("Error when get friend list, userId={}", userId, ar.cause());
                 responseObserver.onNext(
                     FriendListResponse.newBuilder()
                         .setError(
@@ -104,53 +73,81 @@ public class FriendServiceImpl extends FriendServiceImplBase {
   }
 
   @Override
-  public void acceptFriend(
-      AcceptFriendRequest request, StreamObserver<AcceptFriendResponse> responseObserver) {
+  public void setFriendStatus(
+      SetFriendStatusRequest request, StreamObserver<SetFriendStatusResponse> responseObserver) {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+    long friendId = request.getFriendId();
 
-    AcceptFriendResponse.Builder responseBuilder = AcceptFriendResponse.newBuilder();
+    SetFriendStatusRequest.Type type = request.getType();
 
-    friendDbService
-        .acceptFriend(request.getFriendId(), userId)
-        .onComplete(
-            ar -> {
-              if (ar.failed()) {
-                log.debug(
-                    "Fail to accept friend request userId:{}, friendId:{}",
-                    userId,
-                    request.getFriendId(),
-                    ar.cause());
-                responseBuilder.setError(
-                    Error.newBuilder().setMessage("Accept friend failed").build());
-              }
-              responseObserver.onNext(responseBuilder.build());
-              responseObserver.onCompleted();
-            });
-  }
+    Future<Void> setFriendStatusFuture = null;
 
-  @Override
-  public void rejectFriend(
-      RejectFriendRequest request, StreamObserver<RejectFriendResponse> responseObserver) {
-    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+    switch (type) {
+      case REMOVE_FRIEND:
+        log.info("Hanlde remove friend request: userId={}, friendId={}", userId, friendId);
+        setFriendStatusFuture = friendService.removeFriend(userId, friendId);
+        break;
+      case ADD_FRIEND:
+        log.info("Hanlde add friend request: userId={}, friendId={}", userId, friendId);
+        setFriendStatusFuture = friendDbService.addFriend(userId, friendId);
+        break;
+      case ACCEPT_FRIEND:
+        log.info("Hanlde accept friend request: userId={}, friendId={}", userId, friendId);
+        setFriendStatusFuture = friendService.acceptFriend(friendId, userId);
+        break;
+      case REJECT_FRIEND:
+        log.info("Hanlde reject friend request: userId={}, friendId={}", userId, friendId);
+        setFriendStatusFuture = friendDbService.rejectFriend(friendId, userId);
+        break;
+    }
 
-    RejectFriendResponse.Builder responseBuilder = RejectFriendResponse.newBuilder();
+    SetFriendStatusResponse.Builder responseBuilder = SetFriendStatusResponse.newBuilder();
 
-    friendDbService
-        .rejectFriend(request.getFriendId(), userId)
-        .onComplete(
-            ar -> {
-              if (ar.failed()) {
-                log.debug(
-                    "Fail to reject friend request userId:{}, friendId:{}",
-                    userId,
-                    request.getFriendId(),
-                    ar.cause());
-                responseBuilder.setError(
-                    Error.newBuilder().setMessage("Remove friend failed").build());
-              }
-              responseObserver.onNext(responseBuilder.build());
-              responseObserver.onCompleted();
-            });
+    if (setFriendStatusFuture == null) {
+      responseObserver.onNext(
+          responseBuilder
+              .setError(Error.newBuilder().setCode(ErrorCode.INTERNAL_SERVER_ERROR).build())
+              .build());
+      responseObserver.onCompleted();
+      return;
+    }
+
+    setFriendStatusFuture.onComplete(
+        ar -> {
+          if (ar.succeeded()) {
+            responseObserver.onNext(responseBuilder.build());
+            responseObserver.onCompleted();
+            if (type == SetFriendStatusRequest.Type.ACCEPT_FRIEND) {
+              webSocketService.sendTo(
+                  friendId,
+                  WebSocketMessage.builder()
+                      .data(new JsonObject().put("userId", userId))
+                      .type(WebSocketMessage.Type.ACCEPT.name())
+                      .build());
+            }
+            if (type == SetFriendStatusRequest.Type.REMOVE_FRIEND) {
+              webSocketService.sendTo(
+                  friendId,
+                  WebSocketMessage.builder()
+                      .data(new JsonObject().put("userId", userId))
+                      .type(WebSocketMessage.Type.REMOVE_FRIEND.name())
+                      .build());
+            }
+          } else {
+            log.error(
+                "Error when set friend status: user_id={}, friend_id={}",
+                userId,
+                friendId,
+                ar.cause());
+            Error error =
+                Error.newBuilder()
+                    .setCode(ErrorCode.INTERNAL_SERVER_ERROR)
+                    .setMessage("Error when set friend status")
+                    .build();
+            responseObserver.onNext(responseBuilder.setError(error).build());
+            responseObserver.onCompleted();
+          }
+        });
   }
 
   @Override
@@ -160,12 +157,12 @@ public class FriendServiceImpl extends FriendServiceImplBase {
 
     FriendListResponse.Builder responseBuilder = FriendListResponse.newBuilder();
 
-    friendDbService
+    friendService
         .getChatFriendList(userId)
         .onComplete(
             ar -> {
               if (ar.succeeded()) {
-                for (GrpcUserResponse usr : ar.result()) {
+                for (Friend usr : ar.result()) {
                   FriendInfo.Builder friendInfoBuidler =
                       FriendInfo.newBuilder()
                           .setId(usr.getId())
@@ -201,7 +198,7 @@ public class FriendServiceImpl extends FriendServiceImplBase {
 
     String queryString = request.getQueryString();
 
-    Future<List<GrpcUserResponse>> userListFuture =
+    Future<List<Friend>> userListFuture =
         userDbService.queryListUserWithFriendStatus(queryString, userId);
 
     userListFuture.onSuccess(
@@ -209,7 +206,7 @@ public class FriendServiceImpl extends FriendServiceImplBase {
           UserListResponse.Builder response = UserListResponse.newBuilder();
 
           // Convert user object to response
-          for (GrpcUserResponse user : userList) {
+          for (Friend user : userList) {
             response.addUser(
                 UserResponse.newBuilder()
                     .setId(user.getId())
@@ -234,14 +231,14 @@ public class FriendServiceImpl extends FriendServiceImplBase {
       StreamObserver<ClearUnreadMessageResponse> responseObserver) {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
 
-    friendDbService
+    friendService
         .clearUnreadMessage(userId, request.getFriendId())
         .onComplete(
             ar -> {
               ClearUnreadMessageResponse.Builder builder = ClearUnreadMessageResponse.newBuilder();
               if (ar.failed()) {
                 log.error(
-                    "Error when clear unread message: user={}, friend={} l",
+                    "Error when clear unread message: user={}, friend={}",
                     userId,
                     request.getFriendId(),
                     ar.cause());
@@ -253,6 +250,36 @@ public class FriendServiceImpl extends FriendServiceImplBase {
               } else {
                 responseObserver.onNext(builder.build());
               }
+              responseObserver.onCompleted();
+            });
+  }
+
+  @Override
+  public void getUserInfo(
+      GetUserInfoRequest request, StreamObserver<GetUserInfoResponse> responseObserver) {
+    long userId = request.getUserId();
+
+    userService
+        .getUserById(userId)
+        .onComplete(
+            ar -> {
+              GetUserInfoResponse.Builder responseBuilder = GetUserInfoResponse.newBuilder();
+              if (ar.succeeded()) {
+                User user = ar.result();
+                responseBuilder
+                    .setUser(
+                        UserResponse.newBuilder()
+                            .setId(userId)
+                            .setName(user.getName())
+                            .setUsername(user.getUsername())
+                            .build())
+                    .build();
+              } else {
+                log.error("Error when get user info: userId={}", userId, ar.cause());
+                responseBuilder.setError(
+                    Error.newBuilder().setCode(ErrorCode.INTERNAL_SERVER_ERROR).build());
+              }
+              responseObserver.onNext(responseBuilder.build());
               responseObserver.onCompleted();
             });
   }

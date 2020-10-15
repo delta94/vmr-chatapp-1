@@ -12,17 +12,16 @@ var goog = jspb;
 var global = Function('return this')();
 
 var vmr_common_pb = require('../vmr/common_pb.js');
-goog.exportSymbol('proto.vmr.AcceptFriendRequest', null, global);
-goog.exportSymbol('proto.vmr.AcceptFriendResponse', null, global);
-goog.exportSymbol('proto.vmr.AddFriendRequest', null, global);
-goog.exportSymbol('proto.vmr.AddFriendResponse', null, global);
 goog.exportSymbol('proto.vmr.ClearUnreadMessageRequest', null, global);
 goog.exportSymbol('proto.vmr.ClearUnreadMessageResponse', null, global);
 goog.exportSymbol('proto.vmr.FriendInfo', null, global);
 goog.exportSymbol('proto.vmr.FriendListResponse', null, global);
 goog.exportSymbol('proto.vmr.FriendStatus', null, global);
-goog.exportSymbol('proto.vmr.RejectFriendRequest', null, global);
-goog.exportSymbol('proto.vmr.RejectFriendResponse', null, global);
+goog.exportSymbol('proto.vmr.GetUserInfoRequest', null, global);
+goog.exportSymbol('proto.vmr.GetUserInfoResponse', null, global);
+goog.exportSymbol('proto.vmr.SetFriendStatusRequest', null, global);
+goog.exportSymbol('proto.vmr.SetFriendStatusRequest.Type', null, global);
+goog.exportSymbol('proto.vmr.SetFriendStatusResponse', null, global);
 goog.exportSymbol('proto.vmr.UserListRequest', null, global);
 goog.exportSymbol('proto.vmr.UserListResponse', null, global);
 goog.exportSymbol('proto.vmr.UserResponse', null, global);
@@ -37,12 +36,12 @@ goog.exportSymbol('proto.vmr.UserResponse', null, global);
  * @extends {jspb.Message}
  * @constructor
  */
-proto.vmr.AddFriendRequest = function(opt_data) {
+proto.vmr.GetUserInfoRequest = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
-goog.inherits(proto.vmr.AddFriendRequest, jspb.Message);
+goog.inherits(proto.vmr.GetUserInfoRequest, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
-  proto.vmr.AddFriendRequest.displayName = 'proto.vmr.AddFriendRequest';
+  proto.vmr.GetUserInfoRequest.displayName = 'proto.vmr.GetUserInfoRequest';
 }
 
 
@@ -57,8 +56,8 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  *     for transitional soy proto support: http://goto/soy-param-migration
  * @return {!Object}
  */
-proto.vmr.AddFriendRequest.prototype.toObject = function(opt_includeInstance) {
-  return proto.vmr.AddFriendRequest.toObject(opt_includeInstance, this);
+proto.vmr.GetUserInfoRequest.prototype.toObject = function(opt_includeInstance) {
+  return proto.vmr.GetUserInfoRequest.toObject(opt_includeInstance, this);
 };
 
 
@@ -67,11 +66,11 @@ proto.vmr.AddFriendRequest.prototype.toObject = function(opt_includeInstance) {
  * @param {boolean|undefined} includeInstance Whether to include the JSPB
  *     instance for transitional soy proto support:
  *     http://goto/soy-param-migration
- * @param {!proto.vmr.AddFriendRequest} msg The msg instance to transform.
+ * @param {!proto.vmr.GetUserInfoRequest} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.AddFriendRequest.toObject = function(includeInstance, msg) {
+proto.vmr.GetUserInfoRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     userId: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
@@ -87,23 +86,23 @@ proto.vmr.AddFriendRequest.toObject = function(includeInstance, msg) {
 /**
  * Deserializes binary data (in protobuf wire format).
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.vmr.AddFriendRequest}
+ * @return {!proto.vmr.GetUserInfoRequest}
  */
-proto.vmr.AddFriendRequest.deserializeBinary = function(bytes) {
+proto.vmr.GetUserInfoRequest.deserializeBinary = function(bytes) {
   var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.vmr.AddFriendRequest;
-  return proto.vmr.AddFriendRequest.deserializeBinaryFromReader(msg, reader);
+  var msg = new proto.vmr.GetUserInfoRequest;
+  return proto.vmr.GetUserInfoRequest.deserializeBinaryFromReader(msg, reader);
 };
 
 
 /**
  * Deserializes binary data (in protobuf wire format) from the
  * given reader into the given message object.
- * @param {!proto.vmr.AddFriendRequest} msg The message object to deserialize into.
+ * @param {!proto.vmr.GetUserInfoRequest} msg The message object to deserialize into.
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.vmr.AddFriendRequest}
+ * @return {!proto.vmr.GetUserInfoRequest}
  */
-proto.vmr.AddFriendRequest.deserializeBinaryFromReader = function(msg, reader) {
+proto.vmr.GetUserInfoRequest.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
@@ -127,9 +126,9 @@ proto.vmr.AddFriendRequest.deserializeBinaryFromReader = function(msg, reader) {
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.vmr.AddFriendRequest.prototype.serializeBinary = function() {
+proto.vmr.GetUserInfoRequest.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  proto.vmr.AddFriendRequest.serializeBinaryToWriter(this, writer);
+  proto.vmr.GetUserInfoRequest.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
@@ -137,11 +136,11 @@ proto.vmr.AddFriendRequest.prototype.serializeBinary = function() {
 /**
  * Serializes the given message to binary data (in protobuf wire
  * format), writing to the given BinaryWriter.
- * @param {!proto.vmr.AddFriendRequest} message
+ * @param {!proto.vmr.GetUserInfoRequest} message
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.AddFriendRequest.serializeBinaryToWriter = function(message, writer) {
+proto.vmr.GetUserInfoRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getUserId();
   if (f !== 0) {
@@ -157,13 +156,13 @@ proto.vmr.AddFriendRequest.serializeBinaryToWriter = function(message, writer) {
  * optional int64 user_id = 1;
  * @return {number}
  */
-proto.vmr.AddFriendRequest.prototype.getUserId = function() {
+proto.vmr.GetUserInfoRequest.prototype.getUserId = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
 
 /** @param {number} value */
-proto.vmr.AddFriendRequest.prototype.setUserId = function(value) {
+proto.vmr.GetUserInfoRequest.prototype.setUserId = function(value) {
   jspb.Message.setProto3IntField(this, 1, value);
 };
 
@@ -179,12 +178,12 @@ proto.vmr.AddFriendRequest.prototype.setUserId = function(value) {
  * @extends {jspb.Message}
  * @constructor
  */
-proto.vmr.AddFriendResponse = function(opt_data) {
+proto.vmr.GetUserInfoResponse = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
-goog.inherits(proto.vmr.AddFriendResponse, jspb.Message);
+goog.inherits(proto.vmr.GetUserInfoResponse, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
-  proto.vmr.AddFriendResponse.displayName = 'proto.vmr.AddFriendResponse';
+  proto.vmr.GetUserInfoResponse.displayName = 'proto.vmr.GetUserInfoResponse';
 }
 
 
@@ -199,8 +198,8 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  *     for transitional soy proto support: http://goto/soy-param-migration
  * @return {!Object}
  */
-proto.vmr.AddFriendResponse.prototype.toObject = function(opt_includeInstance) {
-  return proto.vmr.AddFriendResponse.toObject(opt_includeInstance, this);
+proto.vmr.GetUserInfoResponse.prototype.toObject = function(opt_includeInstance) {
+  return proto.vmr.GetUserInfoResponse.toObject(opt_includeInstance, this);
 };
 
 
@@ -209,13 +208,14 @@ proto.vmr.AddFriendResponse.prototype.toObject = function(opt_includeInstance) {
  * @param {boolean|undefined} includeInstance Whether to include the JSPB
  *     instance for transitional soy proto support:
  *     http://goto/soy-param-migration
- * @param {!proto.vmr.AddFriendResponse} msg The msg instance to transform.
+ * @param {!proto.vmr.GetUserInfoResponse} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.AddFriendResponse.toObject = function(includeInstance, msg) {
+proto.vmr.GetUserInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    error: (f = msg.getError()) && vmr_common_pb.Error.toObject(includeInstance, f)
+    error: (f = msg.getError()) && vmr_common_pb.Error.toObject(includeInstance, f),
+    user: (f = msg.getUser()) && proto.vmr.UserResponse.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -229,23 +229,23 @@ proto.vmr.AddFriendResponse.toObject = function(includeInstance, msg) {
 /**
  * Deserializes binary data (in protobuf wire format).
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.vmr.AddFriendResponse}
+ * @return {!proto.vmr.GetUserInfoResponse}
  */
-proto.vmr.AddFriendResponse.deserializeBinary = function(bytes) {
+proto.vmr.GetUserInfoResponse.deserializeBinary = function(bytes) {
   var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.vmr.AddFriendResponse;
-  return proto.vmr.AddFriendResponse.deserializeBinaryFromReader(msg, reader);
+  var msg = new proto.vmr.GetUserInfoResponse;
+  return proto.vmr.GetUserInfoResponse.deserializeBinaryFromReader(msg, reader);
 };
 
 
 /**
  * Deserializes binary data (in protobuf wire format) from the
  * given reader into the given message object.
- * @param {!proto.vmr.AddFriendResponse} msg The message object to deserialize into.
+ * @param {!proto.vmr.GetUserInfoResponse} msg The message object to deserialize into.
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.vmr.AddFriendResponse}
+ * @return {!proto.vmr.GetUserInfoResponse}
  */
-proto.vmr.AddFriendResponse.deserializeBinaryFromReader = function(msg, reader) {
+proto.vmr.GetUserInfoResponse.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
@@ -256,6 +256,11 @@ proto.vmr.AddFriendResponse.deserializeBinaryFromReader = function(msg, reader) 
       var value = new vmr_common_pb.Error;
       reader.readMessage(value,vmr_common_pb.Error.deserializeBinaryFromReader);
       msg.setError(value);
+      break;
+    case 2:
+      var value = new proto.vmr.UserResponse;
+      reader.readMessage(value,proto.vmr.UserResponse.deserializeBinaryFromReader);
+      msg.setUser(value);
       break;
     default:
       reader.skipField();
@@ -270,9 +275,9 @@ proto.vmr.AddFriendResponse.deserializeBinaryFromReader = function(msg, reader) 
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.vmr.AddFriendResponse.prototype.serializeBinary = function() {
+proto.vmr.GetUserInfoResponse.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  proto.vmr.AddFriendResponse.serializeBinaryToWriter(this, writer);
+  proto.vmr.GetUserInfoResponse.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
@@ -280,11 +285,11 @@ proto.vmr.AddFriendResponse.prototype.serializeBinary = function() {
 /**
  * Serializes the given message to binary data (in protobuf wire
  * format), writing to the given BinaryWriter.
- * @param {!proto.vmr.AddFriendResponse} message
+ * @param {!proto.vmr.GetUserInfoResponse} message
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.AddFriendResponse.serializeBinaryToWriter = function(message, writer) {
+proto.vmr.GetUserInfoResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getError();
   if (f != null) {
@@ -294,6 +299,14 @@ proto.vmr.AddFriendResponse.serializeBinaryToWriter = function(message, writer) 
       vmr_common_pb.Error.serializeBinaryToWriter
     );
   }
+  f = message.getUser();
+  if (f != null) {
+    writer.writeMessage(
+      2,
+      f,
+      proto.vmr.UserResponse.serializeBinaryToWriter
+    );
+  }
 };
 
 
@@ -301,19 +314,19 @@ proto.vmr.AddFriendResponse.serializeBinaryToWriter = function(message, writer) 
  * optional Error error = 1;
  * @return {?proto.vmr.Error}
  */
-proto.vmr.AddFriendResponse.prototype.getError = function() {
+proto.vmr.GetUserInfoResponse.prototype.getError = function() {
   return /** @type{?proto.vmr.Error} */ (
     jspb.Message.getWrapperField(this, vmr_common_pb.Error, 1));
 };
 
 
 /** @param {?proto.vmr.Error|undefined} value */
-proto.vmr.AddFriendResponse.prototype.setError = function(value) {
+proto.vmr.GetUserInfoResponse.prototype.setError = function(value) {
   jspb.Message.setWrapperField(this, 1, value);
 };
 
 
-proto.vmr.AddFriendResponse.prototype.clearError = function() {
+proto.vmr.GetUserInfoResponse.prototype.clearError = function() {
   this.setError(undefined);
 };
 
@@ -322,8 +335,38 @@ proto.vmr.AddFriendResponse.prototype.clearError = function() {
  * Returns whether this field is set.
  * @return {!boolean}
  */
-proto.vmr.AddFriendResponse.prototype.hasError = function() {
+proto.vmr.GetUserInfoResponse.prototype.hasError = function() {
   return jspb.Message.getField(this, 1) != null;
+};
+
+
+/**
+ * optional UserResponse user = 2;
+ * @return {?proto.vmr.UserResponse}
+ */
+proto.vmr.GetUserInfoResponse.prototype.getUser = function() {
+  return /** @type{?proto.vmr.UserResponse} */ (
+    jspb.Message.getWrapperField(this, proto.vmr.UserResponse, 2));
+};
+
+
+/** @param {?proto.vmr.UserResponse|undefined} value */
+proto.vmr.GetUserInfoResponse.prototype.setUser = function(value) {
+  jspb.Message.setWrapperField(this, 2, value);
+};
+
+
+proto.vmr.GetUserInfoResponse.prototype.clearUser = function() {
+  this.setUser(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {!boolean}
+ */
+proto.vmr.GetUserInfoResponse.prototype.hasUser = function() {
+  return jspb.Message.getField(this, 2) != null;
 };
 
 
@@ -536,6 +579,393 @@ proto.vmr.FriendListResponse.prototype.addFriendinfo = function(opt_value, opt_i
 
 proto.vmr.FriendListResponse.prototype.clearFriendinfoList = function() {
   this.setFriendinfoList([]);
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.vmr.FriendInfo = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.vmr.FriendInfo, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.vmr.FriendInfo.displayName = 'proto.vmr.FriendInfo';
+}
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.vmr.FriendInfo.prototype.toObject = function(opt_includeInstance) {
+  return proto.vmr.FriendInfo.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.vmr.FriendInfo} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.vmr.FriendInfo.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    username: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    name: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    online: jspb.Message.getFieldWithDefault(msg, 4, false),
+    lastMessage: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    lastMessageType: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    lastMessageSender: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    lastMessageTimestamp: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    numUnreadMessage: jspb.Message.getFieldWithDefault(msg, 9, 0),
+    friendStatus: jspb.Message.getFieldWithDefault(msg, 10, 0)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.vmr.FriendInfo}
+ */
+proto.vmr.FriendInfo.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.vmr.FriendInfo;
+  return proto.vmr.FriendInfo.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.vmr.FriendInfo} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.vmr.FriendInfo}
+ */
+proto.vmr.FriendInfo.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setId(value);
+      break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setUsername(value);
+      break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setName(value);
+      break;
+    case 4:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setOnline(value);
+      break;
+    case 5:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setLastMessage(value);
+      break;
+    case 6:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setLastMessageType(value);
+      break;
+    case 7:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setLastMessageSender(value);
+      break;
+    case 8:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setLastMessageTimestamp(value);
+      break;
+    case 9:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setNumUnreadMessage(value);
+      break;
+    case 10:
+      var value = /** @type {!proto.vmr.FriendStatus} */ (reader.readEnum());
+      msg.setFriendStatus(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.vmr.FriendInfo.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.vmr.FriendInfo.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.vmr.FriendInfo} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.vmr.FriendInfo.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getId();
+  if (f !== 0) {
+    writer.writeInt64(
+      1,
+      f
+    );
+  }
+  f = message.getUsername();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
+  f = message.getName();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
+  f = message.getOnline();
+  if (f) {
+    writer.writeBool(
+      4,
+      f
+    );
+  }
+  f = message.getLastMessage();
+  if (f.length > 0) {
+    writer.writeString(
+      5,
+      f
+    );
+  }
+  f = message.getLastMessageType();
+  if (f.length > 0) {
+    writer.writeString(
+      6,
+      f
+    );
+  }
+  f = message.getLastMessageSender();
+  if (f !== 0) {
+    writer.writeInt64(
+      7,
+      f
+    );
+  }
+  f = message.getLastMessageTimestamp();
+  if (f !== 0) {
+    writer.writeInt64(
+      8,
+      f
+    );
+  }
+  f = message.getNumUnreadMessage();
+  if (f !== 0) {
+    writer.writeInt64(
+      9,
+      f
+    );
+  }
+  f = message.getFriendStatus();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      10,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional int64 id = 1;
+ * @return {number}
+ */
+proto.vmr.FriendInfo.prototype.getId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/** @param {number} value */
+proto.vmr.FriendInfo.prototype.setId = function(value) {
+  jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional string username = 2;
+ * @return {string}
+ */
+proto.vmr.FriendInfo.prototype.getUsername = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/** @param {string} value */
+proto.vmr.FriendInfo.prototype.setUsername = function(value) {
+  jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional string name = 3;
+ * @return {string}
+ */
+proto.vmr.FriendInfo.prototype.getName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/** @param {string} value */
+proto.vmr.FriendInfo.prototype.setName = function(value) {
+  jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional bool online = 4;
+ * Note that Boolean fields may be set to 0/1 when serialized from a Java server.
+ * You should avoid comparisons like {@code val === true/false} in those cases.
+ * @return {boolean}
+ */
+proto.vmr.FriendInfo.prototype.getOnline = function() {
+  return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 4, false));
+};
+
+
+/** @param {boolean} value */
+proto.vmr.FriendInfo.prototype.setOnline = function(value) {
+  jspb.Message.setProto3BooleanField(this, 4, value);
+};
+
+
+/**
+ * optional string last_message = 5;
+ * @return {string}
+ */
+proto.vmr.FriendInfo.prototype.getLastMessage = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+};
+
+
+/** @param {string} value */
+proto.vmr.FriendInfo.prototype.setLastMessage = function(value) {
+  jspb.Message.setProto3StringField(this, 5, value);
+};
+
+
+/**
+ * optional string last_message_type = 6;
+ * @return {string}
+ */
+proto.vmr.FriendInfo.prototype.getLastMessageType = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+};
+
+
+/** @param {string} value */
+proto.vmr.FriendInfo.prototype.setLastMessageType = function(value) {
+  jspb.Message.setProto3StringField(this, 6, value);
+};
+
+
+/**
+ * optional int64 last_message_sender = 7;
+ * @return {number}
+ */
+proto.vmr.FriendInfo.prototype.getLastMessageSender = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
+};
+
+
+/** @param {number} value */
+proto.vmr.FriendInfo.prototype.setLastMessageSender = function(value) {
+  jspb.Message.setProto3IntField(this, 7, value);
+};
+
+
+/**
+ * optional int64 last_message_timestamp = 8;
+ * @return {number}
+ */
+proto.vmr.FriendInfo.prototype.getLastMessageTimestamp = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+};
+
+
+/** @param {number} value */
+proto.vmr.FriendInfo.prototype.setLastMessageTimestamp = function(value) {
+  jspb.Message.setProto3IntField(this, 8, value);
+};
+
+
+/**
+ * optional int64 num_unread_message = 9;
+ * @return {number}
+ */
+proto.vmr.FriendInfo.prototype.getNumUnreadMessage = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+};
+
+
+/** @param {number} value */
+proto.vmr.FriendInfo.prototype.setNumUnreadMessage = function(value) {
+  jspb.Message.setProto3IntField(this, 9, value);
+};
+
+
+/**
+ * optional FriendStatus friend_status = 10;
+ * @return {!proto.vmr.FriendStatus}
+ */
+proto.vmr.FriendInfo.prototype.getFriendStatus = function() {
+  return /** @type {!proto.vmr.FriendStatus} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
+};
+
+
+/** @param {!proto.vmr.FriendStatus} value */
+proto.vmr.FriendInfo.prototype.setFriendStatus = function(value) {
+  jspb.Message.setProto3EnumField(this, 10, value);
 };
 
 
@@ -1127,995 +1557,6 @@ proto.vmr.UserResponse.prototype.setFriendstatus = function(value) {
  * @extends {jspb.Message}
  * @constructor
  */
-proto.vmr.FriendInfo = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
-};
-goog.inherits(proto.vmr.FriendInfo, jspb.Message);
-if (goog.DEBUG && !COMPILED) {
-  proto.vmr.FriendInfo.displayName = 'proto.vmr.FriendInfo';
-}
-
-
-if (jspb.Message.GENERATE_TO_OBJECT) {
-/**
- * Creates an object representation of this proto suitable for use in Soy templates.
- * Field names that are reserved in JavaScript and will be renamed to pb_name.
- * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
- * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
- * @return {!Object}
- */
-proto.vmr.FriendInfo.prototype.toObject = function(opt_includeInstance) {
-  return proto.vmr.FriendInfo.toObject(opt_includeInstance, this);
-};
-
-
-/**
- * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
- *     http://goto/soy-param-migration
- * @param {!proto.vmr.FriendInfo} msg The msg instance to transform.
- * @return {!Object}
- * @suppress {unusedLocalVariables} f is only used for nested messages
- */
-proto.vmr.FriendInfo.toObject = function(includeInstance, msg) {
-  var f, obj = {
-    id: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    username: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    name: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    online: jspb.Message.getFieldWithDefault(msg, 4, false),
-    lastMessage: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    lastMessageType: jspb.Message.getFieldWithDefault(msg, 6, ""),
-    lastMessageSender: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    lastMessageTimestamp: jspb.Message.getFieldWithDefault(msg, 8, 0),
-    numUnreadMessage: jspb.Message.getFieldWithDefault(msg, 9, 0),
-    friendStatus: jspb.Message.getFieldWithDefault(msg, 10, 0)
-  };
-
-  if (includeInstance) {
-    obj.$jspbMessageInstance = msg;
-  }
-  return obj;
-};
-}
-
-
-/**
- * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.vmr.FriendInfo}
- */
-proto.vmr.FriendInfo.deserializeBinary = function(bytes) {
-  var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.vmr.FriendInfo;
-  return proto.vmr.FriendInfo.deserializeBinaryFromReader(msg, reader);
-};
-
-
-/**
- * Deserializes binary data (in protobuf wire format) from the
- * given reader into the given message object.
- * @param {!proto.vmr.FriendInfo} msg The message object to deserialize into.
- * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.vmr.FriendInfo}
- */
-proto.vmr.FriendInfo.deserializeBinaryFromReader = function(msg, reader) {
-  while (reader.nextField()) {
-    if (reader.isEndGroup()) {
-      break;
-    }
-    var field = reader.getFieldNumber();
-    switch (field) {
-    case 1:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setId(value);
-      break;
-    case 2:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setUsername(value);
-      break;
-    case 3:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setName(value);
-      break;
-    case 4:
-      var value = /** @type {boolean} */ (reader.readBool());
-      msg.setOnline(value);
-      break;
-    case 5:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setLastMessage(value);
-      break;
-    case 6:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setLastMessageType(value);
-      break;
-    case 7:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setLastMessageSender(value);
-      break;
-    case 8:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setLastMessageTimestamp(value);
-      break;
-    case 9:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setNumUnreadMessage(value);
-      break;
-    case 10:
-      var value = /** @type {!proto.vmr.FriendStatus} */ (reader.readEnum());
-      msg.setFriendStatus(value);
-      break;
-    default:
-      reader.skipField();
-      break;
-    }
-  }
-  return msg;
-};
-
-
-/**
- * Serializes the message to binary data (in protobuf wire format).
- * @return {!Uint8Array}
- */
-proto.vmr.FriendInfo.prototype.serializeBinary = function() {
-  var writer = new jspb.BinaryWriter();
-  proto.vmr.FriendInfo.serializeBinaryToWriter(this, writer);
-  return writer.getResultBuffer();
-};
-
-
-/**
- * Serializes the given message to binary data (in protobuf wire
- * format), writing to the given BinaryWriter.
- * @param {!proto.vmr.FriendInfo} message
- * @param {!jspb.BinaryWriter} writer
- * @suppress {unusedLocalVariables} f is only used for nested messages
- */
-proto.vmr.FriendInfo.serializeBinaryToWriter = function(message, writer) {
-  var f = undefined;
-  f = message.getId();
-  if (f !== 0) {
-    writer.writeInt64(
-      1,
-      f
-    );
-  }
-  f = message.getUsername();
-  if (f.length > 0) {
-    writer.writeString(
-      2,
-      f
-    );
-  }
-  f = message.getName();
-  if (f.length > 0) {
-    writer.writeString(
-      3,
-      f
-    );
-  }
-  f = message.getOnline();
-  if (f) {
-    writer.writeBool(
-      4,
-      f
-    );
-  }
-  f = message.getLastMessage();
-  if (f.length > 0) {
-    writer.writeString(
-      5,
-      f
-    );
-  }
-  f = message.getLastMessageType();
-  if (f.length > 0) {
-    writer.writeString(
-      6,
-      f
-    );
-  }
-  f = message.getLastMessageSender();
-  if (f !== 0) {
-    writer.writeInt64(
-      7,
-      f
-    );
-  }
-  f = message.getLastMessageTimestamp();
-  if (f !== 0) {
-    writer.writeInt64(
-      8,
-      f
-    );
-  }
-  f = message.getNumUnreadMessage();
-  if (f !== 0) {
-    writer.writeInt64(
-      9,
-      f
-    );
-  }
-  f = message.getFriendStatus();
-  if (f !== 0.0) {
-    writer.writeEnum(
-      10,
-      f
-    );
-  }
-};
-
-
-/**
- * optional int64 id = 1;
- * @return {number}
- */
-proto.vmr.FriendInfo.prototype.getId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
-};
-
-
-/** @param {number} value */
-proto.vmr.FriendInfo.prototype.setId = function(value) {
-  jspb.Message.setProto3IntField(this, 1, value);
-};
-
-
-/**
- * optional string username = 2;
- * @return {string}
- */
-proto.vmr.FriendInfo.prototype.getUsername = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/** @param {string} value */
-proto.vmr.FriendInfo.prototype.setUsername = function(value) {
-  jspb.Message.setProto3StringField(this, 2, value);
-};
-
-
-/**
- * optional string name = 3;
- * @return {string}
- */
-proto.vmr.FriendInfo.prototype.getName = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
-};
-
-
-/** @param {string} value */
-proto.vmr.FriendInfo.prototype.setName = function(value) {
-  jspb.Message.setProto3StringField(this, 3, value);
-};
-
-
-/**
- * optional bool online = 4;
- * Note that Boolean fields may be set to 0/1 when serialized from a Java server.
- * You should avoid comparisons like {@code val === true/false} in those cases.
- * @return {boolean}
- */
-proto.vmr.FriendInfo.prototype.getOnline = function() {
-  return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 4, false));
-};
-
-
-/** @param {boolean} value */
-proto.vmr.FriendInfo.prototype.setOnline = function(value) {
-  jspb.Message.setProto3BooleanField(this, 4, value);
-};
-
-
-/**
- * optional string last_message = 5;
- * @return {string}
- */
-proto.vmr.FriendInfo.prototype.getLastMessage = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
-};
-
-
-/** @param {string} value */
-proto.vmr.FriendInfo.prototype.setLastMessage = function(value) {
-  jspb.Message.setProto3StringField(this, 5, value);
-};
-
-
-/**
- * optional string last_message_type = 6;
- * @return {string}
- */
-proto.vmr.FriendInfo.prototype.getLastMessageType = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
-};
-
-
-/** @param {string} value */
-proto.vmr.FriendInfo.prototype.setLastMessageType = function(value) {
-  jspb.Message.setProto3StringField(this, 6, value);
-};
-
-
-/**
- * optional int64 last_message_sender = 7;
- * @return {number}
- */
-proto.vmr.FriendInfo.prototype.getLastMessageSender = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
-};
-
-
-/** @param {number} value */
-proto.vmr.FriendInfo.prototype.setLastMessageSender = function(value) {
-  jspb.Message.setProto3IntField(this, 7, value);
-};
-
-
-/**
- * optional int64 last_message_timestamp = 8;
- * @return {number}
- */
-proto.vmr.FriendInfo.prototype.getLastMessageTimestamp = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
-};
-
-
-/** @param {number} value */
-proto.vmr.FriendInfo.prototype.setLastMessageTimestamp = function(value) {
-  jspb.Message.setProto3IntField(this, 8, value);
-};
-
-
-/**
- * optional int64 num_unread_message = 9;
- * @return {number}
- */
-proto.vmr.FriendInfo.prototype.getNumUnreadMessage = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
-};
-
-
-/** @param {number} value */
-proto.vmr.FriendInfo.prototype.setNumUnreadMessage = function(value) {
-  jspb.Message.setProto3IntField(this, 9, value);
-};
-
-
-/**
- * optional FriendStatus friend_status = 10;
- * @return {!proto.vmr.FriendStatus}
- */
-proto.vmr.FriendInfo.prototype.getFriendStatus = function() {
-  return /** @type {!proto.vmr.FriendStatus} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
-};
-
-
-/** @param {!proto.vmr.FriendStatus} value */
-proto.vmr.FriendInfo.prototype.setFriendStatus = function(value) {
-  jspb.Message.setProto3EnumField(this, 10, value);
-};
-
-
-
-/**
- * Generated by JsPbCodeGenerator.
- * @param {Array=} opt_data Optional initial data array, typically from a
- * server response, or constructed directly in Javascript. The array is used
- * in place and becomes part of the constructed object. It is not cloned.
- * If no data is provided, the constructed object will be empty, but still
- * valid.
- * @extends {jspb.Message}
- * @constructor
- */
-proto.vmr.AcceptFriendRequest = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
-};
-goog.inherits(proto.vmr.AcceptFriendRequest, jspb.Message);
-if (goog.DEBUG && !COMPILED) {
-  proto.vmr.AcceptFriendRequest.displayName = 'proto.vmr.AcceptFriendRequest';
-}
-
-
-if (jspb.Message.GENERATE_TO_OBJECT) {
-/**
- * Creates an object representation of this proto suitable for use in Soy templates.
- * Field names that are reserved in JavaScript and will be renamed to pb_name.
- * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
- * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
- * @return {!Object}
- */
-proto.vmr.AcceptFriendRequest.prototype.toObject = function(opt_includeInstance) {
-  return proto.vmr.AcceptFriendRequest.toObject(opt_includeInstance, this);
-};
-
-
-/**
- * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
- *     http://goto/soy-param-migration
- * @param {!proto.vmr.AcceptFriendRequest} msg The msg instance to transform.
- * @return {!Object}
- * @suppress {unusedLocalVariables} f is only used for nested messages
- */
-proto.vmr.AcceptFriendRequest.toObject = function(includeInstance, msg) {
-  var f, obj = {
-    friendId: jspb.Message.getFieldWithDefault(msg, 1, 0)
-  };
-
-  if (includeInstance) {
-    obj.$jspbMessageInstance = msg;
-  }
-  return obj;
-};
-}
-
-
-/**
- * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.vmr.AcceptFriendRequest}
- */
-proto.vmr.AcceptFriendRequest.deserializeBinary = function(bytes) {
-  var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.vmr.AcceptFriendRequest;
-  return proto.vmr.AcceptFriendRequest.deserializeBinaryFromReader(msg, reader);
-};
-
-
-/**
- * Deserializes binary data (in protobuf wire format) from the
- * given reader into the given message object.
- * @param {!proto.vmr.AcceptFriendRequest} msg The message object to deserialize into.
- * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.vmr.AcceptFriendRequest}
- */
-proto.vmr.AcceptFriendRequest.deserializeBinaryFromReader = function(msg, reader) {
-  while (reader.nextField()) {
-    if (reader.isEndGroup()) {
-      break;
-    }
-    var field = reader.getFieldNumber();
-    switch (field) {
-    case 1:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setFriendId(value);
-      break;
-    default:
-      reader.skipField();
-      break;
-    }
-  }
-  return msg;
-};
-
-
-/**
- * Serializes the message to binary data (in protobuf wire format).
- * @return {!Uint8Array}
- */
-proto.vmr.AcceptFriendRequest.prototype.serializeBinary = function() {
-  var writer = new jspb.BinaryWriter();
-  proto.vmr.AcceptFriendRequest.serializeBinaryToWriter(this, writer);
-  return writer.getResultBuffer();
-};
-
-
-/**
- * Serializes the given message to binary data (in protobuf wire
- * format), writing to the given BinaryWriter.
- * @param {!proto.vmr.AcceptFriendRequest} message
- * @param {!jspb.BinaryWriter} writer
- * @suppress {unusedLocalVariables} f is only used for nested messages
- */
-proto.vmr.AcceptFriendRequest.serializeBinaryToWriter = function(message, writer) {
-  var f = undefined;
-  f = message.getFriendId();
-  if (f !== 0) {
-    writer.writeInt64(
-      1,
-      f
-    );
-  }
-};
-
-
-/**
- * optional int64 friend_id = 1;
- * @return {number}
- */
-proto.vmr.AcceptFriendRequest.prototype.getFriendId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
-};
-
-
-/** @param {number} value */
-proto.vmr.AcceptFriendRequest.prototype.setFriendId = function(value) {
-  jspb.Message.setProto3IntField(this, 1, value);
-};
-
-
-
-/**
- * Generated by JsPbCodeGenerator.
- * @param {Array=} opt_data Optional initial data array, typically from a
- * server response, or constructed directly in Javascript. The array is used
- * in place and becomes part of the constructed object. It is not cloned.
- * If no data is provided, the constructed object will be empty, but still
- * valid.
- * @extends {jspb.Message}
- * @constructor
- */
-proto.vmr.AcceptFriendResponse = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
-};
-goog.inherits(proto.vmr.AcceptFriendResponse, jspb.Message);
-if (goog.DEBUG && !COMPILED) {
-  proto.vmr.AcceptFriendResponse.displayName = 'proto.vmr.AcceptFriendResponse';
-}
-
-
-if (jspb.Message.GENERATE_TO_OBJECT) {
-/**
- * Creates an object representation of this proto suitable for use in Soy templates.
- * Field names that are reserved in JavaScript and will be renamed to pb_name.
- * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
- * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
- * @return {!Object}
- */
-proto.vmr.AcceptFriendResponse.prototype.toObject = function(opt_includeInstance) {
-  return proto.vmr.AcceptFriendResponse.toObject(opt_includeInstance, this);
-};
-
-
-/**
- * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
- *     http://goto/soy-param-migration
- * @param {!proto.vmr.AcceptFriendResponse} msg The msg instance to transform.
- * @return {!Object}
- * @suppress {unusedLocalVariables} f is only used for nested messages
- */
-proto.vmr.AcceptFriendResponse.toObject = function(includeInstance, msg) {
-  var f, obj = {
-    error: (f = msg.getError()) && vmr_common_pb.Error.toObject(includeInstance, f)
-  };
-
-  if (includeInstance) {
-    obj.$jspbMessageInstance = msg;
-  }
-  return obj;
-};
-}
-
-
-/**
- * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.vmr.AcceptFriendResponse}
- */
-proto.vmr.AcceptFriendResponse.deserializeBinary = function(bytes) {
-  var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.vmr.AcceptFriendResponse;
-  return proto.vmr.AcceptFriendResponse.deserializeBinaryFromReader(msg, reader);
-};
-
-
-/**
- * Deserializes binary data (in protobuf wire format) from the
- * given reader into the given message object.
- * @param {!proto.vmr.AcceptFriendResponse} msg The message object to deserialize into.
- * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.vmr.AcceptFriendResponse}
- */
-proto.vmr.AcceptFriendResponse.deserializeBinaryFromReader = function(msg, reader) {
-  while (reader.nextField()) {
-    if (reader.isEndGroup()) {
-      break;
-    }
-    var field = reader.getFieldNumber();
-    switch (field) {
-    case 1:
-      var value = new vmr_common_pb.Error;
-      reader.readMessage(value,vmr_common_pb.Error.deserializeBinaryFromReader);
-      msg.setError(value);
-      break;
-    default:
-      reader.skipField();
-      break;
-    }
-  }
-  return msg;
-};
-
-
-/**
- * Serializes the message to binary data (in protobuf wire format).
- * @return {!Uint8Array}
- */
-proto.vmr.AcceptFriendResponse.prototype.serializeBinary = function() {
-  var writer = new jspb.BinaryWriter();
-  proto.vmr.AcceptFriendResponse.serializeBinaryToWriter(this, writer);
-  return writer.getResultBuffer();
-};
-
-
-/**
- * Serializes the given message to binary data (in protobuf wire
- * format), writing to the given BinaryWriter.
- * @param {!proto.vmr.AcceptFriendResponse} message
- * @param {!jspb.BinaryWriter} writer
- * @suppress {unusedLocalVariables} f is only used for nested messages
- */
-proto.vmr.AcceptFriendResponse.serializeBinaryToWriter = function(message, writer) {
-  var f = undefined;
-  f = message.getError();
-  if (f != null) {
-    writer.writeMessage(
-      1,
-      f,
-      vmr_common_pb.Error.serializeBinaryToWriter
-    );
-  }
-};
-
-
-/**
- * optional Error error = 1;
- * @return {?proto.vmr.Error}
- */
-proto.vmr.AcceptFriendResponse.prototype.getError = function() {
-  return /** @type{?proto.vmr.Error} */ (
-    jspb.Message.getWrapperField(this, vmr_common_pb.Error, 1));
-};
-
-
-/** @param {?proto.vmr.Error|undefined} value */
-proto.vmr.AcceptFriendResponse.prototype.setError = function(value) {
-  jspb.Message.setWrapperField(this, 1, value);
-};
-
-
-proto.vmr.AcceptFriendResponse.prototype.clearError = function() {
-  this.setError(undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {!boolean}
- */
-proto.vmr.AcceptFriendResponse.prototype.hasError = function() {
-  return jspb.Message.getField(this, 1) != null;
-};
-
-
-
-/**
- * Generated by JsPbCodeGenerator.
- * @param {Array=} opt_data Optional initial data array, typically from a
- * server response, or constructed directly in Javascript. The array is used
- * in place and becomes part of the constructed object. It is not cloned.
- * If no data is provided, the constructed object will be empty, but still
- * valid.
- * @extends {jspb.Message}
- * @constructor
- */
-proto.vmr.RejectFriendRequest = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
-};
-goog.inherits(proto.vmr.RejectFriendRequest, jspb.Message);
-if (goog.DEBUG && !COMPILED) {
-  proto.vmr.RejectFriendRequest.displayName = 'proto.vmr.RejectFriendRequest';
-}
-
-
-if (jspb.Message.GENERATE_TO_OBJECT) {
-/**
- * Creates an object representation of this proto suitable for use in Soy templates.
- * Field names that are reserved in JavaScript and will be renamed to pb_name.
- * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
- * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
- * @return {!Object}
- */
-proto.vmr.RejectFriendRequest.prototype.toObject = function(opt_includeInstance) {
-  return proto.vmr.RejectFriendRequest.toObject(opt_includeInstance, this);
-};
-
-
-/**
- * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
- *     http://goto/soy-param-migration
- * @param {!proto.vmr.RejectFriendRequest} msg The msg instance to transform.
- * @return {!Object}
- * @suppress {unusedLocalVariables} f is only used for nested messages
- */
-proto.vmr.RejectFriendRequest.toObject = function(includeInstance, msg) {
-  var f, obj = {
-    friendId: jspb.Message.getFieldWithDefault(msg, 1, 0)
-  };
-
-  if (includeInstance) {
-    obj.$jspbMessageInstance = msg;
-  }
-  return obj;
-};
-}
-
-
-/**
- * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.vmr.RejectFriendRequest}
- */
-proto.vmr.RejectFriendRequest.deserializeBinary = function(bytes) {
-  var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.vmr.RejectFriendRequest;
-  return proto.vmr.RejectFriendRequest.deserializeBinaryFromReader(msg, reader);
-};
-
-
-/**
- * Deserializes binary data (in protobuf wire format) from the
- * given reader into the given message object.
- * @param {!proto.vmr.RejectFriendRequest} msg The message object to deserialize into.
- * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.vmr.RejectFriendRequest}
- */
-proto.vmr.RejectFriendRequest.deserializeBinaryFromReader = function(msg, reader) {
-  while (reader.nextField()) {
-    if (reader.isEndGroup()) {
-      break;
-    }
-    var field = reader.getFieldNumber();
-    switch (field) {
-    case 1:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setFriendId(value);
-      break;
-    default:
-      reader.skipField();
-      break;
-    }
-  }
-  return msg;
-};
-
-
-/**
- * Serializes the message to binary data (in protobuf wire format).
- * @return {!Uint8Array}
- */
-proto.vmr.RejectFriendRequest.prototype.serializeBinary = function() {
-  var writer = new jspb.BinaryWriter();
-  proto.vmr.RejectFriendRequest.serializeBinaryToWriter(this, writer);
-  return writer.getResultBuffer();
-};
-
-
-/**
- * Serializes the given message to binary data (in protobuf wire
- * format), writing to the given BinaryWriter.
- * @param {!proto.vmr.RejectFriendRequest} message
- * @param {!jspb.BinaryWriter} writer
- * @suppress {unusedLocalVariables} f is only used for nested messages
- */
-proto.vmr.RejectFriendRequest.serializeBinaryToWriter = function(message, writer) {
-  var f = undefined;
-  f = message.getFriendId();
-  if (f !== 0) {
-    writer.writeInt64(
-      1,
-      f
-    );
-  }
-};
-
-
-/**
- * optional int64 friend_id = 1;
- * @return {number}
- */
-proto.vmr.RejectFriendRequest.prototype.getFriendId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
-};
-
-
-/** @param {number} value */
-proto.vmr.RejectFriendRequest.prototype.setFriendId = function(value) {
-  jspb.Message.setProto3IntField(this, 1, value);
-};
-
-
-
-/**
- * Generated by JsPbCodeGenerator.
- * @param {Array=} opt_data Optional initial data array, typically from a
- * server response, or constructed directly in Javascript. The array is used
- * in place and becomes part of the constructed object. It is not cloned.
- * If no data is provided, the constructed object will be empty, but still
- * valid.
- * @extends {jspb.Message}
- * @constructor
- */
-proto.vmr.RejectFriendResponse = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
-};
-goog.inherits(proto.vmr.RejectFriendResponse, jspb.Message);
-if (goog.DEBUG && !COMPILED) {
-  proto.vmr.RejectFriendResponse.displayName = 'proto.vmr.RejectFriendResponse';
-}
-
-
-if (jspb.Message.GENERATE_TO_OBJECT) {
-/**
- * Creates an object representation of this proto suitable for use in Soy templates.
- * Field names that are reserved in JavaScript and will be renamed to pb_name.
- * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
- * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
- * @return {!Object}
- */
-proto.vmr.RejectFriendResponse.prototype.toObject = function(opt_includeInstance) {
-  return proto.vmr.RejectFriendResponse.toObject(opt_includeInstance, this);
-};
-
-
-/**
- * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
- *     http://goto/soy-param-migration
- * @param {!proto.vmr.RejectFriendResponse} msg The msg instance to transform.
- * @return {!Object}
- * @suppress {unusedLocalVariables} f is only used for nested messages
- */
-proto.vmr.RejectFriendResponse.toObject = function(includeInstance, msg) {
-  var f, obj = {
-    error: (f = msg.getError()) && vmr_common_pb.Error.toObject(includeInstance, f)
-  };
-
-  if (includeInstance) {
-    obj.$jspbMessageInstance = msg;
-  }
-  return obj;
-};
-}
-
-
-/**
- * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.vmr.RejectFriendResponse}
- */
-proto.vmr.RejectFriendResponse.deserializeBinary = function(bytes) {
-  var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.vmr.RejectFriendResponse;
-  return proto.vmr.RejectFriendResponse.deserializeBinaryFromReader(msg, reader);
-};
-
-
-/**
- * Deserializes binary data (in protobuf wire format) from the
- * given reader into the given message object.
- * @param {!proto.vmr.RejectFriendResponse} msg The message object to deserialize into.
- * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.vmr.RejectFriendResponse}
- */
-proto.vmr.RejectFriendResponse.deserializeBinaryFromReader = function(msg, reader) {
-  while (reader.nextField()) {
-    if (reader.isEndGroup()) {
-      break;
-    }
-    var field = reader.getFieldNumber();
-    switch (field) {
-    case 1:
-      var value = new vmr_common_pb.Error;
-      reader.readMessage(value,vmr_common_pb.Error.deserializeBinaryFromReader);
-      msg.setError(value);
-      break;
-    default:
-      reader.skipField();
-      break;
-    }
-  }
-  return msg;
-};
-
-
-/**
- * Serializes the message to binary data (in protobuf wire format).
- * @return {!Uint8Array}
- */
-proto.vmr.RejectFriendResponse.prototype.serializeBinary = function() {
-  var writer = new jspb.BinaryWriter();
-  proto.vmr.RejectFriendResponse.serializeBinaryToWriter(this, writer);
-  return writer.getResultBuffer();
-};
-
-
-/**
- * Serializes the given message to binary data (in protobuf wire
- * format), writing to the given BinaryWriter.
- * @param {!proto.vmr.RejectFriendResponse} message
- * @param {!jspb.BinaryWriter} writer
- * @suppress {unusedLocalVariables} f is only used for nested messages
- */
-proto.vmr.RejectFriendResponse.serializeBinaryToWriter = function(message, writer) {
-  var f = undefined;
-  f = message.getError();
-  if (f != null) {
-    writer.writeMessage(
-      1,
-      f,
-      vmr_common_pb.Error.serializeBinaryToWriter
-    );
-  }
-};
-
-
-/**
- * optional Error error = 1;
- * @return {?proto.vmr.Error}
- */
-proto.vmr.RejectFriendResponse.prototype.getError = function() {
-  return /** @type{?proto.vmr.Error} */ (
-    jspb.Message.getWrapperField(this, vmr_common_pb.Error, 1));
-};
-
-
-/** @param {?proto.vmr.Error|undefined} value */
-proto.vmr.RejectFriendResponse.prototype.setError = function(value) {
-  jspb.Message.setWrapperField(this, 1, value);
-};
-
-
-proto.vmr.RejectFriendResponse.prototype.clearError = function() {
-  this.setError(undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {!boolean}
- */
-proto.vmr.RejectFriendResponse.prototype.hasError = function() {
-  return jspb.Message.getField(this, 1) != null;
-};
-
-
-
-/**
- * Generated by JsPbCodeGenerator.
- * @param {Array=} opt_data Optional initial data array, typically from a
- * server response, or constructed directly in Javascript. The array is used
- * in place and becomes part of the constructed object. It is not cloned.
- * If no data is provided, the constructed object will be empty, but still
- * valid.
- * @extends {jspb.Message}
- * @constructor
- */
 proto.vmr.ClearUnreadMessageRequest = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
@@ -2406,6 +1847,344 @@ proto.vmr.ClearUnreadMessageResponse.prototype.hasError = function() {
 };
 
 
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.vmr.SetFriendStatusRequest = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.vmr.SetFriendStatusRequest, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.vmr.SetFriendStatusRequest.displayName = 'proto.vmr.SetFriendStatusRequest';
+}
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.vmr.SetFriendStatusRequest.prototype.toObject = function(opt_includeInstance) {
+  return proto.vmr.SetFriendStatusRequest.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.vmr.SetFriendStatusRequest} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.vmr.SetFriendStatusRequest.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    type: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    friendId: jspb.Message.getFieldWithDefault(msg, 2, 0)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.vmr.SetFriendStatusRequest}
+ */
+proto.vmr.SetFriendStatusRequest.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.vmr.SetFriendStatusRequest;
+  return proto.vmr.SetFriendStatusRequest.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.vmr.SetFriendStatusRequest} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.vmr.SetFriendStatusRequest}
+ */
+proto.vmr.SetFriendStatusRequest.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {!proto.vmr.SetFriendStatusRequest.Type} */ (reader.readEnum());
+      msg.setType(value);
+      break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setFriendId(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.vmr.SetFriendStatusRequest.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.vmr.SetFriendStatusRequest.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.vmr.SetFriendStatusRequest} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.vmr.SetFriendStatusRequest.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getType();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      1,
+      f
+    );
+  }
+  f = message.getFriendId();
+  if (f !== 0) {
+    writer.writeInt64(
+      2,
+      f
+    );
+  }
+};
+
+
+/**
+ * @enum {number}
+ */
+proto.vmr.SetFriendStatusRequest.Type = {
+  ADD_FRIEND: 0,
+  ACCEPT_FRIEND: 1,
+  REJECT_FRIEND: 2,
+  REMOVE_FRIEND: 3
+};
+
+/**
+ * optional Type type = 1;
+ * @return {!proto.vmr.SetFriendStatusRequest.Type}
+ */
+proto.vmr.SetFriendStatusRequest.prototype.getType = function() {
+  return /** @type {!proto.vmr.SetFriendStatusRequest.Type} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/** @param {!proto.vmr.SetFriendStatusRequest.Type} value */
+proto.vmr.SetFriendStatusRequest.prototype.setType = function(value) {
+  jspb.Message.setProto3EnumField(this, 1, value);
+};
+
+
+/**
+ * optional int64 friend_id = 2;
+ * @return {number}
+ */
+proto.vmr.SetFriendStatusRequest.prototype.getFriendId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/** @param {number} value */
+proto.vmr.SetFriendStatusRequest.prototype.setFriendId = function(value) {
+  jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.vmr.SetFriendStatusResponse = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.vmr.SetFriendStatusResponse, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.vmr.SetFriendStatusResponse.displayName = 'proto.vmr.SetFriendStatusResponse';
+}
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.vmr.SetFriendStatusResponse.prototype.toObject = function(opt_includeInstance) {
+  return proto.vmr.SetFriendStatusResponse.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.vmr.SetFriendStatusResponse} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.vmr.SetFriendStatusResponse.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    error: (f = msg.getError()) && vmr_common_pb.Error.toObject(includeInstance, f)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.vmr.SetFriendStatusResponse}
+ */
+proto.vmr.SetFriendStatusResponse.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.vmr.SetFriendStatusResponse;
+  return proto.vmr.SetFriendStatusResponse.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.vmr.SetFriendStatusResponse} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.vmr.SetFriendStatusResponse}
+ */
+proto.vmr.SetFriendStatusResponse.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = new vmr_common_pb.Error;
+      reader.readMessage(value,vmr_common_pb.Error.deserializeBinaryFromReader);
+      msg.setError(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.vmr.SetFriendStatusResponse.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.vmr.SetFriendStatusResponse.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.vmr.SetFriendStatusResponse} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.vmr.SetFriendStatusResponse.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getError();
+  if (f != null) {
+    writer.writeMessage(
+      1,
+      f,
+      vmr_common_pb.Error.serializeBinaryToWriter
+    );
+  }
+};
+
+
+/**
+ * optional Error error = 1;
+ * @return {?proto.vmr.Error}
+ */
+proto.vmr.SetFriendStatusResponse.prototype.getError = function() {
+  return /** @type{?proto.vmr.Error} */ (
+    jspb.Message.getWrapperField(this, vmr_common_pb.Error, 1));
+};
+
+
+/** @param {?proto.vmr.Error|undefined} value */
+proto.vmr.SetFriendStatusResponse.prototype.setError = function(value) {
+  jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+proto.vmr.SetFriendStatusResponse.prototype.clearError = function() {
+  this.setError(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {!boolean}
+ */
+proto.vmr.SetFriendStatusResponse.prototype.hasError = function() {
+  return jspb.Message.getField(this, 1) != null;
+};
+
+
 /**
  * @enum {number}
  */
@@ -2413,7 +2192,8 @@ proto.vmr.FriendStatus = {
   FRIEND: 0,
   WAITING: 1,
   NOT_ANSWER: 2,
-  NOTHING: 3
+  NOTHING: 3,
+  REMOVED: 4
 };
 
 goog.object.extend(exports, proto.vmr);

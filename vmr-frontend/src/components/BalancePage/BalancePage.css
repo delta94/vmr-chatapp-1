@@ -10,6 +10,12 @@
   overflow-y: auto;
 }
 
+.balance-page.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 @media screen and (max-width: 700px) {
   .balance-page {
     left: 0;
@@ -27,9 +33,8 @@
 .balance-page .balance-container {
   width: 250px;
   height: 250px;
-  border: 2px solid #8fbee9;
-  color: #5f88b4;
-  background-color: aliceblue;
+  border: 2px solid #096dd9;
+  background-color: #e6f7ff;
   border-radius: 125px;
   display: flex;
   flex-direction: column;
@@ -40,19 +45,19 @@
 
 .balance-page .balance-number {
   font-size: 25px;
-  color: #ce353d;
+  color: #389e0d;
   font-weight: bold;
 }
 
 .balance-page .info-row {
   padding: 20px;
-  background-color: #eef2f5;
+  background-color: #e6f7ff;
   font-size: 15px;
   margin-left: 10px;
   margin-right: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
-  border: 1px solid #8fbee9;
+  border: 1px solid #69c0ff;
 }
 
 .balance-page .info-row:hover {

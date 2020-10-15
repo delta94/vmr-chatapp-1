@@ -58,21 +58,6 @@ public class ControllerModule {
 
   @Provides
   @IntoMap
-  @StringKey("/api/protected/users")
-  public Controller provideUserController(
-      UserDatabaseService userDBService,
-      UserCacheService userCacheService,
-      WebSocketService webSocketService) {
-    log.info("Register user list controller");
-    return UserListController.builder()
-        .userDBService(userDBService)
-        .userCacheService(userCacheService)
-        .webSocketService(webSocketService)
-        .build();
-  }
-
-  @Provides
-  @IntoMap
   @StringKey("/api/protected/logout")
   public Controller provideLogoutController(TokenCacheService tokenCacheService) {
     log.info("Register logout controller");

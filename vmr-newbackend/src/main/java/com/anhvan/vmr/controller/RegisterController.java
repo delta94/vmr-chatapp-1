@@ -4,7 +4,6 @@ import com.anhvan.vmr.cache.UserCacheService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.entity.BaseRequest;
 import com.anhvan.vmr.entity.BaseResponse;
-import com.anhvan.vmr.entity.WebSocketMessage;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.service.JwtService;
 import com.anhvan.vmr.websocket.WebSocketService;
@@ -74,9 +73,6 @@ public class RegisterController extends BaseController {
               jsonResponse.put("userId", userId);
               user.setId(userId);
               userCacheService.setUserCache(user);
-              userCacheService.addUserList(user);
-              webSocketService.broadCast(
-                  WebSocketMessage.builder().type("NEW_USER").data(user).build());
               return jwtService.generate(userId);
             });
 

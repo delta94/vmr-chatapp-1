@@ -1,6 +1,7 @@
 package com.anhvan.vmr.websocket;
 
 import com.anhvan.vmr.entity.WebSocketMessage;
+import com.anhvan.vmr.model.Message;
 import io.vertx.core.Future;
 import io.vertx.core.http.ServerWebSocket;
 
@@ -14,6 +15,8 @@ public interface WebSocketService {
   void removeConnection(long userId, ServerWebSocket conn);
 
   void sendTo(long userId, WebSocketMessage msg);
+
+  void sendChatMessage(long sender, long receiver, Message message);
 
   void broadCast(WebSocketMessage msg);
 

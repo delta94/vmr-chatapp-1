@@ -1,6 +1,6 @@
 package com.anhvan.vmr.database;
 
-import com.anhvan.vmr.entity.GrpcUserResponse;
+import com.anhvan.vmr.entity.Friend;
 import com.anhvan.vmr.model.User;
 import io.vertx.core.Future;
 
@@ -33,5 +33,5 @@ public interface UserDatabaseService {
    * @param userId userId
    * @return list of user in the system with friendstatus status
    */
-  Future<List<GrpcUserResponse>> queryListUserWithFriendStatus(String query, long userId);
+  Future<List<Friend>> queryListUserWithFriendStatus(String query, long userId);
 }

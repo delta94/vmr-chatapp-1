@@ -1,6 +1,7 @@
 package com.anhvan.vmr.websocket;
 
 import com.anhvan.vmr.entity.WebSocketMessage;
+import com.anhvan.vmr.model.Message;
 import com.anhvan.vmr.service.JwtService;
 import io.vertx.core.Future;
 import io.vertx.core.http.ServerWebSocket;
@@ -77,6 +78,17 @@ public class WebSocketServiceImpl implements WebSocketService {
         ws.writeTextMessage(msgString);
       }
     }
+  }
+
+  @Override
+  public void sendChatMessage(long sender, long receiver, Message message) {
+    WebSocketMessage wsMessage =
+        WebSocketMessage.builder()
+            .type(WebSocketMessage.Type.SEND_BACK.name())
+            .data(message)
+            .build();
+    sendTo(sender, wsMessage);
+    sendTo(receiver, wsMessage.toBuilder().type(WebSocketMessage.Type.CHAT.name()).build());
   }
 
   @Override

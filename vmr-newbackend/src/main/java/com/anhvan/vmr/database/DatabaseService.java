@@ -36,17 +36,8 @@ public class DatabaseService {
     // Create connection pool
     pool = MySQLPool.pool(vertx, connectOptions, poolOptions);
 
-    // Test connection
-    pool.query("show tables")
-        .execute(
-            rowSet -> {
-              if (rowSet.failed()) {
-                log.fatal("Cannot connect to mysql", rowSet.cause());
-                vertx.close();
-              } else {
-                log.info("Connect to mysql successfully");
-              }
-            });
+    // Log
+    log.info("Create mysql connection pool");
   }
 
   public MySQLPool getPool() {

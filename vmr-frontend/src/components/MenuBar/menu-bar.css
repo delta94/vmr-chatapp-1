@@ -30,12 +30,12 @@
 }
 
 .icon-wrapper-active, .icon-wrapper:hover {
-  background-color: #eef2f5;
+  background-color: rgba(0, 0, 0, .05);
   cursor: pointer;
 }
 
 .icon-wrapper-active {
-  border: 1px solid #8fbee9;
+  border: 1px solid #bfbfbf;
 }
 
 .menubar-icon {

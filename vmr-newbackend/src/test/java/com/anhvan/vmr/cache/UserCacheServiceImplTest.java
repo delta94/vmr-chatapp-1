@@ -1,5 +1,6 @@
 package com.anhvan.vmr.cache;
 
+import com.anhvan.vmr.cache.exception.CacheMissException;
 import com.anhvan.vmr.config.CacheConfig;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.service.AsyncWorkerService;
@@ -11,11 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.redisson.api.RMap;
-import org.redisson.api.RQueue;
+import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @ExtendWith(VertxExtension.class)
@@ -48,71 +47,48 @@ public class UserCacheServiceImplTest {
   }
 
   @Test
-  void testSetUserList() {
-    RQueue<User> userSet = (RQueue<User>) Mockito.mock(RQueue.class);
-    List<User> userList = (List<User>) Mockito.mock(List.class);
-    Mockito.when(redissonClient.<User>getQueue("vmr:users")).thenReturn(userSet);
-    userCacheService.setUserList(userList);
-    Mockito.verify(userSet).clear();
-    Mockito.verify(userSet).addAll(userList);
-    Mockito.verify(userSet).expire(20, TimeUnit.SECONDS);
-  }
-
-  @Test
-  void testAddUserToList() {
-    RQueue<User> userSet = (RQueue<User>) Mockito.mock(RQueue.class);
-    Mockito.when(redissonClient.<User>getQueue("vmr:users")).thenReturn(userSet);
-    User user = Mockito.mock(User.class);
-    Mockito.when(userSet.isExists()).thenReturn(true);
-
-    userCacheService.addUserList(user);
-
-    Mockito.verify(userSet).add(user);
-    Mockito.verify(userSet).expire(20, TimeUnit.SECONDS);
-  }
-
-  @Test
-  void testAddUserToCache() {
-    RMap<String, String> userInfoMap = (RMap<String, String>) Mockito.mock(RMap.class);
-    Mockito.when(redissonClient.<String, String>getMap("vmr:user:1:info")).thenReturn(userInfoMap);
-    User user = User.builder().id(1).active(true).username("Anh Van").name("Anh Van").build();
-
-    userCacheService.setUserCache(user);
-
-    Mockito.verify(userInfoMap).put(ArgumentMatchers.eq("name"), ArgumentMatchers.anyString());
-    Mockito.verify(userInfoMap).put(ArgumentMatchers.eq("username"), ArgumentMatchers.anyString());
-    Mockito.verify(userInfoMap).expire(20, TimeUnit.SECONDS);
-  }
-
-  @Test
-  void testGetUserFromCache(VertxTestContext testContext) {
-    RMap<String, String> userInfoMap = (RMap<String, String>) Mockito.mock(RMap.class);
-    Mockito.when(redissonClient.<String, String>getMap("vmr:user:1:info")).thenReturn(userInfoMap);
-    Mockito.when(userInfoMap.isExists()).thenReturn(true);
-    Mockito.when(userInfoMap.get("name")).thenReturn("Anh Van");
-    Mockito.when(userInfoMap.get("username")).thenReturn("anhvan");
-
+  void testCacheUser(VertxTestContext testContext) {
+    RBucket<User> rBucket = Mockito.mock(RBucket.class);
+    Mockito.when(redissonClient.<User>getBucket("vmr:user:1:info")).thenReturn(rBucket);
+    User user = User.builder().name("Dang Anh Van").username("danganhvan").id(1).build();
     userCacheService
-        .getUserCache(1)
-        .onSuccess(
-            user -> {
-              Assertions.assertEquals("anhvan", user.getUsername());
-              Assertions.assertEquals("Anh Van", user.getName());
+        .setUserCache(user)
+        .onComplete(
+            ar -> {
+              Mockito.verify(rBucket).set(user);
+              Mockito.verify(rBucket).expire(20, TimeUnit.SECONDS);
               testContext.completeNow();
-            })
-        .onFailure(testContext::failNow);
+            });
   }
 
   @Test
-  void testGetUserNotExistFromCache(VertxTestContext testContext) {
-    RMap<String, String> userInfoMap = (RMap<String, String>) Mockito.mock(RMap.class);
-    Mockito.when(redissonClient.<String, String>getMap("vmr:user:1:info")).thenReturn(userInfoMap);
-    Mockito.when(userInfoMap.isExists()).thenReturn(false);
-
+  void testGetCachedUser(VertxTestContext vertxTestContext) {
+    RBucket<User> rBucket = Mockito.mock(RBucket.class);
+    Mockito.when(redissonClient.<User>getBucket("vmr:user:1:info")).thenReturn(rBucket);
+    User user = User.builder().name("Dang Anh Van").username("danganhvan").id(1).build();
+    Mockito.when(rBucket.get()).thenReturn(user);
+    Mockito.when(rBucket.isExists()).thenReturn(true);
     userCacheService
         .getUserCache(1)
-        .onSuccess(user -> testContext.failNow(new Exception("This call must failue")))
-        .onFailure(
-            throwable -> testContext.completeNow());
+        .onComplete(
+            ar -> {
+              Assertions.assertEquals(1, ar.result().getId());
+              vertxTestContext.completeNow();
+            });
+  }
+
+  @Test
+  void testGetCachedUserFailed(VertxTestContext vertxTestContext) {
+    RBucket<User> rBucket = Mockito.mock(RBucket.class);
+    Mockito.when(redissonClient.<User>getBucket("vmr:user:1:info")).thenReturn(rBucket);
+    Mockito.when(rBucket.isExists()).thenReturn(false);
+    userCacheService
+        .getUserCache(1)
+        .onComplete(
+            ar -> {
+              Assertions.assertTrue(ar.failed());
+              Assertions.assertTrue(ar.cause() instanceof CacheMissException);
+              vertxTestContext.completeNow();
+            });
   }
 }

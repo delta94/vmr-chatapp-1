@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Form, Input, Button, Row, Col, Card, Alert, Checkbox} from "antd";
+import {Form, Input, Button, Row, Col, Card, Alert} from "antd";
 import {UserOutlined, LockOutlined, LoginOutlined} from '@ant-design/icons';
 import bg from '../resource/registerbg.jpg';
 import {login} from "../../service/user";
@@ -50,9 +50,13 @@ function LoginPage(props) {
 
   return (
     <Row style={rowStyle} align="top">
-      <Col xs={{span: 22, offset: 1}} sm={{span: 16, offset: 4}} md={{span: 10, offset: 7}} lg={{span: 8, offset: 8}}
+      <Col xs={{span: 22, offset: 1}}
+           sm={{span: 16, offset: 4}}
+           md={{span: 10, offset: 7}}
+           lg={{span: 8, offset: 8}}
+           xl={{span: 6, offset: 9}}
            style={colStyle}>
-        <h1 style={{textAlign: "center"}}>Login</h1>
+        <h1 style={{textAlign: "center"}}>Đăng nhập</h1>
         <Card bordered={false}>
           <Form form={form}
                 onFinish={handleLogin}
@@ -63,35 +67,26 @@ function LoginPage(props) {
           >
             <Form.Item
               name="username"
-              rules={[{required: true, message: 'Please input your Username!'}]}
+              rules={[{required: true, message: 'Vui lòng nhập tên tài khoản'}]}
             >
-              <Input prefix={<UserOutlined className="site-form-item-icon"/>} placeholder="Username"/>
+              <Input prefix={<UserOutlined className="site-form-item-icon"/>} placeholder="Tên tài khoản"/>
             </Form.Item>
             <Form.Item
               name="password"
-              rules={[{required: true, message: 'Please input your Password!'}]}
+              rules={[{required: true, message: 'Vui lòng nhập mật khẩu!'}]}
             >
               <Input
                 prefix={<LockOutlined className="site-form-item-icon"/>}
                 type="password"
-                placeholder="Password"
+                placeholder="Mật khẩu"
               />
-            </Form.Item>
-            <Form.Item>
-              <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox>Remember me</Checkbox>
-              </Form.Item>
-
-              <Link style={{float: "right"}} to="/login">
-                Forgot password
-              </Link>
             </Form.Item>
 
             <Form.Item>
               <Button type="primary" htmlType="submit" style={{width: "100%"}}>
-                <LoginOutlined/>Log in
+                <LoginOutlined/>Đăng nhập
               </Button>
-              Or <Link to="/register">register now!</Link>
+              <p style={{paddingTop: '10px'}}>Chưa có tài khoản? <Link to="/register">đăng ký ngay</Link></p>
             </Form.Item>
           </Form>
           {msg}

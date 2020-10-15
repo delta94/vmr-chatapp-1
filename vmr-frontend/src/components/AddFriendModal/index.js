@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
-import {Modal, Typography, Input, Avatar, List, Button} from 'antd';
+import React, {useRef, useState} from 'react';
+import {Modal, Typography, Input, Avatar, List, Button, Form} from 'antd';
 import {CheckOutlined, PlusOutlined, SearchOutlined} from '@ant-design/icons';
 import {useSelector, useDispatch} from "react-redux";
 import './add-friend-modal.css';
 import {friendReload, setSearchUserModalActive} from "../../redux/vmr-action";
 import {getFirstLetter} from "../../util/string-util";
 import {getColor} from "../../util/ui-util";
-import {acceptFriend, addFriend, queryUser} from "../../service/friend";
+import {queryUser, setFriendStatus} from "../../service/friend";
 import {getUserId} from "../../util/auth-util";
 
 const {useHistory} = require('react-router-dom');
@@ -19,16 +19,22 @@ function AddFriendModal() {
   let dispatch = useDispatch();
   let [userList, setUserList] = useState([]);
   let userId = getUserId();
+  let searchRef = useRef(null);
+  let [form] = Form.useForm();
 
   let closeModal = () => {
     dispatch(setSearchUserModalActive(false));
+    setUserList([]);
+    form.resetFields();
   };
 
   let searchHandle = (event) => {
     let queryString = event.target.value;
-    queryUser(queryString).then(userListResult => {
-      setUserList(userListResult.filter(x => x.getId() !== userId));
-    });
+    if (queryString.length !== 0) {
+      queryUser(queryString).then(userListResult => {
+        setUserList(userListResult.filter(x => x.getId() !== userId));
+      });
+    }
   };
 
   return (
@@ -45,7 +51,13 @@ function AddFriendModal() {
         <SearchOutlined className="friend-search-icon"/>
         Tìm bạn
       </Title>
-      <Search placeholder="Nhập username hoặc name" onChange={searchHandle}/>
+
+      <Form form={form} initialValues={{searchInput: ''}}>
+        <Form.Item name={"searchInput"}>
+          <Search placeholder="Nhập username hoặc name" onChange={searchHandle} ref={searchRef}/>
+        </Form.Item>
+      </Form>
+
       <div className="user-list-search">
         <List
           dataSource={userList}
@@ -66,7 +78,7 @@ function SearchListItem(props) {
   let [acceptSucceeded, setAcceptSucceeded] = useState(false);
 
   let handleAddFriend = () => {
-    addFriend(item.getId()).then(r => {
+    setFriendStatus(item.getId(), 'ADD').then(r => {
       console.log(r);
       setAddFriendSucceeded(true);
       dispatch(friendReload());
@@ -76,7 +88,7 @@ function SearchListItem(props) {
   };
 
   let acceptFriendBtnHandle = () => {
-    acceptFriend(item.getId()).then(res => {
+    setFriendStatus(item.getId(), 'ACCEPT').then(res => {
       console.log(res);
       setAcceptSucceeded(true);
       dispatch(friendReload());

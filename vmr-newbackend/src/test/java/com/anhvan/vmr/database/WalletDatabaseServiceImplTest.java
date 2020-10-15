@@ -53,7 +53,8 @@ public class WalletDatabaseServiceImplTest {
 
   @Test
   void testTransferPasswordValid(VertxTestContext testContext) {
-    Mockito.when(passwordService.checkPassword(1, "1234578")).thenReturn(Future.succeededFuture(true));
+    Mockito.when(passwordService.checkPassword(1, "1234578"))
+        .thenReturn(Future.succeededFuture(true));
 
     walletDatabaseService
         .checkPassword(TransferStateHolder.builder().senderId(1).password("1234578").build())
@@ -66,7 +67,8 @@ public class WalletDatabaseServiceImplTest {
 
   @Test
   void testCheckPasswordInvalid(VertxTestContext testContext) {
-    Mockito.when(passwordService.checkPassword(1, "1234578")).thenReturn(Future.succeededFuture(true));
+    Mockito.when(passwordService.checkPassword(1, "1234578"))
+        .thenReturn(Future.succeededFuture(true));
     Mockito.when(passwordService.checkPassword(1, "123457"))
         .thenReturn(Future.failedFuture("Password is invalid"));
     walletDatabaseService

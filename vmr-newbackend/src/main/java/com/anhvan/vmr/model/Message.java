@@ -11,6 +11,11 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
 public class Message {
+  public enum Type {
+    CHAT,
+    TRANSFER
+  }
+
   private long id;
 
   @ColName("sender")

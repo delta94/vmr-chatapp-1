@@ -1,6 +1,6 @@
 package com.anhvan.vmr.database;
 
-import com.anhvan.vmr.entity.GrpcUserResponse;
+import com.anhvan.vmr.entity.Friend;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.service.AsyncWorkerService;
 import com.anhvan.vmr.util.RowMapperUtil;
@@ -152,23 +152,22 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
   }
 
   @Override
-  public Future<List<GrpcUserResponse>> queryListUserWithFriendStatus(String query, long userId) {
-    log.debug("Query user with full text search");
-
-    Promise<List<GrpcUserResponse>> userListPromise = Promise.promise();
+  public Future<List<Friend>> queryListUserWithFriendStatus(String query, long userId) {
+    Promise<List<Friend>> userListPromise = Promise.promise();
 
     pool.preparedQuery(FIND_USER_FULL_TEXT_STMT)
         .execute(
             Tuple.of(query, userId),
             rowSetRs -> {
               if (rowSetRs.succeeded()) {
-                List<GrpcUserResponse> userList = new ArrayList<>();
+                List<Friend> userList = new ArrayList<>();
                 RowSet<Row> result = rowSetRs.result();
                 result.forEach(
-                    row -> userList.add(RowMapperUtil.mapRow(row, GrpcUserResponse.class)));
+                    row -> userList.add(RowMapperUtil.mapRow(row, Friend.class)));
                 userListPromise.complete(userList);
               } else {
-                log.error("Fail to query user", rowSetRs.cause());
+                log.error(
+                    "Fail to query user: query={}, userId={}", query, userId, rowSetRs.cause());
               }
             });
 

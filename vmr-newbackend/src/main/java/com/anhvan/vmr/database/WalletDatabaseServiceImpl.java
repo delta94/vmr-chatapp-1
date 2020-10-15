@@ -102,7 +102,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
             .password(transferRequest.getPassword())
             .build();
 
-    // Execute each step in transfer process
+    // Execute each step of transfer process
     checkPassword(initHolder)
         .compose(this::startTransaction)
         .compose(this::checkReceiverExist)

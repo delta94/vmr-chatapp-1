@@ -52,7 +52,7 @@ public class ChatCacheServiceImpl implements ChatCacheService {
   }
 
   @Override
-  public void cacheListMessage(List<Message> messages, int user1, int user2) {
+  public void cacheListMessage(List<Message> messages, long user1, long user2) {
     workerUtil.execute(
         () -> {
           RList<Message> chatMessages = redis.getList(getKey(user1, user2));
@@ -63,7 +63,7 @@ public class ChatCacheServiceImpl implements ChatCacheService {
   }
 
   @Override
-  public Future<List<Message>> getCacheMessage(int userId1, int userId2) {
+  public Future<List<Message>> getCacheMessage(long userId1, long userId2) {
     Promise<List<Message>> messageCache = Promise.promise();
 
     workerUtil.execute(

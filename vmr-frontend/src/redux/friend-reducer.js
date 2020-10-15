@@ -43,17 +43,18 @@ export default function friendReducer(state = initState, action) {
 }
 
 function handleClearNotifications(state, friendId) {
+  let newFriends = {...state.friends};
   let friend = state.friends[friendId];
-  state.friends[friendId] = {...friend, numNotifications: 0};
-  return state;
+  newFriends[friendId] = {...friend, numNotifications: 0};
+  return {...state, friends: newFriends};
 }
 
 function handleChatSendback(state, data) {
-  let friends = {...state.friends};
+  let newFriends = {...state.friends};
 
-  let friend = friends[data.receiverId];
+  let friend = newFriends[data.receiverId];
 
-  friends[data.receiverId] = {
+  newFriends[data.receiverId] = {
     ...friend,
     lastMsg: data.message,
     lastMsgSender: getUserId(),
@@ -63,8 +64,8 @@ function handleChatSendback(state, data) {
 
   return {
     ...state,
-    friends
-  }
+    friends: newFriends
+  };
 }
 
 function handleChatReceive(state, data) {
@@ -84,7 +85,7 @@ function handleChatReceive(state, data) {
   return {
     ...state,
     friends: friends
-  }
+  };
 }
 
 function updateUserList(state, userList) {
@@ -101,7 +102,7 @@ function updateUserList(state, userList) {
 
 function handleOnOffLine(state, data) {
   let friend = state.friends[data.userId];
-  let newFriends = state.friends;
+  let newFriends = {...state.friends};
 
   if (friend) {
     newFriends[data.userId] = {...friend, online: data.status};

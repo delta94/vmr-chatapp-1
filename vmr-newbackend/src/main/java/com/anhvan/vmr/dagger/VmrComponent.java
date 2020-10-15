@@ -8,6 +8,7 @@ import com.anhvan.vmr.grpc.GrpcModule;
 import com.anhvan.vmr.server.GrpcServer;
 import com.anhvan.vmr.server.WebServerVerticle;
 import com.anhvan.vmr.server.WebSocketServer;
+import com.anhvan.vmr.service.ServiceModule;
 import com.anhvan.vmr.websocket.WebSocketModule;
 import dagger.Component;
 import io.vertx.core.Vertx;
@@ -17,15 +18,16 @@ import javax.inject.Singleton;
 @Component(
     modules = {
       ConfigModule.class,
-      ServiceModule.class,
+      VmrModule.class,
       ControllerModule.class,
       WebSocketModule.class,
       DatabaseModule.class,
       CacheModule.class,
-      GrpcModule.class
+      GrpcModule.class,
+      ServiceModule.class
     })
 @Singleton
-public interface ServiceComponent {
+public interface VmrComponent {
   Vertx getVertx();
 
   WebServerVerticle getWebServer();
@@ -36,7 +38,7 @@ public interface ServiceComponent {
 
   @Component.Builder
   interface Builder {
-    ServiceComponent build();
+    VmrComponent build();
 
     Builder configModule(ConfigModule module);
   }

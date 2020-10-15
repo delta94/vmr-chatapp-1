@@ -15,6 +15,8 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 @Log4j2
 public class TokenCacheServiceImpl implements TokenCacheService {
+  public static final String TOKEN_EXPIRE_KEY = "vmr:jwt:%s:expire";
+
   private RedissonClient redis;
   private AuthConfig authConfig;
   private AsyncWorkerService asyncWorkerService;
@@ -41,6 +43,7 @@ public class TokenCacheServiceImpl implements TokenCacheService {
   @Override
   public Future<Boolean> checkExistInBacklist(String token) {
     Promise<Boolean> existPromise = Promise.promise();
+
     asyncWorkerService.execute(
         () -> {
           try {
@@ -51,10 +54,11 @@ public class TokenCacheServiceImpl implements TokenCacheService {
             log.error("Error when get bucket from redis", e);
           }
         });
+
     return existPromise.future();
   }
 
   private String getKey(String token) {
-    return String.format("vmr:jwt:%s:expire", token);
+    return String.format(TOKEN_EXPIRE_KEY, token);
   }
 }

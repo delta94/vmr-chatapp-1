@@ -7,7 +7,7 @@ import ChatTab from "../ChatTab";
 import WalletTab from "../WalletTab";
 import {useFriendList} from "../../hooks/friend";
 
-export default function ConversationList() {
+export default function LeftSideBar() {
   let tab = useSelector(state => state.ui.currentTab);
   let sideBarActive = useSelector(state => state.ui.sideBarActive);
 

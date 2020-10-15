@@ -2,6 +2,7 @@ package com.anhvan.vmr.util;
 
 import com.anhvan.vmr.model.ColName;
 import io.vertx.sqlclient.Row;
+import io.vertx.sqlclient.RowSet;
 import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Field;
@@ -12,6 +13,20 @@ import java.util.List;
 @Log4j2
 public class RowMapperUtil {
   private static final byte TRUE_BYTE = (byte) 1;
+
+  public static Row firstRow(RowSet<Row> rowSet) {
+    for (Row row : rowSet) {
+      return row;
+    }
+    return null;
+  }
+
+  public static <T> T mapRowSet(RowSet<Row> rowSet, Class<T> classType) {
+    for (Row row : rowSet) {
+      return mapRow(row, classType);
+    }
+    return null;
+  }
 
   public static <T> T mapRow(Row row, Class<T> classType) {
     T instance;

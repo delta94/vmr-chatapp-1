@@ -6,9 +6,11 @@ import './HistoryPage.css';
 import HistoryGroup from "../HistoryGroup";
 import {getHistory} from "../../service/wallet";
 import {timestampSecond2Month} from "../../util/string-util";
+import {Empty} from "antd";
 
 export default function HistoryPage() {
   let [historyMonth, setHistoryMonth] = useState({});
+  let isEmpty = Object.keys(historyMonth).length === 0;
 
   useEffect(() => {
     getHistory().then(result => {
@@ -42,9 +44,14 @@ export default function HistoryPage() {
   return (
     <div className={'history-page'}>
       <TitleBar title={'Lịch sử'}/>
+      {!isEmpty &&
       <div className={'history-list'}>
         {Object.keys(historyMonth).map(x => <HistoryGroup month={x} key={x} items={historyMonth[x]}/>)}
-      </div>
+      </div>}
+      {isEmpty &&
+      <div className={'history-list'}>
+        <Empty description={<span>Bạn chưa thực hiện giao dịch nào</span>}/>
+      </div>}
     </div>
   );
 }

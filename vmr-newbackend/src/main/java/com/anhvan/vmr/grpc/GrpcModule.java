@@ -1,9 +1,12 @@
 package com.anhvan.vmr.grpc;
 
 import com.anhvan.vmr.cache.ChatCacheService;
+import com.anhvan.vmr.cache.FriendCacheService;
 import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.database.WalletDatabaseService;
+import com.anhvan.vmr.service.FriendService;
+import com.anhvan.vmr.service.UserService;
 import com.anhvan.vmr.websocket.WebSocketService;
 import dagger.Module;
 import dagger.Provides;
@@ -18,7 +21,7 @@ public class GrpcModule {
   @IntoSet
   @Singleton
   public BindableService provideSampleServiceImpl() {
-    return new SampleServiceImpl();
+    return new GrpcSampleServiceImpl();
   }
 
   @Provides
@@ -27,11 +30,15 @@ public class GrpcModule {
   public BindableService provideFriendServiceImpl(
       UserDatabaseService userDatabaseService,
       FriendDatabaseService friendDatabaseService,
-      WebSocketService wsService) {
-    return FriendServiceImpl.builder()
+      WebSocketService wsService,
+      FriendService friendService,
+      UserService userService) {
+    return GrpcFriendServiceImpl.builder()
         .userDbService(userDatabaseService)
         .friendDbService(friendDatabaseService)
         .webSocketService(wsService)
+        .userService(userService)
+        .friendService(friendService)
         .build();
   }
 
@@ -42,12 +49,14 @@ public class GrpcModule {
       UserDatabaseService userDatabaseService,
       WalletDatabaseService walletDatabaseService,
       WebSocketService webSocketService,
-      ChatCacheService chatCacheService) {
-    return WalletServiceImpl.builder()
+      ChatCacheService chatCacheService,
+      FriendCacheService friendCacheService) {
+    return GrpcWalletServiceImpl.builder()
         .userDbService(userDatabaseService)
         .walletDatabaseService(walletDatabaseService)
         .webSocketService(webSocketService)
         .chatCacheService(chatCacheService)
+        .friendCacheService(friendCacheService)
         .build();
   }
 }

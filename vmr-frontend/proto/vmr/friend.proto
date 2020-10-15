@@ -8,28 +8,41 @@ import "vmr/common.proto";
 
 // Friend services
 service FriendService {
-  rpc AddFriend(AddFriendRequest) returns (AddFriendResponse);
   rpc GetFriendList(Empty) returns (FriendListResponse);
-  rpc AcceptFriend(AcceptFriendRequest) returns (AcceptFriendResponse);
-  rpc RejectFriend(RejectFriendRequest) returns (RejectFriendResponse);
   rpc GetChatFriendList(Empty) returns (FriendListResponse);
   rpc QueryUser(UserListRequest) returns (UserListResponse);
   rpc ClearUnreadMessage(ClearUnreadMessageRequest) returns (ClearUnreadMessageResponse);
+  rpc SetFriendStatus(SetFriendStatusRequest) returns (SetFriendStatusResponse);
+  rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse);
 }
 
-// Add friends
-message AddFriendRequest {
+// Get user info
+message GetUserInfoRequest {
   int64 user_id = 1;
 }
 
-message AddFriendResponse {
+message GetUserInfoResponse {
   Error error = 1;
+  UserResponse user = 2;
 }
 
 // Get friend list
 message FriendListResponse {
   Error error = 1;
   repeated FriendInfo friendInfo = 2;
+}
+
+message FriendInfo {
+  int64 id = 1;
+  string username = 2;
+  string name = 3;
+  bool online = 4;
+  string last_message = 5;
+  string last_message_type = 6;
+  int64 last_message_sender = 7;
+  int64 last_message_timestamp = 8;
+  int64 num_unread_message = 9;
+  FriendStatus friend_status = 10;
 }
 
 // Get user list (find friend)
@@ -49,49 +62,36 @@ message UserResponse {
   FriendStatus friendStatus = 4;
 }
 
-message FriendInfo {
-  int64 id = 1;
-  string username = 2;
-  string name = 3;
-  bool online = 4;
-  string last_message = 5;
-  string last_message_type = 6;
-  int64 last_message_sender = 7;
-  int64 last_message_timestamp = 8;
-  int64 num_unread_message = 9;
-  FriendStatus friend_status = 10;
-}
-
 enum FriendStatus {
   FRIEND = 0;
   WAITING = 1;
   NOT_ANSWER = 2;
   NOTHING = 3;
+  REMOVED = 4;
 }
 
-// Accept friend
-message AcceptFriendRequest {
-  int64 friend_id = 1;
-}
-
-message AcceptFriendResponse {
-  Error error = 1;
-}
-
-// Reject friend
-message RejectFriendRequest {
-  int64 friend_id = 1;
-}
-
-message RejectFriendResponse {
-  Error error = 1;
-}
-
-// Clear un read message
+// Clear unread message
 message ClearUnreadMessageRequest {
   int64  friend_id = 1;
 }
 
 message ClearUnreadMessageResponse {
+  Error error = 1;
+}
+
+// Set friend status
+message SetFriendStatusRequest {
+  enum Type {
+    ADD_FRIEND = 0;
+    ACCEPT_FRIEND = 1;
+    REJECT_FRIEND = 2;
+    REMOVE_FRIEND = 3;
+  }
+
+  Type type = 1;
+  int64 friend_id = 2;
+}
+
+message SetFriendStatusResponse {
   Error error = 1;
 }

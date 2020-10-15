@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
-import {acceptFriend, getFriendList, rejectFriend} from "../../service/friend";
+import {getFriendList, setFriendStatus} from "../../service/friend";
 import ConversationSearch from "../FriendSearch";
 import {Avatar, Button, List, Menu, Dropdown} from "antd";
-import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
+import {CloseOutlined} from "@ant-design/icons";
 import {getColor} from "../../util/ui-util";
 import {getFirstLetter} from "../../util/string-util";
 import {useDispatch, useSelector} from "react-redux";
@@ -10,6 +10,7 @@ import {friendReload, setSideBarActive} from "../../redux/vmr-action";
 
 import "./friend-tab.css";
 import {Link} from "react-router-dom";
+import AddFriendModal from "../AddFriendModal";
 
 const {useHistory} = require("react-router-dom");
 const {FriendStatus} = require('../../proto/vmr/friend_pb');
@@ -36,6 +37,8 @@ export default function FriendTab() {
         renderItem={item => <FriendListItem item={item}/>}
       >
       </List>
+
+      <AddFriendModal/>
     </div>
   );
 }
@@ -51,7 +54,7 @@ function FriendListItem(props) {
 
   let acceptFriendBtnHandle = (e) => {
     e.preventDefault();
-    acceptFriend(item.getId()).then(res => {
+    setFriendStatus(item.getId(), 'ACCEPT').then(res => {
       console.log(res);
       dispatch(friendReload());
     }).catch(err => {
@@ -61,7 +64,7 @@ function FriendListItem(props) {
 
   let rejectFriendHandle = (e) => {
     e.preventDefault();
-    rejectFriend(item.getId()).then(res => {
+    setFriendStatus(item.getId(), 'REJECT').then(res => {
       console.log(res);
       dispatch(friendReload());
     }).catch(err => {
@@ -69,24 +72,19 @@ function FriendListItem(props) {
     });
   };
 
-  let menu = (
-    <Menu>
-      <Menu.Item>
-        <a href="/" onClick={acceptFriendBtnHandle}>
-          Chấp nhận
-        </a>
-      </Menu.Item>
-      <Menu.Item>
-        <a href="/" onClick={rejectFriendHandle}>
-          Từ chối
-        </a>
-      </Menu.Item>
-    </Menu>
-  );
-
-  let chatHandle = () => {
+  let chatHandle = (event) => {
+    event.preventDefault();
     history.push('/t/' + item.getId());
     dispatch(setSideBarActive(false));
+  };
+
+  let removeFriend = (event) => {
+    event.preventDefault();
+    setFriendStatus(item.getId(), 'REMOVE').then(() => {
+      dispatch(friendReload());
+    }).catch(err => {
+      console.log(err);
+    })
   }
 
   if (item.getFriendStatus() === FriendStatus.WAITING) {
@@ -99,6 +97,21 @@ function FriendListItem(props) {
     );
     description = "Bạn đã gửi lời mời";
   } else if (item.getFriendStatus() === FriendStatus.NOT_ANSWER) {
+    let menu = (
+      <Menu>
+        <Menu.Item>
+          <a href="/" onClick={acceptFriendBtnHandle}>
+            Chấp nhận
+          </a>
+        </Menu.Item>
+        <Menu.Item>
+          <a href="/" onClick={rejectFriendHandle}>
+            Từ chối
+          </a>
+        </Menu.Item>
+      </Menu>
+    );
+
     button = (
       <Dropdown overlay={menu} placement="bottomLeft">
         <Button className="friend-modal-button">Trả lời</Button>
@@ -106,10 +119,25 @@ function FriendListItem(props) {
     );
     description = "Đã gửi cho bạn lời mời";
   } else {
+    let menu = (
+      <Menu>
+        <Menu.Item>
+          <a href="/" onClick={chatHandle}>
+            Chat ngay
+          </a>
+        </Menu.Item>
+        <Menu.Item>
+          <a href="/" onClick={removeFriend}>
+            Hủy kết bạn
+          </a>
+        </Menu.Item>
+      </Menu>
+    );
+
     button = (
-      <Button className="friend-modal-button" onClick={chatHandle}>
-        <CheckOutlined/>Chat ngay
-      </Button>
+      <Dropdown overlay={menu} placement="bottomLeft">
+        <Button className="friend-modal-button">Tùy chọn</Button>
+      </Dropdown>
     );
   }
 

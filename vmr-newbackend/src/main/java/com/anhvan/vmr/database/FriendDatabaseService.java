@@ -1,6 +1,6 @@
 package com.anhvan.vmr.database;
 
-import com.anhvan.vmr.entity.GrpcUserResponse;
+import com.anhvan.vmr.entity.Friend;
 import io.vertx.core.Future;
 
 import java.util.List;
@@ -8,13 +8,15 @@ import java.util.List;
 public interface FriendDatabaseService {
   Future<Void> addFriend(long userId, long friendId);
 
-  Future<List<GrpcUserResponse>> getFriendList(long userId);
+  Future<List<Friend>> getFriendList(long userId);
 
-  Future<List<GrpcUserResponse>> getChatFriendList(long userId);
+  Future<List<Friend>> getChatFriendList(long userId);
 
-  Future<Void> acceptFriend(long invitorId, long userId);
+  Future<Void> acceptFriend(long userId, long friendId);
 
-  Future<Void> rejectFriend(long invitorId, long userId);
+  Future<Void> rejectFriend(long userId, long friendId);
+
+  Future<Void> removeFriend(long userId, long friendId);
 
   Future<Void> clearUnreadMessage(long userId, long friendId);
 }

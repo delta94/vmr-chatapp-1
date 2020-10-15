@@ -1,11 +1,11 @@
 package com.anhvan.vmr.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-@Builder(toBuilder = true)
+@SuperBuilder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -19,10 +19,6 @@ public class User {
 
   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   private String password;
-
-  @ColName("is_active")
-  @JsonIgnore
-  private boolean active;
 
   @ColName("balance")
   private long balance;
