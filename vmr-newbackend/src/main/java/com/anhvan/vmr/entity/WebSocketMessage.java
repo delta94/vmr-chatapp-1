@@ -13,7 +13,8 @@ public class WebSocketMessage {
     SEND_BACK,
     ONLINE,
     OFFLINE,
-    ACCEPT
+    ACCEPT,
+    REMOVE_FRIEND
   }
 
   private String type;

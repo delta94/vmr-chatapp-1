@@ -125,6 +125,14 @@ public class GrpcFriendServiceImpl extends FriendServiceImplBase {
                       .type(WebSocketMessage.Type.ACCEPT.name())
                       .build());
             }
+            if (type == SetFriendStatusRequest.Type.REMOVE_FRIEND) {
+              webSocketService.sendTo(
+                  friendId,
+                  WebSocketMessage.builder()
+                      .data(new JsonObject().put("userId", userId))
+                      .type(WebSocketMessage.Type.REMOVE_FRIEND.name())
+                      .build());
+            }
           } else {
             log.error(
                 "Error when set friend status: user_id={}, friend_id={}",

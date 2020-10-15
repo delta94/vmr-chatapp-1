@@ -15,7 +15,8 @@ const messageType = {
   SEND_BACK: 'SEND_BACK',
   ONLINE: 'ONLINE',
   OFFLINE: "OFFLINE",
-  ACCEPT: 'ACCEPT'
+  ACCEPT: 'ACCEPT',
+  REMOVE_FRIEND: 'REMOVE_FRIEND'
 }
 
 let webSocketManager = {
@@ -84,7 +85,7 @@ function internalConnect() {
       store.dispatch(onOffline(data, true));
     } else if (type === messageType.OFFLINE) {
       store.dispatch(onOffline(data, false));
-    } else if (type === messageType.ACCEPT) {
+    } else if (type === messageType.ACCEPT || type === messageType.REMOVE_FRIEND) {
       store.dispatch(friendReload());
     }
   };
