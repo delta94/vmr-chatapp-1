@@ -23,3 +23,8 @@ services:
       context: ./vmr-docker/vmr-prometheus
       dockerfile: ./dockerfile
     network_mode: host
+  grafana:
+    build: 
+      context: ./vmr-docker/vmr-grafana
+      dockerfile: ./dockerfile
+    network_mode: host

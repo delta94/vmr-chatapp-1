@@ -16,26 +16,29 @@ public class AuthInterceptor implements ServerInterceptor {
   public static final String TOKEN_HEADER_NAME = "x-jwt-token";
 
   private JwtService jwtService;
-  private Counter counter;
+  private Counter authCounter;
+  private Counter rejectedCounter;
 
   @Inject
   public AuthInterceptor(JwtService jwtService, MeterRegistry meterRegistry) {
     this.jwtService = jwtService;
-    counter = meterRegistry.counter("count_grpc_call");
+    authCounter = meterRegistry.counter("count_grpc_call", "status", "accepted");
+    rejectedCounter = meterRegistry.counter("count_grpc_call", "status", "rejected");
   }
 
   @Override
   public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(
       ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
-    counter.increment();
     Key<String> jwtToken = Key.of(TOKEN_HEADER_NAME, Metadata.ASCII_STRING_MARSHALLER);
     String token = headers.get(jwtToken);
 
     if (token == null) {
+      rejectedCounter.increment();
       call.close(Status.UNAUTHENTICATED, headers);
       return new ServerCall.Listener<ReqT>() {};
     }
 
+    authCounter.increment();
     try {
       long userId = jwtService.authenticateBlocking(token);
       Context context = Context.current().withValue(GrpcKey.USER_ID_KEY, String.valueOf(userId));

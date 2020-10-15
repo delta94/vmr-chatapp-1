@@ -1,0 +1,5 @@
+FROM grafana/grafana:6.5.0
+
+EXPOSE 9091
+
+ADD grafana.ini /etc/grafana
