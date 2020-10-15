@@ -32,6 +32,8 @@ public class AuthInterceptor implements ServerInterceptor {
     Key<String> jwtToken = Key.of(TOKEN_HEADER_NAME, Metadata.ASCII_STRING_MARSHALLER);
     String token = headers.get(jwtToken);
 
+    // return next.startCall(call, headers);
+
     if (token == null) {
       rejectedCounter.increment();
       call.close(Status.UNAUTHENTICATED, headers);
