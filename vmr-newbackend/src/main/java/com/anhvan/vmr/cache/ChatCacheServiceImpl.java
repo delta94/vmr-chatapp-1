@@ -5,6 +5,7 @@ import com.anhvan.vmr.model.Message;
 import com.anhvan.vmr.service.AsyncWorkerService;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
+import lombok.extern.log4j.Log4j2;
 import org.redisson.api.RList;
 import org.redisson.api.RedissonClient;
 
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
+@Log4j2
 public class ChatCacheServiceImpl implements ChatCacheService {
   private static final String MESSAGES_LIST_KEY = "vmr:chat:%d:%d";
 
@@ -38,28 +40,49 @@ public class ChatCacheServiceImpl implements ChatCacheService {
   }
 
   @Override
-  public void cacheMessage(Message message) {
+  public Future<Void> cacheMessage(Message message) {
+    Promise<Void> promise = Promise.promise();
+
     workerUtil.execute(
         () -> {
-          RList<Message> chatMessages =
-              redis.getList(getKey(message.getSenderId(), message.getReceiverId()));
-          chatMessages.add(message);
-          if (chatMessages.size() > cacheConfig.getNumMessagesCached()) {
-            chatMessages.remove(0);
+          try {
+            RList<Message> chatMessages =
+                redis.getList(getKey(message.getSenderId(), message.getReceiverId()));
+            chatMessages.add(message);
+            if (chatMessages.size() > cacheConfig.getNumMessagesCached()) {
+              chatMessages.remove(0);
+            }
+            chatMessages.expire(cacheConfig.getTimeToLive(), TimeUnit.SECONDS);
+            promise.complete();
+          } catch (Exception e) {
+            log.error("Error when cache message {}", message, e);
+            promise.fail(e);
           }
-          chatMessages.expire(cacheConfig.getTimeToLive(), TimeUnit.SECONDS);
         });
+
+    return promise.future();
   }
 
   @Override
-  public void cacheListMessage(List<Message> messages, long user1, long user2) {
+  public Future<Void> cacheListMessage(List<Message> messages, long user1, long user2) {
+    Promise<Void> promise = Promise.promise();
+
     workerUtil.execute(
         () -> {
-          RList<Message> chatMessages = redis.getList(getKey(user1, user2));
-          chatMessages.clear();
-          chatMessages.addAll(messages);
-          chatMessages.expire(cacheConfig.getTimeToLive(), TimeUnit.SECONDS);
+          try {
+            RList<Message> chatMessages = redis.getList(getKey(user1, user2));
+            chatMessages.clear();
+            chatMessages.addAll(messages);
+            chatMessages.expire(cacheConfig.getTimeToLive(), TimeUnit.SECONDS);
+            promise.complete();
+          } catch (Exception exception) {
+            log.error(
+                "Error when chache list message: user1={}, user2={}", user1, user2, exception);
+            promise.fail(exception);
+          }
         });
+
+    return promise.future();
   }
 
   @Override
