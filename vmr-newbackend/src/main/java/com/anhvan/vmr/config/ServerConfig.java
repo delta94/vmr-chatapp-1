@@ -11,4 +11,5 @@ public class ServerConfig {
   private int port;
   private int wsPort;
   private int grpcPort;
+  private int prometheusPort;
 }

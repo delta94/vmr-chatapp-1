@@ -15,6 +15,11 @@ services:
       - "6379:6379"
   envoy:
     build: 
-        context: ./vmr-docker/vmr-envoy
-        dockerfile: ./dockerfile
+      context: ./vmr-docker/vmr-envoy
+      dockerfile: ./dockerfile
+    network_mode: host
+  promotheus:
+    build:
+      context: ./vmr-docker/vmr-prometheus
+      dockerfile: ./dockerfile
     network_mode: host
