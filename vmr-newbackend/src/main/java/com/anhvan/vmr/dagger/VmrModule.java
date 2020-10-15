@@ -3,9 +3,11 @@ package com.anhvan.vmr.dagger;
 import com.anhvan.vmr.config.AuthConfig;
 import com.anhvan.vmr.config.ServerConfig;
 import com.anhvan.vmr.config.VertxConfig;
-import com.anhvan.vmr.util.Tracker;
 import dagger.Module;
 import dagger.Provides;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.prometheus.PrometheusConfig;
+import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.http.HttpServerOptions;
@@ -61,7 +63,8 @@ public class VmrModule {
 
   @Provides
   @Singleton
-  public MicrometerMetricsOptions provideMicrometerMetricsOptions(ServerConfig serverConfig) {
+  public MicrometerMetricsOptions provideMicrometerMetricsOptions(
+      ServerConfig serverConfig, MeterRegistry meterRegistry) {
     VertxPrometheusOptions prometheusOptions =
         new VertxPrometheusOptions()
             .setEnabled(true)
@@ -72,9 +75,15 @@ public class VmrModule {
             .setEmbeddedServerEndpoint("/metrics");
 
     return new MicrometerMetricsOptions()
-        .setMicrometerRegistry(Tracker.getMeterRegistry())
+        .setMicrometerRegistry(meterRegistry)
         .setJvmMetricsEnabled(true)
         .setPrometheusOptions(prometheusOptions)
         .setEnabled(true);
+  }
+
+  @Provides
+  @Singleton
+  public MeterRegistry provideMeterRegistry() {
+    return new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
   }
 }
