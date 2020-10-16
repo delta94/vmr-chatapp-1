@@ -1,4 +1,10 @@
-# Kết quả benmark GRPC service
+# Kết quả benmark các GRPC service
+
+- [Kết quả benmark các GRPC service](#kết-quả-benmark-các-grpc-service)
+  - [1. GetBalance](#1-getbalance)
+  - [2. GetHistory](#2-gethistory)
+  - [3. GetChatFriendList](#3-getchatfriendlist)
+  - [4. GetFriendList](#4-getfriendlist)
 
 ## 1. GetBalance
 

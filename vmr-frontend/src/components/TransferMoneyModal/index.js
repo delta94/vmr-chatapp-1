@@ -51,11 +51,11 @@ export default function TransferMoneyModal(props) {
 
   useEffect(() => {
     console.log('Compute requestId');
-    setRequestId((new Date()).getMilliseconds());
+    setRequestId(Date.now());
   }, []);
 
   let closeModal = () => {
-    setRequestId((new Date()).getMilliseconds());
+    setRequestId(Date.now());
     form.resetFields();
     form2.resetFields();
     setActive(false);

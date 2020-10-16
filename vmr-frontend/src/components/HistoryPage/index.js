@@ -6,9 +6,11 @@ import HistoryGroup from "../HistoryGroup";
 import {getHistoryWithOffset} from "../../service/wallet";
 import {timestampSecond2Month} from "../../util/string-util";
 import {Empty} from "antd";
+import LoadingArea from "../LoadingArea";
 
 export default function HistoryPage() {
   let [historyMonth, setHistoryMonth] = useState({});
+  let [loading, setLoading] = useState(true);
   let [offset, setOffset] = useState(0);
 
   let isEmpty = Object.keys(historyMonth).length === 0;
@@ -40,6 +42,7 @@ export default function HistoryPage() {
       }
 
       setHistoryMonth(newHistory);
+      setLoading(false);
       if (onComplete) {
         onComplete();
       }
@@ -70,7 +73,11 @@ export default function HistoryPage() {
       <div className={'history-list'}>
         {Object.keys(historyMonth).map(x => <HistoryGroup month={x} key={x} items={historyMonth[x]}/>)}
       </div>}
-      {isEmpty &&
+      {
+        isEmpty && loading &&
+        <LoadingArea/>
+      }
+      {isEmpty && !loading &&
       <div className={'history-list'}>
         <Empty description={<span>Bạn chưa thực hiện giao dịch nào</span>}/>
       </div>}

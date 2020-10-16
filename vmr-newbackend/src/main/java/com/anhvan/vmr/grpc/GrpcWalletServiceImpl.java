@@ -165,7 +165,11 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
     long amount = request.getAmount();
 
     log.info(
-        "Handle transfer grpc call, userId={}, friendId={}, amount={}", userId, receiverId, amount);
+        "Handle transfer grpc call, userId={}, friendId={}, amount={}, requestId={}",
+        userId,
+        receiverId,
+        amount,
+        request.getRequestId());
 
     // Create response builder object
     TransferResponse.Builder responseBuilder = TransferResponse.newBuilder();
