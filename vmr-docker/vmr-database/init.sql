@@ -105,7 +105,7 @@ begin
     set x = 9;
     loop_label:
     loop
-        if x > 1000 then
+        if x > 100 then
             leave loop_label;
         end if;
         insert into users(id, username, name, password, last_updated)

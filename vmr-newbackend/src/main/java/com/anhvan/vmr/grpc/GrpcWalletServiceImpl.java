@@ -26,7 +26,6 @@ import lombok.Builder;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @AllArgsConstructor
@@ -159,16 +158,13 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
   public void transfer(TransferRequest request, StreamObserver<TransferResponse> responseObserver) {
     long startTime = System.currentTimeMillis();
 
-    // long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
 
     // Extract info
-    // long receiverId = request.getReceiver();
+    long receiverId = request.getReceiver();
     long amount = request.getAmount();
 
     // For test
-    Random rd = new Random();
-    long userId = 1 + rd.nextInt(990);
-    long receiverId = 1 + rd.nextInt(990);
 
     log.info(
         "Handle transfer grpc call, userId={}, friendId={}, amount={}, requestId={}",

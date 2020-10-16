@@ -1,5 +1,6 @@
 package com.anhvan.vmr.database;
 
+import com.anhvan.vmr.service.AsyncWorkerService;
 import com.anhvan.vmr.service.PasswordService;
 import dagger.Module;
 import dagger.Provides;
@@ -10,14 +11,15 @@ import javax.inject.Singleton;
 public class DatabaseModule {
   @Provides
   @Singleton
-  public ChatDatabaseService provideChatDBService(ChatDatabaseServiceImpl impl) {
-    return impl;
+  public ChatDatabaseService provideChatDBService(DatabaseService dbService) {
+    return new ChatDatabaseServiceImpl(dbService.getPool());
   }
 
   @Provides
   @Singleton
-  public UserDatabaseService provideUserDBService(UserDatabaseServiceImpl impl) {
-    return impl;
+  public UserDatabaseService provideUserDBService(
+      DatabaseService databaseService, AsyncWorkerService workerUtil) {
+    return new UserDatabaseServiceImpl(databaseService.getPool(), workerUtil);
   }
 
   @Provides

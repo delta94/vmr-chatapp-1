@@ -10,6 +10,7 @@ import io.vertx.mysqlclient.MySQLClient;
 import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.RowSet;
+import io.vertx.sqlclient.SqlClient;
 import io.vertx.sqlclient.Tuple;
 import jodd.crypt.BCrypt;
 import lombok.extern.log4j.Log4j2;
@@ -37,18 +38,17 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
           + "on t1.id = t2.friend_id "
           + "limit 10";
 
-  private MySQLPool pool;
+  private SqlClient pool;
   private AsyncWorkerService workerUtil;
 
-  @Inject
-  public UserDatabaseServiceImpl(DatabaseService databaseService, AsyncWorkerService workerUtil) {
-    pool = databaseService.getPool();
+  public UserDatabaseServiceImpl(SqlClient sqlClient, AsyncWorkerService workerUtil) {
+    pool = sqlClient;
     this.workerUtil = workerUtil;
   }
 
   @Override
   public Future<Long> addUser(User user) {
-    log.info("Add user {} to database", user.getUsername());
+    log.info("addUser: username={}", user.getUsername());
 
     Promise<Long> idPromise = Promise.promise();
 

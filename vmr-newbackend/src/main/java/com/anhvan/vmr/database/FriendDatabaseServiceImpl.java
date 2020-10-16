@@ -5,9 +5,9 @@ import com.anhvan.vmr.exception.AddFriendException;
 import com.anhvan.vmr.util.RowMapperUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.RowSet;
+import io.vertx.sqlclient.SqlClient;
 import io.vertx.sqlclient.Tuple;
 import lombok.extern.log4j.Log4j2;
 
@@ -56,17 +56,19 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
 
   public static final String STATUS_KEY = "STATUS";
 
-  private MySQLPool pool;
+  private SqlClient sqlClient;
   private DatabaseService dbService;
 
   @Inject
   public FriendDatabaseServiceImpl(DatabaseService databaseService) {
-    pool = databaseService.getPool();
+    sqlClient = databaseService.getPool();
     dbService = databaseService;
   }
 
   @Override
   public Future<Void> addFriend(long userId, long friendId) {
+    log.debug("addFriend: userId={}, friendId={}", userId, friendId);
+
     Promise<Void> addFriendPromise = Promise.promise();
 
     TransactionManager transactionManager = dbService.getTransactionManager();
@@ -81,7 +83,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
               transactionManager.close();
               if (ar.failed()) {
                 log.error(
-                    "Error when add friend userId:{}, friendId:{}", userId, friendId, ar.cause());
+                    "Error in addFriend: userId={}, friendId={}", userId, friendId, ar.cause());
                 addFriendPromise.fail(ar.cause());
               } else {
                 addFriendPromise.complete();
@@ -93,6 +95,8 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
 
   Future<TransactionManager> checkFriendStatus(
       long userId, long friendId, TransactionManager manager) {
+    log.debug("checkFriendStatus: userId={}, friendId={}", userId, friendId);
+
     Promise<TransactionManager> promise = Promise.promise();
 
     manager
@@ -116,8 +120,11 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
 
               // Aldready exist in table
               Row result = RowMapperUtil.firstRow(ar.result());
+
+              // Check friend status
               if (result != null) {
                 Friend.Status status = Friend.Status.valueOf(result.getString("status"));
+
                 switch (status) {
                   case ACCEPTED:
                     promise.fail(
@@ -146,6 +153,9 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
 
   Future<TransactionManager> internalAddFriend(
       long userId, long friendId, TransactionManager manager) {
+    log.debug("internalAddFriend, userId={}, friendId={}", userId, friendId);
+
+    // Promise
     Promise<TransactionManager> promise = Promise.promise();
 
     // Create if not exist
@@ -164,6 +174,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
               Tuple.of(Friend.Status.NOT_ANSWER.name(), friendId, userId));
     }
 
+    // Update/Create friend status
     manager
         .getTransaction()
         .preparedQuery(stmt)
@@ -177,30 +188,34 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
               }
             });
 
+    // Future
     return promise.future();
   }
 
   @Override
   public Future<List<Friend>> getFriendList(long userId) {
+    log.debug("getFriendList: userId={}", userId);
+
     Promise<List<Friend>> friendListPromise = Promise.promise();
 
-    pool.preparedQuery(GET_FRIENDS_STMT)
+    sqlClient
+        .preparedQuery(GET_FRIENDS_STMT)
         .execute(
             Tuple.of(userId),
             rowSetAsyncRs -> {
-              if (rowSetAsyncRs.succeeded()) {
-                RowSet<Row> rowSet = rowSetAsyncRs.result();
-                List<Friend> userList = new ArrayList<>();
-                for (Row row : rowSet) {
-                  log.debug("Friend={}", row);
-                  userList.add(RowMapperUtil.mapRow(row, Friend.class));
-                }
-                friendListPromise.complete(userList);
-              } else {
+              if (rowSetAsyncRs.failed()) {
                 Throwable cause = rowSetAsyncRs.cause();
-                log.error("Error when get friend list of user {}", userId, cause);
+                log.error("Error in getFriendList: userId={}", userId, cause);
                 friendListPromise.fail(cause);
+                return;
               }
+
+              RowSet<Row> rowSet = rowSetAsyncRs.result();
+              List<Friend> userList = new ArrayList<>();
+              for (Row row : rowSet) {
+                userList.add(RowMapperUtil.mapRow(row, Friend.class));
+              }
+              friendListPromise.complete(userList);
             });
 
     return friendListPromise.future();
@@ -298,7 +313,8 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
   public Future<List<Friend>> getChatFriendList(long userId) {
     Promise<List<Friend>> friendListPromise = Promise.promise();
 
-    pool.preparedQuery(GET_FRIENDS_WITH_MESSAGE_STMT)
+    sqlClient
+        .preparedQuery(GET_FRIENDS_WITH_MESSAGE_STMT)
         .execute(
             Tuple.of(userId),
             rowSetAsyncRs -> {
@@ -321,12 +337,15 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
 
   @Override
   public Future<Void> removeFriend(long userId, long friendId) {
+    log.debug("removeFriend, userId={}, friendId={}", userId, friendId);
+
     Promise<Void> removeFriendPromise = Promise.promise();
 
+    // Prepared query params
     List<Tuple> tuples = Arrays.asList(Tuple.of(userId, friendId), Tuple.of(friendId, userId));
 
-    TransactionManager txManager = dbService.getTransactionManager();
-    txManager
+    TransactionManager transactionManager = dbService.getTransactionManager();
+    transactionManager
         .begin()
         .compose(
             manager -> {
@@ -369,9 +388,12 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
 
   @Override
   public Future<Void> clearUnreadMessage(long userId, long friendId) {
+    log.debug("clearUnreadMessage: userId={}, friendId={}", userId, friendId);
+
     Promise<Void> queryPromise = Promise.promise();
 
-    pool.preparedQuery(CLEAR_UNREAD_MESSAGE_STMT)
+    sqlClient
+        .preparedQuery(CLEAR_UNREAD_MESSAGE_STMT)
         .execute(
             Tuple.of(userId, friendId),
             ar -> {

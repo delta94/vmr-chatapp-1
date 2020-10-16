@@ -31,7 +31,7 @@ public class ChatDatabaseServiceImplTest {
     pool = Mockito.mock(MySQLPool.class);
     DatabaseService databaseService = Mockito.mock(DatabaseService.class);
     Mockito.when(databaseService.getPool()).thenReturn(pool);
-    chatDBService = new ChatDatabaseServiceImpl(databaseService);
+    chatDBService = new ChatDatabaseServiceImpl(databaseService.getPool());
   }
 
   @Test

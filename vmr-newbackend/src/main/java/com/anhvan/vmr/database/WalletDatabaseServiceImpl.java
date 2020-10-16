@@ -69,6 +69,8 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   public Future<List<HistoryItemResponse>> getHistory(long userId) {
     Promise<List<HistoryItemResponse>> historyPromise = Promise.promise();
 
+    log.debug("Get history from database: userId={}", userId);
+
     pool.preparedQuery(HISTORY_QUERY)
         .execute(
             Tuple.of(userId),
@@ -82,7 +84,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
                 historyPromise.complete(historyList);
               } else {
                 Throwable cause = ar.cause();
-                log.error("Error when get history of user {}", userId, cause);
+                log.error("Error when get history: userId={}", userId, cause);
                 historyPromise.fail(cause);
               }
             });
@@ -93,6 +95,8 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   @Override
   public Future<List<HistoryItemResponse>> getHistoryWithOffset(long userId, long offset) {
     Promise<List<HistoryItemResponse>> historyPromise = Promise.promise();
+
+    log.debug("Get history with offset from database: userId={}, offset={}", userId, offset);
 
     pool.preparedQuery(
             "select transfers.sender, transfers.receiver, transfers.timestamp, transfers.amount, "
@@ -114,7 +118,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
                 historyPromise.complete(historyList);
               } else {
                 Throwable cause = ar.cause();
-                log.error("Error when get history userId={}, offset={}", userId, offset, cause);
+                log.error("Error when get history: userId={}, offset={}", userId, offset, cause);
                 historyPromise.fail(cause);
               }
             });
@@ -160,7 +164,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
                 initHolder.getTransaction().commit();
                 initHolder.getConn().close();
 
-                log.info("Transfer successfully {}", transferRequest);
+                log.info("Transfer money successfully: transfer={}", transferRequest);
 
                 // Return new balance and last update time to sender
                 responsePromise.complete(
@@ -171,7 +175,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
               } else {
                 Throwable cause = ar.cause();
 
-                log.error("Error when transfer {}", transferRequest, cause);
+                log.error("Transfer money failed: transfer={}", transferRequest, cause);
 
                 // Rollback and close connection
                 if (initHolder.getConn() != null) {
@@ -188,39 +192,41 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   }
 
   Future<TransferStateHolder> checkPassword(TransferStateHolder holder) {
-    Promise<TransferStateHolder> passwordPromise = Promise.promise();
-    passwordPromise.complete(holder);
-    // TODO: remove check passworld logic --> error
     log.debug(
         "Check password: sender={}, receiver={}", holder.getSenderId(), holder.getReceiverId());
-    //    passwordService
-    //        .checkPassword(holder.getSenderId(), holder.getPassword())
-    //        .onComplete(
-    //            ar -> {
-    //              // Check password failed
-    //              if (ar.failed()) {
-    //                passwordPromise.fail(ar.cause());
-    //                return;
-    //              }
-    //
-    //              // Password not valid
-    //              if (!ar.result()) {
-    //                passwordPromise.fail(
-    //                    new TransferException("Password not valid", ErrorCode.PASSWORD_INVALID));
-    //                return;
-    //              }
-    //
-    //              passwordPromise.complete(holder);
-    //            });
+
+    Promise<TransferStateHolder> passwordPromise = Promise.promise();
+    passwordPromise.complete(holder);
+
+    passwordService
+        .checkPassword(holder.getSenderId(), holder.getPassword())
+        .onComplete(
+            ar -> {
+              // Check password failed
+              if (ar.failed()) {
+                passwordPromise.fail(ar.cause());
+                return;
+              }
+
+              // Password not valid
+              if (!ar.result()) {
+                passwordPromise.fail(
+                    new TransferException("Password not valid", ErrorCode.PASSWORD_INVALID));
+                return;
+              }
+
+              passwordPromise.complete(holder);
+            });
 
     return passwordPromise.future();
   }
 
   Future<TransferStateHolder> startTransaction(TransferStateHolder holder) {
-    Promise<TransferStateHolder> txPromise = Promise.promise();
-
     log.debug(
         "Get connection: sender={}, receiver={}", holder.getSenderId(), holder.getReceiverId());
+
+    Promise<TransferStateHolder> txPromise = Promise.promise();
+
     pool.getConnection(
         ar -> {
           if (ar.failed()) {
@@ -381,12 +387,12 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   }
 
   Future<TransferStateHolder> updateAccountBalance(TransferStateHolder holder) {
-    Promise<TransferStateHolder> balancePromise = Promise.promise();
-
     log.debug(
-        "Update account balance: sender={}, receiver={}",
+        "Start updateAccountBalance: sender={}, receiver={}",
         holder.getSenderId(),
         holder.getReceiverId());
+
+    Promise<TransferStateHolder> balancePromise = Promise.promise();
 
     long amount = holder.getAmount();
     long senderNewBalance = holder.getSenderBalance() - amount;
@@ -417,10 +423,12 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   }
 
   Future<TransferStateHolder> writeTransfer(TransferStateHolder holder) {
-    Promise<TransferStateHolder> transferPromise = Promise.promise();
-
     log.debug(
-        "Write transfer: sender={}, receiver={}", holder.getSenderId(), holder.getReceiverId());
+        "Start writeTransfer: sender={}, receiver={}",
+        holder.getSenderId(),
+        holder.getReceiverId());
+
+    Promise<TransferStateHolder> transferPromise = Promise.promise();
 
     Tuple transferTuple =
         Tuple.of(
@@ -452,10 +460,12 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   }
 
   Future<TransferStateHolder> writeAccountLog(TransferStateHolder holder) {
-    Promise<TransferStateHolder> accountLogPromise = Promise.promise();
-
     log.debug(
-        "Write account log: sender={}, receiver={}", holder.getSenderId(), holder.getReceiverId());
+        "Start writeAccountLog: sender={}, receiver={}",
+        holder.getSenderId(),
+        holder.getReceiverId());
+
+    Promise<TransferStateHolder> accountLogPromise = Promise.promise();
 
     List<Tuple> tuples =
         Arrays.asList(
@@ -488,10 +498,12 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   }
 
   Future<TransferStateHolder> addChatMessage(TransferStateHolder holder) {
-    Promise<TransferStateHolder> chatPromise = Promise.promise();
-
     log.debug(
-        "Add chat message: sender={}, receiver={}", holder.getSenderId(), holder.getReceiverId());
+        "Start addChatMessage: sender={}, receiver={}",
+        holder.getSenderId(),
+        holder.getReceiverId());
+
+    Promise<TransferStateHolder> chatPromise = Promise.promise();
 
     Message message =
         Message.builder()
@@ -504,7 +516,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
             .build();
 
     chatDatabaseService
-        .addChat(message)
+        .addChat(message, holder.getTransaction())
         .onComplete(
             ar -> {
               if (ar.failed()) {
