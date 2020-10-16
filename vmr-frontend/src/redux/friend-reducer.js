@@ -54,6 +54,10 @@ function handleChatSendback(state, data) {
 
   let friend = newFriends[data.receiverId];
 
+  if (!friend) {
+    return state;
+  }
+
   newFriends[data.receiverId] = {
     ...friend,
     lastMsg: data.message,
@@ -72,6 +76,10 @@ function handleChatReceive(state, data) {
   let friends = {...state.friends};
 
   let friend = friends[data.senderId];
+  if (!friend) {
+    return state;
+  }
+
   friend.numNotifications += 1;
 
   friends[data.senderId] = {
