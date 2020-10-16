@@ -16,7 +16,7 @@ export default function HistoryGroup(props) {
             friendId={((x.senderId === userId) ? x.receiverId : x.senderId)}
             amount={x.amount}
             timestamp={x.timestamp}
-            key={x.timestamp}
+            key={x.id}
             message={x.message}
           />
         ))

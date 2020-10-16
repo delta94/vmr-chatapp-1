@@ -1,8 +1,6 @@
 /* eslint-disable */ /**
  * @fileoverview
  * @enhanceable
- * @suppress {messageConventions} JS Compiler reports an error if a variable or
- *     field starts with 'MSG_' and isn't a translatable message.
  * @public
  */
 // GENERATED CODE -- DO NOT EDIT!
@@ -57,13 +55,12 @@ proto.vmr.Error.prototype.toObject = function(opt_includeInstance) {
  *     http://goto/soy-param-migration
  * @param {!proto.vmr.Error} msg The msg instance to transform.
  * @return {!Object}
- * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.vmr.Error.toObject = function(includeInstance, msg) {
   var f, obj = {
-    code: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    message: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    extraMap: (f = msg.getExtraMap()) ? f.toObject(includeInstance, undefined) : []
+    code: msg.getCode(),
+    message: msg.getMessage(),
+    extraMap: (f = msg.getExtraMap(true)) ? f.toArray() : []
   };
 
   if (includeInstance) {
@@ -111,7 +108,7 @@ proto.vmr.Error.deserializeBinaryFromReader = function(msg, reader) {
     case 3:
       var value = msg.getExtraMap();
       reader.readMessage(value, function(message, reader) {
-        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readString, jspb.BinaryReader.prototype.readString, null, "");
+        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readString, jspb.BinaryReader.prototype.readString);
          });
       break;
     default:
@@ -124,43 +121,61 @@ proto.vmr.Error.deserializeBinaryFromReader = function(msg, reader) {
 
 
 /**
+ * Class method variant: serializes the given message to binary data
+ * (in protobuf wire format), writing to the given BinaryWriter.
+ * @param {!proto.vmr.Error} message
+ * @param {!jspb.BinaryWriter} writer
+ */
+proto.vmr.Error.serializeBinaryToWriter = function(message, writer) {
+  message.serializeBinaryToWriter(writer);
+};
+
+
+/**
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
 proto.vmr.Error.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  proto.vmr.Error.serializeBinaryToWriter(this, writer);
+  this.serializeBinaryToWriter(writer);
   return writer.getResultBuffer();
 };
 
 
 /**
- * Serializes the given message to binary data (in protobuf wire
- * format), writing to the given BinaryWriter.
- * @param {!proto.vmr.Error} message
+ * Serializes the message to binary data (in protobuf wire format),
+ * writing to the given BinaryWriter.
  * @param {!jspb.BinaryWriter} writer
- * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.Error.serializeBinaryToWriter = function(message, writer) {
+proto.vmr.Error.prototype.serializeBinaryToWriter = function (writer) {
   var f = undefined;
-  f = message.getCode();
+  f = this.getCode();
   if (f !== 0.0) {
     writer.writeEnum(
       1,
       f
     );
   }
-  f = message.getMessage();
+  f = this.getMessage();
   if (f.length > 0) {
     writer.writeString(
       2,
       f
     );
   }
-  f = message.getExtraMap(true);
+  f = this.getExtraMap(true);
   if (f && f.getLength() > 0) {
     f.serializeBinary(3, writer, jspb.BinaryWriter.prototype.writeString, jspb.BinaryWriter.prototype.writeString);
   }
+};
+
+
+/**
+ * Creates a deep clone of this proto. No data is shared with the original.
+ * @return {!proto.vmr.Error} The clone.
+ */
+proto.vmr.Error.prototype.cloneMessage = function() {
+  return /** @type {!proto.vmr.Error} */ (jspb.Message.cloneMessage(this));
 };
 
 
@@ -169,13 +184,13 @@ proto.vmr.Error.serializeBinaryToWriter = function(message, writer) {
  * @return {!proto.vmr.ErrorCode}
  */
 proto.vmr.Error.prototype.getCode = function() {
-  return /** @type {!proto.vmr.ErrorCode} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+  return /** @type {!proto.vmr.ErrorCode} */ (jspb.Message.getFieldProto3(this, 1, 0));
 };
 
 
-/** @param {!proto.vmr.ErrorCode} value */
+/** @param {!proto.vmr.ErrorCode} value  */
 proto.vmr.Error.prototype.setCode = function(value) {
-  jspb.Message.setProto3EnumField(this, 1, value);
+  jspb.Message.setField(this, 1, value);
 };
 
 
@@ -184,13 +199,13 @@ proto.vmr.Error.prototype.setCode = function(value) {
  * @return {string}
  */
 proto.vmr.Error.prototype.getMessage = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 2, ""));
 };
 
 
-/** @param {string} value */
+/** @param {string} value  */
 proto.vmr.Error.prototype.setMessage = function(value) {
-  jspb.Message.setProto3StringField(this, 2, value);
+  jspb.Message.setField(this, 2, value);
 };
 
 
@@ -204,11 +219,6 @@ proto.vmr.Error.prototype.getExtraMap = function(opt_noLazyCreate) {
   return /** @type {!jspb.Map<string,string>} */ (
       jspb.Message.getMapField(this, 3, opt_noLazyCreate,
       null));
-};
-
-
-proto.vmr.Error.prototype.clearExtraMap = function() {
-  this.getExtraMap().clear();
 };
 
 
@@ -255,7 +265,6 @@ proto.vmr.Empty.prototype.toObject = function(opt_includeInstance) {
  *     http://goto/soy-param-migration
  * @param {!proto.vmr.Empty} msg The msg instance to transform.
  * @return {!Object}
- * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.vmr.Empty.toObject = function(includeInstance, msg) {
   var f, obj = {
@@ -306,25 +315,43 @@ proto.vmr.Empty.deserializeBinaryFromReader = function(msg, reader) {
 
 
 /**
+ * Class method variant: serializes the given message to binary data
+ * (in protobuf wire format), writing to the given BinaryWriter.
+ * @param {!proto.vmr.Empty} message
+ * @param {!jspb.BinaryWriter} writer
+ */
+proto.vmr.Empty.serializeBinaryToWriter = function(message, writer) {
+  message.serializeBinaryToWriter(writer);
+};
+
+
+/**
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
 proto.vmr.Empty.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  proto.vmr.Empty.serializeBinaryToWriter(this, writer);
+  this.serializeBinaryToWriter(writer);
   return writer.getResultBuffer();
 };
 
 
 /**
- * Serializes the given message to binary data (in protobuf wire
- * format), writing to the given BinaryWriter.
- * @param {!proto.vmr.Empty} message
+ * Serializes the message to binary data (in protobuf wire format),
+ * writing to the given BinaryWriter.
  * @param {!jspb.BinaryWriter} writer
- * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.Empty.serializeBinaryToWriter = function(message, writer) {
+proto.vmr.Empty.prototype.serializeBinaryToWriter = function (writer) {
   var f = undefined;
+};
+
+
+/**
+ * Creates a deep clone of this proto. No data is shared with the original.
+ * @return {!proto.vmr.Empty} The clone.
+ */
+proto.vmr.Empty.prototype.cloneMessage = function() {
+  return /** @type {!proto.vmr.Empty} */ (jspb.Message.cloneMessage(this));
 };
 
 

@@ -30,14 +30,23 @@ public class TokenCacheServiceImpl implements TokenCacheService {
   }
 
   @Override
-  public void addToBlackList(String token) {
+  public Future<Void> addToBlackList(String token) {
+    Promise<Void> promise = Promise.promise();
+
     String key = getKey(token);
     RBucket<Boolean> expireValue = redis.getBucket(key);
     asyncWorkerService.execute(
         () -> {
-          expireValue.set(true);
-          expireValue.expire(authConfig.getExpire(), TimeUnit.SECONDS);
+          try {
+            expireValue.set(true);
+            expireValue.expire(authConfig.getExpire(), TimeUnit.SECONDS);
+          } catch (Exception exception) {
+            log.error("Error when add jwt token to blacklist, jwtToken={}", token, exception);
+            promise.fail(exception);
+          }
         });
+
+    return promise.future();
   }
 
   @Override

@@ -52,6 +52,9 @@ function handleChatReceive(state, data) {
 
   let messages = state.messages;
   let msgList = messages[senderId];
+  if (!msgList) {
+    return state;
+  }
   messages[senderId] = [...msgList, data];
 
   return Object.assign({}, state, {
@@ -63,6 +66,9 @@ function handleChatReceive(state, data) {
 function handleChatSendback(state, data) {
   let messages = state.messages;
   let msgList = messages[data.receiverId];
+  if (!msgList) {
+    return state;
+  }
   messages[data.receiverId] = [...msgList, data];
 
   return Object.assign({}, state, {
@@ -73,7 +79,10 @@ function handleChatSendback(state, data) {
 
 function handleGetMsgFromAPI(state, data) {
   let messages = state.messages;
-  let msgList = messages[data.friendId] || [];
+  let msgList = messages[data.friendId];
+  if (!msgList) {
+    return state;
+  }
   messages[data.friendId] = [...data.messages, ...msgList];
   return Object.assign({}, state, {messages});
 }

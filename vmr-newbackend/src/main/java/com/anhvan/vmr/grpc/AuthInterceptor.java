@@ -32,19 +32,22 @@ public class AuthInterceptor implements ServerInterceptor {
     Key<String> jwtToken = Key.of(TOKEN_HEADER_NAME, Metadata.ASCII_STRING_MARSHALLER);
     String token = headers.get(jwtToken);
 
+    // return next.startCall(call, headers);
+
     if (token == null) {
       rejectedCounter.increment();
       call.close(Status.UNAUTHENTICATED, headers);
       return new ServerCall.Listener<ReqT>() {};
     }
 
-    authCounter.increment();
     try {
       long userId = jwtService.authenticateBlocking(token);
       Context context = Context.current().withValue(GrpcKey.USER_ID_KEY, String.valueOf(userId));
+      authCounter.increment();
       return Contexts.interceptCall(context, call, headers, next);
     } catch (Exception e) {
       call.close(Status.UNAUTHENTICATED, headers);
+      rejectedCounter.increment();
       return new ServerCall.Listener<ReqT>() {};
     }
   }

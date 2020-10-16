@@ -10,7 +10,7 @@ export function useFriendList() {
 
   useEffect(() => {
     getChatFriendList().then(result => {
-      dispatch(updateFriendList(result.getFriendinfoList().map(x => {
+      dispatch(updateFriendList(result.getFriendInfoList().map(x => {
         return {
           id: x.getId(),
           name: x.getName(),

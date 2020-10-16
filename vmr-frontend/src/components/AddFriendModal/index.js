@@ -105,11 +105,12 @@ function SearchListItem(props) {
   let button = <Button type="primary" className="friend-modal-button" onClick={handleAddFriend}><PlusOutlined/>Kết
     bạn</Button>;
 
-  if (acceptSucceeded || item.getFriendstatus() === FriendStatus.FRIEND) {
+  let friendStatus = item.getFriendStatus();
+  if (acceptSucceeded || friendStatus === FriendStatus.FRIEND) {
     button = <Button className="friend-modal-button" onClick={chatHandle}>Chat ngay</Button>;
-  } else if (addFriendSucceeded || item.getFriendstatus() === FriendStatus.WAITING) {
+  } else if (addFriendSucceeded || friendStatus === FriendStatus.WAITING) {
     button = <Text type="secondary">Đang chờ phản hồi</Text>;
-  } else if (item.getFriendstatus() === FriendStatus.NOT_ANSWER) {
+  } else if (friendStatus === FriendStatus.NOT_ANSWER) {
     button = <Button className="friend-modal-button" onClick={acceptFriendBtnHandle}><CheckOutlined/>Chấp
       nhận</Button>;
   }

@@ -315,6 +315,86 @@ proto.vmr.WalletServicePromiseClient.prototype.getHistory =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.vmr.GetHistoryWithOffsetRequest,
+ *   !proto.vmr.HistoryResponse>}
+ */
+const methodDescriptor_WalletService_GetHistoryWithOffset = new grpc.web.MethodDescriptor(
+  '/vmr.WalletService/GetHistoryWithOffset',
+  grpc.web.MethodType.UNARY,
+  proto.vmr.GetHistoryWithOffsetRequest,
+  proto.vmr.HistoryResponse,
+  /**
+   * @param {!proto.vmr.GetHistoryWithOffsetRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.HistoryResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.vmr.GetHistoryWithOffsetRequest,
+ *   !proto.vmr.HistoryResponse>}
+ */
+const methodInfo_WalletService_GetHistoryWithOffset = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.vmr.HistoryResponse,
+  /**
+   * @param {!proto.vmr.GetHistoryWithOffsetRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.vmr.HistoryResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.vmr.GetHistoryWithOffsetRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.vmr.HistoryResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.vmr.HistoryResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.vmr.WalletServiceClient.prototype.getHistoryWithOffset =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/vmr.WalletService/GetHistoryWithOffset',
+      request,
+      metadata || {},
+      methodDescriptor_WalletService_GetHistoryWithOffset,
+      callback);
+};
+
+
+/**
+ * @param {!proto.vmr.GetHistoryWithOffsetRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.vmr.HistoryResponse>}
+ *     Promise that resolves to the response
+ */
+proto.vmr.WalletServicePromiseClient.prototype.getHistoryWithOffset =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/vmr.WalletService/GetHistoryWithOffset',
+      request,
+      metadata || {},
+      methodDescriptor_WalletService_GetHistoryWithOffset);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.vmr.TransferReminderRequest,
  *   !proto.vmr.TransferReminderResponse>}
  */

@@ -37,6 +37,8 @@ export default function TransferMoneyModal(props) {
   let windowSize = useWindowSize();
   let balance = useBalance(step, active);
   let [cause, setCause] = useState('');
+  let [requestId, setRequestId] = useState(0);
+  let [sendBtnLoading, setSendBtnLoading] = useState(false);
 
   useEffect(() => {
     setStep(0);
@@ -47,10 +49,17 @@ export default function TransferMoneyModal(props) {
     // eslint-disable-next-line
   }, [active]);
 
+  useEffect(() => {
+    console.log('Compute requestId');
+    setRequestId(Date.now());
+  }, []);
+
   let closeModal = () => {
+    setRequestId(Date.now());
     form.resetFields();
     form2.resetFields();
     setActive(false);
+    setSendBtnLoading(false);
   };
 
   let validateAndMoveNext = () => {
@@ -85,7 +94,8 @@ export default function TransferMoneyModal(props) {
   };
 
   let handleTransfer = () => {
-    transfer(receiverId, amount, password, message, Math.round(Math.random() * 1000)).then(data => {
+    setSendBtnLoading(true);
+    transfer(receiverId, amount, password, message, requestId).then(data => {
       console.log(data.getBalance());
       setStep(2);
     }).catch(err => {
@@ -97,6 +107,8 @@ export default function TransferMoneyModal(props) {
         setCause('Số dư của bạn không đủ');
       } else if (err.getCode() === ErrorCode.RECEIVER_NOT_EXIST) {
         setCause('Người nhận không tồn tại');
+      } else if (err.getCode() === ErrorCode.REQUEST_EXISTED) {
+        setCause('Bạn đã thực hiện giao dịch này rồi');
       }
       setStep(3);
     });
@@ -116,7 +128,8 @@ export default function TransferMoneyModal(props) {
       <Button key="back" onClick={() => setStep(0)}>
         <ArrowLeftOutlined/>Quay lại
       </Button>,
-      <Button key="submit" type="primary" onClick={handleTransfer} disabled={password.length === 0}>
+      <Button key="submit" type="primary" onClick={handleTransfer} loading={sendBtnLoading}
+              disabled={password.length === 0}>
         Chuyển tiền
       </Button>,
     ]

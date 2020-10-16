@@ -28,10 +28,14 @@ public class DatabaseService {
             .setDatabase(config.getDatabase())
             .setCharacterEncoding("utf8")
             .setCharset("utf8mb4")
-            .setCollation("utf8mb4_unicode_ci");
+            .setCollation("utf8mb4_unicode_ci")
+            .setConnectTimeout(config.getTimeout());
 
     // Pool options
-    PoolOptions poolOptions = new PoolOptions().setMaxSize(config.getPoolSize());
+    PoolOptions poolOptions =
+        new PoolOptions()
+            .setMaxSize(config.getPoolSize())
+            .setMaxWaitQueueSize(config.getQueueSize());
 
     // Create connection pool
     pool = MySQLPool.pool(vertx, connectOptions, poolOptions);

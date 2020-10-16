@@ -37,7 +37,7 @@ public class GrpcFriendServiceImpl extends FriendServiceImplBase {
   public void getFriendList(Empty request, StreamObserver<FriendListResponse> responseObserver) {
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
 
-    log.info("Handle getFriendList, userId={}", userId);
+    log.info("Handle getFriendList grpc call, userId={}", userId);
 
     friendDbService
         .getFriendList(userId)

@@ -10,6 +10,7 @@ service WalletService {
   rpc GetBalance(Empty) returns (BalanceResponse);
   rpc Transfer(TransferRequest) returns (TransferResponse);
   rpc GetHistory(Empty) returns (HistoryResponse);
+  rpc GetHistoryWithOffset(GetHistoryWithOffsetRequest) returns (HistoryResponse);
   rpc RemindTransfer(TransferReminderRequest) returns (TransferReminderResponse);
   rpc GetTransferReminder(Empty) returns (TransferReminderListResponse);
 }
@@ -25,6 +26,12 @@ message BalanceResponse {
 
   Error error = 1;
   Data data = 2;
+}
+
+// History
+
+message GetHistoryWithOffsetRequest {
+  int64 offset = 1;
 }
 
 // Transfer
