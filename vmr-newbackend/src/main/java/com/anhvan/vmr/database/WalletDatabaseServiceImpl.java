@@ -189,29 +189,29 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 
   Future<TransferStateHolder> checkPassword(TransferStateHolder holder) {
     Promise<TransferStateHolder> passwordPromise = Promise.promise();
-    // passwordPromise.complete(holder);
+    passwordPromise.complete(holder);
     // TODO: remove check passworld logic --> error
     log.debug(
         "Check password: sender={}, receiver={}", holder.getSenderId(), holder.getReceiverId());
-    passwordService
-        .checkPassword(holder.getSenderId(), holder.getPassword())
-        .onComplete(
-            ar -> {
-              // Check password failed
-              if (ar.failed()) {
-                passwordPromise.fail(ar.cause());
-                return;
-              }
-
-              // Password not valid
-              if (!ar.result()) {
-                passwordPromise.fail(
-                    new TransferException("Password not valid", ErrorCode.PASSWORD_INVALID));
-                return;
-              }
-
-              passwordPromise.complete(holder);
-            });
+    //    passwordService
+    //        .checkPassword(holder.getSenderId(), holder.getPassword())
+    //        .onComplete(
+    //            ar -> {
+    //              // Check password failed
+    //              if (ar.failed()) {
+    //                passwordPromise.fail(ar.cause());
+    //                return;
+    //              }
+    //
+    //              // Password not valid
+    //              if (!ar.result()) {
+    //                passwordPromise.fail(
+    //                    new TransferException("Password not valid", ErrorCode.PASSWORD_INVALID));
+    //                return;
+    //              }
+    //
+    //              passwordPromise.complete(holder);
+    //            });
 
     return passwordPromise.future();
   }
@@ -249,6 +249,8 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 
   Future<TransferStateHolder> checkReceiverExist(TransferStateHolder holder) {
     Promise<TransferStateHolder> existPromise = Promise.promise();
+    log.debug(
+        "Check user exist, userId={}, receiver={}", holder.getSenderId(), holder.getReceiverId());
 
     holder
         .getConn()
@@ -278,6 +280,11 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   Future<TransferStateHolder> checkRequestIdExist(TransferStateHolder holder) {
     Promise<TransferStateHolder> existPromise = Promise.promise();
 
+    log.debug(
+        "Check request id exist, userId={}, receiver={}",
+        holder.getSenderId(),
+        holder.getReceiverId());
+
     holder
         .getConn()
         .preparedQuery(CHECK_REQUEST_ID_EXIST_QUERY)
@@ -305,6 +312,11 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   Future<TransferStateHolder> lockSenderAndReceiver(TransferStateHolder holder) {
     Promise<TransferStateHolder> lockPromise = Promise.promise();
 
+    log.debug(
+        "Lock sender and receiver: sender={}, receiver={}",
+        holder.getSenderId(),
+        holder.getReceiverId());
+
     holder
         .getConn()
         .preparedQuery(REQUIRE_LOCKS_STMT)
@@ -327,6 +339,11 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 
   Future<TransferStateHolder> checkBalanceEnough(TransferStateHolder holder) {
     Promise<TransferStateHolder> enoughtPromise = Promise.promise();
+
+    log.debug(
+        "Check balance enought: sender={}, receiver={}",
+        holder.getSenderId(),
+        holder.getReceiverId());
 
     holder
         .getConn()
@@ -366,6 +383,11 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   Future<TransferStateHolder> updateAccountBalance(TransferStateHolder holder) {
     Promise<TransferStateHolder> balancePromise = Promise.promise();
 
+    log.debug(
+        "Update account balance: sender={}, receiver={}",
+        holder.getSenderId(),
+        holder.getReceiverId());
+
     long amount = holder.getAmount();
     long senderNewBalance = holder.getSenderBalance() - amount;
     long recevierNewBalance = holder.getReceiverBalance() + amount;
@@ -396,6 +418,9 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 
   Future<TransferStateHolder> writeTransfer(TransferStateHolder holder) {
     Promise<TransferStateHolder> transferPromise = Promise.promise();
+
+    log.debug(
+        "Write transfer: sender={}, receiver={}", holder.getSenderId(), holder.getReceiverId());
 
     Tuple transferTuple =
         Tuple.of(
@@ -429,6 +454,9 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   Future<TransferStateHolder> writeAccountLog(TransferStateHolder holder) {
     Promise<TransferStateHolder> accountLogPromise = Promise.promise();
 
+    log.debug(
+        "Write account log: sender={}, receiver={}", holder.getSenderId(), holder.getReceiverId());
+
     List<Tuple> tuples =
         Arrays.asList(
             Tuple.of(
@@ -461,6 +489,9 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 
   Future<TransferStateHolder> addChatMessage(TransferStateHolder holder) {
     Promise<TransferStateHolder> chatPromise = Promise.promise();
+
+    log.debug(
+        "Add chat message: sender={}, receiver={}", holder.getSenderId(), holder.getReceiverId());
 
     Message message =
         Message.builder()
