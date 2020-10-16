@@ -16,4 +16,6 @@ public class DatabaseConfig {
   private String password;
   private String database;
   private int poolSize;
+  private int timeout;
+  private int queueSize;
 }

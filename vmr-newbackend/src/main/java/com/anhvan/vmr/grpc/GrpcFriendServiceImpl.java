@@ -46,7 +46,6 @@ public class GrpcFriendServiceImpl extends FriendServiceImplBase {
               if (ar.succeeded()) {
                 FriendListResponse.Builder response = FriendListResponse.newBuilder();
                 List<Friend> grpcUserResponseList = ar.result();
-                log.debug("friend list = {}", grpcUserResponseList);
                 for (Friend user : grpcUserResponseList) {
                   FriendInfo info =
                       FriendInfo.newBuilder()
@@ -57,7 +56,6 @@ public class GrpcFriendServiceImpl extends FriendServiceImplBase {
                           .build();
                   response.addFriendInfo(info);
                 }
-                log.debug("Response = {}", response);
                 responseObserver.onNext(response.build());
               } else {
                 log.error("Error when get friend list, userId={}", userId, ar.cause());
