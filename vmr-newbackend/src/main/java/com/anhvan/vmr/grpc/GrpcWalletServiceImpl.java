@@ -20,11 +20,13 @@ import com.anhvan.vmr.proto.WalletServiceGrpc;
 import com.anhvan.vmr.util.GrpcUtil;
 import com.anhvan.vmr.websocket.WebSocketService;
 import io.grpc.stub.StreamObserver;
+import io.micrometer.core.instrument.Timer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @AllArgsConstructor
 @Builder
@@ -35,6 +37,7 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
   private WebSocketService webSocketService;
   private ChatCacheService chatCacheService;
   private FriendCacheService friendCacheService;
+  private Timer transferSuccessTimer;
 
   @Override
   public void getBalance(Common.Empty request, StreamObserver<BalanceResponse> responseObserver) {
@@ -153,6 +156,8 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
 
   @Override
   public void transfer(TransferRequest request, StreamObserver<TransferResponse> responseObserver) {
+    long startTime = System.currentTimeMillis();
+
     long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
 
     // Extract info
@@ -217,6 +222,9 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
                 chatCacheService.cacheMessage(message);
                 friendCacheService.updateLastMessageForBoth(userId, receiverId, message);
                 webSocketService.sendChatMessage(userId, receiverId, message);
+                long executedTime = System.currentTimeMillis() - startTime;
+                log.debug("Transfer execution time: {}", executedTime);
+                transferSuccessTimer.record(executedTime, TimeUnit.MILLISECONDS);
               } else {
                 // Transfer failed
                 Throwable cause = ar.cause();
@@ -242,6 +250,9 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
                 // Send the error
                 responseObserver.onNext(responseBuilder.build());
                 responseObserver.onCompleted();
+                long executedTime = System.currentTimeMillis() - startTime;
+                log.debug("Transfer execution time: {}", executedTime);
+                transferSuccessTimer.record(executedTime, TimeUnit.MILLISECONDS);
               }
             });
   }

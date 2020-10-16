@@ -40,13 +40,14 @@ public class AuthInterceptor implements ServerInterceptor {
       return new ServerCall.Listener<ReqT>() {};
     }
 
-    authCounter.increment();
     try {
       long userId = jwtService.authenticateBlocking(token);
       Context context = Context.current().withValue(GrpcKey.USER_ID_KEY, String.valueOf(userId));
+      authCounter.increment();
       return Contexts.interceptCall(context, call, headers, next);
     } catch (Exception e) {
       call.close(Status.UNAUTHENTICATED, headers);
+      rejectedCounter.increment();
       return new ServerCall.Listener<ReqT>() {};
     }
   }

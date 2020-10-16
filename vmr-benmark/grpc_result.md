@@ -74,5 +74,76 @@ Status code distribution:
   [OK]   2000 responses
 ```
 
-## 3. Transfer
+## 3. GetChatFriendList
 
+```bash
+Summary:
+  Count:        2000
+  Total:        561.56 ms
+  Slowest:      32.31 ms
+  Fastest:      1.73 ms
+  Average:      13.43 ms
+  Requests/sec: 3561.54
+
+Response time histogram:
+  1.733 [1]     |
+  4.790 [42]    |∎∎∎∎
+  7.847 [220]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  10.904 [475]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  13.962 [415]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  17.019 [410]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  20.076 [205]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  23.134 [109]  |∎∎∎∎∎∎∎∎∎
+  26.191 [72]   |∎∎∎∎∎∎
+  29.248 [39]   |∎∎∎
+  32.306 [12]   |∎
+
+Latency distribution:
+  10 % in 7.37 ms
+  25 % in 9.50 ms
+  50 % in 12.68 ms
+  75 % in 16.38 ms
+  90 % in 20.88 ms
+  95 % in 23.74 ms
+  99 % in 28.67 ms
+
+Status code distribution:
+  [OK]   2000 responses
+```
+
+## 4. GetFriendList
+
+```bash
+Summary:
+  Count:        2000
+  Total:        750.69 ms
+  Slowest:      51.75 ms
+  Fastest:      0.78 ms
+  Average:      17.76 ms
+  Requests/sec: 2664.20
+
+Response time histogram:
+  0.781 [1]     |
+  5.878 [57]    |∎∎∎
+  10.975 [235]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  16.072 [555]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  21.169 [672]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  26.266 [253]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  31.362 [135]  |∎∎∎∎∎∎∎∎
+  36.459 [51]   |∎∎∎
+  41.556 [25]   |∎
+  46.653 [6]    |
+  51.750 [10]   |∎
+
+Latency distribution:
+  10 % in 9.47 ms
+  25 % in 13.02 ms
+  50 % in 17.20 ms
+  75 % in 20.99 ms
+  90 % in 27.13 ms
+  95 % in 30.99 ms
+  99 % in 40.22 ms
+
+Status code distribution:
+  [OK]   2000 responses
+```

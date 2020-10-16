@@ -9,7 +9,7 @@ create table users
     username     varchar(20) not null unique,
     password     varchar(60) not null,
     name         varchar(45) not null,
-    balance      bigint      not null default 100000,
+    balance      bigint      not null default 10000000,
     last_updated bigint      not null,
     fulltext (username, name)
 );
@@ -66,21 +66,22 @@ create table account_logs
     foreign key (transfer) references transfers (id)
 );
 
-insert into users (username, name, password, last_updated)
-values ('danganhvan', 'Đặng Anh Văn', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.', UNIX_TIMESTAMP()),
-       ('dangduymanh', 'Đặng Duy Mạnh', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+insert into users (id, username, name, password, last_updated)
+values (1, 'danganhvan', 'Đặng Anh Văn', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
         UNIX_TIMESTAMP()),
-       ('phamanhtuan', 'Phạm Anh Tuấn', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+       (2, 'dangduymanh', 'Đặng Duy Mạnh', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
         UNIX_TIMESTAMP()),
-       ('lengocphuong', 'Le Ngoc Phuong', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+       (3, 'phamanhtuan', 'Phạm Anh Tuấn', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
         UNIX_TIMESTAMP()),
-       ('nguyenvana', 'Nguyen Van A', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+       (4, 'lengocphuong', 'e Ngoc Phuong', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
         UNIX_TIMESTAMP()),
-       ('nguyenthithuylinh', 'Nguyen Thi Thuy Linh', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+       (5, 'nguyenvannam', 'Nguyễn Văn Nam', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
         UNIX_TIMESTAMP()),
-       ('dangphuongthao', 'Đặng Phương Thảo', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+       (6, 'nguyenthithuylinh', 'Nguyen Thi Thuy Linh', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
         UNIX_TIMESTAMP()),
-       ('dangtunglam', 'Đặng Tùng Lâm', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+       (7, 'dangphuongthao', 'Đặng Phương Thảo', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+        UNIX_TIMESTAMP()),
+       (8, 'dangtunglam', 'Đặng Tùng Lâm', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
         UNIX_TIMESTAMP());
 
 insert into friends (user_id, friend_id, status)
@@ -96,3 +97,23 @@ values (1, 2, 'ACCEPTED'),
        (6, 1, 'NOT_ANSWER'),
        (1, 7, 'NOT_ANSWER'),
        (7, 1, 'WAITING');
+
+
+create procedure fake_user()
+begin
+    declare x int;
+    set x = 9;
+    loop_label:
+    loop
+        if x > 1000 then
+            leave loop_label;
+        end if;
+        insert into users(id, username, name, password, last_updated)
+        values (x, concat('user', x), concat('User Name ', x),
+                '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+                UNIX_TIMESTAMP());
+        set x = x + 1;
+    end loop;
+end;
+
+call fake_user();

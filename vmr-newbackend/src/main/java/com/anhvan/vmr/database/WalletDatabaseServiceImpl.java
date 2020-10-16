@@ -57,6 +57,8 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   public static final String WRITE_CHAT_STMT =
       "insert into messages (sender, receiver, send_time, message, type, transfer_id) "
           + "values (?,?,?,?,?,?)";
+  public static final String REQUIRE_LOCKS_STMT =
+      "select * from users where id=? or id=? for update";
 
   private MySQLPool pool;
   private PasswordService passwordService;
@@ -290,7 +292,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 
     holder
         .getConn()
-        .preparedQuery("select * from users where id=? or id=? for update")
+        .preparedQuery(REQUIRE_LOCKS_STMT)
         .execute(
             Tuple.of(holder.getSenderId(), holder.getReceiverId()),
             ar -> {
