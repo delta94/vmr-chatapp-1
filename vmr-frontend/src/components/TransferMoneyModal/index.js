@@ -59,6 +59,7 @@ export default function TransferMoneyModal(props) {
     form.resetFields();
     form2.resetFields();
     setActive(false);
+    setSendBtnLoading(false);
   };
 
   let validateAndMoveNext = () => {
@@ -127,7 +128,8 @@ export default function TransferMoneyModal(props) {
       <Button key="back" onClick={() => setStep(0)}>
         <ArrowLeftOutlined/>Quay lại
       </Button>,
-      <Button key="submit" type="primary" onClick={handleTransfer} loading={sendBtnLoading} disabled={password.length === 0}>
+      <Button key="submit" type="primary" onClick={handleTransfer} loading={sendBtnLoading}
+              disabled={password.length === 0}>
         Chuyển tiền
       </Button>,
     ]

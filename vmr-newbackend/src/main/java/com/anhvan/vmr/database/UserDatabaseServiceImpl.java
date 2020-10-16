@@ -34,7 +34,8 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
       "select t1.username, t1.name, t1.id, t2.status "
           + "from (select * from users where match(username, name) against(? IN NATURAL LANGUAGE MODE)) t1 "
           + "left join (select * from friends where user_id = ?) t2 "
-          + "on t1.id = t2.friend_id";
+          + "on t1.id = t2.friend_id "
+          + "limit 10";
 
   private MySQLPool pool;
   private AsyncWorkerService workerUtil;
@@ -162,8 +163,7 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
               if (rowSetRs.succeeded()) {
                 List<Friend> userList = new ArrayList<>();
                 RowSet<Row> result = rowSetRs.result();
-                result.forEach(
-                    row -> userList.add(RowMapperUtil.mapRow(row, Friend.class)));
+                result.forEach(row -> userList.add(RowMapperUtil.mapRow(row, Friend.class)));
                 userListPromise.complete(userList);
               } else {
                 log.error(

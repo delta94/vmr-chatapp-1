@@ -22,7 +22,7 @@ export default function FriendTab() {
 
   useEffect(() => {
     getFriendList().then(res => {
-      let friendListRes = res.getFriendinfoList();
+      let friendListRes = res.getFriendInfoList();
       setFriendList(friendListRes);
     }).catch(err => {
       console.log(err);

@@ -138,6 +138,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     checkPassword(initHolder)
         .compose(this::startTransaction)
         .compose(this::checkReceiverExist)
+        .compose(this::lockSenderAndReceiver)
         .compose(this::checkBalanceEnough)
         .compose(this::checkRequestIdExist)
         .compose(this::updateAccountBalance)
@@ -282,6 +283,25 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
             });
 
     return existPromise.future();
+  }
+
+  Future<TransferStateHolder> lockSenderAndReceiver(TransferStateHolder holder) {
+    Promise<TransferStateHolder> lockPromise = Promise.promise();
+
+    holder
+        .getConn()
+        .preparedQuery("select * from users where id=? or id=? for update")
+        .execute(
+            Tuple.of(holder.getSenderId(), holder.getReceiverId()),
+            ar -> {
+              if (ar.succeeded()) {
+                lockPromise.complete(holder);
+              } else {
+                lockPromise.fail(ar.cause());
+              }
+            });
+
+    return lockPromise.future();
   }
 
   Future<TransferStateHolder> checkBalanceEnough(TransferStateHolder holder) {

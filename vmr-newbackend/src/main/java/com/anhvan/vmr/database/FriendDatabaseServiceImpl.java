@@ -192,6 +192,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
                 RowSet<Row> rowSet = rowSetAsyncRs.result();
                 List<Friend> userList = new ArrayList<>();
                 for (Row row : rowSet) {
+                  log.debug("Friend={}", row);
                   userList.add(RowMapperUtil.mapRow(row, Friend.class));
                 }
                 friendListPromise.complete(userList);

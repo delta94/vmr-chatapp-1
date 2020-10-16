@@ -1,7 +1,6 @@
 package com.anhvan.vmr.entity;
 
 import com.anhvan.vmr.model.ColName;
-import com.anhvan.vmr.model.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 @ToString
 @SuperBuilder
 @NoArgsConstructor
-public class Friend extends User {
+public class Friend {
   public enum Status {
     WAITING,
     NOT_ANSWER,
@@ -21,6 +20,10 @@ public class Friend extends User {
     NOTHING,
     REMOVED
   }
+
+  private long id;
+  private String username;
+  private String name;
 
   @ColName("status")
   private String friendStatus;
