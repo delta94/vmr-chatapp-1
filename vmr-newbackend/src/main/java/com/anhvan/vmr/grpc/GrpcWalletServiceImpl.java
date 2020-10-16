@@ -11,6 +11,7 @@ import com.anhvan.vmr.exception.TransferException;
 import com.anhvan.vmr.model.Message;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.proto.Common;
+import com.anhvan.vmr.proto.Wallet;
 import com.anhvan.vmr.proto.Wallet.BalanceResponse;
 import com.anhvan.vmr.proto.Wallet.HistoryResponse;
 import com.anhvan.vmr.proto.Wallet.TransferRequest;
@@ -87,6 +88,44 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
 
     walletDatabaseService
         .getHistory(userId)
+        .onComplete(
+            ar -> {
+              if (ar.succeeded()) {
+                List<HistoryItemResponse> historyList = ar.result();
+                HistoryResponse.Data.Builder dataBuilder = HistoryResponse.Data.newBuilder();
+                for (HistoryItemResponse history : historyList) {
+                  dataBuilder.addItem(GrpcUtil.history2HistoryResponseItem(history));
+                }
+                historyResponseBuilder.setData(dataBuilder.build());
+              } else {
+                Common.Error error =
+                    Common.Error.newBuilder()
+                        .setCode(Common.ErrorCode.INTERNAL_SERVER_ERROR)
+                        .setMessage("Fail to get history")
+                        .build();
+                historyResponseBuilder.setError(error);
+
+                // Write log
+                log.error("Error when get history list, userId={}", userId, ar.cause());
+              }
+              responseObserver.onNext(historyResponseBuilder.build());
+              responseObserver.onCompleted();
+            });
+  }
+
+  @Override
+  public void getHistoryWithOffset(
+      Wallet.GetHistoryWithOffsetRequest request,
+      StreamObserver<HistoryResponse> responseObserver) {
+    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+    long offset = request.getOffset();
+
+    log.info("Handle getHistory grpc call, userId={}, offset={}", userId, offset);
+
+    HistoryResponse.Builder historyResponseBuilder = HistoryResponse.newBuilder();
+
+    walletDatabaseService
+        .getHistoryWithOffset(userId, request.getOffset())
         .onComplete(
             ar -> {
               if (ar.succeeded()) {

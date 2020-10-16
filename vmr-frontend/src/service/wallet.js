@@ -1,7 +1,7 @@
 import {getGrpcTokenMetadata} from "../util/auth-util";
 
 const {Empty} = require('../proto/vmr/common_pb');
-const {TransferRequest} = require('../proto/vmr/wallet_pb');
+const {TransferRequest, GetHistoryWithOffsetRequest} = require('../proto/vmr/wallet_pb');
 const {WalletServiceClient} = require('../proto/vmr/wallet_grpc_web_pb');
 
 const ENVOY_ROOT = process.env.REACT_APP_ENVOY_ROOT;
@@ -27,6 +27,26 @@ export function getBalance() {
 export function getHistory() {
   return new Promise((resolve, reject) => {
     wallet.getHistory(new Empty(), getGrpcTokenMetadata(), (err, res) => {
+      if (err) {
+        console.log(err);
+        reject(err);
+      } else {
+        if (res.getError()) {
+          console.log(res.getError());
+          reject(res.getError());
+        } else {
+          resolve(res.getData().getItemList());
+        }
+      }
+    });
+  });
+}
+
+export function getHistoryWithOffset(offset) {
+  let request = new GetHistoryWithOffsetRequest();
+  request.setOffset(offset);
+  return new Promise((resolve, reject) => {
+    wallet.getHistoryWithOffset(request, getGrpcTokenMetadata(), (err, res) => {
       if (err) {
         console.log(err);
         reject(err);

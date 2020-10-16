@@ -87,6 +87,38 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     return historyPromise.future();
   }
 
+  @Override
+  public Future<List<HistoryItemResponse>> getHistoryWithOffset(long userId, long offset) {
+    Promise<List<HistoryItemResponse>> historyPromise = Promise.promise();
+
+    pool.preparedQuery(
+            "select transfers.sender, transfers.receiver, transfers.timestamp, transfers.amount, "
+                + "transfers.message, account_logs.balance, account_logs.type as type_string, "
+                + "account_logs.id from "
+                + "account_logs inner join transfers "
+                + "on account_logs.transfer = transfers.id "
+                + "where account_logs.user = ? "
+                + "limit ?, 20")
+        .execute(
+            Tuple.of(userId, offset),
+            ar -> {
+              if (ar.succeeded()) {
+                RowSet<Row> rowSet = ar.result();
+                List<HistoryItemResponse> historyList = new ArrayList<>();
+                for (Row row : rowSet) {
+                  historyList.add(HistoryItemResponse.fromRow(row));
+                }
+                historyPromise.complete(historyList);
+              } else {
+                Throwable cause = ar.cause();
+                log.error("Error when get history userId={}, offset={}", userId, offset, cause);
+                historyPromise.fail(cause);
+              }
+            });
+
+    return historyPromise.future();
+  }
+
   public Future<DatabaseTransferResponse> transfer(DatabaseTransferRequest transferRequest) {
     Promise<DatabaseTransferResponse> responsePromise = Promise.promise();
 

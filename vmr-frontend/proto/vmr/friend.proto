@@ -29,7 +29,7 @@ message GetUserInfoResponse {
 // Get friend list
 message FriendListResponse {
   Error error = 1;
-  repeated FriendInfo friendInfo = 2;
+  repeated FriendInfo friend_info = 2;
 }
 
 message FriendInfo {
@@ -59,7 +59,7 @@ message UserResponse {
   int64 id = 1;
   string username = 2;
   string name = 3;
-  FriendStatus friendStatus = 4;
+  FriendStatus friend_status = 4;
 }
 
 enum FriendStatus {
