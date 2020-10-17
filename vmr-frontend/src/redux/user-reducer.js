@@ -18,6 +18,7 @@ export default function userReducer(state = initialUser, action) {
       state = handleLogin(state, data);
       break;
     case actionType.LOGOUT:
+      console.log('Handle logout');
       state = getInitState();
       break;
     default:

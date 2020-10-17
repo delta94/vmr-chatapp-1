@@ -1,7 +1,7 @@
 package com.anhvan.vmr.cache;
 
 import com.anhvan.vmr.cache.exception.CacheMissException;
-import com.anhvan.vmr.config.CacheConfig;
+import com.anhvan.vmr.configs.CacheConfig;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.service.AsyncWorkerService;
 import io.vertx.core.Future;
@@ -25,8 +25,8 @@ public class UserCacheServiceImpl implements UserCacheService {
 
   @Inject
   public UserCacheServiceImpl(
-      RedisCache redisCache, AsyncWorkerService workerUtil, CacheConfig cacheConfig) {
-    redis = redisCache.getRedissonClient();
+      RedissonClient redissonClient, AsyncWorkerService workerUtil, CacheConfig cacheConfig) {
+    redis = redissonClient;
     this.workerUtil = workerUtil;
     this.cacheConfig = cacheConfig;
   }
@@ -37,19 +37,20 @@ public class UserCacheServiceImpl implements UserCacheService {
 
   @Override
   public Future<Void> setUserCache(User user) {
-    Promise<Void> cacheUserPromise = Promise.promise();
+    log.debug("setUserCache: user={}", user);
 
-    String key = getUserKey(user.getId());
-    RBucket<User> userBucket = redis.getBucket(key);
+    Promise<Void> cacheUserPromise = Promise.promise();
 
     workerUtil.execute(
         () -> {
           try {
+            String key = getUserKey(user.getId());
+            RBucket<User> userBucket = redis.getBucket(key);
             userBucket.set(user);
             userBucket.expire(cacheConfig.getTimeToLive(), TimeUnit.SECONDS);
             cacheUserPromise.complete();
           } catch (Exception e) {
-            log.error("Error when cache new user {}", user, e);
+            log.error("Error in setCacheUser: user={}", user, e);
             cacheUserPromise.fail(e);
           }
         });
@@ -59,21 +60,23 @@ public class UserCacheServiceImpl implements UserCacheService {
 
   @Override
   public Future<User> getUserCache(long userId) {
-    Promise<User> userPromise = Promise.promise();
+    log.debug("getUserCache: userId={}", userId);
 
-    RBucket<User> userInfo = redis.getBucket(getUserKey(userId));
+    Promise<User> userPromise = Promise.promise();
 
     workerUtil.execute(
         () -> {
           try {
+            RBucket<User> userInfo = redis.getBucket(getUserKey(userId));
             if (!userInfo.isExists()) {
+              log.debug("getUserCache: userId={} -> cache miss", userId);
               userPromise.fail(new CacheMissException(getUserKey(userId)));
               return;
             }
             userInfo.expire(cacheConfig.getTimeToLive(), TimeUnit.SECONDS);
             userPromise.complete(userInfo.get());
           } catch (Exception e) {
-            log.error("Error when get User from cache: userId={}", userId, e);
+            log.error("Error in getUserCache: userId={}", userId, e);
             userPromise.fail(e);
           }
         });

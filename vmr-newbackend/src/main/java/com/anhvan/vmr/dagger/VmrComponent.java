@@ -1,7 +1,7 @@
 package com.anhvan.vmr.dagger;
 
 import com.anhvan.vmr.cache.CacheModule;
-import com.anhvan.vmr.config.ConfigModule;
+import com.anhvan.vmr.configs.ConfigModule;
 import com.anhvan.vmr.controller.ControllerModule;
 import com.anhvan.vmr.database.DatabaseModule;
 import com.anhvan.vmr.grpc.GrpcModule;

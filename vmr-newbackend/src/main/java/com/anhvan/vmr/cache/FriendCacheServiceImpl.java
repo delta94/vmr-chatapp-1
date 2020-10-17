@@ -1,7 +1,7 @@
 package com.anhvan.vmr.cache;
 
 import com.anhvan.vmr.cache.exception.CacheMissException;
-import com.anhvan.vmr.config.CacheConfig;
+import com.anhvan.vmr.configs.CacheConfig;
 import com.anhvan.vmr.entity.Friend;
 import com.anhvan.vmr.model.Message;
 import com.anhvan.vmr.service.AsyncWorkerService;

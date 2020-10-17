@@ -2,9 +2,9 @@ import React, {useState} from 'react';
 import {Form, Input, Button, Row, Col, Card, Alert} from "antd";
 import {UserOutlined, LockOutlined, SmileOutlined, PlusCircleOutlined} from '@ant-design/icons';
 import {register} from "../../service/user";
+import responseCode from '../../const/responseCode';
 
 import bg from '../resource/registerbg.jpg';
-import "./Register.css";
 
 const {useHistory, Link} = require('react-router-dom');
 
@@ -30,12 +30,23 @@ function RegisterPage() {
   let [errorMessage, setErrorMessage] = useState('');
 
   let submitForm = (formData) => {
-    console.log('Submit form data');
     let {username, fullname, password} = formData;
+
     register(username, fullname, password).then(() => {
       history.push('/');
-    }).catch(error => {
-      setErrorMessage(error.message);
+    }).catch(errorData => {
+      // Show error message
+      switch (errorData['responseCode']) {
+        case responseCode.USERNAME_EXISTED:
+          setErrorMessage('Tên người dùng đã tồn tại');
+          break;
+        case responseCode.CREDENTIALS_NOTVALID:
+          setErrorMessage('Username hoặc mật khẩu bạn nhập không hợp lệ');
+          break;
+        default:
+          setErrorMessage('Không kết nối được với server, vui lòng thử lại');
+      }
+
       form.resetFields();
       setError(true);
     });

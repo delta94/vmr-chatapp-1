@@ -1,6 +1,6 @@
 package com.anhvan.vmr.cache;
 
-import com.anhvan.vmr.config.CacheConfig;
+import com.anhvan.vmr.configs.CacheConfig;
 import com.anhvan.vmr.model.Message;
 import com.anhvan.vmr.service.AsyncWorkerService;
 import io.vertx.core.Future;
@@ -25,8 +25,8 @@ public class ChatCacheServiceImpl implements ChatCacheService {
 
   @Inject
   public ChatCacheServiceImpl(
-      RedisCache redisCache, AsyncWorkerService workerUtil, CacheConfig cacheConfig) {
-    this.redis = redisCache.getRedissonClient();
+      RedissonClient redis, AsyncWorkerService workerUtil, CacheConfig cacheConfig) {
+    this.redis = redis;
     this.workerUtil = workerUtil;
     this.cacheConfig = cacheConfig;
   }

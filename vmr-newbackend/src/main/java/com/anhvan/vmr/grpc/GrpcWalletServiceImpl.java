@@ -41,7 +41,7 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
 
   @Override
   public void getBalance(Common.Empty request, StreamObserver<BalanceResponse> responseObserver) {
-    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+    long userId = GrpcKey.getUserId();
 
     // Log the request
     log.info("Handle getBalance grpc call, userId={}", userId);
@@ -83,7 +83,7 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
 
   @Override
   public void getHistory(Common.Empty request, StreamObserver<HistoryResponse> responseObserver) {
-    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+    long userId = GrpcKey.getUserId();
 
     log.info("Handle getHistory grpc call, userId={}", userId);
 
@@ -120,7 +120,7 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
   public void getHistoryWithOffset(
       Wallet.GetHistoryWithOffsetRequest request,
       StreamObserver<HistoryResponse> responseObserver) {
-    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+    long userId = GrpcKey.getUserId();
     long offset = request.getOffset();
 
     log.info("Handle getHistory grpc call, userId={}, offset={}", userId, offset);
@@ -158,13 +158,11 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
   public void transfer(TransferRequest request, StreamObserver<TransferResponse> responseObserver) {
     long startTime = System.currentTimeMillis();
 
-    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+    long userId = GrpcKey.getUserId();
 
     // Extract info
     long receiverId = request.getReceiver();
     long amount = request.getAmount();
-
-    // For test
 
     log.info(
         "Handle transfer grpc call, userId={}, friendId={}, amount={}, requestId={}",
@@ -228,6 +226,8 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
                 chatCacheService.cacheMessage(message);
                 friendCacheService.updateLastMessageForBoth(userId, receiverId, message);
                 webSocketService.sendChatMessage(userId, receiverId, message);
+
+                // Metrics
                 long executedTime = System.currentTimeMillis() - startTime;
                 log.debug("Transfer execution time: {}", executedTime);
                 transferSuccessTimer.record(executedTime, TimeUnit.MILLISECONDS);

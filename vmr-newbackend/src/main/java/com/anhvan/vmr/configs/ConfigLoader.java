@@ -1,4 +1,4 @@
-package com.anhvan.vmr.config;
+package com.anhvan.vmr.configs;
 
 import io.vertx.core.json.JsonObject;
 import lombok.extern.log4j.Log4j2;

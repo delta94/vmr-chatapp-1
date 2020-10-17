@@ -4,6 +4,7 @@ import {UserOutlined, LockOutlined, LoginOutlined} from '@ant-design/icons';
 import bg from '../resource/registerbg.jpg';
 import {login} from "../../service/user";
 import {Link} from 'react-router-dom';
+import responseCode from '../../const/responseCode';
 
 const rowStyle = {
   minHeight: "100vh",
@@ -28,10 +29,19 @@ function LoginPage(props) {
   let handleLogin = (event) => {
     login(event.username, event.password).then(() => {
       props.history.push('/');
-    }).catch(msg => {
+    }).catch(code => {
       form.resetFields();
       setError(true);
-      setErrorMessage(msg);
+      switch (code) {
+        case responseCode.USERNAME_NOT_EXISTED:
+          setErrorMessage('Tên tài khoản không tồn tại');
+          break;
+        case responseCode.PASSWORD_INVALID:
+          setErrorMessage('Mật khẩu bạn nhập không đúng');
+          break;
+        default:
+          setErrorMessage('Lỗi, không kết nối được server');
+      }
     });
   };
 

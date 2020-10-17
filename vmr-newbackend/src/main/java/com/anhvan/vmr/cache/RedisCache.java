@@ -1,6 +1,6 @@
 package com.anhvan.vmr.cache;
 
-import com.anhvan.vmr.config.CacheConfig;
+import com.anhvan.vmr.configs.CacheConfig;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.redisson.Redisson;

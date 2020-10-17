@@ -111,6 +111,7 @@ export default function TransferMoneyModal(props) {
         setCause('Bạn đã thực hiện giao dịch này rồi');
       }
       setStep(3);
+      setSendBtnLoading(false);
     });
   };
 

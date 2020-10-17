@@ -23,18 +23,33 @@ public class LogoutController extends BaseController {
     // Get token from header
     String jwtToken = baseRequest.getRequest().getHeader("Authorization").substring(7);
 
+    // Log
+    log.debug("handlePost - logout user: jwtToken={}", jwtToken);
+
     // Add to blacklist
-    tokenCacheService.addToBlackList(jwtToken);
+    tokenCacheService
+        .addToBlackList(jwtToken)
+        .onComplete(
+            ar -> {
+              log.debug("After logout user");
 
-    // Response to user
-    logoutPromise.complete(
-        BaseResponse.builder()
-            .statusCode(HttpResponseStatus.OK.code())
-            .message("Logout successfully")
-            .build());
-
-    // Write log
-    log.info("Logout user with token {}", jwtToken);
+              if (ar.succeeded()) {
+                // Logout success
+                logoutPromise.complete(
+                    BaseResponse.builder()
+                        .statusCode(HttpResponseStatus.OK.code())
+                        .message("Logout successfully")
+                        .build());
+              } else {
+                // Add jwtToken to blacklist failed
+                log.error("Error in handlePost - logout user: jwtToken={}", jwtToken, ar.cause());
+                logoutPromise.complete(
+                    BaseResponse.builder()
+                        .statusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code())
+                        .message("Fail to logout")
+                        .build());
+              }
+            });
 
     return logoutPromise.future();
   }

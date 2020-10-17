@@ -1,8 +1,8 @@
 package com.anhvan.vmr.dagger;
 
-import com.anhvan.vmr.config.AuthConfig;
-import com.anhvan.vmr.config.ServerConfig;
-import com.anhvan.vmr.config.VertxConfig;
+import com.anhvan.vmr.configs.AuthConfig;
+import com.anhvan.vmr.configs.ServerConfig;
+import com.anhvan.vmr.configs.VertxConfig;
 import dagger.Module;
 import dagger.Provides;
 import io.micrometer.core.instrument.MeterRegistry;

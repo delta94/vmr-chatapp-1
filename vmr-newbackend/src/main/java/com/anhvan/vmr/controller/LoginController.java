@@ -1,6 +1,7 @@
 package com.anhvan.vmr.controller;
 
 import com.anhvan.vmr.cache.UserCacheService;
+import com.anhvan.vmr.consts.ResponseCode;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.entity.BaseRequest;
 import com.anhvan.vmr.entity.BaseResponse;
@@ -33,7 +34,7 @@ public class LoginController extends BaseController {
 
     // Get user submitted data
     User user = baseRequest.getBody().mapTo(User.class);
-    log.info("Handle login for user {}", user.getUsername());
+    log.info("handlePost: login user: username={}", user.getUsername());
 
     // Response data
     JsonObject data = new JsonObject();
@@ -60,7 +61,7 @@ public class LoginController extends BaseController {
           responsePromise.complete(
               BaseResponse.builder()
                   .statusCode(HttpResponseStatus.UNAUTHORIZED.code())
-                  .message("Password not valid")
+                  .responseCode(ResponseCode.PASSWORD_INVALID)
                   .build());
           return Future.failedFuture("Password not valid");
         };
@@ -68,11 +69,11 @@ public class LoginController extends BaseController {
     // Handle get user from database fails
     Function<Throwable, Future<String>> failueHandler =
         throwable -> {
-          log.info("Login failed, user = {}, user not existed", user.getUsername(), throwable);
+          log.info("handlePost: login failed: username={}", user.getUsername(), throwable);
           responsePromise.complete(
               BaseResponse.builder()
                   .statusCode(HttpResponseStatus.UNAUTHORIZED.code())
-                  .message("Username not valid")
+                  .responseCode(ResponseCode.USERNAME_NOT_EXISTED)
                   .build());
           return Future.failedFuture("Username not existed");
         };
@@ -84,13 +85,9 @@ public class LoginController extends BaseController {
           data.put("jwtToken", token);
 
           responsePromise.complete(
-              BaseResponse.builder()
-                  .statusCode(HttpResponseStatus.OK.code())
-                  .message("Login successfully")
-                  .data(data)
-                  .build());
+              BaseResponse.builder().statusCode(HttpResponseStatus.OK.code()).data(data).build());
 
-          log.info("User {} login successfully", user.getUsername());
+          log.info("handlePost: login successfully: username={}", user.getUsername());
         });
 
     return responsePromise.future();

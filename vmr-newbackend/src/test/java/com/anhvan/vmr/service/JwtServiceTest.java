@@ -1,6 +1,6 @@
 package com.anhvan.vmr.service;
 
-import com.anhvan.vmr.config.AuthConfig;
+import com.anhvan.vmr.configs.AuthConfig;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
