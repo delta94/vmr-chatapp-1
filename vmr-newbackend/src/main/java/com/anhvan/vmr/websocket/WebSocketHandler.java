@@ -78,8 +78,13 @@ public class WebSocketHandler {
         .onSuccess(
             id -> {
               message.setType(Message.Type.CHAT.name());
+              // Cache message list
               chatCacheService.cacheMessage(message);
+
+              // Cache last message
               friendCacheService.updateLastMessageForBoth(userId, receiverId, message);
+
+              // Send to receiver
               webSocketService.sendChatMessage(userId, receiverId, message);
             })
         .onFailure(

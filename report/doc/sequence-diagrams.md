@@ -5,12 +5,12 @@
   - [2. Đăng nhập](#2-đăng-nhập)
   - [3. Đăng xuất](#3-đăng-xuất)
   - [4. Kết bạn/Chấp nhận/Xóa lời mời](#4-kết-bạnchấp-nhậnxóa-lời-mời)
-  - [4. Xem danh sách bạn bè](#4-xem-danh-sách-bạn-bè)
-  - [4. Chat 1 - 1](#4-chat-1---1)
-  - [5. Xem số dư](#5-xem-số-dư)
-  - [6. Chuyển tiền](#6-chuyển-tiền)
-  - [7. Xem lịch sử](#7-xem-lịch-sử)
-  - [8. Nhắc chuyển tiền](#8-nhắc-chuyển-tiền)
+  - [5. Xem danh sách bạn bè](#5-xem-danh-sách-bạn-bè)
+  - [6. Chat 1 - 1](#6-chat-1---1)
+  - [7. Xem số dư](#7-xem-số-dư)
+  - [8. Chuyển tiền](#8-chuyển-tiền)
+  - [9. Xem lịch sử](#9-xem-lịch-sử)
+  - [10. Nhắc chuyển tiền](#10-nhắc-chuyển-tiền)
 
 ## 1. Đăng ký
 
@@ -28,26 +28,26 @@
 
 ![Add friend](../../report/img/sequence-diagrams/add-friend.png)
 
-## 4. Xem danh sách bạn bè
+## 5. Xem danh sách bạn bè
 
 ![View list](../../report/img/sequence-diagrams/view-list.png)
 
-## 4. Chat 1 - 1
+## 6. Chat 1 - 1
 
 ![Chat](../../report/img/sequence-diagrams/chat.png)
 
-## 5. Xem số dư
+## 7. Xem số dư
 
 ![Get balance](../../report/img/sequence-diagrams/get-balance.png)
 
-## 6. Chuyển tiền
+## 8. Chuyển tiền
 
 ![Transfer money](../../report/img/sequence-diagrams/transfer.png)
 
-## 7. Xem lịch sử
+## 9. Xem lịch sử
 
 ![Get history](../../report/img/sequence-diagrams/get-history.png)
 
-## 8. Nhắc chuyển tiền
+## 10. Nhắc chuyển tiền
 
 ![Trans remind](../../report/img/sequence-diagrams/remind-transfer.png)
