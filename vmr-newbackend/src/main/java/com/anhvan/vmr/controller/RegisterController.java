@@ -1,6 +1,7 @@
 package com.anhvan.vmr.controller;
 
 import com.anhvan.vmr.cache.UserCacheService;
+import com.anhvan.vmr.consts.ResponseCode;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.entity.BaseRequest;
 import com.anhvan.vmr.entity.BaseResponse;
@@ -34,7 +35,7 @@ public class RegisterController extends BaseController {
     // Create user object
     User user = requestBody.mapTo(User.class);
 
-    if (!isValid(user)) {
+    if (!isUserInfoValid(user)) {
       log.info(
           "Validate user info not valid uname {} - name {} - pwlen {}",
           user.getUsername(),
@@ -46,6 +47,7 @@ public class RegisterController extends BaseController {
           BaseResponse.builder()
               .statusCode(HttpResponseStatus.BAD_REQUEST.code())
               .message("Username or password not valid")
+              .responseCode(ResponseCode.CREDENTIALS_NOTVALID)
               .build());
 
       return registerPromise.future();
@@ -63,6 +65,7 @@ public class RegisterController extends BaseController {
             registerPromise.complete(
                 BaseResponse.builder()
                     .statusCode(HttpResponseStatus.CONFLICT.code())
+                    .responseCode(ResponseCode.USERNAME_EXISTED)
                     .message("Username existed")
                     .build()));
 
@@ -83,7 +86,6 @@ public class RegisterController extends BaseController {
           registerPromise.complete(
               BaseResponse.builder()
                   .statusCode(HttpResponseStatus.CREATED.code())
-                  .message("Create success")
                   .data(jsonResponse)
                   .build());
         });
@@ -91,7 +93,7 @@ public class RegisterController extends BaseController {
     return registerPromise.future();
   }
 
-  public boolean isValid(User user) {
+  public boolean isUserInfoValid(User user) {
     if (!user.getUsername().matches("^[a-zA-Z]\\w{7,}$")) {
       return false;
     }

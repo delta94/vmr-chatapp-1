@@ -9,7 +9,6 @@ import "vmr/common.proto";
 service WalletService {
   rpc GetBalance(Empty) returns (BalanceResponse);
   rpc Transfer(TransferRequest) returns (TransferResponse);
-  rpc GetHistory(Empty) returns (HistoryResponse);
   rpc GetHistoryWithOffset(GetHistoryWithOffsetRequest) returns (HistoryResponse);
   rpc RemindTransfer(TransferReminderRequest) returns (TransferReminderResponse);
   rpc GetTransferReminder(Empty) returns (TransferReminderListResponse);

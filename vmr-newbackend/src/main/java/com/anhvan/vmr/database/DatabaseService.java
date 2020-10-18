@@ -1,6 +1,6 @@
 package com.anhvan.vmr.database;
 
-import com.anhvan.vmr.config.DatabaseConfig;
+import com.anhvan.vmr.configs.DatabaseConfig;
 import com.anhvan.vmr.entity.FutureStateHolder;
 import io.vertx.core.Vertx;
 import io.vertx.mysqlclient.MySQLConnectOptions;

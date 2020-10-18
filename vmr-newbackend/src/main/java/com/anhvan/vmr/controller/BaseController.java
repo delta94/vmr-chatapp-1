@@ -44,7 +44,7 @@ public abstract class BaseController implements Controller {
     JsonObject body = routingContext.getBodyAsJson();
 
     // Log the request
-    log.info("Handle request to {}", request.path());
+    log.info("Handle http request: path={}, method={}", request.path(), request.method());
 
     // User credentials
     User user = routingContext.user();
@@ -79,10 +79,10 @@ public abstract class BaseController implements Controller {
 
     // Handle request
     requestHandler.onComplete(
-        handlerResponse -> {
-          if (handlerResponse.succeeded()) {
+        asyncResult -> {
+          if (asyncResult.succeeded()) {
             // Handle success
-            BaseResponse handlerResponseResult = handlerResponse.result();
+            BaseResponse handlerResponseResult = asyncResult.result();
             response
                 .putHeader("Content-Type", "application/json; charset=utf-8")
                 .setStatusCode(handlerResponseResult.getStatusCode())
@@ -90,12 +90,18 @@ public abstract class BaseController implements Controller {
 
             // Log the response
             log.info(
-                "Response to request {} with status {}",
+                "Handle http request done: path={}, method={}, statusCode={}",
                 request.path(),
+                request.method(),
                 handlerResponseResult.getStatusCode());
           } else {
             // Error
-            log.error("Error when handle request {}", request, handlerResponse.cause());
+            log.error(
+                "Error when handle http request: path={}, method={}",
+                request.path(),
+                request.method(),
+                asyncResult.cause());
+
             response.setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code()).end();
           }
         });

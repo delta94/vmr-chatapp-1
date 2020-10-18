@@ -1,6 +1,6 @@
 package com.anhvan.vmr.cache;
 
-import com.anhvan.vmr.config.AuthConfig;
+import com.anhvan.vmr.configs.AuthConfig;
 import com.anhvan.vmr.service.AsyncWorkerService;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -23,25 +23,28 @@ public class TokenCacheServiceImpl implements TokenCacheService {
 
   @Inject
   public TokenCacheServiceImpl(
-      RedisCache redisCache, AuthConfig authConfig, AsyncWorkerService asyncWorkerService) {
-    this.redis = redisCache.getRedissonClient();
+      RedissonClient redissonClient, AuthConfig authConfig, AsyncWorkerService asyncWorkerService) {
+    this.redis = redissonClient;
     this.authConfig = authConfig;
     this.asyncWorkerService = asyncWorkerService;
   }
 
   @Override
   public Future<Void> addToBlackList(String token) {
+    log.debug("addToBlackList: token={}", token);
+
     Promise<Void> promise = Promise.promise();
 
-    String key = getKey(token);
-    RBucket<Boolean> expireValue = redis.getBucket(key);
     asyncWorkerService.execute(
         () -> {
           try {
+            String key = getKey(token);
+            RBucket<Boolean> expireValue = redis.getBucket(key);
             expireValue.set(true);
             expireValue.expire(authConfig.getExpire(), TimeUnit.SECONDS);
+            promise.complete();
           } catch (Exception exception) {
-            log.error("Error when add jwt token to blacklist, jwtToken={}", token, exception);
+            log.error("Error in addToBlackList: jwtToken={}", token, exception);
             promise.fail(exception);
           }
         });
@@ -50,7 +53,9 @@ public class TokenCacheServiceImpl implements TokenCacheService {
   }
 
   @Override
-  public Future<Boolean> checkExistInBacklist(String token) {
+  public Future<Boolean> checkExistInBlackList(String token) {
+    log.debug("checkExistInBlackList: token={}", token);
+
     Promise<Boolean> existPromise = Promise.promise();
 
     asyncWorkerService.execute(

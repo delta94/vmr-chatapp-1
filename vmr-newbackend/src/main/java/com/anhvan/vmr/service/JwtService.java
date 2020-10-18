@@ -1,6 +1,6 @@
 package com.anhvan.vmr.service;
 
-import com.anhvan.vmr.config.AuthConfig;
+import com.anhvan.vmr.configs.AuthConfig;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;

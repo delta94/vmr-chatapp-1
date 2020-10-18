@@ -1,6 +1,6 @@
 package com.anhvan.vmr.server;
 
-import com.anhvan.vmr.config.ServerConfig;
+import com.anhvan.vmr.configs.ServerConfig;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.http.HttpServer;

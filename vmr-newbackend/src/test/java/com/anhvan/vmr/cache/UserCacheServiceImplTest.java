@@ -1,7 +1,7 @@
 package com.anhvan.vmr.cache;
 
 import com.anhvan.vmr.cache.exception.CacheMissException;
-import com.anhvan.vmr.config.CacheConfig;
+import com.anhvan.vmr.configs.CacheConfig;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.service.AsyncWorkerService;
 import io.vertx.junit5.VertxExtension;
@@ -43,7 +43,7 @@ public class UserCacheServiceImplTest {
     Mockito.when(cacheConfig.getTimeToLive()).thenReturn(20);
     Mockito.when(cacheConfig.getNumMessagesCached()).thenReturn(20);
 
-    userCacheService = new UserCacheServiceImpl(redisCache, workerUtil, cacheConfig);
+    userCacheService = new UserCacheServiceImpl(redissonClient, workerUtil, cacheConfig);
   }
 
   @Test

@@ -1,4 +1,4 @@
-package com.anhvan.vmr.config;
+package com.anhvan.vmr.configs;
 
 import lombok.*;
 

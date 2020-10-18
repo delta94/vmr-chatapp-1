@@ -1,7 +1,7 @@
 package com.anhvan.vmr.cache;
 
 import com.anhvan.vmr.cache.exception.CacheMissException;
-import com.anhvan.vmr.config.CacheConfig;
+import com.anhvan.vmr.configs.CacheConfig;
 import com.anhvan.vmr.entity.Friend;
 import com.anhvan.vmr.model.Message;
 import com.anhvan.vmr.service.AsyncWorkerService;
@@ -21,20 +21,22 @@ import java.util.concurrent.TimeUnit;
 @Builder
 @Log4j2
 public class FriendCacheServiceImpl implements FriendCacheService {
+  public static final String FRIEND_LIST_KEY = "vmr:user:%d:friends";
+
   private RedissonClient redissonClient;
   private AsyncWorkerService asyncWorkerService;
   private CacheConfig cacheConfig;
 
-  public static final String FRIEND_LIST_KEY = "vmr:user:%d:friends";
-
   @Override
   public Future<Void> cacheFriendList(long userId, List<Friend> friendList) {
+    log.debug("Start cacheFriendList: userId={}, friendList={}", userId, friendList);
+
     Promise<Void> cachePromise = Promise.promise();
 
     asyncWorkerService.execute(
         () -> {
           try {
-            RMap<Long, Friend> friendMap = redissonClient.getMap(getKey(userId));
+            RMap<Long, Friend> friendMap = redissonClient.getMap(getUserFriendsKey(userId));
             friendMap.clear();
             for (Friend friend : friendList) {
               friendMap.put(friend.getId(), friend);
@@ -52,12 +54,14 @@ public class FriendCacheServiceImpl implements FriendCacheService {
 
   @Override
   public Future<Void> cacheFriend(long userId, Friend friend) {
+    log.debug("Start cacheFriend: userId={}, friend={}", userId, friend);
+
     Promise<Void> cachePromise = Promise.promise();
 
     asyncWorkerService.execute(
         () -> {
           try {
-            RMap<Long, Friend> friendMap = redissonClient.getMap(getKey(userId));
+            RMap<Long, Friend> friendMap = redissonClient.getMap(getUserFriendsKey(userId));
             friendMap.put(friend.getId(), friend);
             friendMap.expire(cacheConfig.getTimeToLive(), TimeUnit.SECONDS);
             cachePromise.complete();
@@ -72,13 +76,15 @@ public class FriendCacheServiceImpl implements FriendCacheService {
 
   @Override
   public Future<List<Friend>> getFriendList(long userId) {
+    log.debug("Start getFriendList: userId={}", userId);
+
     Promise<List<Friend>> friendsPromise = Promise.promise();
 
     asyncWorkerService.execute(
         () -> {
           try {
-            String key = getKey(userId);
-            RMap<Long, Friend> friendMap = redissonClient.getMap(getKey(userId));
+            String key = getUserFriendsKey(userId);
+            RMap<Long, Friend> friendMap = redissonClient.getMap(getUserFriendsKey(userId));
             if (friendMap.isExists()) {
               friendsPromise.complete(new ArrayList<>(friendMap.values()));
             } else {
@@ -95,12 +101,14 @@ public class FriendCacheServiceImpl implements FriendCacheService {
 
   @Override
   public Future<Void> updateLastMessage(long userId, long friendId, Message message) {
+    log.debug("updateLastMessage: userId={}, friendId={}, message={}", userId, friendId, message);
+
     Promise<Void> cachePromise = Promise.promise();
 
     asyncWorkerService.execute(
         () -> {
           try {
-            RMap<Long, Friend> friendMap = redissonClient.getMap(getKey(userId));
+            RMap<Long, Friend> friendMap = redissonClient.getMap(getUserFriendsKey(userId));
 
             if (!friendMap.isExists()) {
               cachePromise.complete();
@@ -138,18 +146,26 @@ public class FriendCacheServiceImpl implements FriendCacheService {
 
   @Override
   public Future<Void> updateLastMessageForBoth(long userId, long friendId, Message message) {
+    log.debug(
+        "Start updateLastMessageForBoth: userId={}, friendId={}, message={}",
+        userId,
+        friendId,
+        message);
+
     return updateLastMessage(userId, friendId, message)
         .compose(ignored -> updateLastMessage(friendId, userId, message));
   }
 
   @Override
   public Future<Void> clearFriendCache(long userId) {
+    log.debug("Start clearFriendCache: userId={}", userId);
+
     Promise<Void> cachePromise = Promise.promise();
 
     asyncWorkerService.execute(
         () -> {
           try {
-            RMap<Long, Friend> friendMap = redissonClient.getMap(getKey(userId));
+            RMap<Long, Friend> friendMap = redissonClient.getMap(getUserFriendsKey(userId));
             friendMap.clear();
             cachePromise.complete();
           } catch (Exception e) {
@@ -168,7 +184,7 @@ public class FriendCacheServiceImpl implements FriendCacheService {
     asyncWorkerService.execute(
         () -> {
           try {
-            RMap<Long, Friend> friendMap = redissonClient.getMap(getKey(userId));
+            RMap<Long, Friend> friendMap = redissonClient.getMap(getUserFriendsKey(userId));
 
             if (!friendMap.isExists()) {
               cachePromise.complete();
@@ -204,7 +220,7 @@ public class FriendCacheServiceImpl implements FriendCacheService {
     asyncWorkerService.execute(
         () -> {
           try {
-            RMap<Long, Friend> friendMap = redissonClient.getMap(getKey(userId));
+            RMap<Long, Friend> friendMap = redissonClient.getMap(getUserFriendsKey(userId));
 
             if (!friendMap.isExists()) {
               cachePromise.complete();
@@ -222,7 +238,7 @@ public class FriendCacheServiceImpl implements FriendCacheService {
     return cachePromise.future();
   }
 
-  private String getKey(long userId) {
+  private String getUserFriendsKey(long userId) {
     return String.format(FRIEND_LIST_KEY, userId);
   }
 }

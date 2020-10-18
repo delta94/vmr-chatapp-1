@@ -5,19 +5,20 @@ import com.anhvan.vmr.util.RowMapperUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.mysqlclient.MySQLClient;
-import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.RowSet;
+import io.vertx.sqlclient.SqlClient;
 import io.vertx.sqlclient.Tuple;
+import lombok.Builder;
 import lombok.extern.log4j.Log4j2;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 @Log4j2
+@Builder
 public class ChatDatabaseServiceImpl implements ChatDatabaseService {
   public static final String GET_MESSAGE_STMT =
       "select * from  "
@@ -36,27 +37,35 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
       "update friends set num_unread_message=num_unread_message+1 "
           + "where user_id=? and friend_id=?";
 
-  private MySQLPool pool;
+  private SqlClient sqlClient;
 
-  @Inject
-  public ChatDatabaseServiceImpl(DatabaseService databaseService) {
-    pool = databaseService.getPool();
+  public ChatDatabaseServiceImpl(SqlClient sqlClient) {
+    this.sqlClient = sqlClient;
   }
 
   @Override
-  public Future<Long> addChat(Message msg) {
+  public Future<Long> addChat(Message message) {
+    return addChat(message, sqlClient);
+  }
+
+  @Override
+  public Future<Long> addChat(Message message, SqlClient sqlClient) {
+    log.debug("addChat: message={}", message);
+
     Promise<Long> idPromise = Promise.promise();
 
-    long senderId = msg.getSenderId();
-    long receiverId = msg.getReceiverId();
+    // Extract info
+    long senderId = message.getSenderId();
+    long receiverId = message.getReceiverId();
 
-    internalAddChat(msg)
-        .compose(insertedId -> updateLastMessageId(senderId, receiverId, insertedId))
-        .compose(id -> increaseUnreadMessage(senderId, receiverId, id))
+    // Add friend, update last message, update number of unread message
+    internalAddChat(message, sqlClient)
+        .compose(insertedId -> updateLastMessageId(senderId, receiverId, insertedId, sqlClient))
+        .compose(id -> increaseUnreadMessage(senderId, receiverId, id, sqlClient))
         .onComplete(
             ar -> {
               if (ar.failed()) {
-                log.error("Error when add chat, message={}", msg, ar.cause());
+                log.error("Error when add chat, message={}", message, ar.cause());
                 idPromise.fail(ar.cause());
                 return;
               }
@@ -67,21 +76,28 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
     return idPromise.future();
   }
 
-  private Future<Long> internalAddChat(Message msg) {
+  private Future<Long> internalAddChat(Message message, SqlClient sqlClient) {
+    log.debug("internalAddChat: message={}", message);
+
     Promise<Long> idPromise = Promise.promise();
 
-    String type = msg.getType();
+    String type = message.getType();
     if (type == null) {
       type = Message.Type.CHAT.name();
     }
 
-    pool.preparedQuery(INSERT_MESSAGE_STMT)
+    sqlClient
+        .preparedQuery(INSERT_MESSAGE_STMT)
         .execute(
             Tuple.of(
-                msg.getSenderId(), msg.getReceiverId(), msg.getMessage(), msg.getTimestamp(), type),
+                message.getSenderId(),
+                message.getReceiverId(),
+                message.getMessage(),
+                message.getTimestamp(),
+                type),
             rs -> {
               if (!rs.succeeded()) {
-                log.error("Error when add chat, message={}", msg, rs.cause());
+                log.error("Error when add chat, message={}", message, rs.cause());
                 idPromise.fail(rs.cause());
                 return;
               }
@@ -91,10 +107,15 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
     return idPromise.future();
   }
 
-  private Future<Long> updateLastMessageId(long userId, long friendId, long messageId) {
+  private Future<Long> updateLastMessageId(
+      long userId, long friendId, long messageId, SqlClient sqlClient) {
+    log.debug(
+        "updateLastMessageId, userId={}, friendId={}, messageId={}", userId, friendId, messageId);
+
     Promise<Long> updatedPromise = Promise.promise();
 
-    pool.preparedQuery(UPDATE_LAST_MESSAGE_STMT)
+    sqlClient
+        .preparedQuery(UPDATE_LAST_MESSAGE_STMT)
         .executeBatch(
             Arrays.asList(
                 Tuple.of(messageId, userId, friendId), Tuple.of(messageId, friendId, userId)),
@@ -115,10 +136,14 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
     return updatedPromise.future();
   }
 
-  private Future<Long> increaseUnreadMessage(long senderId, long receiverId, long messageId) {
+  private Future<Long> increaseUnreadMessage(
+      long senderId, long receiverId, long messageId, SqlClient sqlClient) {
+    log.debug("increaseUnreadMessage, userId={}, friendId={}", senderId, receiverId);
+
     Promise<Long> updatedPromise = Promise.promise();
 
-    pool.preparedQuery(INCREASE_UNREAD_MSG_STMT)
+    sqlClient
+        .preparedQuery(INCREASE_UNREAD_MSG_STMT)
         .execute(
             Tuple.of(receiverId, senderId),
             ar -> {
@@ -138,12 +163,13 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
     return updatedPromise.future();
   }
 
-  public Future<List<Message>> getChatMessages(int user1, int user2, int offset) {
-    log.debug("Get chat message: user1={}, user2={}, offset={}", user1, user2, offset);
+  public Future<List<Message>> getChatMessages(int user1, long user2, long offset) {
+    log.debug("getChatMessages: user1Id={}, user2Id={}, offset={}", user1, user2, offset);
 
     Promise<List<Message>> listMsgPromise = Promise.promise();
 
-    pool.preparedQuery(GET_MESSAGE_STMT)
+    sqlClient
+        .preparedQuery(GET_MESSAGE_STMT)
         .execute(
             Tuple.of(user1, user2, user2, user1, offset),
             rowSet -> {
@@ -170,7 +196,7 @@ public class ChatDatabaseServiceImpl implements ChatDatabaseService {
     return listMsgPromise.future();
   }
 
-  public Message rowToMessage(Row row) {
+  private Message rowToMessage(Row row) {
     return RowMapperUtil.mapRow(row, Message.class);
   }
 }

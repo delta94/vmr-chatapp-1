@@ -80,7 +80,7 @@ public class RouterFactory {
     String jwtToken = jwtService.getTokenFromHeader(routingContext);
 
     // Check if token in blacklist
-    Future<Boolean> existFuture = tokenCacheService.checkExistInBacklist(jwtToken);
+    Future<Boolean> existFuture = tokenCacheService.checkExistInBlackList(jwtToken);
 
     // Check the result
     existFuture.onSuccess(

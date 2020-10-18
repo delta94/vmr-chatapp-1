@@ -20,7 +20,6 @@ import java.time.Instant;
 @Log4j2
 public class WebSocketHandler {
   public static final String TYPE_KEY = "type";
-
   public static final String DATA_KEY = "data";
 
   private ServerWebSocket conn;
@@ -79,8 +78,13 @@ public class WebSocketHandler {
         .onSuccess(
             id -> {
               message.setType(Message.Type.CHAT.name());
+              // Cache message list
               chatCacheService.cacheMessage(message);
+
+              // Cache last message
               friendCacheService.updateLastMessageForBoth(userId, receiverId, message);
+
+              // Send to receiver
               webSocketService.sendChatMessage(userId, receiverId, message);
             })
         .onFailure(

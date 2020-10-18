@@ -1,7 +1,7 @@
 package com.anhvan.vmr;
 
-import com.anhvan.vmr.config.ConfigLoader;
-import com.anhvan.vmr.config.ConfigModule;
+import com.anhvan.vmr.configs.ConfigLoader;
+import com.anhvan.vmr.configs.ConfigModule;
 import com.anhvan.vmr.dagger.DaggerVmrComponent;
 import com.anhvan.vmr.dagger.VmrComponent;
 import io.vertx.core.Vertx;

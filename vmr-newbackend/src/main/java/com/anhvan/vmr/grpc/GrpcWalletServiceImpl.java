@@ -7,6 +7,7 @@ import com.anhvan.vmr.database.WalletDatabaseService;
 import com.anhvan.vmr.entity.DatabaseTransferRequest;
 import com.anhvan.vmr.entity.DatabaseTransferResponse;
 import com.anhvan.vmr.entity.HistoryItemResponse;
+import com.anhvan.vmr.entity.TimeTracker;
 import com.anhvan.vmr.exception.TransferException;
 import com.anhvan.vmr.model.Message;
 import com.anhvan.vmr.model.User;
@@ -20,14 +21,11 @@ import com.anhvan.vmr.proto.WalletServiceGrpc;
 import com.anhvan.vmr.util.GrpcUtil;
 import com.anhvan.vmr.websocket.WebSocketService;
 import io.grpc.stub.StreamObserver;
-import io.micrometer.core.instrument.Timer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 @AllArgsConstructor
 @Builder
@@ -38,11 +36,17 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
   private WebSocketService webSocketService;
   private ChatCacheService chatCacheService;
   private FriendCacheService friendCacheService;
-  private Timer transferSuccessTimer;
+
+  private TimeTracker balanceTracker;
+  private TimeTracker historyTracker;
+  private TimeTracker transferTracker;
 
   @Override
   public void getBalance(Common.Empty request, StreamObserver<BalanceResponse> responseObserver) {
-    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+    TimeTracker.Tracker tracker = balanceTracker.start();
+
+    // Get request id
+    long userId = GrpcKey.getUserId();
 
     // Log the request
     log.info("Handle getBalance grpc call, userId={}", userId);
@@ -79,41 +83,7 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
               }
               responseObserver.onNext(responseBuilder.build());
               responseObserver.onCompleted();
-            });
-  }
-
-  @Override
-  public void getHistory(Common.Empty request, StreamObserver<HistoryResponse> responseObserver) {
-    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
-
-    log.info("Handle getHistory grpc call, userId={}", userId);
-
-    HistoryResponse.Builder historyResponseBuilder = HistoryResponse.newBuilder();
-
-    walletDatabaseService
-        .getHistory(userId)
-        .onComplete(
-            ar -> {
-              if (ar.succeeded()) {
-                List<HistoryItemResponse> historyList = ar.result();
-                HistoryResponse.Data.Builder dataBuilder = HistoryResponse.Data.newBuilder();
-                for (HistoryItemResponse history : historyList) {
-                  dataBuilder.addItem(GrpcUtil.history2HistoryResponseItem(history));
-                }
-                historyResponseBuilder.setData(dataBuilder.build());
-              } else {
-                Common.Error error =
-                    Common.Error.newBuilder()
-                        .setCode(Common.ErrorCode.INTERNAL_SERVER_ERROR)
-                        .setMessage("Fail to get history")
-                        .build();
-                historyResponseBuilder.setError(error);
-
-                // Write log
-                log.error("Error when get history list, userId={}", userId, ar.cause());
-              }
-              responseObserver.onNext(historyResponseBuilder.build());
-              responseObserver.onCompleted();
+              tracker.record();
             });
   }
 
@@ -121,7 +91,9 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
   public void getHistoryWithOffset(
       Wallet.GetHistoryWithOffsetRequest request,
       StreamObserver<HistoryResponse> responseObserver) {
-    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+    TimeTracker.Tracker tracker = historyTracker.start();
+
+    long userId = GrpcKey.getUserId();
     long offset = request.getOffset();
 
     log.info("Handle getHistory grpc call, userId={}, offset={}", userId, offset);
@@ -152,23 +124,19 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
               }
               responseObserver.onNext(historyResponseBuilder.build());
               responseObserver.onCompleted();
+              tracker.record();
             });
   }
 
   @Override
   public void transfer(TransferRequest request, StreamObserver<TransferResponse> responseObserver) {
-    long startTime = System.currentTimeMillis();
+    TimeTracker.Tracker tracker = transferTracker.start();
 
-    // long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+    long userId = GrpcKey.getUserId();
 
     // Extract info
-    // long receiverId = request.getReceiver();
+    long receiverId = request.getReceiver();
     long amount = request.getAmount();
-
-    // For test
-    Random rd = new Random();
-    long userId = 1 + rd.nextInt(990);
-    long receiverId = 1 + rd.nextInt(990);
 
     log.info(
         "Handle transfer grpc call, userId={}, friendId={}, amount={}, requestId={}",
@@ -232,9 +200,6 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
                 chatCacheService.cacheMessage(message);
                 friendCacheService.updateLastMessageForBoth(userId, receiverId, message);
                 webSocketService.sendChatMessage(userId, receiverId, message);
-                long executedTime = System.currentTimeMillis() - startTime;
-                log.debug("Transfer execution time: {}", executedTime);
-                transferSuccessTimer.record(executedTime, TimeUnit.MILLISECONDS);
               } else {
                 // Transfer failed
                 Throwable cause = ar.cause();
@@ -260,10 +225,8 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
                 // Send the error
                 responseObserver.onNext(responseBuilder.build());
                 responseObserver.onCompleted();
-                long executedTime = System.currentTimeMillis() - startTime;
-                log.debug("Transfer execution time: {}", executedTime);
-                transferSuccessTimer.record(executedTime, TimeUnit.MILLISECONDS);
               }
+              tracker.record();
             });
   }
 }

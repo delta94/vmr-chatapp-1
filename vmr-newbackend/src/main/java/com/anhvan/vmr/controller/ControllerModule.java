@@ -66,14 +66,6 @@ public class ControllerModule {
 
   @Provides
   @IntoMap
-  @StringKey("/api/protected/sockettoken")
-  public Controller provideSocketTokenController(JwtService jwtService) {
-    log.info("Register socket token controller");
-    return SocketTokenController.builder().jwtService(jwtService).build();
-  }
-
-  @Provides
-  @IntoMap
   @StringKey("/api/protected/chat")
   public Controller provideMessageListController(
       ChatDatabaseService chatDatabaseService, ChatCacheService chatCacheService) {

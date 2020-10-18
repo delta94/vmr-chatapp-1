@@ -65,7 +65,8 @@ public class MessageListController extends BaseController {
       // Load more
       getFromDB(userId, friendId, offset, responsePromise, false);
     }
-    //getFromDB(userId, friendId, offset, responsePromise, false);
+
+    // getFromDB(userId, friendId, offset, responsePromise, false);
     return responsePromise.future();
   }
 

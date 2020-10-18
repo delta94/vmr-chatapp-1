@@ -73,11 +73,11 @@ values (1, 'danganhvan', 'Đặng Anh Văn', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e
         UNIX_TIMESTAMP()),
        (3, 'phamanhtuan', 'Phạm Anh Tuấn', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
         UNIX_TIMESTAMP()),
-       (4, 'lengocphuong', 'e Ngoc Phuong', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+       (4, 'lengocphuong', 'Lê Ngọc Phương', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
         UNIX_TIMESTAMP()),
        (5, 'nguyenvannam', 'Nguyễn Văn Nam', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
         UNIX_TIMESTAMP()),
-       (6, 'nguyenthithuylinh', 'Nguyen Thi Thuy Linh', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+       (6, 'nguyenthithuylinh', 'Nguyễn Thị Thùy Linh', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
         UNIX_TIMESTAMP()),
        (7, 'dangphuongthao', 'Đặng Phương Thảo', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
         UNIX_TIMESTAMP()),
@@ -98,14 +98,14 @@ values (1, 2, 'ACCEPTED'),
        (1, 7, 'NOT_ANSWER'),
        (7, 1, 'WAITING');
 
-
+delimiter $$
 create procedure fake_user()
 begin
     declare x int;
     set x = 9;
     loop_label:
     loop
-        if x > 1000 then
+        if x > 100 then
             leave loop_label;
         end if;
         insert into users(id, username, name, password, last_updated)
@@ -115,5 +115,6 @@ begin
         set x = x + 1;
     end loop;
 end;
+
 
 call fake_user();

@@ -18,16 +18,19 @@ export function login(username, password) {
       // Send to login page
       resolve(response.data.data);
     }).catch(error => {
-      console.log(error);
-      reject(error.response.data.message);
+      // Get error code
+      reject(error.response.data["responseCode"]);
     });
   });
 }
 
 export function logout() {
-  protectedPost("/logout").then(() => {
+  protectedPost("/logout").then((res) => {
+    console.log(res.data.data);
     localStorageLogout();
     store.dispatch(logoutAction());
+  }).catch(err => {
+    console.log(err);
   });
 }
 

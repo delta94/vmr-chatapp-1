@@ -1,6 +1,6 @@
 package com.anhvan.vmr.cache;
 
-import com.anhvan.vmr.config.CacheConfig;
+import com.anhvan.vmr.configs.CacheConfig;
 import com.anhvan.vmr.model.Message;
 import com.anhvan.vmr.service.AsyncWorkerService;
 import io.vertx.junit5.VertxExtension;
@@ -42,7 +42,7 @@ public class ChatCacheServiceImplTest {
     Mockito.when(cacheConfig.getTimeToLive()).thenReturn(20);
     Mockito.when(cacheConfig.getNumMessagesCached()).thenReturn(20);
 
-    chatCacheService = new ChatCacheServiceImpl(redisCache, workerUtil, cacheConfig);
+    chatCacheService = new ChatCacheServiceImpl(redissonClient, workerUtil, cacheConfig);
   }
 
   @Test

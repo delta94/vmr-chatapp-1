@@ -29,11 +29,11 @@ public class AuthInterceptor implements ServerInterceptor {
   @Override
   public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(
       ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
-    Key<String> jwtToken = Key.of(TOKEN_HEADER_NAME, Metadata.ASCII_STRING_MARSHALLER);
-    String token = headers.get(jwtToken);
+    // Get token from metadata
+    Key<String> tokenKey = Key.of(TOKEN_HEADER_NAME, Metadata.ASCII_STRING_MARSHALLER);
+    String token = headers.get(tokenKey);
 
-    // return next.startCall(call, headers);
-
+    // Reject if token is null
     if (token == null) {
       rejectedCounter.increment();
       call.close(Status.UNAUTHENTICATED, headers);
@@ -41,11 +41,17 @@ public class AuthInterceptor implements ServerInterceptor {
     }
 
     try {
+      // Verify token
       long userId = jwtService.authenticateBlocking(token);
+
+      // Save user id to context
       Context context = Context.current().withValue(GrpcKey.USER_ID_KEY, String.valueOf(userId));
       authCounter.increment();
+
+      // Pass to callback
       return Contexts.interceptCall(context, call, headers, next);
     } catch (Exception e) {
+      // Jwt token not valid
       call.close(Status.UNAUTHENTICATED, headers);
       rejectedCounter.increment();
       return new ServerCall.Listener<ReqT>() {};

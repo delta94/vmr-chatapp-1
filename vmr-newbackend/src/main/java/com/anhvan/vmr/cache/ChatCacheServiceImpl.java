@@ -1,6 +1,6 @@
 package com.anhvan.vmr.cache;
 
-import com.anhvan.vmr.config.CacheConfig;
+import com.anhvan.vmr.configs.CacheConfig;
 import com.anhvan.vmr.model.Message;
 import com.anhvan.vmr.service.AsyncWorkerService;
 import io.vertx.core.Future;
@@ -25,8 +25,8 @@ public class ChatCacheServiceImpl implements ChatCacheService {
 
   @Inject
   public ChatCacheServiceImpl(
-      RedisCache redisCache, AsyncWorkerService workerUtil, CacheConfig cacheConfig) {
-    this.redis = redisCache.getRedissonClient();
+      RedissonClient redis, AsyncWorkerService workerUtil, CacheConfig cacheConfig) {
+    this.redis = redis;
     this.workerUtil = workerUtil;
     this.cacheConfig = cacheConfig;
   }
@@ -41,6 +41,8 @@ public class ChatCacheServiceImpl implements ChatCacheService {
 
   @Override
   public Future<Void> cacheMessage(Message message) {
+    log.debug("Start cacheMessage: message={}", message);
+
     Promise<Void> promise = Promise.promise();
 
     workerUtil.execute(
@@ -55,7 +57,7 @@ public class ChatCacheServiceImpl implements ChatCacheService {
             chatMessages.expire(cacheConfig.getTimeToLive(), TimeUnit.SECONDS);
             promise.complete();
           } catch (Exception e) {
-            log.error("Error when cache message {}", message, e);
+            log.error("Error in cacheMessage: message={}", message, e);
             promise.fail(e);
           }
         });
@@ -65,6 +67,8 @@ public class ChatCacheServiceImpl implements ChatCacheService {
 
   @Override
   public Future<Void> cacheListMessage(List<Message> messages, long user1, long user2) {
+    log.debug("Start cacheListMessage: user1={}, user2={}, messages={}", user1, user2, messages);
+
     Promise<Void> promise = Promise.promise();
 
     workerUtil.execute(
@@ -87,6 +91,8 @@ public class ChatCacheServiceImpl implements ChatCacheService {
 
   @Override
   public Future<List<Message>> getCacheMessage(long userId1, long userId2) {
+    log.debug("Start getCacheMessage: user1={}, user2={}", userId1, userId2);
+
     Promise<List<Message>> messageCache = Promise.promise();
 
     workerUtil.execute(

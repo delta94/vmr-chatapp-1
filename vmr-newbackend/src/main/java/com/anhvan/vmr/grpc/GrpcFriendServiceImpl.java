@@ -3,6 +3,7 @@ package com.anhvan.vmr.grpc;
 import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.entity.Friend;
+import com.anhvan.vmr.entity.TimeTracker;
 import com.anhvan.vmr.entity.WebSocketMessage;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.proto.Common.Error;
@@ -33,9 +34,11 @@ public class GrpcFriendServiceImpl extends FriendServiceImplBase {
   private FriendService friendService;
   private UserService userService;
 
+  TimeTracker chatFriendListTracker;
+
   @Override
   public void getFriendList(Empty request, StreamObserver<FriendListResponse> responseObserver) {
-    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+    long userId = GrpcKey.getUserId();
 
     log.info("Handle getFriendList grpc call, userId={}", userId);
 
@@ -75,7 +78,7 @@ public class GrpcFriendServiceImpl extends FriendServiceImplBase {
   @Override
   public void setFriendStatus(
       SetFriendStatusRequest request, StreamObserver<SetFriendStatusResponse> responseObserver) {
-    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+    long userId = GrpcKey.getUserId();
     long friendId = request.getFriendId();
 
     SetFriendStatusRequest.Type type = request.getType();
@@ -153,7 +156,9 @@ public class GrpcFriendServiceImpl extends FriendServiceImplBase {
   @Override
   public void getChatFriendList(
       Empty request, StreamObserver<FriendListResponse> responseObserver) {
-    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+    TimeTracker.Tracker tracker = chatFriendListTracker.start();
+
+    long userId = GrpcKey.getUserId();
 
     FriendListResponse.Builder responseBuilder = FriendListResponse.newBuilder();
 
@@ -188,13 +193,14 @@ public class GrpcFriendServiceImpl extends FriendServiceImplBase {
               }
               responseObserver.onNext(responseBuilder.build());
               responseObserver.onCompleted();
+              tracker.record();
             });
   }
 
   @Override
   public void queryUser(
       UserListRequest request, StreamObserver<UserListResponse> responseObserver) {
-    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
+    long userId = GrpcKey.getUserId();
 
     String queryString = request.getQueryString();
 
@@ -229,8 +235,7 @@ public class GrpcFriendServiceImpl extends FriendServiceImplBase {
   public void clearUnreadMessage(
       ClearUnreadMessageRequest request,
       StreamObserver<ClearUnreadMessageResponse> responseObserver) {
-    long userId = Long.parseLong(GrpcKey.USER_ID_KEY.get());
-
+    long userId = GrpcKey.getUserId();
     friendService
         .clearUnreadMessage(userId, request.getFriendId())
         .onComplete(

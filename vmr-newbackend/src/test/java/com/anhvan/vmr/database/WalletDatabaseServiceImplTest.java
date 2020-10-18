@@ -32,26 +32,6 @@ public class WalletDatabaseServiceImplTest {
   }
 
   @Test
-  void testGetHistory(VertxTestContext testContext) {
-    PreparedQuery<RowSet<Row>> preparedQuery = Mockito.mock(PreparedQuery.class);
-
-    Mockito.when(pool.preparedQuery(WalletDatabaseServiceImpl.HISTORY_QUERY))
-        .thenReturn(preparedQuery);
-
-    Mockito.doAnswer(
-            invocationOnMock -> {
-              Tuple tuple = invocationOnMock.getArgument(0);
-              Assertions.assertEquals(1L, tuple.getLong(0));
-              testContext.completeNow();
-              return null;
-            })
-        .when(preparedQuery)
-        .execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-
-    walletDatabaseService.getHistory(1);
-  }
-
-  @Test
   void testTransferPasswordValid(VertxTestContext testContext) {
     Mockito.when(passwordService.checkPassword(1, "1234578"))
         .thenReturn(Future.succeededFuture(true));

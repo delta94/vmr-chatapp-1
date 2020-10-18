@@ -1,6 +1,6 @@
 package com.anhvan.vmr.server;
 
-import com.anhvan.vmr.config.ServerConfig;
+import com.anhvan.vmr.configs.ServerConfig;
 import com.anhvan.vmr.grpc.AuthInterceptor;
 import io.grpc.BindableService;
 import io.grpc.Server;

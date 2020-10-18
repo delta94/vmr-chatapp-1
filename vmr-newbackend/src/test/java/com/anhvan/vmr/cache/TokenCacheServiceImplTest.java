@@ -1,6 +1,6 @@
 package com.anhvan.vmr.cache;
 
-import com.anhvan.vmr.config.AuthConfig;
+import com.anhvan.vmr.configs.AuthConfig;
 import com.anhvan.vmr.service.AsyncWorkerService;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
@@ -41,7 +41,7 @@ public class TokenCacheServiceImplTest {
         .when(asyncWorkerService)
         .execute(ArgumentMatchers.any());
 
-    tokenCacheService = new TokenCacheServiceImpl(cache, authConfig, asyncWorkerService);
+    tokenCacheService = new TokenCacheServiceImpl(redissonClient, authConfig, asyncWorkerService);
   }
 
   @Test
@@ -60,7 +60,7 @@ public class TokenCacheServiceImplTest {
     Mockito.when(redissonClient.<Boolean>getBucket("vmr:jwt:123:expire")).thenReturn(existBucket);
 
     tokenCacheService
-        .checkExistInBacklist("123")
+        .checkExistInBlackList("123")
         .onSuccess(
             isExist -> {
               Assertions.assertTrue(isExist);
@@ -76,7 +76,7 @@ public class TokenCacheServiceImplTest {
     Mockito.when(redissonClient.<Boolean>getBucket("vmr:jwt:123:expire")).thenReturn(existBucket);
 
     tokenCacheService
-        .checkExistInBacklist("123")
+        .checkExistInBlackList("123")
         .onSuccess(
             isExist -> {
               Assertions.assertFalse(isExist);
