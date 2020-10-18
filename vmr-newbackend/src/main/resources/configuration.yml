@@ -17,7 +17,7 @@ mysql:
   timeout: 120
   queueSize: 1000
 cache:
-  timeToLive: 600
+  timeToLive: 120
   numMessagesCached: 20
 vertx:
   numOfWorkerThread: 50

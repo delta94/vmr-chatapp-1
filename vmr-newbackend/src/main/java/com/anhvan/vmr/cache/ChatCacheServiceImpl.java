@@ -54,7 +54,6 @@ public class ChatCacheServiceImpl implements ChatCacheService {
             if (chatMessages.size() > cacheConfig.getNumMessagesCached()) {
               chatMessages.remove(0);
             }
-            chatMessages.expire(cacheConfig.getTimeToLive(), TimeUnit.SECONDS);
             promise.complete();
           } catch (Exception e) {
             log.error("Error in cacheMessage: message={}", message, e);

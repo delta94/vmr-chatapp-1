@@ -63,7 +63,6 @@ public class FriendCacheServiceImpl implements FriendCacheService {
           try {
             RMap<Long, Friend> friendMap = redissonClient.getMap(getUserFriendsKey(userId));
             friendMap.put(friend.getId(), friend);
-            friendMap.expire(cacheConfig.getTimeToLive(), TimeUnit.SECONDS);
             cachePromise.complete();
           } catch (Exception e) {
             log.error("Error occur when cache friend, userId={}, friend={}", userId, friend, e);
@@ -128,7 +127,6 @@ public class FriendCacheServiceImpl implements FriendCacheService {
               friendMap.put(friendId, friend);
             }
 
-            friendMap.expire(cacheConfig.getTimeToLive(), TimeUnit.SECONDS);
             cachePromise.complete();
           } catch (Exception e) {
             log.error(
@@ -198,7 +196,6 @@ public class FriendCacheServiceImpl implements FriendCacheService {
               friendMap.put(friendId, friend);
             }
 
-            friendMap.expire(cacheConfig.getTimeToLive(), TimeUnit.SECONDS);
             cachePromise.complete();
           } catch (Exception e) {
             log.error(
