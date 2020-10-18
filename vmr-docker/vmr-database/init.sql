@@ -98,7 +98,7 @@ values (1, 2, 'ACCEPTED'),
        (1, 7, 'NOT_ANSWER'),
        (7, 1, 'WAITING');
 
-
+delimiter $$
 create procedure fake_user()
 begin
     declare x int;
@@ -115,5 +115,6 @@ begin
         set x = x + 1;
     end loop;
 end;
+$$
 
 call fake_user();

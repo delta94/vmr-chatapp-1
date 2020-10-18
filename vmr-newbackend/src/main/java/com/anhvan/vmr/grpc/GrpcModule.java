@@ -6,18 +6,20 @@ import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.database.WalletDatabaseService;
 import com.anhvan.vmr.service.FriendService;
+import com.anhvan.vmr.service.TrackerService;
 import com.anhvan.vmr.service.UserService;
 import com.anhvan.vmr.websocket.WebSocketService;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoSet;
 import io.grpc.BindableService;
-import io.micrometer.core.instrument.MeterRegistry;
 
 import javax.inject.Singleton;
 
 @Module
 public class GrpcModule {
+  public static final String GRPC_RESPONSE_TIME_METRIC = "grpc_response_time";
+
   @Provides
   @IntoSet
   @Singleton
@@ -52,14 +54,19 @@ public class GrpcModule {
       WebSocketService webSocketService,
       ChatCacheService chatCacheService,
       FriendCacheService friendCacheService,
-      MeterRegistry meterRegistry) {
+      TrackerService trackerService) {
     return GrpcWalletServiceImpl.builder()
         .userDbService(userDatabaseService)
         .walletDatabaseService(walletDatabaseService)
         .webSocketService(webSocketService)
         .chatCacheService(chatCacheService)
         .friendCacheService(friendCacheService)
-        .transferSuccessTimer(meterRegistry.timer("grpc_transfer_time", "status", "transfer_money"))
+        .balanceTracker(
+            trackerService.getTimeTracker(GRPC_RESPONSE_TIME_METRIC, "method", "getBalance"))
+        .historyTracker(
+            trackerService.getTimeTracker(GRPC_RESPONSE_TIME_METRIC, "method", "getHistory"))
+        .transferTracker(
+            trackerService.getTimeTracker(GRPC_RESPONSE_TIME_METRIC, "method", "getTransfer"))
         .build();
   }
 }

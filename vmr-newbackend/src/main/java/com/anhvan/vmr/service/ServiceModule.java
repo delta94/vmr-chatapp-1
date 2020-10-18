@@ -6,6 +6,7 @@ import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import dagger.Module;
 import dagger.Provides;
+import io.micrometer.core.instrument.MeterRegistry;
 
 import javax.inject.Singleton;
 
@@ -23,5 +24,11 @@ public class ServiceModule {
   public FriendService provideFriendService(
       FriendDatabaseService friendDatabaseService, FriendCacheService friendCacheService) {
     return new FriendServiceImpl(friendDatabaseService, friendCacheService);
+  }
+
+  @Provides
+  @Singleton
+  public TrackerService provideTrackerService(MeterRegistry meterRegistry) {
+    return new TrackerServiceImpl(meterRegistry);
   }
 }
