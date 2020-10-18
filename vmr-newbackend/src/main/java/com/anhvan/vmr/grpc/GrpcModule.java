@@ -35,13 +35,16 @@ public class GrpcModule {
       FriendDatabaseService friendDatabaseService,
       WebSocketService wsService,
       FriendService friendService,
-      UserService userService) {
+      UserService userService,
+      TrackerService trackerService) {
     return GrpcFriendServiceImpl.builder()
         .userDbService(userDatabaseService)
         .friendDbService(friendDatabaseService)
         .webSocketService(wsService)
         .userService(userService)
         .friendService(friendService)
+        .chatFriendListTracker(
+            trackerService.getTimeTracker(GRPC_RESPONSE_TIME_METRIC, "method", "getChatFriendList"))
         .build();
   }
 
@@ -66,7 +69,7 @@ public class GrpcModule {
         .historyTracker(
             trackerService.getTimeTracker(GRPC_RESPONSE_TIME_METRIC, "method", "getHistory"))
         .transferTracker(
-            trackerService.getTimeTracker(GRPC_RESPONSE_TIME_METRIC, "method", "getTransfer"))
+            trackerService.getTimeTracker(GRPC_RESPONSE_TIME_METRIC, "method", "transfer"))
         .build();
   }
 }

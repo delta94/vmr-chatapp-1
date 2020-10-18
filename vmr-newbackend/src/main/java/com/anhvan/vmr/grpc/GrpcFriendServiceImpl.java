@@ -3,6 +3,7 @@ package com.anhvan.vmr.grpc;
 import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.entity.Friend;
+import com.anhvan.vmr.entity.TimeTracker;
 import com.anhvan.vmr.entity.WebSocketMessage;
 import com.anhvan.vmr.model.User;
 import com.anhvan.vmr.proto.Common.Error;
@@ -32,6 +33,8 @@ public class GrpcFriendServiceImpl extends FriendServiceImplBase {
   private WebSocketService webSocketService;
   private FriendService friendService;
   private UserService userService;
+
+  TimeTracker chatFriendListTracker;
 
   @Override
   public void getFriendList(Empty request, StreamObserver<FriendListResponse> responseObserver) {
@@ -153,6 +156,8 @@ public class GrpcFriendServiceImpl extends FriendServiceImplBase {
   @Override
   public void getChatFriendList(
       Empty request, StreamObserver<FriendListResponse> responseObserver) {
+    TimeTracker.Tracker tracker = chatFriendListTracker.start();
+
     long userId = GrpcKey.getUserId();
 
     FriendListResponse.Builder responseBuilder = FriendListResponse.newBuilder();
@@ -188,6 +193,7 @@ public class GrpcFriendServiceImpl extends FriendServiceImplBase {
               }
               responseObserver.onNext(responseBuilder.build());
               responseObserver.onCompleted();
+              tracker.record();
             });
   }
 
