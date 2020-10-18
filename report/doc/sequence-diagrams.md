@@ -4,7 +4,8 @@
   - [1. Đăng ký](#1-đăng-ký)
   - [2. Đăng nhập](#2-đăng-nhập)
   - [3. Đăng xuất](#3-đăng-xuất)
-  - [3. Xem danh sách User](#3-xem-danh-sách-user)
+  - [4. Kết bạn/Chấp nhận/Xóa lời mời](#4-kết-bạnchấp-nhậnxóa-lời-mời)
+  - [4. Xem danh sách bạn bè](#4-xem-danh-sách-bạn-bè)
   - [4. Chat 1 - 1](#4-chat-1---1)
   - [5. Xem số dư](#5-xem-số-dư)
   - [6. Chuyển tiền](#6-chuyển-tiền)
@@ -23,7 +24,11 @@
 
 ![Logout](../../report/img/sequence-diagrams/logout.png)
 
-## 3. Xem danh sách User
+## 4. Kết bạn/Chấp nhận/Xóa lời mời
+
+![Add friend](../../report/img/sequence-diagrams/add-friend.png)
+
+## 4. Xem danh sách bạn bè
 
 ![View list](../../report/img/sequence-diagrams/view-list.png)
 

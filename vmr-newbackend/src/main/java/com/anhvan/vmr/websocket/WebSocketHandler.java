@@ -20,7 +20,6 @@ import java.time.Instant;
 @Log4j2
 public class WebSocketHandler {
   public static final String TYPE_KEY = "type";
-
   public static final String DATA_KEY = "data";
 
   private ServerWebSocket conn;
