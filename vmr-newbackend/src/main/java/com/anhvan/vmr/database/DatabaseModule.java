@@ -2,6 +2,7 @@ package com.anhvan.vmr.database;
 
 import com.anhvan.vmr.service.AsyncWorkerService;
 import com.anhvan.vmr.service.PasswordService;
+import com.anhvan.vmr.service.TrackerService;
 import dagger.Module;
 import dagger.Provides;
 
@@ -33,11 +34,15 @@ public class DatabaseModule {
   public WalletDatabaseService provideWalletDatabaseService(
       DatabaseService dbService,
       PasswordService passwordService,
-      ChatDatabaseService chatDatabaseService) {
-    return WalletDatabaseServiceImpl.builder()
+      ChatDatabaseService chatDatabaseService,
+      TrackerService trackerService) {
+    return WalletDatabaseServiceWithTrackerImpl.builder()
         .pool(dbService.getPool())
         .passwordService(passwordService)
         .chatDatabaseService(chatDatabaseService)
+        .historyTracker(
+            trackerService.getTimeTracker("database_query_time", "method", "getHistory"))
+        .transferTracker(trackerService.getTimeTracker("database_query_time", "method", "transfer"))
         .build();
   }
 }

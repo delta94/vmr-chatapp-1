@@ -13,11 +13,11 @@ mysql:
   username: root
   password: password
   database: vmrchat
-  poolSize: 40
+  poolSize: 50
   timeout: 120
-  queueSize: 5000
+  queueSize: 1000
 cache:
   timeToLive: 600
   numMessagesCached: 20
 vertx:
-  numOfWorkerThread: 40
+  numOfWorkerThread: 50

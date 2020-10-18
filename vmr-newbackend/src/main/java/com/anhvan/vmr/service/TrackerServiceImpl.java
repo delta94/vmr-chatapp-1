@@ -17,12 +17,19 @@ public class TrackerServiceImpl implements TrackerService {
   }
 
   public TimeTracker getTimeTracker(String metricName, String... tags) {
+    // Compute the key
     String key = getKey(metricName, tags);
+
+    // Get timer from map
     Timer timer = timerMap.get(key);
+
+    // If timer not exist
     if (timer == null) {
       timer = meterRegistry.timer(metricName, tags);
       timerMap.put(key, timer);
     }
+
+    // Create time tracker object
     return new TimeTracker(timer);
   }
 

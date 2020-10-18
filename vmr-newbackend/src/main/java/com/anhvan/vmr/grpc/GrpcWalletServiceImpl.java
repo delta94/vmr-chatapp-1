@@ -88,44 +88,6 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
   }
 
   @Override
-  public void getHistory(Common.Empty request, StreamObserver<HistoryResponse> responseObserver) {
-    TimeTracker.Tracker tracker = historyTracker.start();
-
-    long userId = GrpcKey.getUserId();
-
-    log.info("Handle getHistory grpc call, userId={}", userId);
-
-    HistoryResponse.Builder historyResponseBuilder = HistoryResponse.newBuilder();
-
-    walletDatabaseService
-        .getHistory(userId)
-        .onComplete(
-            ar -> {
-              if (ar.succeeded()) {
-                List<HistoryItemResponse> historyList = ar.result();
-                HistoryResponse.Data.Builder dataBuilder = HistoryResponse.Data.newBuilder();
-                for (HistoryItemResponse history : historyList) {
-                  dataBuilder.addItem(GrpcUtil.history2HistoryResponseItem(history));
-                }
-                historyResponseBuilder.setData(dataBuilder.build());
-              } else {
-                Common.Error error =
-                    Common.Error.newBuilder()
-                        .setCode(Common.ErrorCode.INTERNAL_SERVER_ERROR)
-                        .setMessage("Fail to get history")
-                        .build();
-                historyResponseBuilder.setError(error);
-
-                // Write log
-                log.error("Error when get history list, userId={}", userId, ar.cause());
-              }
-              responseObserver.onNext(historyResponseBuilder.build());
-              responseObserver.onCompleted();
-              tracker.record();
-            });
-  }
-
-  @Override
   public void getHistoryWithOffset(
       Wallet.GetHistoryWithOffsetRequest request,
       StreamObserver<HistoryResponse> responseObserver) {

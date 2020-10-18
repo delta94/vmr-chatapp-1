@@ -15,6 +15,9 @@
     <AsyncLogger name="com.anhvan.vmr.database" level="debug" additivity="false">
       <AppenderRef ref="Console"/>
     </AsyncLogger>
+    <AsyncLogger name="com.anhvan.vmr.entity.TimeTracker" level="debug" additivity="false">
+      <AppenderRef ref="Console"/>
+    </AsyncLogger>
     <Root level="warn">
       <AppenderRef ref="Console"/>
     </Root>

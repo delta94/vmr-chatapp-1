@@ -115,6 +115,6 @@ begin
         set x = x + 1;
     end loop;
 end;
-$$
+
 
 call fake_user();

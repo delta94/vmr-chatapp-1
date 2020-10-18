@@ -13,8 +13,8 @@ import io.vertx.mysqlclient.MySQLClient;
 import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.log4j.Log4j2;
 
 import java.time.Instant;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @Log4j2
@@ -73,33 +73,6 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   private MySQLPool pool;
   private PasswordService passwordService;
   private ChatDatabaseService chatDatabaseService;
-
-  @Override
-  public Future<List<HistoryItemResponse>> getHistory(long userId) {
-    log.debug("Start getHistory: userId={}", userId);
-
-    Promise<List<HistoryItemResponse>> historyPromise = Promise.promise();
-
-    pool.preparedQuery(HISTORY_QUERY)
-        .execute(
-            Tuple.of(userId),
-            ar -> {
-              if (ar.succeeded()) {
-                RowSet<Row> rowSet = ar.result();
-                List<HistoryItemResponse> historyList = new ArrayList<>();
-                for (Row row : rowSet) {
-                  historyList.add(HistoryItemResponse.fromRow(row));
-                }
-                historyPromise.complete(historyList);
-              } else {
-                Throwable cause = ar.cause();
-                log.error("Error when get history: userId={}", userId, cause);
-                historyPromise.fail(cause);
-              }
-            });
-
-    return historyPromise.future();
-  }
 
   @Override
   public Future<List<HistoryItemResponse>> getHistoryWithOffset(long userId, long offset) {
