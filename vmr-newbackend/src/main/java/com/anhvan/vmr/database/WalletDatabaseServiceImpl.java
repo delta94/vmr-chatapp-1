@@ -42,7 +42,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
       "select exists(select * from transfers where sender=? and "
           + "request_id=?) as transfer_exist";
 
-  public static final String BALANCE_QUERY = "select balance from users where id = ?";
+  public static final String BALANCE_QUERY = "select balance from users where id = ? for update";
 
   public static final String UPDATE_BALANCE_QUERY =
       "update users set balance=?, last_updated=? where id=?";

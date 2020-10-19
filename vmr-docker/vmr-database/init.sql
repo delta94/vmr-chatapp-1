@@ -75,7 +75,7 @@ values (1, 'danganhvan', 'Đặng Anh Văn', @pw,
         UNIX_TIMESTAMP()),
        (3, 'phamanhtuan', 'Phạm Anh Tuấn', @pw,
         UNIX_TIMESTAMP()),
-       (4, 'lengocphuong', 'e Ngoc Phuong', @pw,
+       (4, 'lengocphuong', 'Lê Ngọc Phương', @pw,
         UNIX_TIMESTAMP()),
        (5, 'nguyenvannam', 'Nguyễn Văn Nam', @pw,
         UNIX_TIMESTAMP()),
@@ -100,7 +100,7 @@ values (1, 2, 'ACCEPTED'),
        (1, 7, 'NOT_ANSWER'),
        (7, 1, 'WAITING');
 
-
+delimiter $$
 create procedure fake_user()
 begin
     declare x int;
@@ -115,5 +115,6 @@ begin
         set x = x + 1;
     end loop;
 end;
+$$
 
 call fake_user();

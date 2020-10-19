@@ -6,7 +6,13 @@
     </Console>
   </Appenders>
   <Loggers>
-    <AsyncLogger name="com.anhvan.vmr" level="info" additivity="false">
+    <AsyncLogger name="com.anhvan.vmr" level="warn" additivity="false">
+      <AppenderRef ref="Console"/>
+    </AsyncLogger>
+    <AsyncLogger name="com.anhvan.vmr.database.WalletDatabaseServiceImpl" level="debug" additivity="false">
+      <AppenderRef ref="Console"/>
+    </AsyncLogger>
+    <AsyncLogger name="com.anhvan.vmr.grpc.GrpcWalletServiceImpl" level="debug" additivity="false">
       <AppenderRef ref="Console"/>
     </AsyncLogger>
     <Root level="info">

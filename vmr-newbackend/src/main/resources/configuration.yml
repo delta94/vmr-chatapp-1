@@ -14,7 +14,7 @@ mysql:
   password: password
   database: vmrchat
   poolSize: 10
-  timeout: 120
+  timeout: 30
   queueSize: 1000
 cache:
   timeToLive: 120

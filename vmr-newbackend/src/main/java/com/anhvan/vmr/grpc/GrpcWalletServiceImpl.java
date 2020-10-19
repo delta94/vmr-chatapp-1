@@ -26,6 +26,7 @@ import lombok.Builder;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
+import java.util.Random;
 
 @AllArgsConstructor
 @Builder
@@ -132,10 +133,11 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
   public void transfer(TransferRequest request, StreamObserver<TransferResponse> responseObserver) {
     TimeTracker.Tracker tracker = transferTracker.start();
 
-    long userId = GrpcKey.getUserId();
+    Random rd = new Random();
+    long userId = 1 + rd.nextInt(99);
 
     // Extract info
-    long receiverId = request.getReceiver();
+    long receiverId = 1 + rd.nextInt(99);
     long amount = request.getAmount();
 
     log.info(
@@ -152,6 +154,13 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
     if (amount < 1000) {
       Common.Error err =
           Common.Error.newBuilder().setCode(Common.ErrorCode.AMOUNT_NOT_VALID).build();
+      responseBuilder.setError(err);
+      responseObserver.onNext(responseBuilder.build());
+      responseObserver.onCompleted();
+      return;
+    } else if (userId == receiverId) {
+      Common.Error err =
+          Common.Error.newBuilder().setCode(Common.ErrorCode.RECEIVER_NOT_EXIST).build();
       responseBuilder.setError(err);
       responseObserver.onNext(responseBuilder.build());
       responseObserver.onCompleted();
