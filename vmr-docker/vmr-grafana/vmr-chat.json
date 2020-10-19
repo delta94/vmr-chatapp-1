@@ -83,7 +83,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, rate(grpc_response_time_seconds_bucket[5m]))",
+          "expr": "histogram_quantile(0.99, rate(grpc_response_time_seconds_bucket[10m]))",
           "refId": "A"
         }
       ],
@@ -169,7 +169,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(vertx_http_server_responseTime_seconds_sum[5m])/rate(vertx_http_server_responseTime_seconds_count[5m])*1000",
+          "expr": "histogram_quantile(0.99, rate(vertx_http_server_responseTime_seconds_bucket[10m]))",
           "refId": "A"
         }
       ],
@@ -177,7 +177,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "HTTP Response Time In Milisecond",
+      "title": "HTTP Response Time",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -193,7 +193,7 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "format": "s",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -255,7 +255,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, rate(database_query_time_seconds_bucket[1m]))",
+          "expr": "histogram_quantile(0.99, rate(database_query_time_seconds_bucket[10m]))",
           "refId": "A"
         }
       ],
@@ -874,5 +874,5 @@
   "timezone": "",
   "title": "vmr-chat",
   "uid": "e1NTOU5Mz",
-  "version": 21
+  "version": 8
 }
