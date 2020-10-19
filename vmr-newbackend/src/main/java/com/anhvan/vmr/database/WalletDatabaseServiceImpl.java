@@ -45,7 +45,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
   public static final String BALANCE_QUERY = "select balance from users where id = ? for update";
 
   public static final String UPDATE_BALANCE_QUERY =
-      "update users set balance=?, last_updated=? where id=?";
+      "update users set balance=balance+?, last_updated=? where id=?";
 
   public static final String CREATE_TRANSFER_QUERY =
       "insert into transfers (sender, receiver, amount, message, timestamp, "
@@ -379,8 +379,8 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 
     List<Tuple> queryTuples =
         Arrays.asList(
-            Tuple.of(senderNewBalance, lastUpdated, holder.getSenderId()),
-            Tuple.of(recevierNewBalance, lastUpdated, holder.getReceiverId()));
+            Tuple.of(amount, lastUpdated, holder.getSenderId()),
+            Tuple.of(-amount, lastUpdated, holder.getReceiverId()));
 
     holder
         .getConn()
