@@ -6,7 +6,6 @@ import com.anhvan.vmr.dagger.DaggerVmrComponent;
 import com.anhvan.vmr.dagger.VmrComponent;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-import jodd.crypt.BCrypt;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -37,7 +36,5 @@ public class Runner {
     vertx.deployVerticle(component.getWebServer());
     vertx.deployVerticle(component.getWebSocketServer());
     component.getGrpcServer().start();
-
-    System.out.println(BCrypt.hashpw("12345678", BCrypt.gensalt(5)));
   }
 }

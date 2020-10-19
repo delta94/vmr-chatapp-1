@@ -9,16 +9,7 @@
     <AsyncLogger name="com.anhvan.vmr" level="info" additivity="false">
       <AppenderRef ref="Console"/>
     </AsyncLogger>
-    <AsyncLogger name="com.anhvan.vmr.grpc" level="debug" additivity="false">
-      <AppenderRef ref="Console"/>
-    </AsyncLogger>
-    <AsyncLogger name="com.anhvan.vmr.database" level="debug" additivity="false">
-      <AppenderRef ref="Console"/>
-    </AsyncLogger>
-    <AsyncLogger name="com.anhvan.vmr.entity.TimeTracker" level="debug" additivity="false">
-      <AppenderRef ref="Console"/>
-    </AsyncLogger>
-    <Root level="warn">
+    <Root level="info">
       <AppenderRef ref="Console"/>
     </Root>
   </Loggers>

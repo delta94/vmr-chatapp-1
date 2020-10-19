@@ -68,7 +68,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
           + "account_logs inner join transfers "
           + "on account_logs.transfer = transfers.id "
           + "where account_logs.user = ? "
-          + "limit ?, 20";
+          + "order by account_logs.id desc limit ?, 20 ";
 
   private MySQLPool pool;
   private PasswordService passwordService;
