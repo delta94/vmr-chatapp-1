@@ -108,7 +108,7 @@ public class ChatCacheServiceImplTest {
     Mockito.when(redissonClient.<Message>getList("vmr:chat:1:2")).thenReturn(cachedMessageListMock);
 
     chatCacheService
-        .getCacheMessage(1, 2)
+        .getCacheMessages(1, 2)
         .onSuccess(
             messageList -> {
               Assertions.assertEquals(messageListMock, messageList);

@@ -2,6 +2,7 @@ package com.anhvan.vmr.cache;
 
 import com.anhvan.vmr.configs.CacheConfig;
 import com.anhvan.vmr.service.AsyncWorkerService;
+import com.anhvan.vmr.service.TrackerService;
 import dagger.Module;
 import dagger.Provides;
 import org.redisson.api.RedissonClient;
@@ -30,8 +31,13 @@ public class CacheModule {
 
   @Provides
   @Singleton
-  public ChatCacheService provideChatCacheService(ChatCacheServiceImpl impl) {
-    return impl;
+  public ChatCacheService provideChatCacheService(
+      RedissonClient redissonClient,
+      AsyncWorkerService asyncWorkerService,
+      CacheConfig cacheConfig,
+      TrackerService trackerService) {
+    return new ChatCacheServiceWithTrackerImpl(
+        redissonClient, asyncWorkerService, cacheConfig, trackerService);
   }
 
   @Provides

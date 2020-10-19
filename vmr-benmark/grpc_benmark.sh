@@ -9,31 +9,31 @@ ghz -i ./../vmr-newbackend/src/main/proto --proto=vmr/wallet.proto \
   -m '{"x-jwt-token":"'"${JWT_TOKEN}"'"}' \
   --insecure
 
-# ghz -i ./../vmr-newbackend/src/main/proto --proto=vmr/wallet.proto \
-#   --call=vmr.WalletService.GetBalance \
-#   -n 2000 \
-#   -d '{}' localhost:8082 \
-#   -m '{"x-jwt-token":"'"${JWT_TOKEN}"'"}' \
-#   --insecure
+ghz -i ./../vmr-newbackend/src/main/proto --proto=vmr/wallet.proto \
+  --call=vmr.WalletService.GetBalance \
+  -n 2000 \
+  -d '{}' localhost:8082 \
+  -m '{"x-jwt-token":"'"${JWT_TOKEN}"'"}' \
+  --insecure
 
-# ghz -i ./../vmr-newbackend/src/main/proto --proto=vmr/wallet.proto \
-#   --call=vmr.WalletService.GetHistoryWithOffset \
-#   -n 2000 \
-#   -d '{"offset":0}' localhost:8082 \
-#   -m '{"x-jwt-token":"'"${JWT_TOKEN}"'"}' \
-#   --insecure
+ghz -i ./../vmr-newbackend/src/main/proto --proto=vmr/wallet.proto \
+  --call=vmr.WalletService.GetHistoryWithOffset \
+  -n 2000 \
+  -d '{"offset":0}' localhost:8082 \
+  -m '{"x-jwt-token":"'"${JWT_TOKEN}"'"}' \
+  --insecure
 
-# ghz -i ./../vmr-newbackend/src/main/proto --proto=vmr/friend.proto \
-#   --call=vmr.FriendService.GetChatFriendList \
-#   -n 2000 \
-#   -d '{}' localhost:8082 \
-#   -m '{"x-jwt-token":"'"${JWT_TOKEN}"'"}' \
-#   --insecure
+ghz -i ./../vmr-newbackend/src/main/proto --proto=vmr/friend.proto \
+  --call=vmr.FriendService.GetChatFriendList \
+  -n 2000 \
+  -d '{}' localhost:8082 \
+  -m '{"x-jwt-token":"'"${JWT_TOKEN}"'"}' \
+  --insecure
 
-# ghz -i ./../vmr-newbackend/src/main/proto --proto=vmr/friend.proto \
-#   --call=vmr.FriendService.GetFriendList \
-#   -n 2000 \
-#   -d '{}' localhost:8082 \
-#   -m '{"x-jwt-token":"'"${JWT_TOKEN}"'"}' \
-#   --insecure
+ghz -i ./../vmr-newbackend/src/main/proto --proto=vmr/friend.proto \
+  --call=vmr.FriendService.GetFriendList \
+  -n 2000 \
+  -d '{}' localhost:8082 \
+  -m '{"x-jwt-token":"'"${JWT_TOKEN}"'"}' \
+  --insecure
 

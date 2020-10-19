@@ -10,5 +10,5 @@ public interface ChatCacheService {
 
   Future<Void> cacheListMessage(List<Message> messages, long user1, long user2);
 
-  Future<List<Message>> getCacheMessage(long userId1, long userId2);
+  Future<List<Message>> getCacheMessages(long userId1, long userId2);
 }

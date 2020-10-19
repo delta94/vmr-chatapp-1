@@ -9,12 +9,9 @@ import lombok.extern.log4j.Log4j2;
 import org.redisson.api.RList;
 import org.redisson.api.RedissonClient;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Singleton
 @Log4j2
 public class ChatCacheServiceImpl implements ChatCacheService {
   private static final String MESSAGES_LIST_KEY = "vmr:chat:%d:%d";
@@ -23,7 +20,6 @@ public class ChatCacheServiceImpl implements ChatCacheService {
   private AsyncWorkerService workerUtil;
   private CacheConfig cacheConfig;
 
-  @Inject
   public ChatCacheServiceImpl(
       RedissonClient redis, AsyncWorkerService workerUtil, CacheConfig cacheConfig) {
     this.redis = redis;
@@ -89,7 +85,7 @@ public class ChatCacheServiceImpl implements ChatCacheService {
   }
 
   @Override
-  public Future<List<Message>> getCacheMessage(long userId1, long userId2) {
+  public Future<List<Message>> getCacheMessages(long userId1, long userId2) {
     log.debug("Start getCacheMessage: user1={}, user2={}", userId1, userId2);
 
     Promise<List<Message>> messageCache = Promise.promise();
