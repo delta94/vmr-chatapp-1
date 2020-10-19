@@ -843,7 +843,7 @@
     "list": []
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
@@ -874,5 +874,5 @@
   "timezone": "",
   "title": "vmr-chat",
   "uid": "e1NTOU5Mz",
-  "version": 20
+  "version": 21
 }
