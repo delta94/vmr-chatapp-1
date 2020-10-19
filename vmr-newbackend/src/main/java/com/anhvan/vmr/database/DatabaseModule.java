@@ -19,8 +19,11 @@ public class DatabaseModule {
   @Provides
   @Singleton
   public UserDatabaseService provideUserDBService(
-      DatabaseService databaseService, AsyncWorkerService workerUtil) {
-    return new UserDatabaseServiceImpl(databaseService.getPool(), workerUtil);
+      DatabaseService databaseService,
+      AsyncWorkerService workerUtil,
+      TrackerService trackerService) {
+    return new UserDatabaseServiceWithTrackerImpl(
+        databaseService.getPool(), workerUtil, trackerService);
   }
 
   @Provides

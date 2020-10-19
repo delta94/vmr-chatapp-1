@@ -13,7 +13,7 @@ mysql:
   username: root
   password: password
   database: vmrchat
-  poolSize: 50
+  poolSize: 10
   timeout: 120
   queueSize: 1000
 cache:
