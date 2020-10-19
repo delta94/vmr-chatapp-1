@@ -14,27 +14,32 @@ public class PasswordService {
   private UserDatabaseService userDatabaseService;
 
   @Inject
-  public PasswordService(AsyncWorkerService asyncWorkerService, UserDatabaseService userDatabaseService) {
+  public PasswordService(
+      AsyncWorkerService asyncWorkerService, UserDatabaseService userDatabaseService) {
     this.workerUtil = asyncWorkerService;
     this.userDatabaseService = userDatabaseService;
   }
 
-  public Future<Boolean> checkPassword(long userId, String password) {
-    Promise<Boolean> checkPasswordPromise = Promise.promise();
+  public Future<Void> checkPassword(long userId, String password) {
+    Promise<Void> checkPasswordPromise = Promise.promise();
 
     userDatabaseService
         .getUserById(userId)
         .onComplete(
             ar -> {
               if (ar.failed()) {
-                checkPasswordPromise.complete(false);
+                checkPasswordPromise.fail(new RuntimeException("Cannot access database"));
                 log.debug("Fail to get user", ar.cause());
                 return;
               }
               workerUtil.execute(
-                  () ->
-                      checkPasswordPromise.complete(
-                          BCrypt.checkpw(password, ar.result().getPassword())));
+                  () -> {
+                    if (BCrypt.checkpw(password, ar.result().getPassword())) {
+                      checkPasswordPromise.complete();
+                    } else {
+                      checkPasswordPromise.fail("Password is invalid");
+                    }
+                  });
             });
 
     return checkPasswordPromise.future();

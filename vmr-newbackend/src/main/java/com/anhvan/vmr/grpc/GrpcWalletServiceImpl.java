@@ -18,9 +18,11 @@ import com.anhvan.vmr.proto.Wallet.HistoryResponse;
 import com.anhvan.vmr.proto.Wallet.TransferRequest;
 import com.anhvan.vmr.proto.Wallet.TransferResponse;
 import com.anhvan.vmr.proto.WalletServiceGrpc;
+import com.anhvan.vmr.service.PasswordService;
 import com.anhvan.vmr.util.GrpcUtil;
 import com.anhvan.vmr.websocket.WebSocketService;
 import io.grpc.stub.StreamObserver;
+import io.vertx.core.Future;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.log4j.Log4j2;
@@ -36,6 +38,7 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
   private WebSocketService webSocketService;
   private ChatCacheService chatCacheService;
   private FriendCacheService friendCacheService;
+  private PasswordService passwordService;
 
   private TimeTracker balanceTracker;
   private TimeTracker historyTracker;
@@ -133,8 +136,6 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
     TimeTracker.Tracker tracker = transferTracker.start();
 
     long userId = GrpcKey.getUserId();
-
-    // Extract info
     long receiverId = request.getReceiver();
     long amount = request.getAmount();
 
@@ -171,13 +172,18 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
             .sender(userId)
             .receiver(receiverId)
             .amount(amount)
-            .password(request.getPassword())
             .message(request.getMessage())
             .requestId(request.getRequestId())
             .build();
 
-    walletDatabaseService
-        .transfer(transferRequest)
+    passwordService
+        .checkPassword(userId, request.getPassword())
+        .compose(
+            ignored -> walletDatabaseService.transfer(transferRequest),
+            throwable ->
+                Future.failedFuture(
+                    new TransferException(
+                        "password is invalid", TransferException.ErrorCode.PASSWORD_INVALID)))
         .onComplete(
             ar -> {
               if (ar.succeeded()) {

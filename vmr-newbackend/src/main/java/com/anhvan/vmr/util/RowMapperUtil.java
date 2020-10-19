@@ -18,7 +18,7 @@ public class RowMapperUtil {
     for (Row row : rowSet) {
       return row;
     }
-    return null;
+    throw new RuntimeException("Empty set");
   }
 
   public static <T> T mapRowSet(RowSet<Row> rowSet, Class<T> classType) {

@@ -88,7 +88,6 @@ public class FriendCacheServiceImplTest {
         .onComplete(
             ar -> {
               Mockito.verify(friendMap).put(2L, friend);
-              Mockito.verify(friendMap).expire(20, TimeUnit.SECONDS);
               testContext.completeNow();
             });
   }

@@ -60,7 +60,6 @@ create table account_logs
     id       bigint primary key auto_increment,
     user     bigint                       not null,
     transfer bigint                       not null,
-    balance  bigint                       not null,
     type     enum ('TRANSFER', 'RECEIVE') not null,
     foreign key (user) references users (id),
     foreign key (transfer) references transfers (id)

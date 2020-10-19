@@ -6,6 +6,7 @@ import com.anhvan.vmr.database.FriendDatabaseService;
 import com.anhvan.vmr.database.UserDatabaseService;
 import com.anhvan.vmr.database.WalletDatabaseService;
 import com.anhvan.vmr.service.FriendService;
+import com.anhvan.vmr.service.PasswordService;
 import com.anhvan.vmr.service.TrackerService;
 import com.anhvan.vmr.service.UserService;
 import com.anhvan.vmr.websocket.WebSocketService;
@@ -57,13 +58,15 @@ public class GrpcModule {
       WebSocketService webSocketService,
       ChatCacheService chatCacheService,
       FriendCacheService friendCacheService,
-      TrackerService trackerService) {
+      TrackerService trackerService,
+      PasswordService passwordService) {
     return GrpcWalletServiceImpl.builder()
         .userDbService(userDatabaseService)
         .walletDatabaseService(walletDatabaseService)
         .webSocketService(webSocketService)
         .chatCacheService(chatCacheService)
         .friendCacheService(friendCacheService)
+        .passwordService(passwordService)
         .balanceTracker(
             trackerService.getTimeTracker(GRPC_RESPONSE_TIME_METRIC, "method", "getBalance"))
         .historyTracker(

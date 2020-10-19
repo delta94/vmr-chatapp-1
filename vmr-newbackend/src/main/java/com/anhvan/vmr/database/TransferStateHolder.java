@@ -17,9 +17,7 @@ class TransferStateHolder {
   private long requestId;
   private long amount;
   private long senderBalance;
-  private long receiverBalance;
   private long newSenderBalance; // after update balance
-  private long newReceiverBalance; // after update balance
   private long lastUpdated;
   private String message;
   private long transferId;

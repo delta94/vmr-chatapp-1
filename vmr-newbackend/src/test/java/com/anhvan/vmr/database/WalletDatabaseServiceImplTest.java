@@ -2,7 +2,6 @@ package com.anhvan.vmr.database;
 
 import com.anhvan.vmr.service.PasswordService;
 import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
@@ -29,35 +28,6 @@ public class WalletDatabaseServiceImplTest {
     pool = Mockito.mock(MySQLPool.class);
     passwordService = Mockito.mock(PasswordService.class);
     walletDatabaseService = new WalletDatabaseServiceImpl(pool, passwordService, null);
-  }
-
-  @Test
-  void testTransferPasswordValid(VertxTestContext testContext) {
-    Mockito.when(passwordService.checkPassword(1, "1234578"))
-        .thenReturn(Future.succeededFuture(true));
-
-    walletDatabaseService
-        .checkPassword(TransferStateHolder.builder().senderId(1).password("1234578").build())
-        .onComplete(
-            ar -> {
-              Assertions.assertTrue(ar.succeeded());
-              testContext.completeNow();
-            });
-  }
-
-  @Test
-  void testCheckPasswordInvalid(VertxTestContext testContext) {
-    Mockito.when(passwordService.checkPassword(1, "1234578"))
-        .thenReturn(Future.succeededFuture(true));
-    Mockito.when(passwordService.checkPassword(1, "123457"))
-        .thenReturn(Future.failedFuture("Password is invalid"));
-    walletDatabaseService
-        .checkPassword(TransferStateHolder.builder().senderId(1).password("123457").build())
-        .onComplete(
-            ar -> {
-              Assertions.assertTrue(ar.failed());
-              testContext.completeNow();
-            });
   }
 
   @Test

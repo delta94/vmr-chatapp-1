@@ -15,5 +15,4 @@ public class DatabaseTransferRequest {
   private long amount;
   private String message;
   private long requestId;
-  private String password;
 }
