@@ -7,10 +7,11 @@ import lombok.extern.log4j.Log4j2;
 import java.util.concurrent.TimeUnit;
 
 @Getter
-@Log4j2
 public class TimeTracker {
+  @Getter
   public static class Tracker {
     private long startTime;
+    private long executionTime;
     private Timer timer;
 
     public Tracker(long startTime, Timer timer) {
@@ -20,8 +21,8 @@ public class TimeTracker {
 
     public void record() {
       long time = System.currentTimeMillis() - startTime;
-      log.debug("TimeTracker.Tracker.record: time={}ms", time);
       timer.record(time, TimeUnit.MILLISECONDS);
+      executionTime = time;
     }
   }
 

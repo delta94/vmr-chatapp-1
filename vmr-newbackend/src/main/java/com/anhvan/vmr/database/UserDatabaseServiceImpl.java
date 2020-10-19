@@ -7,7 +7,6 @@ import com.anhvan.vmr.util.RowMapperUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.mysqlclient.MySQLClient;
-import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.RowSet;
 import io.vertx.sqlclient.SqlClient;
@@ -15,7 +14,6 @@ import io.vertx.sqlclient.Tuple;
 import jodd.crypt.BCrypt;
 import lombok.extern.log4j.Log4j2;
 
-import javax.inject.Inject;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +53,7 @@ public class UserDatabaseServiceImpl implements UserDatabaseService {
     workerUtil.execute(
         () -> {
           // Generate password
-          String password = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+          String password = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(5));
 
           // Info params
           Tuple info =

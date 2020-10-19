@@ -8,10 +8,12 @@ import com.anhvan.vmr.util.AsyncUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 
 @SuperBuilder
+@Log4j2
 public class WalletDatabaseServiceWithTrackerImpl extends WalletDatabaseServiceImpl {
   private TimeTracker historyTracker;
   private TimeTracker transferTracker;
@@ -41,6 +43,7 @@ public class WalletDatabaseServiceWithTrackerImpl extends WalletDatabaseServiceI
             ar -> {
               AsyncUtil.convert(promise, ar);
               tracker.record();
+              log.debug("Transfer time: {}", tracker.getExecutionTime());
             });
 
     return promise.future();

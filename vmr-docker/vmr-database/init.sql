@@ -66,22 +66,24 @@ create table account_logs
     foreign key (transfer) references transfers (id)
 );
 
+set @pw = '$2a$05$oaUZlei0KVo9hWwG.0mpqebMwvGcHlaM7.Kgrpf10ncG7A36xvMGu';
+
 insert into users (id, username, name, password, last_updated)
-values (1, 'danganhvan', 'Đặng Anh Văn', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+values (1, 'danganhvan', 'Đặng Anh Văn', @pw,
         UNIX_TIMESTAMP()),
-       (2, 'dangduymanh', 'Đặng Duy Mạnh', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+       (2, 'dangduymanh', 'Đặng Duy Mạnh', @pw,
         UNIX_TIMESTAMP()),
-       (3, 'phamanhtuan', 'Phạm Anh Tuấn', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+       (3, 'phamanhtuan', 'Phạm Anh Tuấn', @pw,
         UNIX_TIMESTAMP()),
-       (4, 'lengocphuong', 'Lê Ngọc Phương', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+       (4, 'lengocphuong', 'e Ngoc Phuong', @pw,
         UNIX_TIMESTAMP()),
-       (5, 'nguyenvannam', 'Nguyễn Văn Nam', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+       (5, 'nguyenvannam', 'Nguyễn Văn Nam', @pw,
         UNIX_TIMESTAMP()),
-       (6, 'nguyenthithuylinh', 'Nguyễn Thị Thùy Linh', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+       (6, 'nguyenthithuylinh', 'Nguyen Thi Thuy Linh', @pw,
         UNIX_TIMESTAMP()),
-       (7, 'dangphuongthao', 'Đặng Phương Thảo', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+       (7, 'dangphuongthao', 'Đặng Phương Thảo', @pw,
         UNIX_TIMESTAMP()),
-       (8, 'dangtunglam', 'Đặng Tùng Lâm', '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
+       (8, 'dangtunglam', 'Đặng Tùng Lâm', @pw,
         UNIX_TIMESTAMP());
 
 insert into friends (user_id, friend_id, status)
@@ -98,7 +100,7 @@ values (1, 2, 'ACCEPTED'),
        (1, 7, 'NOT_ANSWER'),
        (7, 1, 'WAITING');
 
-delimiter $$
+
 create procedure fake_user()
 begin
     declare x int;
@@ -109,12 +111,9 @@ begin
             leave loop_label;
         end if;
         insert into users(id, username, name, password, last_updated)
-        values (x, concat('user', x), concat('User Name ', x),
-                '$2a$10$UjfgnhYV9gRWM/2HmOuuleRCA1e9bzfB7H95d/4eGFHvCUmYgH/u.',
-                UNIX_TIMESTAMP());
+        values (x, concat('user', x), concat('User Name ', x), @pw, UNIX_TIMESTAMP());
         set x = x + 1;
     end loop;
 end;
-
 
 call fake_user();
