@@ -8,23 +8,23 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      -  ./vmr-docker/vmr-database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      -  ./vmr-database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
   cache:
     image: "redis:6.0.6"
     ports:
       - "6379:6379"
   envoy:
     build: 
-      context: ./vmr-docker/vmr-envoy
+      context: ./vmr-envoy
       dockerfile: ./dockerfile
     network_mode: host
   promotheus:
     build:
-      context: ./vmr-docker/vmr-prometheus
+      context: ./vmr-prometheus
       dockerfile: ./dockerfile
     network_mode: host
   grafana:
     build: 
-      context: ./vmr-docker/vmr-grafana
+      context: ./vmr-grafana
       dockerfile: ./dockerfile
     network_mode: host
