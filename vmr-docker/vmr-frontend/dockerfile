@@ -1,14 +1,10 @@
 FROM node:12.18
 
-ADD /vmr-frontend/package.json /vmr-frontend/
-WORKDIR /vmr-frontend
-RUN yarn install
-
-ADD /vmr-frontend /vmr-frontend/
-ADD /vmr-docker/vmr-frontend/configs /vmr-frontend/
+WORKDIR /vmr-chat
+RUN yarn add express
+ADD ./build/ /vmr-chat
+ADD ./server.js /vmr-chat
 
 EXPOSE 3000
-
-RUN yarn build
 
 ENTRYPOINT node server.js

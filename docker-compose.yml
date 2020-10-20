@@ -36,8 +36,10 @@ services:
       context: ./vmr-docker/vmr-backend
       dockerfile: ./dockerfile
     network_mode: host
-  # react:
-  #   build:
-  #     context: ./vmr-docker/vmr-frontend
-  #     dockerfile: ./dockerfile
-  #   network_mode: host
+  react:
+    depends_on:
+      - vertx
+    build:
+      context: ./vmr-docker/vmr-frontend
+      dockerfile: ./dockerfile
+    network_mode: host
