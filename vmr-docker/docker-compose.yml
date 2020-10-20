@@ -15,17 +15,17 @@ services:
       - "6379:6379"
   promotheus:
     build:
-      context: ./vmr-docker/vmr-prometheus
+      context: ./vmr-prometheus
       dockerfile: ./dockerfile
     network_mode: host
   envoy:
     build: 
-      context: ./vmr-docker/vmr-envoy
+      context: ./vmr-envoy
       dockerfile: ./dockerfile
     network_mode: host
   grafana:
     build: 
-      context: ./vmr-docker/vmr-grafana
+      context: ./vmr-grafana
       dockerfile: ./dockerfile
     network_mode: host
   vertx:
@@ -33,13 +33,13 @@ services:
       - database
       - cache
     build: 
-      context: ./vmr-docker/vmr-backend
+      context: ./vmr-backend
       dockerfile: ./dockerfile
     network_mode: host
   react:
     depends_on:
       - vertx
     build:
-      context: ./vmr-docker/vmr-frontend
+      context: ./vmr-frontend
       dockerfile: ./dockerfile
     network_mode: host
