@@ -391,7 +391,6 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
                 return;
               }
 
-              holder.setLastMessageId(ar.result());
               chatPromise.complete(holder);
             });
 

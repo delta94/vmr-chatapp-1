@@ -6,10 +6,10 @@
     </Console>
   </Appenders>
   <Loggers>
-    <AsyncLogger name="com.anhvan.vmr" level="all" additivity="false">
+    <AsyncLogger name="com.anhvan.vmr" level="debug" additivity="false">
       <AppenderRef ref="Console"/>
     </AsyncLogger>
-    <Root level="warn">
+    <Root level="info">
       <AppenderRef ref="Console"/>
     </Root>
   </Loggers>
