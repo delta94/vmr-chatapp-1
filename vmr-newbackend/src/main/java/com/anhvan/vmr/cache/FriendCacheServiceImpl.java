@@ -8,7 +8,7 @@ import com.anhvan.vmr.service.AsyncWorkerService;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.log4j.Log4j2;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @AllArgsConstructor
-@Builder
 @Log4j2
+@SuperBuilder
 public class FriendCacheServiceImpl implements FriendCacheService {
   public static final String FRIEND_LIST_KEY = "vmr:user:%d:friends";
 

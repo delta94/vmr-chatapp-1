@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 2,
   "links": [
     {
       "icon": "external link",
@@ -223,7 +223,7 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 9,
+        "h": 10,
         "w": 12,
         "x": 0,
         "y": 11
@@ -309,7 +309,7 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 9,
+        "h": 10,
         "w": 12,
         "x": 12,
         "y": 11
@@ -341,7 +341,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(cache_query_time_seconds_sum[5m])/rate(cache_query_time_seconds_count[5m])*1000",
+          "expr": "histogram_quantile(0.99, rate(cache_query_time_seconds_bucket[10m]))",
           "refId": "A"
         }
       ],
@@ -349,7 +349,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Redis Query Time In Miliseconds",
+      "title": "Redis Query Time",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -365,7 +365,7 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "format": "s",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -398,7 +398,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 20
+        "y": 21
       },
       "hiddenSeries": false,
       "id": 17,
@@ -479,189 +479,6 @@
       }
     },
     {
-      "aliasColors": {
-        "400": "#447EBC",
-        "500": "#BF1B00"
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "Prometheus",
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 20
-      },
-      "height": "",
-      "hiddenSeries": false,
-      "id": 11,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [],
-      "nullPointMode": "null as zero",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {}
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "rate(count_grpc_call_total[5m])",
-          "format": "time_series",
-          "intervalFactor": 4,
-          "legendFormat": "",
-          "refId": "A",
-          "step": 20
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "GRPC Call Rate",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": "request/second",
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 28
-      },
-      "hiddenSeries": false,
-      "id": 27,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "vertx_http_server_connections",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Http Server Connections",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -673,7 +490,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 28
+        "y": 21
       },
       "hiddenSeries": false,
       "id": 21,
@@ -758,8 +575,94 @@
       "gridPos": {
         "h": 8,
         "w": 12,
+        "x": 0,
+        "y": 29
+      },
+      "hiddenSeries": false,
+      "id": 27,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "vertx_http_server_connections",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Http Server Connections",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
         "x": 12,
-        "y": 37
+        "y": 30
       },
       "hiddenSeries": false,
       "id": 23,
@@ -874,5 +777,5 @@
   "timezone": "",
   "title": "vmr-chat",
   "uid": "e1NTOU5Mz",
-  "version": 8
+  "version": 4
 }

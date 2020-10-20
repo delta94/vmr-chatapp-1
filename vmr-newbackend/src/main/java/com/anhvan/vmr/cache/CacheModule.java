@@ -49,11 +49,11 @@ public class CacheModule {
   @Provides
   @Singleton
   FriendCacheService provideFriendCacheService(
-      RedissonClient redissonClient, AsyncWorkerService workerService, CacheConfig cacheConfig) {
-    return FriendCacheServiceImpl.builder()
-        .asyncWorkerService(workerService)
-        .cacheConfig(cacheConfig)
-        .redissonClient(redissonClient)
-        .build();
+      RedissonClient redissonClient,
+      AsyncWorkerService workerService,
+      CacheConfig cacheConfig,
+      TrackerService trackerService) {
+    return new FriendCacheServiceWithTrackerImpl(
+        redissonClient, workerService, cacheConfig, trackerService);
   }
 }
