@@ -13,33 +13,18 @@ services:
     image: "redis:6.0.6"
     ports:
       - "6379:6379"
-  promotheus:
-    build:
-      context: ./vmr-prometheus
-      dockerfile: ./dockerfile
-    network_mode: host
   envoy:
     build: 
       context: ./vmr-envoy
       dockerfile: ./dockerfile
     network_mode: host
+  promotheus:
+    build:
+      context: ./vmr-prometheus
+      dockerfile: ./dockerfile
+    network_mode: host
   grafana:
     build: 
       context: ./vmr-grafana
-      dockerfile: ./dockerfile
-    network_mode: host
-  vertx:
-    depends_on:
-      - database
-      - cache
-    build: 
-      context: ./vmr-backend
-      dockerfile: ./dockerfile
-    network_mode: host
-  react:
-    depends_on:
-      - vertx
-    build:
-      context: ./vmr-frontend
       dockerfile: ./dockerfile
     network_mode: host
