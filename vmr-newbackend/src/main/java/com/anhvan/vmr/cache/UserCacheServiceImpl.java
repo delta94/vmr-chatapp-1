@@ -10,11 +10,8 @@ import lombok.extern.log4j.Log4j2;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.concurrent.TimeUnit;
 
-@Singleton
 @Log4j2
 public class UserCacheServiceImpl implements UserCacheService {
   public static final String USER_INFO_KEY = "vmr:user:%d:info";
@@ -23,7 +20,6 @@ public class UserCacheServiceImpl implements UserCacheService {
   private AsyncWorkerService workerUtil;
   private CacheConfig cacheConfig;
 
-  @Inject
   public UserCacheServiceImpl(
       RedissonClient redissonClient, AsyncWorkerService workerUtil, CacheConfig cacheConfig) {
     redis = redissonClient;

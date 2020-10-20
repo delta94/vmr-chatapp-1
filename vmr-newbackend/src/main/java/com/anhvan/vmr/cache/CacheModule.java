@@ -25,8 +25,13 @@ public class CacheModule {
 
   @Provides
   @Singleton
-  public UserCacheService provideUserCacheService(UserCacheServiceImpl impl) {
-    return impl;
+  public UserCacheService provideUserCacheService(
+      RedissonClient redissonClient,
+      CacheConfig cacheConfig,
+      AsyncWorkerService workerService,
+      TrackerService trackerService) {
+    return new UserCacheServiceWithTrackerImpl(
+        redissonClient, workerService, cacheConfig, trackerService);
   }
 
   @Provides
