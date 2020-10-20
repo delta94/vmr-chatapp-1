@@ -36,6 +36,7 @@ function MessageListInternal(props) {
   };
 
   let clearChatNotifications = () => {
+    clearUnreadMessage(receiverId);
     dispatch(clearNotifications(receiverId));
   };
 
@@ -85,7 +86,7 @@ function MessageListInternal(props) {
           }
         });
       }
-      clearUnreadMessage(receiverId);
+      clearChatNotifications();
     },
     // eslint-disable-next-line
     [receiverId]

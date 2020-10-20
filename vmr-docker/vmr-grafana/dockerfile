@@ -3,3 +3,6 @@ FROM grafana/grafana:6.5.0
 EXPOSE 9091
 
 ADD grafana.ini /etc/grafana
+ADD datasource.yaml /etc/grafana/provisioning/datasources
+ADD vmr-chat.yaml /etc/grafana/provisioning/dashboards
+ADD vmr-chat.json /vmr-dashboards/
