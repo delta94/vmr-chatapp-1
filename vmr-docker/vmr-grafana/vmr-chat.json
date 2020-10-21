@@ -91,7 +91,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "GRPC Response Time In Milisecond",
+      "title": "GRPC Response Time",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -392,16 +392,16 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
-      "fill": 0,
-      "fillGradient": 6,
+      "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 12,
         "x": 0,
         "y": 21
       },
       "hiddenSeries": false,
-      "id": 17,
+      "id": 35,
       "legend": {
         "avg": false,
         "current": false,
@@ -427,13 +427,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "jvm_threads_live_threads",
-          "legendFormat": "live threads",
+          "expr": "sum(jvm_memory_used_bytes{area=\"heap\"})",
           "refId": "A"
         },
         {
-          "expr": "jvm_threads_daemon_threads",
-          "legendFormat": "daemon threads",
+          "expr": "sum(jvm_memory_used_bytes{area=\"nonheap\"})",
           "refId": "B"
         }
       ],
@@ -441,7 +439,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "JVM Thread",
+      "title": "JVM Memory Usage",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -457,7 +455,7 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "format": "decbytes",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -570,16 +568,16 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
+      "fill": 0,
+      "fillGradient": 6,
       "gridPos": {
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 29
+        "y": 30
       },
       "hiddenSeries": false,
-      "id": 27,
+      "id": 17,
       "legend": {
         "avg": false,
         "current": false,
@@ -605,15 +603,21 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "vertx_http_server_connections",
+          "expr": "jvm_threads_live_threads",
+          "legendFormat": "live threads",
           "refId": "A"
+        },
+        {
+          "expr": "jvm_threads_daemon_threads",
+          "legendFormat": "daemon threads",
+          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Http Server Connections",
+      "title": "JVM Thread",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -659,13 +663,13 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 12,
         "x": 12,
         "y": 30
       },
       "hiddenSeries": false,
-      "id": 23,
+      "id": 37,
       "legend": {
         "avg": false,
         "current": false,
@@ -691,7 +695,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "vertx_http_server_wsConnections",
+          "expr": "rate(jvm_gc_pause_seconds_sum[5m])/rate(jvm_gc_pause_seconds_count[5m])",
           "refId": "A"
         }
       ],
@@ -699,7 +703,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Websocket connections",
+      "title": "GC Time",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -746,7 +750,7 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {
@@ -777,5 +781,5 @@
   "timezone": "",
   "title": "vmr-chat",
   "uid": "e1NTOU5Mz",
-  "version": 4
+  "version": 15
 }
