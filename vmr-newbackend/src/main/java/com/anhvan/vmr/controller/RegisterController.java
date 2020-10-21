@@ -94,7 +94,7 @@ public class RegisterController extends BaseController {
   }
 
   public boolean isUserInfoValid(User user) {
-    if (!user.getUsername().matches("^[a-zA-Z]\\w{7,}$")) {
+    if (!user.getUsername().matches("^[a-zA-Z][\\w|.]{7,}$")) {
       return false;
     }
     if (user.getPassword().length() < 8) {
