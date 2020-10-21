@@ -28,7 +28,6 @@ import lombok.Builder;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
-import java.util.Random;
 
 @AllArgsConstructor
 @Builder
@@ -136,9 +135,8 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
   public void transfer(TransferRequest request, StreamObserver<TransferResponse> responseObserver) {
     TimeTracker.Tracker tracker = transferTracker.start();
 
-    Random rd = new Random();
-    long userId = 1 + rd.nextInt(99);
-    long receiverId = 1 + rd.nextInt(99);
+    long userId = GrpcKey.getUserId();
+    long receiverId = request.getReceiver();
     long amount = request.getAmount();
 
     log.info(
