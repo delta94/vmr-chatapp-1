@@ -1,6 +1,8 @@
 /* eslint-disable */ /**
  * @fileoverview
  * @enhanceable
+ * @suppress {messageConventions} JS Compiler reports an error if a variable or
+ *     field starts with 'MSG_' and isn't a translatable message.
  * @public
  */
 // GENERATED CODE -- DO NOT EDIT!
@@ -66,10 +68,11 @@ proto.vmr.GetUserInfoRequest.prototype.toObject = function(opt_includeInstance) 
  *     http://goto/soy-param-migration
  * @param {!proto.vmr.GetUserInfoRequest} msg The msg instance to transform.
  * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.vmr.GetUserInfoRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    userId: msg.getUserId()
+    userId: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -120,35 +123,26 @@ proto.vmr.GetUserInfoRequest.deserializeBinaryFromReader = function(msg, reader)
 
 
 /**
- * Class method variant: serializes the given message to binary data
- * (in protobuf wire format), writing to the given BinaryWriter.
- * @param {!proto.vmr.GetUserInfoRequest} message
- * @param {!jspb.BinaryWriter} writer
- */
-proto.vmr.GetUserInfoRequest.serializeBinaryToWriter = function(message, writer) {
-  message.serializeBinaryToWriter(writer);
-};
-
-
-/**
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
 proto.vmr.GetUserInfoRequest.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  this.serializeBinaryToWriter(writer);
+  proto.vmr.GetUserInfoRequest.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
 
 /**
- * Serializes the message to binary data (in protobuf wire format),
- * writing to the given BinaryWriter.
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.vmr.GetUserInfoRequest} message
  * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.GetUserInfoRequest.prototype.serializeBinaryToWriter = function (writer) {
+proto.vmr.GetUserInfoRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = this.getUserId();
+  f = message.getUserId();
   if (f !== 0) {
     writer.writeInt64(
       1,
@@ -159,26 +153,17 @@ proto.vmr.GetUserInfoRequest.prototype.serializeBinaryToWriter = function (write
 
 
 /**
- * Creates a deep clone of this proto. No data is shared with the original.
- * @return {!proto.vmr.GetUserInfoRequest} The clone.
- */
-proto.vmr.GetUserInfoRequest.prototype.cloneMessage = function() {
-  return /** @type {!proto.vmr.GetUserInfoRequest} */ (jspb.Message.cloneMessage(this));
-};
-
-
-/**
  * optional int64 user_id = 1;
  * @return {number}
  */
 proto.vmr.GetUserInfoRequest.prototype.getUserId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldProto3(this, 1, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
 
-/** @param {number} value  */
+/** @param {number} value */
 proto.vmr.GetUserInfoRequest.prototype.setUserId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -225,6 +210,7 @@ proto.vmr.GetUserInfoResponse.prototype.toObject = function(opt_includeInstance)
  *     http://goto/soy-param-migration
  * @param {!proto.vmr.GetUserInfoResponse} msg The msg instance to transform.
  * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.vmr.GetUserInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
@@ -286,35 +272,26 @@ proto.vmr.GetUserInfoResponse.deserializeBinaryFromReader = function(msg, reader
 
 
 /**
- * Class method variant: serializes the given message to binary data
- * (in protobuf wire format), writing to the given BinaryWriter.
- * @param {!proto.vmr.GetUserInfoResponse} message
- * @param {!jspb.BinaryWriter} writer
- */
-proto.vmr.GetUserInfoResponse.serializeBinaryToWriter = function(message, writer) {
-  message.serializeBinaryToWriter(writer);
-};
-
-
-/**
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
 proto.vmr.GetUserInfoResponse.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  this.serializeBinaryToWriter(writer);
+  proto.vmr.GetUserInfoResponse.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
 
 /**
- * Serializes the message to binary data (in protobuf wire format),
- * writing to the given BinaryWriter.
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.vmr.GetUserInfoResponse} message
  * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.GetUserInfoResponse.prototype.serializeBinaryToWriter = function (writer) {
+proto.vmr.GetUserInfoResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = this.getError();
+  f = message.getError();
   if (f != null) {
     writer.writeMessage(
       1,
@@ -322,7 +299,7 @@ proto.vmr.GetUserInfoResponse.prototype.serializeBinaryToWriter = function (writ
       vmr_common_pb.Error.serializeBinaryToWriter
     );
   }
-  f = this.getUser();
+  f = message.getUser();
   if (f != null) {
     writer.writeMessage(
       2,
@@ -334,25 +311,16 @@ proto.vmr.GetUserInfoResponse.prototype.serializeBinaryToWriter = function (writ
 
 
 /**
- * Creates a deep clone of this proto. No data is shared with the original.
- * @return {!proto.vmr.GetUserInfoResponse} The clone.
- */
-proto.vmr.GetUserInfoResponse.prototype.cloneMessage = function() {
-  return /** @type {!proto.vmr.GetUserInfoResponse} */ (jspb.Message.cloneMessage(this));
-};
-
-
-/**
  * optional Error error = 1;
- * @return {proto.vmr.Error}
+ * @return {?proto.vmr.Error}
  */
 proto.vmr.GetUserInfoResponse.prototype.getError = function() {
-  return /** @type{proto.vmr.Error} */ (
+  return /** @type{?proto.vmr.Error} */ (
     jspb.Message.getWrapperField(this, vmr_common_pb.Error, 1));
 };
 
 
-/** @param {proto.vmr.Error|undefined} value  */
+/** @param {?proto.vmr.Error|undefined} value */
 proto.vmr.GetUserInfoResponse.prototype.setError = function(value) {
   jspb.Message.setWrapperField(this, 1, value);
 };
@@ -365,7 +333,7 @@ proto.vmr.GetUserInfoResponse.prototype.clearError = function() {
 
 /**
  * Returns whether this field is set.
- * @return{!boolean}
+ * @return {!boolean}
  */
 proto.vmr.GetUserInfoResponse.prototype.hasError = function() {
   return jspb.Message.getField(this, 1) != null;
@@ -374,15 +342,15 @@ proto.vmr.GetUserInfoResponse.prototype.hasError = function() {
 
 /**
  * optional UserResponse user = 2;
- * @return {proto.vmr.UserResponse}
+ * @return {?proto.vmr.UserResponse}
  */
 proto.vmr.GetUserInfoResponse.prototype.getUser = function() {
-  return /** @type{proto.vmr.UserResponse} */ (
+  return /** @type{?proto.vmr.UserResponse} */ (
     jspb.Message.getWrapperField(this, proto.vmr.UserResponse, 2));
 };
 
 
-/** @param {proto.vmr.UserResponse|undefined} value  */
+/** @param {?proto.vmr.UserResponse|undefined} value */
 proto.vmr.GetUserInfoResponse.prototype.setUser = function(value) {
   jspb.Message.setWrapperField(this, 2, value);
 };
@@ -395,7 +363,7 @@ proto.vmr.GetUserInfoResponse.prototype.clearUser = function() {
 
 /**
  * Returns whether this field is set.
- * @return{!boolean}
+ * @return {!boolean}
  */
 proto.vmr.GetUserInfoResponse.prototype.hasUser = function() {
   return jspb.Message.getField(this, 2) != null;
@@ -452,6 +420,7 @@ proto.vmr.FriendListResponse.prototype.toObject = function(opt_includeInstance) 
  *     http://goto/soy-param-migration
  * @param {!proto.vmr.FriendListResponse} msg The msg instance to transform.
  * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.vmr.FriendListResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
@@ -502,8 +471,7 @@ proto.vmr.FriendListResponse.deserializeBinaryFromReader = function(msg, reader)
     case 2:
       var value = new proto.vmr.FriendInfo;
       reader.readMessage(value,proto.vmr.FriendInfo.deserializeBinaryFromReader);
-      msg.getFriendInfoList().push(value);
-      msg.setFriendInfoList(msg.getFriendInfoList());
+      msg.addFriendInfo(value);
       break;
     default:
       reader.skipField();
@@ -515,35 +483,26 @@ proto.vmr.FriendListResponse.deserializeBinaryFromReader = function(msg, reader)
 
 
 /**
- * Class method variant: serializes the given message to binary data
- * (in protobuf wire format), writing to the given BinaryWriter.
- * @param {!proto.vmr.FriendListResponse} message
- * @param {!jspb.BinaryWriter} writer
- */
-proto.vmr.FriendListResponse.serializeBinaryToWriter = function(message, writer) {
-  message.serializeBinaryToWriter(writer);
-};
-
-
-/**
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
 proto.vmr.FriendListResponse.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  this.serializeBinaryToWriter(writer);
+  proto.vmr.FriendListResponse.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
 
 /**
- * Serializes the message to binary data (in protobuf wire format),
- * writing to the given BinaryWriter.
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.vmr.FriendListResponse} message
  * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.FriendListResponse.prototype.serializeBinaryToWriter = function (writer) {
+proto.vmr.FriendListResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = this.getError();
+  f = message.getError();
   if (f != null) {
     writer.writeMessage(
       1,
@@ -551,7 +510,7 @@ proto.vmr.FriendListResponse.prototype.serializeBinaryToWriter = function (write
       vmr_common_pb.Error.serializeBinaryToWriter
     );
   }
-  f = this.getFriendInfoList();
+  f = message.getFriendInfoList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
       2,
@@ -563,25 +522,16 @@ proto.vmr.FriendListResponse.prototype.serializeBinaryToWriter = function (write
 
 
 /**
- * Creates a deep clone of this proto. No data is shared with the original.
- * @return {!proto.vmr.FriendListResponse} The clone.
- */
-proto.vmr.FriendListResponse.prototype.cloneMessage = function() {
-  return /** @type {!proto.vmr.FriendListResponse} */ (jspb.Message.cloneMessage(this));
-};
-
-
-/**
  * optional Error error = 1;
- * @return {proto.vmr.Error}
+ * @return {?proto.vmr.Error}
  */
 proto.vmr.FriendListResponse.prototype.getError = function() {
-  return /** @type{proto.vmr.Error} */ (
+  return /** @type{?proto.vmr.Error} */ (
     jspb.Message.getWrapperField(this, vmr_common_pb.Error, 1));
 };
 
 
-/** @param {proto.vmr.Error|undefined} value  */
+/** @param {?proto.vmr.Error|undefined} value */
 proto.vmr.FriendListResponse.prototype.setError = function(value) {
   jspb.Message.setWrapperField(this, 1, value);
 };
@@ -594,7 +544,7 @@ proto.vmr.FriendListResponse.prototype.clearError = function() {
 
 /**
  * Returns whether this field is set.
- * @return{!boolean}
+ * @return {!boolean}
  */
 proto.vmr.FriendListResponse.prototype.hasError = function() {
   return jspb.Message.getField(this, 1) != null;
@@ -603,19 +553,27 @@ proto.vmr.FriendListResponse.prototype.hasError = function() {
 
 /**
  * repeated FriendInfo friend_info = 2;
- * If you change this array by adding, removing or replacing elements, or if you
- * replace the array itself, then you must call the setter to update it.
- * @return {!Array.<!proto.vmr.FriendInfo>}
+ * @return {!Array<!proto.vmr.FriendInfo>}
  */
 proto.vmr.FriendListResponse.prototype.getFriendInfoList = function() {
-  return /** @type{!Array.<!proto.vmr.FriendInfo>} */ (
+  return /** @type{!Array<!proto.vmr.FriendInfo>} */ (
     jspb.Message.getRepeatedWrapperField(this, proto.vmr.FriendInfo, 2));
 };
 
 
-/** @param {Array.<!proto.vmr.FriendInfo>} value  */
+/** @param {!Array<!proto.vmr.FriendInfo>} value */
 proto.vmr.FriendListResponse.prototype.setFriendInfoList = function(value) {
   jspb.Message.setRepeatedWrapperField(this, 2, value);
+};
+
+
+/**
+ * @param {!proto.vmr.FriendInfo=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.vmr.FriendInfo}
+ */
+proto.vmr.FriendListResponse.prototype.addFriendInfo = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.vmr.FriendInfo, opt_index);
 };
 
 
@@ -667,19 +625,20 @@ proto.vmr.FriendInfo.prototype.toObject = function(opt_includeInstance) {
  *     http://goto/soy-param-migration
  * @param {!proto.vmr.FriendInfo} msg The msg instance to transform.
  * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.vmr.FriendInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    id: msg.getId(),
-    username: msg.getUsername(),
-    name: msg.getName(),
-    online: msg.getOnline(),
-    lastMessage: msg.getLastMessage(),
-    lastMessageType: msg.getLastMessageType(),
-    lastMessageSender: msg.getLastMessageSender(),
-    lastMessageTimestamp: msg.getLastMessageTimestamp(),
-    numUnreadMessage: msg.getNumUnreadMessage(),
-    friendStatus: msg.getFriendStatus()
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    username: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    name: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    online: jspb.Message.getFieldWithDefault(msg, 4, false),
+    lastMessage: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    lastMessageType: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    lastMessageSender: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    lastMessageTimestamp: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    numUnreadMessage: jspb.Message.getFieldWithDefault(msg, 9, 0),
+    friendStatus: jspb.Message.getFieldWithDefault(msg, 10, 0)
   };
 
   if (includeInstance) {
@@ -766,98 +725,89 @@ proto.vmr.FriendInfo.deserializeBinaryFromReader = function(msg, reader) {
 
 
 /**
- * Class method variant: serializes the given message to binary data
- * (in protobuf wire format), writing to the given BinaryWriter.
- * @param {!proto.vmr.FriendInfo} message
- * @param {!jspb.BinaryWriter} writer
- */
-proto.vmr.FriendInfo.serializeBinaryToWriter = function(message, writer) {
-  message.serializeBinaryToWriter(writer);
-};
-
-
-/**
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
 proto.vmr.FriendInfo.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  this.serializeBinaryToWriter(writer);
+  proto.vmr.FriendInfo.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
 
 /**
- * Serializes the message to binary data (in protobuf wire format),
- * writing to the given BinaryWriter.
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.vmr.FriendInfo} message
  * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.FriendInfo.prototype.serializeBinaryToWriter = function (writer) {
+proto.vmr.FriendInfo.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = this.getId();
+  f = message.getId();
   if (f !== 0) {
     writer.writeInt64(
       1,
       f
     );
   }
-  f = this.getUsername();
+  f = message.getUsername();
   if (f.length > 0) {
     writer.writeString(
       2,
       f
     );
   }
-  f = this.getName();
+  f = message.getName();
   if (f.length > 0) {
     writer.writeString(
       3,
       f
     );
   }
-  f = this.getOnline();
+  f = message.getOnline();
   if (f) {
     writer.writeBool(
       4,
       f
     );
   }
-  f = this.getLastMessage();
+  f = message.getLastMessage();
   if (f.length > 0) {
     writer.writeString(
       5,
       f
     );
   }
-  f = this.getLastMessageType();
+  f = message.getLastMessageType();
   if (f.length > 0) {
     writer.writeString(
       6,
       f
     );
   }
-  f = this.getLastMessageSender();
+  f = message.getLastMessageSender();
   if (f !== 0) {
     writer.writeInt64(
       7,
       f
     );
   }
-  f = this.getLastMessageTimestamp();
+  f = message.getLastMessageTimestamp();
   if (f !== 0) {
     writer.writeInt64(
       8,
       f
     );
   }
-  f = this.getNumUnreadMessage();
+  f = message.getNumUnreadMessage();
   if (f !== 0) {
     writer.writeInt64(
       9,
       f
     );
   }
-  f = this.getFriendStatus();
+  f = message.getFriendStatus();
   if (f !== 0.0) {
     writer.writeEnum(
       10,
@@ -868,26 +818,17 @@ proto.vmr.FriendInfo.prototype.serializeBinaryToWriter = function (writer) {
 
 
 /**
- * Creates a deep clone of this proto. No data is shared with the original.
- * @return {!proto.vmr.FriendInfo} The clone.
- */
-proto.vmr.FriendInfo.prototype.cloneMessage = function() {
-  return /** @type {!proto.vmr.FriendInfo} */ (jspb.Message.cloneMessage(this));
-};
-
-
-/**
  * optional int64 id = 1;
  * @return {number}
  */
 proto.vmr.FriendInfo.prototype.getId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldProto3(this, 1, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
 
-/** @param {number} value  */
+/** @param {number} value */
 proto.vmr.FriendInfo.prototype.setId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -896,13 +837,13 @@ proto.vmr.FriendInfo.prototype.setId = function(value) {
  * @return {string}
  */
 proto.vmr.FriendInfo.prototype.getUsername = function() {
-  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 2, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
-/** @param {string} value  */
+/** @param {string} value */
 proto.vmr.FriendInfo.prototype.setUsername = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -911,13 +852,13 @@ proto.vmr.FriendInfo.prototype.setUsername = function(value) {
  * @return {string}
  */
 proto.vmr.FriendInfo.prototype.getName = function() {
-  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 3, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
 
-/** @param {string} value  */
+/** @param {string} value */
 proto.vmr.FriendInfo.prototype.setName = function(value) {
-  jspb.Message.setField(this, 3, value);
+  jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
@@ -928,13 +869,13 @@ proto.vmr.FriendInfo.prototype.setName = function(value) {
  * @return {boolean}
  */
 proto.vmr.FriendInfo.prototype.getOnline = function() {
-  return /** @type {boolean} */ (jspb.Message.getFieldProto3(this, 4, false));
+  return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 4, false));
 };
 
 
-/** @param {boolean} value  */
+/** @param {boolean} value */
 proto.vmr.FriendInfo.prototype.setOnline = function(value) {
-  jspb.Message.setField(this, 4, value);
+  jspb.Message.setProto3BooleanField(this, 4, value);
 };
 
 
@@ -943,13 +884,13 @@ proto.vmr.FriendInfo.prototype.setOnline = function(value) {
  * @return {string}
  */
 proto.vmr.FriendInfo.prototype.getLastMessage = function() {
-  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 5, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
 };
 
 
-/** @param {string} value  */
+/** @param {string} value */
 proto.vmr.FriendInfo.prototype.setLastMessage = function(value) {
-  jspb.Message.setField(this, 5, value);
+  jspb.Message.setProto3StringField(this, 5, value);
 };
 
 
@@ -958,13 +899,13 @@ proto.vmr.FriendInfo.prototype.setLastMessage = function(value) {
  * @return {string}
  */
 proto.vmr.FriendInfo.prototype.getLastMessageType = function() {
-  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 6, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
 };
 
 
-/** @param {string} value  */
+/** @param {string} value */
 proto.vmr.FriendInfo.prototype.setLastMessageType = function(value) {
-  jspb.Message.setField(this, 6, value);
+  jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
@@ -973,13 +914,13 @@ proto.vmr.FriendInfo.prototype.setLastMessageType = function(value) {
  * @return {number}
  */
 proto.vmr.FriendInfo.prototype.getLastMessageSender = function() {
-  return /** @type {number} */ (jspb.Message.getFieldProto3(this, 7, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
 
-/** @param {number} value  */
+/** @param {number} value */
 proto.vmr.FriendInfo.prototype.setLastMessageSender = function(value) {
-  jspb.Message.setField(this, 7, value);
+  jspb.Message.setProto3IntField(this, 7, value);
 };
 
 
@@ -988,13 +929,13 @@ proto.vmr.FriendInfo.prototype.setLastMessageSender = function(value) {
  * @return {number}
  */
 proto.vmr.FriendInfo.prototype.getLastMessageTimestamp = function() {
-  return /** @type {number} */ (jspb.Message.getFieldProto3(this, 8, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
 };
 
 
-/** @param {number} value  */
+/** @param {number} value */
 proto.vmr.FriendInfo.prototype.setLastMessageTimestamp = function(value) {
-  jspb.Message.setField(this, 8, value);
+  jspb.Message.setProto3IntField(this, 8, value);
 };
 
 
@@ -1003,13 +944,13 @@ proto.vmr.FriendInfo.prototype.setLastMessageTimestamp = function(value) {
  * @return {number}
  */
 proto.vmr.FriendInfo.prototype.getNumUnreadMessage = function() {
-  return /** @type {number} */ (jspb.Message.getFieldProto3(this, 9, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
 };
 
 
-/** @param {number} value  */
+/** @param {number} value */
 proto.vmr.FriendInfo.prototype.setNumUnreadMessage = function(value) {
-  jspb.Message.setField(this, 9, value);
+  jspb.Message.setProto3IntField(this, 9, value);
 };
 
 
@@ -1018,13 +959,13 @@ proto.vmr.FriendInfo.prototype.setNumUnreadMessage = function(value) {
  * @return {!proto.vmr.FriendStatus}
  */
 proto.vmr.FriendInfo.prototype.getFriendStatus = function() {
-  return /** @type {!proto.vmr.FriendStatus} */ (jspb.Message.getFieldProto3(this, 10, 0));
+  return /** @type {!proto.vmr.FriendStatus} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
 };
 
 
-/** @param {!proto.vmr.FriendStatus} value  */
+/** @param {!proto.vmr.FriendStatus} value */
 proto.vmr.FriendInfo.prototype.setFriendStatus = function(value) {
-  jspb.Message.setField(this, 10, value);
+  jspb.Message.setProto3EnumField(this, 10, value);
 };
 
 
@@ -1071,10 +1012,11 @@ proto.vmr.UserListRequest.prototype.toObject = function(opt_includeInstance) {
  *     http://goto/soy-param-migration
  * @param {!proto.vmr.UserListRequest} msg The msg instance to transform.
  * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.vmr.UserListRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    queryString: msg.getQueryString()
+    queryString: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -1125,35 +1067,26 @@ proto.vmr.UserListRequest.deserializeBinaryFromReader = function(msg, reader) {
 
 
 /**
- * Class method variant: serializes the given message to binary data
- * (in protobuf wire format), writing to the given BinaryWriter.
- * @param {!proto.vmr.UserListRequest} message
- * @param {!jspb.BinaryWriter} writer
- */
-proto.vmr.UserListRequest.serializeBinaryToWriter = function(message, writer) {
-  message.serializeBinaryToWriter(writer);
-};
-
-
-/**
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
 proto.vmr.UserListRequest.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  this.serializeBinaryToWriter(writer);
+  proto.vmr.UserListRequest.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
 
 /**
- * Serializes the message to binary data (in protobuf wire format),
- * writing to the given BinaryWriter.
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.vmr.UserListRequest} message
  * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.UserListRequest.prototype.serializeBinaryToWriter = function (writer) {
+proto.vmr.UserListRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = this.getQueryString();
+  f = message.getQueryString();
   if (f.length > 0) {
     writer.writeString(
       1,
@@ -1164,26 +1097,17 @@ proto.vmr.UserListRequest.prototype.serializeBinaryToWriter = function (writer) 
 
 
 /**
- * Creates a deep clone of this proto. No data is shared with the original.
- * @return {!proto.vmr.UserListRequest} The clone.
- */
-proto.vmr.UserListRequest.prototype.cloneMessage = function() {
-  return /** @type {!proto.vmr.UserListRequest} */ (jspb.Message.cloneMessage(this));
-};
-
-
-/**
  * optional string query_string = 1;
  * @return {string}
  */
 proto.vmr.UserListRequest.prototype.getQueryString = function() {
-  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 1, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
-/** @param {string} value  */
+/** @param {string} value */
 proto.vmr.UserListRequest.prototype.setQueryString = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -1237,6 +1161,7 @@ proto.vmr.UserListResponse.prototype.toObject = function(opt_includeInstance) {
  *     http://goto/soy-param-migration
  * @param {!proto.vmr.UserListResponse} msg The msg instance to transform.
  * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.vmr.UserListResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
@@ -1287,8 +1212,7 @@ proto.vmr.UserListResponse.deserializeBinaryFromReader = function(msg, reader) {
     case 2:
       var value = new proto.vmr.UserResponse;
       reader.readMessage(value,proto.vmr.UserResponse.deserializeBinaryFromReader);
-      msg.getUserList().push(value);
-      msg.setUserList(msg.getUserList());
+      msg.addUser(value);
       break;
     default:
       reader.skipField();
@@ -1300,35 +1224,26 @@ proto.vmr.UserListResponse.deserializeBinaryFromReader = function(msg, reader) {
 
 
 /**
- * Class method variant: serializes the given message to binary data
- * (in protobuf wire format), writing to the given BinaryWriter.
- * @param {!proto.vmr.UserListResponse} message
- * @param {!jspb.BinaryWriter} writer
- */
-proto.vmr.UserListResponse.serializeBinaryToWriter = function(message, writer) {
-  message.serializeBinaryToWriter(writer);
-};
-
-
-/**
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
 proto.vmr.UserListResponse.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  this.serializeBinaryToWriter(writer);
+  proto.vmr.UserListResponse.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
 
 /**
- * Serializes the message to binary data (in protobuf wire format),
- * writing to the given BinaryWriter.
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.vmr.UserListResponse} message
  * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.UserListResponse.prototype.serializeBinaryToWriter = function (writer) {
+proto.vmr.UserListResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = this.getError();
+  f = message.getError();
   if (f != null) {
     writer.writeMessage(
       1,
@@ -1336,7 +1251,7 @@ proto.vmr.UserListResponse.prototype.serializeBinaryToWriter = function (writer)
       vmr_common_pb.Error.serializeBinaryToWriter
     );
   }
-  f = this.getUserList();
+  f = message.getUserList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
       2,
@@ -1348,25 +1263,16 @@ proto.vmr.UserListResponse.prototype.serializeBinaryToWriter = function (writer)
 
 
 /**
- * Creates a deep clone of this proto. No data is shared with the original.
- * @return {!proto.vmr.UserListResponse} The clone.
- */
-proto.vmr.UserListResponse.prototype.cloneMessage = function() {
-  return /** @type {!proto.vmr.UserListResponse} */ (jspb.Message.cloneMessage(this));
-};
-
-
-/**
  * optional Error error = 1;
- * @return {proto.vmr.Error}
+ * @return {?proto.vmr.Error}
  */
 proto.vmr.UserListResponse.prototype.getError = function() {
-  return /** @type{proto.vmr.Error} */ (
+  return /** @type{?proto.vmr.Error} */ (
     jspb.Message.getWrapperField(this, vmr_common_pb.Error, 1));
 };
 
 
-/** @param {proto.vmr.Error|undefined} value  */
+/** @param {?proto.vmr.Error|undefined} value */
 proto.vmr.UserListResponse.prototype.setError = function(value) {
   jspb.Message.setWrapperField(this, 1, value);
 };
@@ -1379,7 +1285,7 @@ proto.vmr.UserListResponse.prototype.clearError = function() {
 
 /**
  * Returns whether this field is set.
- * @return{!boolean}
+ * @return {!boolean}
  */
 proto.vmr.UserListResponse.prototype.hasError = function() {
   return jspb.Message.getField(this, 1) != null;
@@ -1388,19 +1294,27 @@ proto.vmr.UserListResponse.prototype.hasError = function() {
 
 /**
  * repeated UserResponse user = 2;
- * If you change this array by adding, removing or replacing elements, or if you
- * replace the array itself, then you must call the setter to update it.
- * @return {!Array.<!proto.vmr.UserResponse>}
+ * @return {!Array<!proto.vmr.UserResponse>}
  */
 proto.vmr.UserListResponse.prototype.getUserList = function() {
-  return /** @type{!Array.<!proto.vmr.UserResponse>} */ (
+  return /** @type{!Array<!proto.vmr.UserResponse>} */ (
     jspb.Message.getRepeatedWrapperField(this, proto.vmr.UserResponse, 2));
 };
 
 
-/** @param {Array.<!proto.vmr.UserResponse>} value  */
+/** @param {!Array<!proto.vmr.UserResponse>} value */
 proto.vmr.UserListResponse.prototype.setUserList = function(value) {
   jspb.Message.setRepeatedWrapperField(this, 2, value);
+};
+
+
+/**
+ * @param {!proto.vmr.UserResponse=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.vmr.UserResponse}
+ */
+proto.vmr.UserListResponse.prototype.addUser = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.vmr.UserResponse, opt_index);
 };
 
 
@@ -1452,13 +1366,14 @@ proto.vmr.UserResponse.prototype.toObject = function(opt_includeInstance) {
  *     http://goto/soy-param-migration
  * @param {!proto.vmr.UserResponse} msg The msg instance to transform.
  * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.vmr.UserResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    id: msg.getId(),
-    username: msg.getUsername(),
-    name: msg.getName(),
-    friendStatus: msg.getFriendStatus()
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    username: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    name: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    friendStatus: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -1521,56 +1436,47 @@ proto.vmr.UserResponse.deserializeBinaryFromReader = function(msg, reader) {
 
 
 /**
- * Class method variant: serializes the given message to binary data
- * (in protobuf wire format), writing to the given BinaryWriter.
- * @param {!proto.vmr.UserResponse} message
- * @param {!jspb.BinaryWriter} writer
- */
-proto.vmr.UserResponse.serializeBinaryToWriter = function(message, writer) {
-  message.serializeBinaryToWriter(writer);
-};
-
-
-/**
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
 proto.vmr.UserResponse.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  this.serializeBinaryToWriter(writer);
+  proto.vmr.UserResponse.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
 
 /**
- * Serializes the message to binary data (in protobuf wire format),
- * writing to the given BinaryWriter.
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.vmr.UserResponse} message
  * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.UserResponse.prototype.serializeBinaryToWriter = function (writer) {
+proto.vmr.UserResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = this.getId();
+  f = message.getId();
   if (f !== 0) {
     writer.writeInt64(
       1,
       f
     );
   }
-  f = this.getUsername();
+  f = message.getUsername();
   if (f.length > 0) {
     writer.writeString(
       2,
       f
     );
   }
-  f = this.getName();
+  f = message.getName();
   if (f.length > 0) {
     writer.writeString(
       3,
       f
     );
   }
-  f = this.getFriendStatus();
+  f = message.getFriendStatus();
   if (f !== 0.0) {
     writer.writeEnum(
       4,
@@ -1581,26 +1487,17 @@ proto.vmr.UserResponse.prototype.serializeBinaryToWriter = function (writer) {
 
 
 /**
- * Creates a deep clone of this proto. No data is shared with the original.
- * @return {!proto.vmr.UserResponse} The clone.
- */
-proto.vmr.UserResponse.prototype.cloneMessage = function() {
-  return /** @type {!proto.vmr.UserResponse} */ (jspb.Message.cloneMessage(this));
-};
-
-
-/**
  * optional int64 id = 1;
  * @return {number}
  */
 proto.vmr.UserResponse.prototype.getId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldProto3(this, 1, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
 
-/** @param {number} value  */
+/** @param {number} value */
 proto.vmr.UserResponse.prototype.setId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -1609,13 +1506,13 @@ proto.vmr.UserResponse.prototype.setId = function(value) {
  * @return {string}
  */
 proto.vmr.UserResponse.prototype.getUsername = function() {
-  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 2, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
-/** @param {string} value  */
+/** @param {string} value */
 proto.vmr.UserResponse.prototype.setUsername = function(value) {
-  jspb.Message.setField(this, 2, value);
+  jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -1624,13 +1521,13 @@ proto.vmr.UserResponse.prototype.setUsername = function(value) {
  * @return {string}
  */
 proto.vmr.UserResponse.prototype.getName = function() {
-  return /** @type {string} */ (jspb.Message.getFieldProto3(this, 3, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
 
-/** @param {string} value  */
+/** @param {string} value */
 proto.vmr.UserResponse.prototype.setName = function(value) {
-  jspb.Message.setField(this, 3, value);
+  jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
@@ -1639,13 +1536,13 @@ proto.vmr.UserResponse.prototype.setName = function(value) {
  * @return {!proto.vmr.FriendStatus}
  */
 proto.vmr.UserResponse.prototype.getFriendStatus = function() {
-  return /** @type {!proto.vmr.FriendStatus} */ (jspb.Message.getFieldProto3(this, 4, 0));
+  return /** @type {!proto.vmr.FriendStatus} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
 
-/** @param {!proto.vmr.FriendStatus} value  */
+/** @param {!proto.vmr.FriendStatus} value */
 proto.vmr.UserResponse.prototype.setFriendStatus = function(value) {
-  jspb.Message.setField(this, 4, value);
+  jspb.Message.setProto3EnumField(this, 4, value);
 };
 
 
@@ -1692,10 +1589,11 @@ proto.vmr.ClearUnreadMessageRequest.prototype.toObject = function(opt_includeIns
  *     http://goto/soy-param-migration
  * @param {!proto.vmr.ClearUnreadMessageRequest} msg The msg instance to transform.
  * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.vmr.ClearUnreadMessageRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    friendId: msg.getFriendId()
+    friendId: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -1746,35 +1644,26 @@ proto.vmr.ClearUnreadMessageRequest.deserializeBinaryFromReader = function(msg, 
 
 
 /**
- * Class method variant: serializes the given message to binary data
- * (in protobuf wire format), writing to the given BinaryWriter.
- * @param {!proto.vmr.ClearUnreadMessageRequest} message
- * @param {!jspb.BinaryWriter} writer
- */
-proto.vmr.ClearUnreadMessageRequest.serializeBinaryToWriter = function(message, writer) {
-  message.serializeBinaryToWriter(writer);
-};
-
-
-/**
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
 proto.vmr.ClearUnreadMessageRequest.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  this.serializeBinaryToWriter(writer);
+  proto.vmr.ClearUnreadMessageRequest.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
 
 /**
- * Serializes the message to binary data (in protobuf wire format),
- * writing to the given BinaryWriter.
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.vmr.ClearUnreadMessageRequest} message
  * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.ClearUnreadMessageRequest.prototype.serializeBinaryToWriter = function (writer) {
+proto.vmr.ClearUnreadMessageRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = this.getFriendId();
+  f = message.getFriendId();
   if (f !== 0) {
     writer.writeInt64(
       1,
@@ -1785,26 +1674,17 @@ proto.vmr.ClearUnreadMessageRequest.prototype.serializeBinaryToWriter = function
 
 
 /**
- * Creates a deep clone of this proto. No data is shared with the original.
- * @return {!proto.vmr.ClearUnreadMessageRequest} The clone.
- */
-proto.vmr.ClearUnreadMessageRequest.prototype.cloneMessage = function() {
-  return /** @type {!proto.vmr.ClearUnreadMessageRequest} */ (jspb.Message.cloneMessage(this));
-};
-
-
-/**
  * optional int64 friend_id = 1;
  * @return {number}
  */
 proto.vmr.ClearUnreadMessageRequest.prototype.getFriendId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldProto3(this, 1, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
 
-/** @param {number} value  */
+/** @param {number} value */
 proto.vmr.ClearUnreadMessageRequest.prototype.setFriendId = function(value) {
-  jspb.Message.setField(this, 1, value);
+  jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -1851,6 +1731,7 @@ proto.vmr.ClearUnreadMessageResponse.prototype.toObject = function(opt_includeIn
  *     http://goto/soy-param-migration
  * @param {!proto.vmr.ClearUnreadMessageResponse} msg The msg instance to transform.
  * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.vmr.ClearUnreadMessageResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
@@ -1906,35 +1787,26 @@ proto.vmr.ClearUnreadMessageResponse.deserializeBinaryFromReader = function(msg,
 
 
 /**
- * Class method variant: serializes the given message to binary data
- * (in protobuf wire format), writing to the given BinaryWriter.
- * @param {!proto.vmr.ClearUnreadMessageResponse} message
- * @param {!jspb.BinaryWriter} writer
- */
-proto.vmr.ClearUnreadMessageResponse.serializeBinaryToWriter = function(message, writer) {
-  message.serializeBinaryToWriter(writer);
-};
-
-
-/**
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
 proto.vmr.ClearUnreadMessageResponse.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  this.serializeBinaryToWriter(writer);
+  proto.vmr.ClearUnreadMessageResponse.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
 
 /**
- * Serializes the message to binary data (in protobuf wire format),
- * writing to the given BinaryWriter.
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.vmr.ClearUnreadMessageResponse} message
  * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.ClearUnreadMessageResponse.prototype.serializeBinaryToWriter = function (writer) {
+proto.vmr.ClearUnreadMessageResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = this.getError();
+  f = message.getError();
   if (f != null) {
     writer.writeMessage(
       1,
@@ -1946,25 +1818,16 @@ proto.vmr.ClearUnreadMessageResponse.prototype.serializeBinaryToWriter = functio
 
 
 /**
- * Creates a deep clone of this proto. No data is shared with the original.
- * @return {!proto.vmr.ClearUnreadMessageResponse} The clone.
- */
-proto.vmr.ClearUnreadMessageResponse.prototype.cloneMessage = function() {
-  return /** @type {!proto.vmr.ClearUnreadMessageResponse} */ (jspb.Message.cloneMessage(this));
-};
-
-
-/**
  * optional Error error = 1;
- * @return {proto.vmr.Error}
+ * @return {?proto.vmr.Error}
  */
 proto.vmr.ClearUnreadMessageResponse.prototype.getError = function() {
-  return /** @type{proto.vmr.Error} */ (
+  return /** @type{?proto.vmr.Error} */ (
     jspb.Message.getWrapperField(this, vmr_common_pb.Error, 1));
 };
 
 
-/** @param {proto.vmr.Error|undefined} value  */
+/** @param {?proto.vmr.Error|undefined} value */
 proto.vmr.ClearUnreadMessageResponse.prototype.setError = function(value) {
   jspb.Message.setWrapperField(this, 1, value);
 };
@@ -1977,7 +1840,7 @@ proto.vmr.ClearUnreadMessageResponse.prototype.clearError = function() {
 
 /**
  * Returns whether this field is set.
- * @return{!boolean}
+ * @return {!boolean}
  */
 proto.vmr.ClearUnreadMessageResponse.prototype.hasError = function() {
   return jspb.Message.getField(this, 1) != null;
@@ -2027,11 +1890,12 @@ proto.vmr.SetFriendStatusRequest.prototype.toObject = function(opt_includeInstan
  *     http://goto/soy-param-migration
  * @param {!proto.vmr.SetFriendStatusRequest} msg The msg instance to transform.
  * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.vmr.SetFriendStatusRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    type: msg.getType(),
-    friendId: msg.getFriendId()
+    type: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    friendId: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -2086,87 +1950,39 @@ proto.vmr.SetFriendStatusRequest.deserializeBinaryFromReader = function(msg, rea
 
 
 /**
- * Class method variant: serializes the given message to binary data
- * (in protobuf wire format), writing to the given BinaryWriter.
- * @param {!proto.vmr.SetFriendStatusRequest} message
- * @param {!jspb.BinaryWriter} writer
- */
-proto.vmr.SetFriendStatusRequest.serializeBinaryToWriter = function(message, writer) {
-  message.serializeBinaryToWriter(writer);
-};
-
-
-/**
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
 proto.vmr.SetFriendStatusRequest.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  this.serializeBinaryToWriter(writer);
+  proto.vmr.SetFriendStatusRequest.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
 
 /**
- * Serializes the message to binary data (in protobuf wire format),
- * writing to the given BinaryWriter.
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.vmr.SetFriendStatusRequest} message
  * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.SetFriendStatusRequest.prototype.serializeBinaryToWriter = function (writer) {
+proto.vmr.SetFriendStatusRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = this.getType();
+  f = message.getType();
   if (f !== 0.0) {
     writer.writeEnum(
       1,
       f
     );
   }
-  f = this.getFriendId();
+  f = message.getFriendId();
   if (f !== 0) {
     writer.writeInt64(
       2,
       f
     );
   }
-};
-
-
-/**
- * Creates a deep clone of this proto. No data is shared with the original.
- * @return {!proto.vmr.SetFriendStatusRequest} The clone.
- */
-proto.vmr.SetFriendStatusRequest.prototype.cloneMessage = function() {
-  return /** @type {!proto.vmr.SetFriendStatusRequest} */ (jspb.Message.cloneMessage(this));
-};
-
-
-/**
- * optional Type type = 1;
- * @return {!proto.vmr.SetFriendStatusRequest.Type}
- */
-proto.vmr.SetFriendStatusRequest.prototype.getType = function() {
-  return /** @type {!proto.vmr.SetFriendStatusRequest.Type} */ (jspb.Message.getFieldProto3(this, 1, 0));
-};
-
-
-/** @param {!proto.vmr.SetFriendStatusRequest.Type} value  */
-proto.vmr.SetFriendStatusRequest.prototype.setType = function(value) {
-  jspb.Message.setField(this, 1, value);
-};
-
-
-/**
- * optional int64 friend_id = 2;
- * @return {number}
- */
-proto.vmr.SetFriendStatusRequest.prototype.getFriendId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldProto3(this, 2, 0));
-};
-
-
-/** @param {number} value  */
-proto.vmr.SetFriendStatusRequest.prototype.setFriendId = function(value) {
-  jspb.Message.setField(this, 2, value);
 };
 
 
@@ -2179,6 +1995,36 @@ proto.vmr.SetFriendStatusRequest.Type = {
   REJECT_FRIEND: 2,
   REMOVE_FRIEND: 3
 };
+
+/**
+ * optional Type type = 1;
+ * @return {!proto.vmr.SetFriendStatusRequest.Type}
+ */
+proto.vmr.SetFriendStatusRequest.prototype.getType = function() {
+  return /** @type {!proto.vmr.SetFriendStatusRequest.Type} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/** @param {!proto.vmr.SetFriendStatusRequest.Type} value */
+proto.vmr.SetFriendStatusRequest.prototype.setType = function(value) {
+  jspb.Message.setProto3EnumField(this, 1, value);
+};
+
+
+/**
+ * optional int64 friend_id = 2;
+ * @return {number}
+ */
+proto.vmr.SetFriendStatusRequest.prototype.getFriendId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/** @param {number} value */
+proto.vmr.SetFriendStatusRequest.prototype.setFriendId = function(value) {
+  jspb.Message.setProto3IntField(this, 2, value);
+};
+
 
 
 /**
@@ -2223,6 +2069,7 @@ proto.vmr.SetFriendStatusResponse.prototype.toObject = function(opt_includeInsta
  *     http://goto/soy-param-migration
  * @param {!proto.vmr.SetFriendStatusResponse} msg The msg instance to transform.
  * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.vmr.SetFriendStatusResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
@@ -2278,35 +2125,26 @@ proto.vmr.SetFriendStatusResponse.deserializeBinaryFromReader = function(msg, re
 
 
 /**
- * Class method variant: serializes the given message to binary data
- * (in protobuf wire format), writing to the given BinaryWriter.
- * @param {!proto.vmr.SetFriendStatusResponse} message
- * @param {!jspb.BinaryWriter} writer
- */
-proto.vmr.SetFriendStatusResponse.serializeBinaryToWriter = function(message, writer) {
-  message.serializeBinaryToWriter(writer);
-};
-
-
-/**
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
 proto.vmr.SetFriendStatusResponse.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  this.serializeBinaryToWriter(writer);
+  proto.vmr.SetFriendStatusResponse.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
 
 /**
- * Serializes the message to binary data (in protobuf wire format),
- * writing to the given BinaryWriter.
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.vmr.SetFriendStatusResponse} message
  * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.vmr.SetFriendStatusResponse.prototype.serializeBinaryToWriter = function (writer) {
+proto.vmr.SetFriendStatusResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = this.getError();
+  f = message.getError();
   if (f != null) {
     writer.writeMessage(
       1,
@@ -2318,25 +2156,16 @@ proto.vmr.SetFriendStatusResponse.prototype.serializeBinaryToWriter = function (
 
 
 /**
- * Creates a deep clone of this proto. No data is shared with the original.
- * @return {!proto.vmr.SetFriendStatusResponse} The clone.
- */
-proto.vmr.SetFriendStatusResponse.prototype.cloneMessage = function() {
-  return /** @type {!proto.vmr.SetFriendStatusResponse} */ (jspb.Message.cloneMessage(this));
-};
-
-
-/**
  * optional Error error = 1;
- * @return {proto.vmr.Error}
+ * @return {?proto.vmr.Error}
  */
 proto.vmr.SetFriendStatusResponse.prototype.getError = function() {
-  return /** @type{proto.vmr.Error} */ (
+  return /** @type{?proto.vmr.Error} */ (
     jspb.Message.getWrapperField(this, vmr_common_pb.Error, 1));
 };
 
 
-/** @param {proto.vmr.Error|undefined} value  */
+/** @param {?proto.vmr.Error|undefined} value */
 proto.vmr.SetFriendStatusResponse.prototype.setError = function(value) {
   jspb.Message.setWrapperField(this, 1, value);
 };
@@ -2349,7 +2178,7 @@ proto.vmr.SetFriendStatusResponse.prototype.clearError = function() {
 
 /**
  * Returns whether this field is set.
- * @return{!boolean}
+ * @return {!boolean}
  */
 proto.vmr.SetFriendStatusResponse.prototype.hasError = function() {
   return jspb.Message.getField(this, 1) != null;

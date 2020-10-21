@@ -1,5 +1,6 @@
 package com.anhvan.vmr.database;
 
+import com.anhvan.vmr.consts.Metric;
 import com.anhvan.vmr.service.AsyncWorkerService;
 import com.anhvan.vmr.service.PasswordService;
 import com.anhvan.vmr.service.TrackerService;
@@ -44,8 +45,9 @@ public class DatabaseModule {
         .passwordService(passwordService)
         .chatDatabaseService(chatDatabaseService)
         .historyTracker(
-            trackerService.getTimeTracker("database_query_time", "method", "getHistory"))
-        .transferTracker(trackerService.getTimeTracker("database_query_time", "method", "transfer"))
+            trackerService.getTimeTracker(Metric.DATABASE_QUERY_TIME, "method", "getHistory"))
+        .transferTracker(
+            trackerService.getTimeTracker(Metric.DATABASE_QUERY_TIME, "method", "transfer"))
         .build();
   }
 }

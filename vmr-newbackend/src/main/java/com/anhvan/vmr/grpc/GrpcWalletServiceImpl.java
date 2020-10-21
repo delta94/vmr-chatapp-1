@@ -107,7 +107,7 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
     HistoryResponse.Builder historyResponseBuilder = HistoryResponse.newBuilder();
 
     walletDatabaseService
-        .getHistoryWithOffset(userId, request.getOffset())
+        .getHistory(userId, request.getOffset())
         .onComplete(
             ar -> {
               if (ar.succeeded()) {
@@ -138,8 +138,10 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
   public void transfer(TransferRequest request, StreamObserver<TransferResponse> responseObserver) {
     TimeTracker.Tracker tracker = transferTracker.start();
 
-    long userId = rd.nextInt(999) + 1;
-    long receiverId = rd.nextInt(999) + 1;
+    //    long userId = rd.nextInt(999) + 1;
+    //    long receiverId = rd.nextInt(999) + 1;
+    long userId = GrpcKey.getUserId();
+    long receiverId = request.getReceiver();
     long amount = request.getAmount();
 
     log.info(
@@ -192,11 +194,6 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
               if (ar.succeeded()) {
                 // Transfer successfully
                 DatabaseTransferResponse dbResponse = ar.result();
-                responseBuilder.setData(
-                    TransferResponse.Data.newBuilder()
-                        .setBalance(dbResponse.getNewBalance())
-                        .setLastUpdated(dbResponse.getLastUpdated())
-                        .build());
 
                 // Response to user
                 responseObserver.onNext(responseBuilder.build());

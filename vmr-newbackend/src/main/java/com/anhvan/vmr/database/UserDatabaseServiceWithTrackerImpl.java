@@ -23,6 +23,7 @@ public class UserDatabaseServiceWithTrackerImpl extends UserDatabaseServiceImpl 
   public Future<User> getUserById(long id) {
     Promise<User> promise = Promise.promise();
     TimeTracker.Tracker tracker = getUserByIdTracker.start();
+
     super.getUserById(id)
         .onComplete(
             ar -> {

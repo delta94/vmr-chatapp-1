@@ -1,5 +1,6 @@
 package com.anhvan.vmr.database;
 
+import com.anhvan.vmr.consts.AccountLogType;
 import com.anhvan.vmr.entity.DatabaseTransferRequest;
 import com.anhvan.vmr.entity.DatabaseTransferResponse;
 import com.anhvan.vmr.entity.HistoryItemResponse;
@@ -35,14 +36,9 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
           + "on account_logs.transfer = transfers.id "
           + "where account_logs.user = ?";
 
-  public static final String CHECK_USER_EXIST_QUERY =
-      "select exists(select * from users where id = ?) as user_exist";
-
   public static final String CHECK_REQUEST_ID_EXIST_QUERY =
       "select exists(select * from transfers where sender=? and "
           + "request_id=?) as transfer_exist";
-
-  public static final String BALANCE_QUERY = "select balance from users where id = ? for update";
 
   public static final String UPDATE_BALANCE_QUERY =
       "update users set balance=balance+?, last_updated=? where id=?";
@@ -67,12 +63,15 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
           + "where account_logs.user = ? "
           + "order by account_logs.id desc limit ?, 20 ";
 
+  public static final String SELECT_BALANCE_FOR_UPDATE_STMT =
+      "select id, balance from users where id=? or id=? for update";
+
   private MySQLPool pool;
   private PasswordService passwordService;
   private ChatDatabaseService chatDatabaseService;
 
   @Override
-  public Future<List<HistoryItemResponse>> getHistoryWithOffset(long userId, long offset) {
+  public Future<List<HistoryItemResponse>> getHistory(long userId, long offset) {
     log.debug("Start getHistoryWithOffset: userId={}, offset={}", userId, offset);
 
     Promise<List<HistoryItemResponse>> historyPromise = Promise.promise();
@@ -134,7 +133,6 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
                 // Return new balance and last update time to sender
                 responsePromise.complete(
                     DatabaseTransferResponse.builder()
-                        .newBalance(initHolder.getNewSenderBalance())
                         .lastUpdated(initHolder.getLastUpdated())
                         .build());
               } else {
@@ -192,7 +190,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 
     holder
         .getConn()
-        .preparedQuery("select id, balance from users where id=? or id=? for update")
+        .preparedQuery(SELECT_BALANCE_FOR_UPDATE_STMT)
         .execute(
             Tuple.of(senderId, holder.getReceiverId()),
             ar -> {
@@ -257,7 +255,6 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     Promise<TransferStateHolder> balancePromise = Promise.promise();
 
     long amount = holder.getAmount();
-    long senderNewBalance = holder.getSenderBalance() - amount;
     long lastUpdated = holder.getLastUpdated();
 
     List<Tuple> queryTuples =
@@ -275,7 +272,6 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
                 balancePromise.fail(ar.cause());
                 return;
               }
-              holder.setNewSenderBalance(senderNewBalance);
               balancePromise.complete(holder);
             });
 
@@ -319,8 +315,8 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 
     List<Tuple> tuples =
         Arrays.asList(
-            Tuple.of(holder.getSenderId(), holder.getTransferId(), "TRANSFER"),
-            Tuple.of(holder.getReceiverId(), holder.getTransferId(), "RECEIVE"));
+            Tuple.of(holder.getSenderId(), holder.getTransferId(), AccountLogType.TRANSFER),
+            Tuple.of(holder.getReceiverId(), holder.getTransferId(), AccountLogType.RECEIVE));
 
     holder
         .getConn()

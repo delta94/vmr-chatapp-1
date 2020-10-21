@@ -68,24 +68,28 @@ function MessageListInternal(props) {
     };
   });
 
+  let loadMessages = () => {
+    if (chatMessages.length < 20) {
+      getMessageList(receiverId, chatMessages.length).then((data) => {
+        updateMessageList(data, receiverId);
+        return data.messages.length;
+      }).then(length => {
+        if (length + chatMessages.length < 20) {
+          getMessageList(receiverId, chatMessages.length + length).then((data) => {
+            updateMessageList(data, receiverId);
+            scrollToBottom();
+          });
+        } else {
+          scrollToBottom();
+        }
+      });
+    }
+  };
+
   // Load message
   useEffect(() => {
       updateConversationId(receiverId);
-      if (chatMessages.length === 0) {
-        getMessageList(receiverId, 0).then((data) => {
-          updateMessageList(data, receiverId);
-          return data.messages.length;
-        }).then(length => {
-          if (length + chatMessages.length < 20) {
-            getMessageList(receiverId, chatMessages.length + length).then((data) => {
-              updateMessageList(data, receiverId);
-              scrollToBottom();
-            });
-          } else {
-            scrollToBottom();
-          }
-        });
-      }
+      loadMessages();
       clearChatNotifications();
     },
     // eslint-disable-next-line

@@ -8,7 +8,7 @@ import io.vertx.core.Future;
 import java.util.List;
 
 public interface WalletDatabaseService {
-  Future<List<HistoryItemResponse>> getHistoryWithOffset(long userId, long offset);
+  Future<List<HistoryItemResponse>> getHistory(long userId, long offset);
 
   Future<DatabaseTransferResponse> transfer(DatabaseTransferRequest databaseTransferRequest);
 }

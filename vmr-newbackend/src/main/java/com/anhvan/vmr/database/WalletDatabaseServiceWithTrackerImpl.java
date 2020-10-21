@@ -19,11 +19,11 @@ public class WalletDatabaseServiceWithTrackerImpl extends WalletDatabaseServiceI
   private TimeTracker transferTracker;
 
   @Override
-  public Future<List<HistoryItemResponse>> getHistoryWithOffset(long userId, long offset) {
+  public Future<List<HistoryItemResponse>> getHistory(long userId, long offset) {
     Promise<List<HistoryItemResponse>> promise = Promise.promise();
     TimeTracker.Tracker tracker = historyTracker.start();
 
-    super.getHistoryWithOffset(userId, offset)
+    super.getHistory(userId, offset)
         .onComplete(
             ar -> {
               AsyncUtil.convert(promise, ar);

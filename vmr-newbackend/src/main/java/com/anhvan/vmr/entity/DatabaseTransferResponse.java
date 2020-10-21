@@ -10,6 +10,5 @@ import lombok.ToString;
 @Builder
 @ToString
 public class DatabaseTransferResponse {
-  long newBalance;
   long lastUpdated;
 }

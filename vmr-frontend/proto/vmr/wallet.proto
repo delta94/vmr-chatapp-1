@@ -9,7 +9,6 @@ import "vmr/common.proto";
 service WalletService {
   rpc GetBalance(Empty) returns (BalanceResponse);
   rpc Transfer(TransferRequest) returns (TransferResponse);
-  rpc GetHistory(Empty) returns (HistoryResponse);
   rpc GetHistoryWithOffset(GetHistoryWithOffsetRequest) returns (HistoryResponse);
   rpc RemindTransfer(TransferReminderRequest) returns (TransferReminderResponse);
   rpc GetTransferReminder(Empty) returns (TransferReminderListResponse);
@@ -44,13 +43,7 @@ message TransferRequest {
 }
 
 message TransferResponse {
-  message Data {
-    int64 balance = 1;
-    int64 last_updated = 2;
-  }
-
   Error error = 1;
-  Data data = 2;
 }
 
 message HistoryResponse {

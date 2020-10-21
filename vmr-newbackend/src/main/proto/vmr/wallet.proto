@@ -43,13 +43,7 @@ message TransferRequest {
 }
 
 message TransferResponse {
-  message Data {
-    int64 balance = 1;
-    int64 last_updated = 2;
-  }
-
   Error error = 1;
-  Data data = 2;
 }
 
 message HistoryResponse {

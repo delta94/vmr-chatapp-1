@@ -95,8 +95,7 @@ export default function TransferMoneyModal(props) {
 
   let handleTransfer = () => {
     setSendBtnLoading(true);
-    transfer(receiverId, amount, password, message, requestId).then(data => {
-      console.log(data.getBalance());
+    transfer(receiverId, amount, password, message, requestId).then(() => {
       setStep(2);
     }).catch(err => {
       if (!err.getCode) {
