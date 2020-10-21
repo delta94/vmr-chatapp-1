@@ -4,10 +4,22 @@
     <Console name="Console" target="SYSTEM_OUT">
       <PatternLayout pattern="%d{dd-MMM-yyyy HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </Console>
+    <RollingFile
+        name="RollingFile"
+        fileName="logs/vmr.log"
+        filePattern="logs/vmr.%i.log.gz"
+        ignoreExceptions="false">
+      <PatternLayout pattern="%d{dd-MMM-yyyy HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="10MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="5"/>
+    </RollingFile>
   </Appenders>
   <Loggers>
     <AsyncLogger name="com.anhvan.vmr" level="info" additivity="false">
       <AppenderRef ref="Console"/>
+      <AppenderRef ref="RollingFile" level="error"/>
     </AsyncLogger>
     <Root level="info">
       <AppenderRef ref="Console"/>

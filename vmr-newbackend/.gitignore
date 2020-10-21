@@ -6,3 +6,4 @@ target/
 dependency-reduced-pom.xml
 .idea
 vmr-newbackend.iml
+logs/

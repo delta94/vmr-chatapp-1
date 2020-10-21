@@ -83,8 +83,8 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, rate(grpc_response_time_seconds_bucket[10m]))",
-          "refId": "A"
+          "expr": "histogram_quantile(0.99, rate(grpc_response_time_seconds_bucket[5m]))",
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -750,7 +750,7 @@
     "list": []
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
@@ -781,5 +781,5 @@
   "timezone": "",
   "title": "vmr-chat",
   "uid": "e1NTOU5Mz",
-  "version": 15
+  "version": 20
 }

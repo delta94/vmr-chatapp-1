@@ -138,8 +138,8 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
   public void transfer(TransferRequest request, StreamObserver<TransferResponse> responseObserver) {
     TimeTracker.Tracker tracker = transferTracker.start();
 
-    long userId = GrpcKey.getUserId();
-    long receiverId = request.getReceiver();
+    long userId = rd.nextInt(999) + 1;
+    long receiverId = rd.nextInt(999) + 1;
     long amount = request.getAmount();
 
     log.info(

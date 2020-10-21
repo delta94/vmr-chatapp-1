@@ -129,7 +129,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
                 initHolder.getTransaction().commit();
                 initHolder.getConn().close();
 
-                log.debug("transfer execute successfully: transferRequest={}", transferRequest);
+                log.info("transfer execute successfully: transferRequest={}", transferRequest);
 
                 // Return new balance and last update time to sender
                 responsePromise.complete(
