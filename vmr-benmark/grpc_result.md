@@ -3,229 +3,191 @@
 - [Kết quả benmark các GRPC service](#kết-quả-benmark-các-grpc-service)
   - [1. GetBalance](#1-getbalance)
   - [2. GetHistory](#2-gethistory)
-  - [3. Transfer (Sender và Receiver cố định)](#3-transfer-sender-và-receiver-cố-định)
-  - [4. Transfer (Sender và Receiver ngẫu nhiên)](#4-transfer-sender-và-receiver-ngẫu-nhiên)
-  - [3. GetChatFriendList](#3-getchatfriendlist)
-  - [4. GetFriendList](#4-getfriendlist)
+  - [3. Transfer (Sender và Receiver ngẫu nhiên)](#3-transfer-sender-và-receiver-ngẫu-nhiên)
+  - [4. GetChatFriendList](#4-getchatfriendlist)
+  - [5. GetFriendList](#5-getfriendlist)
 
 ## 1. GetBalance
 
 ```bash
 Summary:
-  Count:        2000
-  Total:        693.37 ms
-  Slowest:      36.92 ms
-  Fastest:      4.83 ms
-  Average:      17.03 ms
-  Requests/sec: 2884.47
+  Count:        500
+  Total:        94.02 ms
+  Slowest:      19.82 ms
+  Fastest:      1.00 ms
+  Average:      8.67 ms
+  Requests/sec: 5318.25
 
 Response time histogram:
-  4.826 [1]     |
-  8.036 [6]     |
-  11.246 [8]    |
-  14.456 [41]   |∎
-  17.665 [1477] |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  20.875 [322]  |∎∎∎∎∎∎∎∎∎
-  24.085 [45]   |∎
-  27.295 [1]    |
-  30.505 [53]   |∎
-  33.715 [28]   |∎
-  36.924 [18]   |
+  0.996 [1]     |
+  2.879 [13]    |∎∎∎∎
+  4.762 [38]    |∎∎∎∎∎∎∎∎∎∎∎
+  6.644 [112]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  8.527 [137]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  10.410 [66]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  12.292 [42]   |∎∎∎∎∎∎∎∎∎∎∎∎
+  14.175 [46]   |∎∎∎∎∎∎∎∎∎∎∎∎∎
+  16.058 [14]   |∎∎∎∎
+  17.941 [12]   |∎∎∎∎
+  19.823 [19]   |∎∎∎∎∎∎
 
 Latency distribution:
-  10 % in 15.22 ms
-  25 % in 15.41 ms
-  50 % in 15.77 ms
-  75 % in 17.43 ms
-  90 % in 19.44 ms
-  95 % in 23.92 ms
-  99 % in 33.17 ms
+  10 % in 4.67 ms 
+  25 % in 6.14 ms 
+  50 % in 7.76 ms 
+  75 % in 10.54 ms 
+  90 % in 13.86 ms 
+  95 % in 17.61 ms 
+  99 % in 19.42 ms 
 
 Status code distribution:
-  [OK]   2000 responses  
+  [OK]   500 responses
 ```
 
 ## 2. GetHistory
 
 ```bash
 Summary:
-  Count:        2000
-  Total:        988.66 ms
-  Slowest:      37.32 ms
-  Fastest:      5.19 ms
-  Average:      24.31 ms
-  Requests/sec: 2022.94
+  Count:        500
+  Total:        135.43 ms
+  Slowest:      29.68 ms
+  Fastest:      0.87 ms
+  Average:      12.16 ms
+  Requests/sec: 3692.00
 
 Response time histogram:
-  5.187 [1]     |
-  8.401 [6]     |
-  11.614 [5]    |
-  14.828 [8]    |
-  18.042 [12]   |
-  21.255 [32]   |∎
-  24.469 [1150] |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  27.683 [671]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  30.896 [100]  |∎∎∎
-  34.110 [7]    |
-  37.323 [8]    |
+  0.870 [1]     |
+  3.752 [10]    |∎∎∎
+  6.633 [17]    |∎∎∎∎∎
+  9.514 [126]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  12.395 [137]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  15.276 [109]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  18.157 [43]   |∎∎∎∎∎∎∎∎∎∎∎∎∎
+  21.038 [36]   |∎∎∎∎∎∎∎∎∎∎∎
+  23.919 [18]   |∎∎∎∎∎
+  26.800 [1]    |
+  29.681 [2]    |∎
 
 Latency distribution:
-  10 % in 22.63 ms
-  25 % in 23.44 ms
-  50 % in 24.20 ms
-  75 % in 25.02 ms
-  90 % in 26.54 ms
-  95 % in 27.96 ms
-  99 % in 30.18 ms
+  10 % in 7.57 ms 
+  25 % in 9.17 ms 
+  50 % in 11.25 ms 
+  75 % in 14.45 ms 
+  90 % in 18.74 ms 
+  95 % in 20.59 ms 
+  99 % in 23.55 ms 
 
 Status code distribution:
-  [OK]   2000 responses
+  [OK]   500 responses 
 ```
 
-## 3. Transfer (Sender và Receiver cố định)
+## 3. Transfer (Sender và Receiver ngẫu nhiên)
 
 ```bash
 Summary:
-  Count:        2000
-  Total:        40.84 s
-  Slowest:      1.39 s
-  Fastest:      181.81 ms
-  Average:      1.01 s
-  Requests/sec: 48.98
+  Count:        500
+  Total:        2.33 s
+  Slowest:      347.75 ms
+  Fastest:      0.49 ms
+  Average:      220.98 ms
+  Requests/sec: 214.24
 
 Response time histogram:
-  181.807 [1]   |
-  303.090 [4]   |
-  424.373 [4]   |
-  545.656 [6]   |
-  666.939 [6]   |
-  788.222 [5]   |
-  909.505 [3]   |
-  1030.788 [1485]       |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  1152.070 [455]        |∎∎∎∎∎∎∎∎∎∎∎∎
-  1273.353 [24] |∎
-  1394.636 [7]  |
+  0.491 [1]     |
+  35.217 [5]    |∎
+  69.943 [9]    |∎∎
+  104.668 [8]   |∎
+  139.394 [9]   |∎∎
+  174.120 [16]  |∎∎∎
+  208.845 [85]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  243.571 [237] |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  278.297 [85]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  313.022 [36]  |∎∎∎∎∎∎
+  347.748 [9]   |∎∎
 
 Latency distribution:
-  10 % in 969.91 ms
-  25 % in 987.95 ms
-  50 % in 1.01 s
-  75 % in 1.03 s
-  90 % in 1.05 s
-  95 % in 1.08 s
-  99 % in 1.17 s
+  10 % in 177.66 ms
+  25 % in 207.80 ms
+  50 % in 222.64 ms
+  75 % in 244.39 ms
+  90 % in 275.06 ms
+  95 % in 290.79 ms
+  99 % in 322.94 ms
 
 Status code distribution:
-  [OK]   2000 responses
+  [OK]   500 responses
 ```
 
-## 4. Transfer (Sender và Receiver ngẫu nhiên)
+## 4. GetChatFriendList
 
 ```bash
 Summary:
-  Count:        2000
-  Total:        11.67 s
-  Slowest:      970.55 ms
-  Fastest:      47.80 ms
-  Average:      288.21 ms
-  Requests/sec: 171.34
+  Count:        500
+  Total:        115.69 ms
+  Slowest:      25.96 ms
+  Fastest:      1.59 ms
+  Average:      10.70 ms
+  Requests/sec: 4322.00
 
 Response time histogram:
-  47.799 [1]    |
-  140.074 [6]   |
-  232.349 [405] |∎∎∎∎∎∎∎∎∎∎∎∎∎
-  324.624 [1204]        |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  416.898 [264] |∎∎∎∎∎∎∎∎∎
-  509.173 [71]  |∎∎
-  601.448 [8]   |
-  693.723 [9]   |
-  785.998 [11]  |
-  878.273 [14]  |
-  970.547 [7]   |
+  1.591 [1]     |
+  4.027 [40]    |∎∎∎∎∎∎∎∎∎∎∎∎
+  6.464 [38]    |∎∎∎∎∎∎∎∎∎∎∎∎
+  8.901 [104]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  11.337 [130]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  13.774 [66]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  16.211 [62]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  18.648 [23]   |∎∎∎∎∎∎∎
+  21.084 [25]   |∎∎∎∎∎∎∎∎
+  23.521 [10]   |∎∎∎
+  25.958 [1]    |
 
 Latency distribution:
-  10 % in 218.58 ms 
-  25 % in 238.06 ms 
-  50 % in 264.22 ms 
-  75 % in 306.11 ms 
-  90 % in 378.59 ms 
-  95 % in 434.28 ms 
-  99 % in 790.26 ms 
+  10 % in 4.86 ms 
+  25 % in 7.88 ms 
+  50 % in 9.99 ms 
+  75 % in 13.70 ms 
+  90 % in 18.09 ms 
+  95 % in 19.31 ms 
+  99 % in 21.93 ms 
 
 Status code distribution:
-  [OK]   2000 responses 
+  [OK]   500 responses 
 ```
 
-## 3. GetChatFriendList
+## 5. GetFriendList
 
 ```bash
 Summary:
-  Count:        2000
-  Total:        561.56 ms
-  Slowest:      32.31 ms
-  Fastest:      1.73 ms
-  Average:      13.43 ms
-  Requests/sec: 3561.54
+  Count:        500
+  Total:        122.94 ms
+  Slowest:      31.43 ms
+  Fastest:      1.02 ms
+  Average:      11.47 ms
+  Requests/sec: 4066.90
 
 Response time histogram:
-  1.733 [1]     |
-  4.790 [42]    |∎∎∎∎
-  7.847 [220]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  10.904 [475]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  13.962 [415]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  17.019 [410]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  20.076 [205]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  23.134 [109]  |∎∎∎∎∎∎∎∎∎
-  26.191 [72]   |∎∎∎∎∎∎
-  29.248 [39]   |∎∎∎
-  32.306 [12]   |∎
+  1.020 [1]     |
+  4.062 [27]    |∎∎∎∎∎∎∎∎
+  7.103 [101]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  10.144 [134]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  13.186 [91]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  16.227 [49]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  19.268 [36]   |∎∎∎∎∎∎∎∎∎∎∎
+  22.310 [17]   |∎∎∎∎∎
+  25.351 [7]    |∎∎
+  28.393 [36]   |∎∎∎∎∎∎∎∎∎∎∎
+  31.434 [1]    |
 
 Latency distribution:
-  10 % in 7.37 ms
-  25 % in 9.50 ms
-  50 % in 12.68 ms
-  75 % in 16.38 ms
-  90 % in 20.88 ms
-  95 % in 23.74 ms
-  99 % in 28.67 ms
+  10 % in 4.53 ms 
+  25 % in 6.95 ms 
+  50 % in 9.75 ms 
+  75 % in 14.20 ms 
+  90 % in 21.25 ms 
+  95 % in 26.16 ms 
+  99 % in 27.72 ms 
 
 Status code distribution:
-  [OK]   2000 responses
-```
-
-## 4. GetFriendList
-
-```bash
-Summary:
-  Count:        2000
-  Total:        750.69 ms
-  Slowest:      51.75 ms
-  Fastest:      0.78 ms
-  Average:      17.76 ms
-  Requests/sec: 2664.20
-
-Response time histogram:
-  0.781 [1]     |
-  5.878 [57]    |∎∎∎
-  10.975 [235]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  16.072 [555]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  21.169 [672]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  26.266 [253]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  31.362 [135]  |∎∎∎∎∎∎∎∎
-  36.459 [51]   |∎∎∎
-  41.556 [25]   |∎
-  46.653 [6]    |
-  51.750 [10]   |∎
-
-Latency distribution:
-  10 % in 9.47 ms
-  25 % in 13.02 ms
-  50 % in 17.20 ms
-  75 % in 20.99 ms
-  90 % in 27.13 ms
-  95 % in 30.99 ms
-  99 % in 40.22 ms
-
-Status code distribution:
-  [OK]   2000 responses
+  [OK]   500 responses
 ```
