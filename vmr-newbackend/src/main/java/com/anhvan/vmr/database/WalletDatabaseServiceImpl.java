@@ -7,7 +7,6 @@ import com.anhvan.vmr.exception.TransferException;
 import com.anhvan.vmr.exception.TransferException.ErrorCode;
 import com.anhvan.vmr.model.Message;
 import com.anhvan.vmr.service.PasswordService;
-import com.anhvan.vmr.util.RowMapperUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.mysqlclient.MySQLClient;
@@ -117,8 +116,7 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
 
     // Execute each step of transfer process
     startTransaction(initHolder)
-        .compose(this::checkReceiverExist)
-        .compose(this::checkBalanceEnough)
+        .compose(this::checkSenderBalanceEnough)
         .compose(this::checkRequestIdExist)
         .compose(this::updateAccountBalance)
         .compose(this::writeTransfer)
@@ -187,32 +185,45 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
     return txPromise.future();
   }
 
-  Future<TransferStateHolder> checkReceiverExist(TransferStateHolder holder) {
-    Promise<TransferStateHolder> existPromise = Promise.promise();
+  Future<TransferStateHolder> checkSenderBalanceEnough(TransferStateHolder holder) {
+    Promise<TransferStateHolder> enoughtPromise = Promise.promise();
+
+    long senderId = holder.getSenderId();
 
     holder
         .getConn()
-        .preparedQuery(CHECK_USER_EXIST_QUERY)
+        .preparedQuery("select id, balance from users where id=? or id=? for update")
         .execute(
-            Tuple.of(holder.getReceiverId()),
+            Tuple.of(senderId, holder.getReceiverId()),
             ar -> {
               if (ar.failed()) {
-                existPromise.fail(ar.cause());
+                enoughtPromise.fail(ar.cause());
+                return;
+              }
+
+              RowSet<Row> result = ar.result();
+              if (result.size() != 2) {
+                enoughtPromise.fail(
+                    new TransferException("Receiver not exist", ErrorCode.RECEIVER_INVALID));
                 return;
               }
 
               for (Row row : ar.result()) {
-                // Check if receiver exist
-                if (row.getBoolean("user_exist")) {
-                  existPromise.complete(holder);
-                } else {
-                  existPromise.fail(
-                      new TransferException("Receiver not exist", ErrorCode.RECEIVER_INVALID));
+                if (row.getLong("id") == senderId) {
+                  long balance = row.getLong("balance");
+                  if (balance < holder.getAmount()) {
+                    enoughtPromise.fail(
+                        new TransferException(
+                            "Balance is not enough", ErrorCode.BALANCE_NOT_ENOUGHT));
+                    return;
+                  }
+                  holder.setSenderBalance(balance);
+                  enoughtPromise.complete(holder);
                 }
               }
             });
 
-    return existPromise.future();
+    return enoughtPromise.future();
   }
 
   Future<TransferStateHolder> checkRequestIdExist(TransferStateHolder holder) {
@@ -240,47 +251,6 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
             });
 
     return existPromise.future();
-  }
-
-  Future<TransferStateHolder> checkBalanceEnough(TransferStateHolder holder) {
-    Promise<TransferStateHolder> enoughtPromise = Promise.promise();
-
-    // Get sender and receiver id
-    long senderId = holder.getSenderId();
-    long receiverId = holder.getReceiverId();
-
-    // Always require lock for user with smaller id first
-    long minId = Math.min(senderId, receiverId);
-    long maxId = Math.max(senderId, receiverId);
-
-    holder
-        .getConn()
-        .preparedQuery(BALANCE_QUERY)
-        .executeBatch(
-            Arrays.asList(Tuple.of(minId), Tuple.of(maxId)),
-            ar -> {
-              if (ar.failed()) {
-                enoughtPromise.fail(ar.cause());
-                return;
-              }
-
-              // Sender checking
-              RowSet<Row> senderRow = ar.result();
-              if (minId != senderId) {
-                senderRow = senderRow.next();
-              }
-              Row row = RowMapperUtil.firstRow(senderRow);
-              long balance = row.getLong("balance");
-              if (balance < holder.getAmount()) {
-                enoughtPromise.fail(
-                    new TransferException("Balance is not enought", ErrorCode.BALANCE_NOT_ENOUGHT));
-              } else {
-                holder.setSenderBalance(balance);
-                enoughtPromise.complete(holder);
-              }
-            });
-
-    return enoughtPromise.future();
   }
 
   Future<TransferStateHolder> updateAccountBalance(TransferStateHolder holder) {

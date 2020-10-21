@@ -4,7 +4,8 @@ JWT_TOKEN='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsImlhdCI6MTYwMjgx
 
 ghz -i ./../vmr-newbackend/src/main/proto --proto=vmr/wallet.proto \
   --call=vmr.WalletService.Transfer \
-  -n 500 \
+  -n 3000 \
+  -t 0 \
   -d '{"request_id":"{{.RequestNumber}}", "receiver":"2", "amount":1000,"message":"Foo", "password": "12345678"}' localhost:8082 \
   -m '{"x-jwt-token":"'"${JWT_TOKEN}"'"}' \
   --insecure

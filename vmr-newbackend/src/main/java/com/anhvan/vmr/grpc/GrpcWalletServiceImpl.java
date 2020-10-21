@@ -28,6 +28,7 @@ import lombok.Builder;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
+import java.util.Random;
 
 @AllArgsConstructor
 @Builder
@@ -43,6 +44,8 @@ public class GrpcWalletServiceImpl extends WalletServiceGrpc.WalletServiceImplBa
   private TimeTracker balanceTracker;
   private TimeTracker historyTracker;
   private TimeTracker transferTracker;
+
+  @Builder.Default private Random rd = new Random();
 
   @Override
   public void getBalance(Common.Empty request, StreamObserver<BalanceResponse> responseObserver) {
