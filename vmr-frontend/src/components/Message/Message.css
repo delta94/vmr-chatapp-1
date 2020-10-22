@@ -84,6 +84,8 @@
 
 .message .bubble-container .amount {
   font-size: 18px;
+  word-break: keep-all;
+  white-space: nowrap;
 }
 
 .message .bubble-container .msg {

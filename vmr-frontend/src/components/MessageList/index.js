@@ -13,6 +13,7 @@ import {Empty} from "antd";
 
 import './MessageList.css';
 import LoadingArea from "../LoadingArea";
+import EmptyPage from "../EmptyPage";
 
 function MessageListInternal(props) {
   let {receiverId} = props;
@@ -204,7 +205,7 @@ export default function MessageList(props) {
 
   // If chat message and recevier not exist in redux
   if (!chatMessages || !receiver) {
-    return null;
+    return <EmptyPage/>;
   }
 
   // Render internal component

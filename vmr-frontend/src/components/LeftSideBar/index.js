@@ -6,6 +6,7 @@ import FriendTab from "../FriendTab";
 import ChatTab from "../ChatTab";
 import WalletTab from "../WalletTab";
 import {useFriendList} from "../../hooks/friend";
+import AddFriendModal from "../AddFriendModal";
 
 export default function LeftSideBar() {
   let tab = useSelector(state => state.ui.currentTab);
@@ -24,6 +25,7 @@ export default function LeftSideBar() {
       {tab === 'chat' && <ChatTab/>}
       {tab === 'friend' && <FriendTab/>}
       {tab === 'wallet' && <WalletTab/>}
+      <AddFriendModal/>
     </div>
   );
 }

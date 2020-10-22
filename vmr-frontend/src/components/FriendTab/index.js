@@ -37,8 +37,6 @@ export default function FriendTab() {
         renderItem={item => <FriendListItem item={item}/>}
       >
       </List>
-
-      <AddFriendModal/>
     </div>
   );
 }
