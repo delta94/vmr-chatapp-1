@@ -69,13 +69,16 @@ function MessageListInternal(props) {
   });
 
   let loadMessages = () => {
-    if (chatMessages.length < 20) {
-      getMessageList(receiverId, chatMessages.length).then((data) => {
+    let current = msgList.current;
+    let oldLength = messages.length;
+    let {clientHeight, scrollHeight} = current;
+    if (clientHeight <= scrollHeight) {
+      getMessageList(receiverId, oldLength).then((data) => {
         updateMessageList(data, receiverId);
-        return data.messages.length;
+        return data.messages.length + oldLength;
       }).then(length => {
-        if (length + chatMessages.length < 20) {
-          getMessageList(receiverId, chatMessages.length + length).then((data) => {
+        if (clientHeight <= scrollHeight) {
+          getMessageList(receiverId, length).then((data) => {
             updateMessageList(data, receiverId);
             scrollToBottom();
           });
@@ -88,6 +91,7 @@ function MessageListInternal(props) {
 
   // Load message
   useEffect(() => {
+      setMsgLoading(true);
       updateConversationId(receiverId);
       loadMessages();
       clearChatNotifications();
@@ -112,12 +116,14 @@ function MessageListInternal(props) {
     let msgList = event.target;
     let offset = msgList.scrollTop;
     if (offset === 0) {
-      getMessageList(receiverId, chatMessages.length).then((data) => {
-        let oldHeight = msgList.scrollHeight;
-        updateMessageList(data, receiverId);
-        let newHeight = msgList.scrollHeight;
-        msgList.scrollTo(0, newHeight - oldHeight);
-      });
+      if (msgList.scrollHeight > msgList.clientHeight) {
+        getMessageList(receiverId, chatMessages.length).then((data) => {
+          let oldHeight = msgList.scrollHeight;
+          updateMessageList(data, receiverId);
+          let newHeight = msgList.scrollHeight;
+          msgList.scrollTo(0, newHeight - oldHeight);
+        });
+      }
     }
   };
 
