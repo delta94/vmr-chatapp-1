@@ -1,6 +1,7 @@
 package com.anhvan.vmr.cache;
 
 import com.anhvan.vmr.configs.CacheConfig;
+import com.anhvan.vmr.consts.Metric;
 import com.anhvan.vmr.entity.Friend;
 import com.anhvan.vmr.entity.TimeTracker;
 import com.anhvan.vmr.model.Message;
@@ -14,7 +15,10 @@ import org.redisson.api.RedissonClient;
 import java.util.List;
 
 public class FriendCacheServiceWithTrackerImpl extends FriendCacheServiceImpl {
-  private TimeTracker friendCacheServiceTracker;
+  private TimeTracker cacheFriendListTracker;
+  private TimeTracker cacheFriendTracker;
+  private TimeTracker getFriendListTracker;
+  private TimeTracker updateLastMsgTracker;
 
   public FriendCacheServiceWithTrackerImpl(
       RedissonClient redissonClient,
@@ -22,14 +26,20 @@ public class FriendCacheServiceWithTrackerImpl extends FriendCacheServiceImpl {
       CacheConfig cacheConfig,
       TrackerService trackerService) {
     super(redissonClient, asyncWorkerService, cacheConfig);
-    friendCacheServiceTracker =
-        trackerService.getTimeTracker("cache_query_time", "method", "friend_cache_service_methods");
+    cacheFriendListTracker =
+        trackerService.getTimeTracker(Metric.CACHE_QUERY_TIME, "method", "cacheFriendList");
+    cacheFriendTracker =
+        trackerService.getTimeTracker(Metric.CACHE_QUERY_TIME, "method", "cacheFriend");
+    getFriendListTracker =
+        trackerService.getTimeTracker(Metric.CACHE_QUERY_TIME, "method", "getFriendList");
+    updateLastMsgTracker =
+        trackerService.getTimeTracker(Metric.CACHE_QUERY_TIME, "method", "updateLastMessage");
   }
 
   @Override
   public Future<Void> cacheFriendList(long userId, List<Friend> friendList) {
     Promise<Void> promise = Promise.promise();
-    TimeTracker.Tracker tracker = friendCacheServiceTracker.start();
+    TimeTracker.Tracker tracker = cacheFriendListTracker.start();
 
     super.cacheFriendList(userId, friendList)
         .onComplete(
@@ -44,7 +54,7 @@ public class FriendCacheServiceWithTrackerImpl extends FriendCacheServiceImpl {
   @Override
   public Future<Void> cacheFriend(long userId, Friend friend) {
     Promise<Void> promise = Promise.promise();
-    TimeTracker.Tracker tracker = friendCacheServiceTracker.start();
+    TimeTracker.Tracker tracker = cacheFriendTracker.start();
 
     super.cacheFriend(userId, friend)
         .onComplete(
@@ -57,24 +67,9 @@ public class FriendCacheServiceWithTrackerImpl extends FriendCacheServiceImpl {
   }
 
   @Override
-  public Future<Void> removeFriend(long userId, long friendId) {
-    Promise<Void> promise = Promise.promise();
-    TimeTracker.Tracker tracker = friendCacheServiceTracker.start();
-
-    super.removeFriend(userId, friendId)
-        .onComplete(
-            ar -> {
-              AsyncUtil.convert(promise, ar);
-              tracker.record();
-            });
-
-    return promise.future();
-  }
-
-  @Override
   public Future<List<Friend>> getFriendList(long userId) {
     Promise<List<Friend>> promise = Promise.promise();
-    TimeTracker.Tracker tracker = friendCacheServiceTracker.start();
+    TimeTracker.Tracker tracker = getFriendListTracker.start();
 
     super.getFriendList(userId)
         .onComplete(
@@ -89,7 +84,7 @@ public class FriendCacheServiceWithTrackerImpl extends FriendCacheServiceImpl {
   @Override
   public Future<Void> updateLastMessageForBoth(long userId, long friendId, Message message) {
     Promise<Void> promise = Promise.promise();
-    TimeTracker.Tracker tracker = friendCacheServiceTracker.start();
+    TimeTracker.Tracker tracker = updateLastMsgTracker.start();
 
     super.updateLastMessageForBoth(userId, friendId, message)
         .onComplete(

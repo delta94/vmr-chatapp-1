@@ -4,7 +4,7 @@ import com.anhvan.vmr.model.User;
 import io.vertx.core.Future;
 
 public interface UserCacheService {
-  Future<Void> setUserCache(User user);
+  Future<Void> cacheUser(User user);
 
-  Future<User> getUserCache(long userId);
+  Future<User> getUser(long userId);
 }

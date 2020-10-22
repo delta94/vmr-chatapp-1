@@ -52,7 +52,7 @@ public class UserCacheServiceImplTest {
     Mockito.when(redissonClient.<User>getBucket("vmr:user:1:info")).thenReturn(rBucket);
     User user = User.builder().name("Dang Anh Van").username("danganhvan").id(1).build();
     userCacheService
-        .setUserCache(user)
+        .cacheUser(user)
         .onComplete(
             ar -> {
               Mockito.verify(rBucket).set(user);
@@ -69,7 +69,7 @@ public class UserCacheServiceImplTest {
     Mockito.when(rBucket.get()).thenReturn(user);
     Mockito.when(rBucket.isExists()).thenReturn(true);
     userCacheService
-        .getUserCache(1)
+        .getUser(1)
         .onComplete(
             ar -> {
               Assertions.assertEquals(1, ar.result().getId());
@@ -83,7 +83,7 @@ public class UserCacheServiceImplTest {
     Mockito.when(redissonClient.<User>getBucket("vmr:user:1:info")).thenReturn(rBucket);
     Mockito.when(rBucket.isExists()).thenReturn(false);
     userCacheService
-        .getUserCache(1)
+        .getUser(1)
         .onComplete(
             ar -> {
               Assertions.assertTrue(ar.failed());

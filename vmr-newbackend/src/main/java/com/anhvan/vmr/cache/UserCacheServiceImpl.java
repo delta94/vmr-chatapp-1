@@ -32,7 +32,7 @@ public class UserCacheServiceImpl implements UserCacheService {
   }
 
   @Override
-  public Future<Void> setUserCache(User user) {
+  public Future<Void> cacheUser(User user) {
     log.debug("setUserCache: user={}", user);
 
     Promise<Void> cacheUserPromise = Promise.promise();
@@ -55,7 +55,7 @@ public class UserCacheServiceImpl implements UserCacheService {
   }
 
   @Override
-  public Future<User> getUserCache(long userId) {
+  public Future<User> getUser(long userId) {
     log.debug("getUserCache: userId={}", userId);
 
     Promise<User> userPromise = Promise.promise();

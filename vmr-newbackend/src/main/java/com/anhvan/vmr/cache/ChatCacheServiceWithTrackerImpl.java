@@ -62,11 +62,11 @@ public class ChatCacheServiceWithTrackerImpl extends ChatCacheServiceImpl {
   }
 
   @Override
-  public Future<List<Message>> getCacheMessages(long userId1, long userId2) {
+  public Future<List<Message>> getMessages(long userId1, long userId2) {
     Promise<List<Message>> promise = Promise.promise();
     TimeTracker.Tracker tracker = getCacheMessagesTracker.start();
 
-    super.getCacheMessages(userId1, userId2)
+    super.getMessages(userId1, userId2)
         .onComplete(
             ar -> {
               AsyncUtil.convert(promise, ar);

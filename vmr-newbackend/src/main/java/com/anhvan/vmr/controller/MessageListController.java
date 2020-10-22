@@ -34,7 +34,7 @@ public class MessageListController extends BaseController {
 
     if (offset == 0) {
       // First load
-      Future<List<Message>> chatMessages = chatCacheService.getCacheMessages(userId, friendId);
+      Future<List<Message>> chatMessages = chatCacheService.getMessages(userId, friendId);
 
       // Cache hit
       chatMessages.onSuccess(

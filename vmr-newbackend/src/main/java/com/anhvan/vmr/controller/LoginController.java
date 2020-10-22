@@ -52,7 +52,7 @@ public class LoginController extends BaseController {
           if (user.getPassword() != null
               && BCrypt.checkpw(user.getPassword(), dbUser.getPassword())) {
             data.put("userId", dbUser.getId());
-            userCacheService.setUserCache(dbUser);
+            userCacheService.cacheUser(dbUser);
             return jwtService.generate(dbUser.getId());
           }
 

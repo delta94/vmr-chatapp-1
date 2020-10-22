@@ -85,7 +85,7 @@ public class ChatCacheServiceImpl implements ChatCacheService {
   }
 
   @Override
-  public Future<List<Message>> getCacheMessages(long userId1, long userId2) {
+  public Future<List<Message>> getMessages(long userId1, long userId2) {
     log.debug("Start getCacheMessage: user1={}, user2={}", userId1, userId2);
 
     Promise<List<Message>> messageCache = Promise.promise();

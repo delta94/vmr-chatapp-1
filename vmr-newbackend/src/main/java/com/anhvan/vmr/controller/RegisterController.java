@@ -75,7 +75,7 @@ public class RegisterController extends BaseController {
             userId -> {
               jsonResponse.put("userId", userId);
               user.setId(userId);
-              userCacheService.setUserCache(user);
+              userCacheService.cacheUser(user);
               return jwtService.generate(userId);
             });
 

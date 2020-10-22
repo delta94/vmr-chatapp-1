@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
   public Future<User> getUserById(long userId) {
     Promise<User> userPromise = Promise.promise();
 
-    Future<User> userCacheFuture = userCacheService.getUserCache(userId);
+    Future<User> userCacheFuture = userCacheService.getUser(userId);
 
     userCacheFuture.onComplete(
         cacheAr -> {
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
                     if (dbAr.succeeded()) {
                       User result = dbAr.result();
                       userPromise.complete(result);
-                      userCacheService.setUserCache(result);
+                      userCacheService.cacheUser(result);
                       return;
                     }
 
