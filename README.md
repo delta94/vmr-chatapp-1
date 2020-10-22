@@ -67,6 +67,6 @@ docker-compose up -d
 - [Mockup](https://balsamiq.cloud/seo701z/pbade9k)
 - [GRPC API Design](report/doc/grpc-design.md)
 - [Database design](report/doc/database-diagrams.md)
-- [API design](https://app.swaggerhub.com/apis-docs/anhvan1999/vmr-chat/1.0.0)
+- [HTTP API design](https://app.swaggerhub.com/apis-docs/anhvan1999/vmr-chat/1.0.0)
 - [Sequence diagrams](report/doc/sequence-diagrams.md)
 - [Cache design](report/doc/cache-design.md)
