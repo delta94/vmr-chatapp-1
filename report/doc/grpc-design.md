@@ -9,34 +9,46 @@ package vmr;
 
 option java_package = "com.anhvan.vmr.proto";
 
-import "vmr/error.proto";
-import "vmr/empty.proto";
+import "vmr/common.proto";
 
-message TransferRequest {
-  int64 request_id = 1;
-  int64 to = 2;
-  uint64 amount = 3;
-  string message = 4;
+service WalletService {
+  rpc GetBalance(Empty) returns (BalanceResponse);
+  rpc Transfer(TransferRequest) returns (TransferResponse);
+  rpc GetHistoryWithOffset(GetHistoryWithOffsetRequest) returns (HistoryResponse);
+  rpc RemindTransfer(TransferReminderRequest) returns (TransferReminderResponse);
+  rpc GetTransferReminder(Empty) returns (TransferReminderListResponse);
 }
 
-message TransferResponse {
-  message Data {
-    int64 balance = 1;
-    int64 last_updated = 2;
-  }
-
-  Error error = 1;
-  Data data = 2;
-}
-
+// Get balance
 message BalanceResponse {
   message Data {
     int64 balance = 1;
     int64 last_updated = 2;
+    string user_name = 3;
+    string name = 4;
   }
 
   Error error = 1;
   Data data = 2;
+}
+
+// History
+
+message GetHistoryWithOffsetRequest {
+  int64 offset = 1;
+}
+
+// Transfer
+message TransferRequest {
+  int64 request_id = 1;
+  int64 receiver = 2;
+  uint64 amount = 3;
+  string message = 4;
+  string password = 5;
+}
+
+message TransferResponse {
+  Error error = 1;
 }
 
 message HistoryResponse {
@@ -47,14 +59,21 @@ message HistoryResponse {
 
   message Item {
     int64 id = 1;
-    int64 user_id = 2;
-    int64 amount = 3;
-    int64 timestamp = 4;
-    Type type = 5;
+    int64 sender = 2;
+    int64 receiver = 3;
+    int64 amount = 4;
+    int64 timestamp = 5;
+    string message = 6;
+    int64 balance = 7;
+    Type type = 8;
+  }
+
+  message Data {
+    repeated Item item = 1;
   }
 
   Error error = 1;
-  repeated Item item = 2;
+  Data data = 2;
 }
 
 message TransferReminderRequest {
@@ -81,17 +100,9 @@ message TransferReminderListResponse {
   Error error = 1;
   repeated TransferReminder reminder = 2;
 }
-
-service WalletService {
-  rpc Transfer(TransferRequest) returns (TransferResponse);
-  rpc GetBalance(Empty) returns (BalanceResponse);
-  rpc GetHistory(Empty) returns (HistoryResponse);
-  rpc RemindTransfer(TransferReminderRequest) returns (TransferReminderResponse);
-  rpc GetTransferReminder(Empty) returns (TransferReminderListResponse);
-}
 ```
 
-## 2. Tìm kiếm và kết bạn (bổ sung module trước)
+## 2. Tìm kiếm và kết bạn
 
 ```protobuf
 syntax = "proto3";
@@ -100,48 +111,32 @@ package vmr;
 
 option java_package = "com.anhvan.vmr.proto";
 
-import "vmr/error.proto";
-import "vmr/empty.proto";
+import "vmr/common.proto";
 
+// Friend services
 service FriendService {
-  rpc AddFriend(AddFriendRequest) returns (AddFriendResponse);
   rpc GetFriendList(Empty) returns (FriendListResponse);
-  rpc AcceptFriend(AcceptFriendRequest) returns (AcceptFriendResponse);
-  rpc RejectFriend(RejectFriendRequest) returns (RejectFriendResponse);
   rpc GetChatFriendList(Empty) returns (FriendListResponse);
-  rpc GetLastMessage(GetLastMessageRequest) returns (GetLastMessageResponse);
   rpc QueryUser(UserListRequest) returns (UserListResponse);
+  rpc ClearUnreadMessage(ClearUnreadMessageRequest) returns (ClearUnreadMessageResponse);
+  rpc SetFriendStatus(SetFriendStatusRequest) returns (SetFriendStatusResponse);
+  rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse);
 }
 
-message UserListRequest {
-  string query_string = 1;
-}
-
-message UserResponse {
-  int64 id = 1;
-  string username = 2;
-  string name = 3;
-  FriendStatus friendStatus = 4;
-}
-
-message UserListResponse {
-  Error error = 1;
-  repeated UserResponse user = 2;
-}
-
-message AddFriendRequest {
+// Get user info
+message GetUserInfoRequest {
   int64 user_id = 1;
 }
 
-message AddFriendResponse {
+message GetUserInfoResponse {
   Error error = 1;
+  UserResponse user = 2;
 }
 
-enum FriendStatus {
-  FRIEND = 0;
-  WAITING = 1;
-  NOT_ANSWER = 2;
-  NOTHING = 3;
+// Get friend list
+message FriendListResponse {
+  Error error = 1;
+  repeated FriendInfo friend_info = 2;
 }
 
 message FriendInfo {
@@ -149,44 +144,67 @@ message FriendInfo {
   string username = 2;
   string name = 3;
   bool online = 4;
-  FriendStatus friend_status = 5;
+  string last_message = 5;
+  string last_message_type = 6;
+  int64 last_message_sender = 7;
+  int64 last_message_timestamp = 8;
+  int64 num_unread_message = 9;
+  FriendStatus friend_status = 10;
 }
 
-message FriendListResponse {
+// Get user list (find friend)
+message UserListRequest {
+  string query_string = 1;
+}
+
+message UserListResponse {
   Error error = 1;
-  repeated FriendInfo friendInfo = 2;
+  repeated UserResponse user = 2;
 }
 
-message AcceptFriendRequest {
-  int64 friend_id = 1;
+message UserResponse {
+  int64 id = 1;
+  string username = 2;
+  string name = 3;
+  FriendStatus friend_status = 4;
 }
 
-message AcceptFriendResponse {
+enum FriendStatus {
+  FRIEND = 0;
+  WAITING = 1;
+  NOT_ANSWER = 2;
+  NOTHING = 3;
+  REMOVED = 4;
+}
+
+// Clear unread message
+message ClearUnreadMessageRequest {
+  int64  friend_id = 1;
+}
+
+message ClearUnreadMessageResponse {
   Error error = 1;
 }
 
-message RejectFriendRequest {
-  int64 friend_id = 1;
+// Set friend status
+message SetFriendStatusRequest {
+  enum Type {
+    ADD_FRIEND = 0;
+    ACCEPT_FRIEND = 1;
+    REJECT_FRIEND = 2;
+    REMOVE_FRIEND = 3;
+  }
+
+  Type type = 1;
+  int64 friend_id = 2;
 }
 
-message RejectFriendResponse {
+message SetFriendStatusResponse {
   Error error = 1;
-}
-
-message GetLastMessageRequest {
-  int64 friend_id = 1;
-}
-
-message GetLastMessageResponse {
-  Error error = 1;
-  int64 sender_id = 2;
-  int64 receiver_id = 3;
-  int64 message = 4;
-  int64 timestamp = 5;
 }
 ```
 
-## 3. Error message
+## 3. Các message hỗ trợ
 
 ```protobuf
 syntax = "proto3";
@@ -196,7 +214,13 @@ package vmr;
 option java_package = "com.anhvan.vmr.proto";
 
 enum ErrorCode {
-  FAILUE = 0;
+  PASSWORD_INVALID = 0;
+  BALANCE_NOT_ENOUGH = 1;
+  RECEIVER_NOT_EXIST = 2;
+  INTERNAL_SERVER_ERROR = 3;
+  REQUEST_EXISTED = 4;
+  FAILUE = 5;
+  AMOUNT_NOT_VALID = 6;
 }
 
 message Error {
@@ -204,4 +228,6 @@ message Error {
   string message = 2;
   map<string, string> extra = 3;
 }
+
+message Empty {}
 ```
