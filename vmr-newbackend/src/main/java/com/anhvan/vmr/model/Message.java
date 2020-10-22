@@ -18,10 +18,10 @@ public class Message {
 
   private long id;
 
-  @ColName("sender")
+  @ColName("sender_id")
   private long senderId;
 
-  @ColName("receiver")
+  @ColName("receiver_id")
   private long receiverId;
 
   private String message;

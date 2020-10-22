@@ -1,5 +1,6 @@
 package com.anhvan.vmr.entity;
 
+import com.anhvan.vmr.model.ColName;
 import com.anhvan.vmr.util.RowMapperUtil;
 import io.vertx.sqlclient.Row;
 import lombok.*;
@@ -18,8 +19,13 @@ public class HistoryItemResponse {
 
   private long id;
   private long userId;
+
+  @ColName("sender_id")
   private long sender;
+
+  @ColName("receiver_id")
   private long receiver;
+
   private long amount;
   private long timestamp;
   private long balance;

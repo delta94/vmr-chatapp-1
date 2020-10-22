@@ -22,13 +22,13 @@ import java.util.List;
 public class ChatDatabaseServiceImpl implements ChatDatabaseService {
   public static final String GET_MESSAGE_STMT =
       "select * from  "
-          + "(select * from messages where sender=? and receiver=? "
-          + "union select * from messages where sender=? and receiver=?) msgs "
+          + "(select * from messages where sender_id=? and receiver_id=? "
+          + "union select * from messages where sender_id=? and receiver_id=?) msgs "
           + "order by id desc "
           + "limit ?, 20";
 
   public static final String INSERT_MESSAGE_STMT =
-      "insert into messages (sender, receiver, message, send_time, type) values (?, ?, ?, ?, ?)";
+      "insert into messages (sender_id, receiver_id, message, send_time, type) values (?, ?, ?, ?, ?)";
 
   public static final String UPDATE_LAST_MESSAGE_STMT =
       "update friends set last_message_id=? where " + "user_id=? and friend_id=?";

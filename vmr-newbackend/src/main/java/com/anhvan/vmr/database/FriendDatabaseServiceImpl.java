@@ -29,7 +29,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
 
   public static final String GET_FRIENDS_WITH_MESSAGE_STMT =
       "select users.id, users.username, users.name, messages.message as last_message, "
-          + "messages.sender as last_message_sender, messages.type as last_message_type, "
+          + "messages.sender_id as last_message_sender, messages.type as last_message_type, "
           + "messages.send_time as last_message_timestamp, friends.num_unread_message "
           + "from users inner join friends "
           + "on users.id = friends.friend_id "

@@ -37,30 +37,30 @@ public class WalletDatabaseServiceImpl implements WalletDatabaseService {
           + "where account_logs.user = ?";
 
   public static final String CHECK_REQUEST_ID_EXIST_QUERY =
-      "select exists(select * from transfers where sender=? and "
+      "select exists(select * from transfers where sender_id=? and "
           + "request_id=?) as transfer_exist";
 
   public static final String UPDATE_BALANCE_QUERY =
       "update users set balance=balance+?, last_updated=? where id=?";
 
   public static final String CREATE_TRANSFER_QUERY =
-      "insert into transfers (sender, receiver, amount, message, timestamp, "
+      "insert into transfers (sender_id, receiver_id, amount, message, timestamp, "
           + "request_id) values (?,?,?,?,?,?)";
 
   public static final String CREATE_ACCOUNT_LOG_QUERY =
-      "insert into account_logs (user, transfer, type) values (?,?,?)";
+      "insert into account_logs (user_id, transfer_id, type) values (?,?,?)";
 
   public static final String WRITE_CHAT_STMT =
-      "insert into messages (sender, receiver, send_time, message, type, transfer_id) "
+      "insert into messages (sender_id, receiver_id, send_time, message, type, transfer_id) "
           + "values (?,?,?,?,?,?)";
 
   public static final String GET_HISTORY_WITH_OFFSET_STMT =
-      "select transfers.sender, transfers.receiver, transfers.timestamp, transfers.amount, "
+      "select transfers.sender_id, transfers.receiver_id, transfers.timestamp, transfers.amount, "
           + "transfers.message, account_logs.type as type_string, "
           + "account_logs.id from "
           + "account_logs inner join transfers "
-          + "on account_logs.transfer = transfers.id "
-          + "where account_logs.user = ? "
+          + "on account_logs.transfer_id = transfers.id "
+          + "where account_logs.user_id = ? "
           + "order by account_logs.id desc limit ?, 20 ";
 
   public static final String SELECT_BALANCE_FOR_UPDATE_STMT =
