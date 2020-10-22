@@ -30,39 +30,39 @@ create table friends
 
 create table transfers
 (
-    id         bigint primary key auto_increment,
-    sender     bigint not null,
-    receiver   bigint not null,
-    amount     bigint not null,
-    message    text   not null,
-    timestamp  bigint not null,
-    request_id bigint not null,
-    unique (sender, request_id),
-    foreign key (sender) references users (id),
-    foreign key (receiver) references users (id)
+    id          bigint primary key auto_increment,
+    sender_id   bigint not null,
+    receiver_id bigint not null,
+    amount      bigint not null,
+    message     text   not null,
+    timestamp   bigint not null,
+    request_id  bigint not null,
+    unique (sender_id, request_id),
+    foreign key (sender_id) references users (id),
+    foreign key (receiver_id) references users (id)
 );
 
 create table messages
 (
     id          bigint primary key auto_increment,
-    sender      bigint                    not null,
-    receiver    bigint                    not null,
+    sender_id   bigint                    not null,
+    receiver_id bigint                    not null,
     send_time   bigint                    not null,
     message     text                      not null,
     type        enum ('CHAT', 'TRANSFER') not null default 'CHAT',
     transfer_id bigint,
-    index sender_receiver (sender, receiver)
+    index sender_receiver (sender_id, receiver_id)
 );
 
 
 create table account_logs
 (
     id       bigint primary key auto_increment,
-    user     bigint                       not null,
-    transfer bigint                       not null,
+    user_id     bigint                       not null,
+    transfer_id bigint                       not null,
     type     enum ('TRANSFER', 'RECEIVE') not null,
-    foreign key (user) references users (id),
-    foreign key (transfer) references transfers (id)
+    foreign key (user_id) references users (id),
+    foreign key (transfer_id) references transfers (id)
 );
 
 set @pw = '$2a$05$oaUZlei0KVo9hWwG.0mpqebMwvGcHlaM7.Kgrpf10ncG7A36xvMGu';
