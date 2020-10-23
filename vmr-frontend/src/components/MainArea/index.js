@@ -12,7 +12,7 @@ export default function MainArea() {
       <Route path="/t/:receiverId" component={MessageList}/>
       <Route path="/w/balance" component={BalancePage}/>
       <Route path="/w/history" component={HistoryPage}/>
-      <Route exact path="/">
+      <Route path="/"> {/*exact*/}
         <EmptyPage/>
       </Route>
     </Switch>
