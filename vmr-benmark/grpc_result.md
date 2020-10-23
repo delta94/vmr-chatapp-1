@@ -4,13 +4,19 @@
   - [1. Transfer](#1-transfer)
     - [1.1 Điều kiện test](#11-điều-kiện-test)
     - [1.2 Kết quả test](#12-kết-quả-test)
+    - [1.3 Nhận xét](#13-nhận-xét)
   - [2. GetBalance](#2-getbalance)
     - [2.1 Điều kiện test](#21-điều-kiện-test)
     - [2.2 Kết quả test](#22-kết-quả-test)
   - [3. GetHistory](#3-gethistory)
     - [3.1 Điều kiện test](#31-điều-kiện-test)
+    - [3.2 Kết quả test](#32-kết-quả-test)
   - [4. GetChatFriendList](#4-getchatfriendlist)
+    - [4.1 Điều kiện test](#41-điều-kiện-test)
+    - [4.2 Kết quả test](#42-kết-quả-test)
   - [5. GetFriendList](#5-getfriendlist)
+    - [5.1 Điều kiện test](#51-điều-kiện-test)
+    - [5.2 Kết quả test](#52-kết-quả-test)
 
 ## 1. Transfer
 
@@ -19,13 +25,13 @@
 - Chuyển tiền ngẫu nhiên (random sender & receiver) giữa các user trong hệ thống
 - Số dư trong tài khoản luôn đủ cho mỗi lần chuyển (để check balance không bị fail)
 - Chuyển tiền thành công
-
-|Thông số|Giá trị|
-|--|--|
-|Số lượng user|1000|
-|MySQL pool size|10|
-|Số lượng request|500|
-|Số lượng request song song|20|
+- Các thông số test:
+  |Thông số|Giá trị|
+  |--|--|
+  |Số lượng user|1000|
+  |MySQL pool size|10|
+  |Số lượng request|500|
+  |Số lượng request song song|20|
 
 ### 1.2 Kết quả test
 
@@ -59,14 +65,22 @@ Latency distribution:
   90 % in 88.11 ms
   95 % in 90.95 ms
   99 % in 105.14 ms
-
 Status code distribution:
   [OK]   500 responses
 ```
 
+### 1.3 Nhận xét
+
+- So với các lời gọi gRPC khác, _transfer_ có thời gian P99 là lâu nhất.
+- Lý do:
+  - Thời gian thực thi của hàm BCrypt check password
+  - Thao tác transfer đòi hỏi update/insert data ở nhiều bảng, sử dụng lock ở bảng users khi tiến hành cập nhật số dư.
+
 ## 2. GetBalance
 
 ### 2.1 Điều kiện test
+
+- Truy vấn balance của 1 user
 
 |Thông số|Giá trị|
 |--|--|
@@ -116,7 +130,7 @@ Status code distribution:
 
 ### 3.1 Điều kiện test
 
-- 500 request với offset tăng dần
+- 500 request với offset tăng dần, get history của cùng 1 user
 
 |Thông số|Giá trị|
 |--|--|
@@ -126,6 +140,8 @@ Status code distribution:
 |Số lượng request|500|
 |Số lượng request song song|20|
 |Số lượng history item|20|
+
+### 3.2 Kết quả test
 
 ```bash
 Summary:
@@ -164,6 +180,21 @@ Status code distribution:
 
 ## 4. GetChatFriendList
 
+### 4.1 Điều kiện test
+
+- Số lượng friend: 7
+
+|Thông số|Giá trị|
+|--|--|
+|Số lượng user|1000|
+|Số lượng history trong db|4000|
+|MySQL pool size|10|
+|Số lượng request|500|
+|Số lượng request song song|20|
+|Số lượng history item|20|
+
+### 4.2 Kết quả test
+
 ```bash
 Summary:
   Count:        500
@@ -187,19 +218,34 @@ Response time histogram:
   25.958 [1]    |
 
 Latency distribution:
-  10 % in 4.86 ms 
-  25 % in 7.88 ms 
-  50 % in 9.99 ms 
-  75 % in 13.70 ms 
-  90 % in 18.09 ms 
-  95 % in 19.31 ms 
-  99 % in 21.93 ms 
+  10 % in 4.86 ms
+  25 % in 7.88 ms
+  50 % in 9.99 ms
+  75 % in 13.70 ms
+  90 % in 18.09 ms
+  95 % in 19.31 ms
+  99 % in 21.93 ms
 
 Status code distribution:
-  [OK]   500 responses 
+  [OK]   500 responses
 ```
 
 ## 5. GetFriendList
+
+### 5.1 Điều kiện test
+
+- Số lượng friend: 7
+
+|Thông số|Giá trị|
+|--|--|
+|Số lượng user|1000|
+|Số lượng history trong db|4000|
+|MySQL pool size|10|
+|Số lượng request|500|
+|Số lượng request song song|20|
+|Số lượng history item|20|
+
+### 5.2 Kết quả test
 
 ```bash
 Summary:
@@ -227,10 +273,10 @@ Latency distribution:
   10 % in 4.53 ms
   25 % in 6.95 ms
   50 % in 9.75 ms
-  75 % in 14.20 ms 
-  90 % in 21.25 ms 
-  95 % in 26.16 ms 
-  99 % in 27.72 ms 
+  75 % in 14.20 ms
+  90 % in 21.25 ms
+  95 % in 26.16 ms
+  99 % in 27.72 ms
 
 Status code distribution:
   [OK]   500 responses
