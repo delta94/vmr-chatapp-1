@@ -11,6 +11,7 @@
     - [3.5 Chuyển tiền](#35-chuyển-tiền)
     - [3.6 Hiện số dư](#36-hiện-số-dư)
     - [3.7 Xem lịch sử](#37-xem-lịch-sử)
+    - [3.8 Phone UI](#38-phone-ui)
   - [4. Thiết kế](#4-thiết-kế)
 
 ## 1. Tổng quan
@@ -77,6 +78,10 @@ docker-compose up -d
 ### 3.7 Xem lịch sử
 
 ![History](report/img/demo/history.png)
+
+### 3.8 Phone UI
+
+![Phone](report/img/demo/phone.gif)
 
 ## 4. Thiết kế
 
