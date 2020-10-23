@@ -8,6 +8,9 @@
     - [3.2 Login](#32-login)
     - [3.3 Hiện danh sách user, chat 1-1](#33-hiện-danh-sách-user-chat-1-1)
     - [3.4 Thêm bạn bè](#34-thêm-bạn-bè)
+    - [3.5 Chuyển tiền](#35-chuyển-tiền)
+    - [3.6 Hiện số dư](#36-hiện-số-dư)
+    - [3.7 Xem lịch sử](#37-xem-lịch-sử)
   - [4. Thiết kế](#4-thiết-kế)
 
 ## 1. Tổng quan
@@ -25,6 +28,7 @@ __VMR Chat__ là ứng dụng chat realtime với tính năng cơ bản. Là pro
 - Chuyển tiền
 - Xem số dư
 - Hiện lịch sử giao dịch
+- Giao diện responsive
 
 Các công nghệ sử dụng:
 
@@ -56,11 +60,23 @@ docker-compose up -d
 
 ### 3.3 Hiện danh sách user, chat 1-1
 
-![Chat](report/img/demo/chat-1-1.png)
+![Chat](report/img/demo/chat-1-1.gif)
 
 ### 3.4 Thêm bạn bè
 
 ![Add friend](report/img/demo/add-friend.png)
+
+### 3.5 Chuyển tiền
+
+![Transfer](report/img/demo/transfer.gif)
+
+### 3.6 Hiện số dư
+
+![Balance](report/img/demo/balance.png)
+
+### 3.7 Xem lịch sử
+
+![History](report/img/demo/history.png)
 
 ## 4. Thiết kế
 

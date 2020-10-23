@@ -10,7 +10,6 @@ import {friendReload, setSideBarActive} from "../../redux/vmr-action";
 
 import "./friend-tab.css";
 import {Link} from "react-router-dom";
-import AddFriendModal from "../AddFriendModal";
 
 const {useHistory} = require("react-router-dom");
 const {FriendStatus} = require('../../proto/vmr/friend_pb');

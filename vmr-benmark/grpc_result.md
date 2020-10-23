@@ -1,87 +1,33 @@
 # Kết quả benmark các GRPC service
 
 - [Kết quả benmark các GRPC service](#kết-quả-benmark-các-grpc-service)
-  - [1. GetBalance](#1-getbalance)
-  - [2. GetHistory](#2-gethistory)
-  - [3. Transfer (Sender và Receiver ngẫu nhiên)](#3-transfer-sender-và-receiver-ngẫu-nhiên)
+  - [1. Transfer](#1-transfer)
+    - [1.1 Điều kiện test](#11-điều-kiện-test)
+    - [1.2 Kết quả test](#12-kết-quả-test)
+  - [2. GetBalance](#2-getbalance)
+    - [2.1 Điều kiện test](#21-điều-kiện-test)
+    - [2.2 Kết quả test](#22-kết-quả-test)
+  - [3. GetHistory](#3-gethistory)
+    - [3.1 Điều kiện test](#31-điều-kiện-test)
   - [4. GetChatFriendList](#4-getchatfriendlist)
   - [5. GetFriendList](#5-getfriendlist)
 
-## 1. GetBalance
+## 1. Transfer
 
-```bash
-Summary:
-  Count:        500
-  Total:        94.02 ms
-  Slowest:      19.82 ms
-  Fastest:      1.00 ms
-  Average:      8.67 ms
-  Requests/sec: 5318.25
+### 1.1 Điều kiện test
 
-Response time histogram:
-  0.996 [1]     |
-  2.879 [13]    |∎∎∎∎
-  4.762 [38]    |∎∎∎∎∎∎∎∎∎∎∎
-  6.644 [112]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  8.527 [137]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  10.410 [66]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  12.292 [42]   |∎∎∎∎∎∎∎∎∎∎∎∎
-  14.175 [46]   |∎∎∎∎∎∎∎∎∎∎∎∎∎
-  16.058 [14]   |∎∎∎∎
-  17.941 [12]   |∎∎∎∎
-  19.823 [19]   |∎∎∎∎∎∎
+- Chuyển tiền ngẫu nhiên (random sender & receiver) giữa các user trong hệ thống
+- Số dư trong tài khoản luôn đủ cho mỗi lần chuyển (để check balance không bị fail)
+- Chuyển tiền thành công
 
-Latency distribution:
-  10 % in 4.67 ms 
-  25 % in 6.14 ms 
-  50 % in 7.76 ms 
-  75 % in 10.54 ms 
-  90 % in 13.86 ms 
-  95 % in 17.61 ms 
-  99 % in 19.42 ms 
+|Thông số|Giá trị|
+|--|--|
+|Số lượng user|1000|
+|MySQL pool size|10|
+|Số lượng request|500|
+|Số lượng request song song|20|
 
-Status code distribution:
-  [OK]   500 responses
-```
-
-## 2. GetHistory
-
-```bash
-Summary:
-  Count:        500
-  Total:        135.43 ms
-  Slowest:      29.68 ms
-  Fastest:      0.87 ms
-  Average:      12.16 ms
-  Requests/sec: 3692.00
-
-Response time histogram:
-  0.870 [1]     |
-  3.752 [10]    |∎∎∎
-  6.633 [17]    |∎∎∎∎∎
-  9.514 [126]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  12.395 [137]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  15.276 [109]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-  18.157 [43]   |∎∎∎∎∎∎∎∎∎∎∎∎∎
-  21.038 [36]   |∎∎∎∎∎∎∎∎∎∎∎
-  23.919 [18]   |∎∎∎∎∎
-  26.800 [1]    |
-  29.681 [2]    |∎
-
-Latency distribution:
-  10 % in 7.57 ms 
-  25 % in 9.17 ms 
-  50 % in 11.25 ms 
-  75 % in 14.45 ms 
-  90 % in 18.74 ms 
-  95 % in 20.59 ms 
-  99 % in 23.55 ms 
-
-Status code distribution:
-  [OK]   500 responses 
-```
-
-## 3. Transfer (Sender và Receiver ngẫu nhiên)
+### 1.2 Kết quả test
 
 ```bash
 Summary:
@@ -106,16 +52,114 @@ Response time histogram:
   112.514 [11]  |∎∎∎
 
 Latency distribution:
-  10 % in 55.27 ms 
-  25 % in 64.83 ms 
-  50 % in 75.33 ms 
-  75 % in 82.47 ms 
-  90 % in 88.11 ms 
-  95 % in 90.95 ms 
-  99 % in 105.14 ms 
+  10 % in 55.27 ms
+  25 % in 64.83 ms
+  50 % in 75.33 ms
+  75 % in 82.47 ms
+  90 % in 88.11 ms
+  95 % in 90.95 ms
+  99 % in 105.14 ms
 
 Status code distribution:
-  [OK]   500 responses 
+  [OK]   500 responses
+```
+
+## 2. GetBalance
+
+### 2.1 Điều kiện test
+
+|Thông số|Giá trị|
+|--|--|
+|Số lượng user|1000|
+|MySQL pool size|10|
+|Số lượng request|500|
+|Số lượng request song song|20|
+
+### 2.2 Kết quả test
+
+```bash
+Summary:
+  Count:        500
+  Total:        94.02 ms
+  Slowest:      19.82 ms
+  Fastest:      1.00 ms
+  Average:      8.67 ms
+  Requests/sec: 5318.25
+
+Response time histogram:
+  0.996 [1]     |
+  2.879 [13]    |∎∎∎∎
+  4.762 [38]    |∎∎∎∎∎∎∎∎∎∎∎
+  6.644 [112]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  8.527 [137]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  10.410 [66]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  12.292 [42]   |∎∎∎∎∎∎∎∎∎∎∎∎
+  14.175 [46]   |∎∎∎∎∎∎∎∎∎∎∎∎∎
+  16.058 [14]   |∎∎∎∎
+  17.941 [12]   |∎∎∎∎
+  19.823 [19]   |∎∎∎∎∎∎
+
+Latency distribution:
+  10 % in 4.67 ms
+  25 % in 6.14 ms
+  50 % in 7.76 ms
+  75 % in 10.54 ms
+  90 % in 13.86 ms
+  95 % in 17.61 ms
+  99 % in 19.42 ms
+
+Status code distribution:
+  [OK]   500 responses
+```
+
+## 3. GetHistory
+
+### 3.1 Điều kiện test
+
+- 500 request với offset tăng dần
+
+|Thông số|Giá trị|
+|--|--|
+|Số lượng user|1000|
+|Số lượng history trong db|4000|
+|MySQL pool size|10|
+|Số lượng request|500|
+|Số lượng request song song|20|
+|Số lượng history item|20|
+
+```bash
+Summary:
+  Count:        500
+  Total:        243.68 ms
+  Slowest:      37.54 ms
+  Fastest:      1.87 ms
+  Average:      22.65 ms
+  Requests/sec: 2051.86
+
+Response time histogram:
+  1.873 [1]     |
+  5.440 [0]     |
+  9.007 [1]     |
+  12.574 [12]   |∎∎∎∎
+  16.141 [50]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  19.708 [100]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  23.275 [101]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  26.842 [110]  |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  30.410 [92]   |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
+  33.977 [26]   |∎∎∎∎∎∎∎∎∎
+  37.544 [7]    |∎∎∎
+
+Latency distribution:
+  10 % in 15.62 ms
+  25 % in 18.24 ms
+  50 % in 22.69 ms
+  75 % in 26.83 ms
+  90 % in 29.35 ms
+  95 % in 31.84 ms
+  99 % in 34.96 ms
+
+Status code distribution:
+  [OK]   500 responses
 ```
 
 ## 4. GetChatFriendList

@@ -73,7 +73,8 @@ function MessageListInternal(props) {
     let current = msgList.current;
     let oldLength = messages.length;
     let {clientHeight, scrollHeight} = current;
-    if (clientHeight <= scrollHeight) {
+    console.log(clientHeight, scrollHeight);
+    if (clientHeight >= scrollHeight) {
       getMessageList(receiverId, oldLength).then((data) => {
         updateMessageList(data, receiverId);
         return data.messages.length + oldLength;

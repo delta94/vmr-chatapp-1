@@ -7,3 +7,5 @@ select count(*) from transfers;
 show open tables in vmrchat;
 
 SHOW ENGINE INNODB STATUS;
+
+show status like 'Conn%';
