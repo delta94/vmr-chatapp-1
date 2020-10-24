@@ -4,15 +4,11 @@
   - [1. Tổng quan](#1-tổng-quan)
   - [2. Hướng dẫn chạy](#2-hướng-dẫn-chạy)
   - [3. Demo](#3-demo)
-    - [3.1 Register](#31-register)
-    - [3.2 Login](#32-login)
-    - [3.3 Hiện danh sách user, chat 1-1](#33-hiện-danh-sách-user-chat-1-1)
-    - [3.4 Thêm bạn bè](#34-thêm-bạn-bè)
-    - [3.5 Chuyển tiền](#35-chuyển-tiền)
-    - [3.6 Hiện số dư](#36-hiện-số-dư)
-    - [3.7 Xem lịch sử](#37-xem-lịch-sử)
-    - [3.8 Phone UI](#38-phone-ui)
-  - [4. Thiết kế](#4-thiết-kế)
+  - [4. Kiến trúc ứng dụng](#4-kiến-trúc-ứng-dụng)
+  - [5. Thiết kế](#5-thiết-kế)
+  - [6. Slide trình bày](#6-slide-trình-bày)
+
+![VMR CHAT](report/img/demo/thumnail.gif)
 
 ## 1. Tổng quan
 
@@ -37,8 +33,10 @@ Các công nghệ sử dụng:
 - Logging: Log4j2
 - Cơ sở dữ liệu: MySQL
 - Cache: Redis
-- React, Redux để xây dựng giao diện (có sử dụng template)
+- React, Redux, Ant Design để xây dựng giao diện (có sử dụng template)
 - Sử dựng Websocket để hiện thực chức năng chat
+- gRPC cho API chuyển tiền
+- Monitoring: Prometheus - Grafana
 - Sử dụng docker để deploy sản phẩm
 
 ## 2. Hướng dẫn chạy
@@ -51,39 +49,17 @@ docker-compose up -d
 
 ## 3. Demo
 
-### 3.1 Register
+![Demo img](./report/img/demo/chat-1-1.png)
 
-![Register](report/img/demo/register.png)
+Chi tiết tại [demo](./report/doc/demo.md)
 
-### 3.2 Login
+## 4. Kiến trúc ứng dụng
 
-![Login](report/img/demo/login.png)
+![Demo img](./report/img/architechture/vmr-chat-architecture.png)
 
-### 3.3 Hiện danh sách user, chat 1-1
+Chi tiết tại [architechture](./report/architecure/md)
 
-![Chat](report/img/demo/chat-1-1.gif)
-
-### 3.4 Thêm bạn bè
-
-![Add friend](report/img/demo/add-friend.png)
-
-### 3.5 Chuyển tiền
-
-![Transfer](report/img/demo/transfer.gif)
-
-### 3.6 Hiện số dư
-
-![Balance](report/img/demo/balance.png)
-
-### 3.7 Xem lịch sử
-
-![History](report/img/demo/history.png)
-
-### 3.8 Phone UI
-
-![Phone](report/img/demo/phone.gif)
-
-## 4. Thiết kế
+## 5. Thiết kế
 
 - [Mockup](https://balsamiq.cloud/seo701z/pbade9k)
 - [GRPC API Design](report/doc/grpc-design.md)
@@ -91,3 +67,7 @@ docker-compose up -d
 - [HTTP API design](https://app.swaggerhub.com/apis-docs/anhvan1999/vmr-chat/1.0.0)
 - [Sequence diagrams](report/doc/sequence-diagrams.md)
 - [Cache design](report/doc/cache-design.md)
+
+## 6. Slide trình bày
+
+- Xem chi tiết tại [đây](https://docs.google.com/presentation/d/1U3-c4uA41YDkuKFxvouv5NcHEuowjYQbiQFb-z1BKkw/edit?usp=sharing)
