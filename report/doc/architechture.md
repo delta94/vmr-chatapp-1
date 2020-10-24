@@ -15,6 +15,8 @@
 
 ## 4.2 Backend
 
-![Architecture](../img/architechture/vmr-backend.png)
+![Backend Architecture](../img/architechture/vmr-backend.png)
 
 ## 4.3 Frontend
+
+![Backend Architecture](../img/architechture/vmr-frontend.png)
