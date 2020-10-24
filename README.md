@@ -57,7 +57,7 @@ Chi tiết tại [demo](./report/doc/demo.md)
 
 ![Demo img](./report/img/architechture/vmr-chat-architecture.png)
 
-Chi tiết tại [architechture](./report/architecure/md)
+Chi tiết tại [architechture](./report/doc/architechture.md)
 
 ## 5. Thiết kế
 
