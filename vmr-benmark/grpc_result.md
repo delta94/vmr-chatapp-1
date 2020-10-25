@@ -80,7 +80,7 @@ Status code distribution:
 
 ### 2.1 Điều kiện test
 
-- Truy vấn balance của 1 user
+- Truy vấn balance của user ngẫu nhiên
 
 |Thông số|Giá trị|
 |--|--|

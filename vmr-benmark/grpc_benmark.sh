@@ -35,7 +35,7 @@ ghz -i ./../vmr-newbackend/src/main/proto --proto=vmr/friend.proto \
 
 ghz -i ./../vmr-newbackend/src/main/proto --proto=vmr/friend.proto \
   --call=vmr.FriendService.GetFriendList \
-  -n 100000 \
+  -n 500 \
   -d '{}' localhost:8082 \
   -m '{"x-jwt-token":"'"${JWT_TOKEN}"'"}' \
   --insecure

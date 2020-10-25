@@ -45,12 +45,20 @@ public class TokenCacheServiceImplTest {
   }
 
   @Test
-  void testAddToBlackList() {
+  void testAddToBlackList(VertxTestContext testContext) {
     RBucket<Boolean> existBucket = (RBucket<Boolean>) Mockito.mock(RBucket.class);
     Mockito.when(redissonClient.<Boolean>getBucket("vmr:jwt:123:expire")).thenReturn(existBucket);
-    tokenCacheService.addToBlackList("123");
-    Mockito.verify(existBucket).set(true);
-    Mockito.verify(existBucket).expire(20, TimeUnit.SECONDS);
+    tokenCacheService
+        .addToBlackList("123")
+        .onComplete(
+            ar -> {
+              if (ar.failed()) {
+                testContext.failNow(ar.cause());
+              }
+              Mockito.verify(existBucket).set(true);
+              Mockito.verify(existBucket).expire(20, TimeUnit.SECONDS);
+              testContext.completeNow();
+            });
   }
 
   @Test

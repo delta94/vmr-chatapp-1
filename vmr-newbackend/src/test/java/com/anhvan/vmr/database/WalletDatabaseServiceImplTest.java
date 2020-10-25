@@ -6,7 +6,8 @@ import io.vertx.core.Handler;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import io.vertx.mysqlclient.MySQLPool;
-import io.vertx.sqlclient.SqlConnection;
+import io.vertx.sqlclient.*;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +26,31 @@ public class WalletDatabaseServiceImplTest {
     pool = Mockito.mock(MySQLPool.class);
     passwordService = Mockito.mock(PasswordService.class);
     walletDatabaseService = new WalletDatabaseServiceImpl(pool, passwordService, null);
+  }
+
+  @Test
+  void testGetHistory(VertxTestContext testContext) {
+    SqlConnection sqlConnection = Mockito.mock(SqlConnection.class);
+    AsyncResult<SqlConnection> connAr = Mockito.mock(AsyncResult.class);
+    PreparedQuery<RowSet<Row>> preparedQuery = Mockito.mock(PreparedQuery.class);
+
+    Mockito.when(connAr.succeeded()).thenReturn(true);
+    Mockito.when(connAr.result()).thenReturn(sqlConnection);
+    Mockito.when(pool.preparedQuery(WalletDatabaseServiceImpl.GET_HISTORY_WITH_OFFSET_STMT))
+        .thenReturn(preparedQuery);
+
+    Mockito.doAnswer(
+            invocationOnMock -> {
+              Tuple t = invocationOnMock.getArgument(0);
+              Assertions.assertEquals(1L, t.getLong(0));
+              Assertions.assertEquals(0L, t.getLong(1));
+              testContext.completeNow();
+              return null;
+            })
+        .when(preparedQuery)
+        .execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+
+    walletDatabaseService.getHistory(1, 0);
   }
 
   @Test
