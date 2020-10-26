@@ -83,6 +83,10 @@ values (1, 'danganhvan', 'Đặng Anh Văn', @pw,
        (7, 'dangphuongthao', 'Đặng Phương Thảo', @pw,
         UNIX_TIMESTAMP(), 1000000),
        (8, 'dangtunglam', 'Đặng Tùng Lâm', @pw,
+        UNIX_TIMESTAMP(), 1000000),
+       (9, 'vovanduc', 'Võ Văn Đức', @pw,
+        UNIX_TIMESTAMP(), 1000000),
+       (9, 'nguyenphuan', 'Nguyễn Phú An', @pw,
         UNIX_TIMESTAMP(), 1000000);
 
 insert into friends (user_id, friend_id, status)

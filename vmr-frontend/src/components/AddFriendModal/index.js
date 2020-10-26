@@ -32,6 +32,7 @@ function AddFriendModal() {
     let queryString = event.target.value;
     if (queryString.length !== 0) {
       queryUser(queryString).then(userListResult => {
+        console.log(userListResult);
         setUserList(userListResult.filter(x => x.getId() !== userId));
       });
     }
