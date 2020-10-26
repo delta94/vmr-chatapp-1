@@ -25,5 +25,5 @@
 
 ## 4. Kết quả benmark
 
-- [gRPC](./grpc_benmark.md)
-- [HTTP](./http_benmark.md)
+- [gRPC](./grpc_result.md)
+- [HTTP](./http_result.md)
