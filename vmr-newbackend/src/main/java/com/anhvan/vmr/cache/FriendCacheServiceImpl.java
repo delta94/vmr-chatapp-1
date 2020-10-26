@@ -224,7 +224,9 @@ public class FriendCacheServiceImpl implements FriendCacheService {
               return;
             }
 
-            friendMap.remove(friendId);
+            Friend friend = friendMap.get(friendId);
+            friend.setFriendStatus(Friend.Status.UNFRIENDED.name());
+            friendMap.put(friendId, friend);
             cachePromise.complete();
           } catch (Exception e) {
             log.error("Error when remove friend, userId={}, friendId={}", userId, friendId, e);

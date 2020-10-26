@@ -59,13 +59,15 @@
       "hiddenSeries": false,
       "id": 29,
       "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
         "min": false,
+        "rightSide": false,
         "show": true,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
@@ -84,6 +86,7 @@
       "targets": [
         {
           "expr": "histogram_quantile(0.99, rate(grpc_response_time_seconds_bucket[5m]))",
+          "legendFormat": "{{method}}",
           "refId": "B"
         }
       ],
@@ -263,7 +266,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Database Query Time In Miliseconds",
+      "title": "Database Query Time",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -401,7 +404,7 @@
         "y": 21
       },
       "hiddenSeries": false,
-      "id": 35,
+      "id": 39,
       "legend": {
         "avg": false,
         "current": false,
@@ -427,19 +430,15 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(jvm_memory_used_bytes{area=\"heap\"})",
+          "expr": "rate(grpc_response_time_seconds_count[10s])",
           "refId": "A"
-        },
-        {
-          "expr": "sum(jvm_memory_used_bytes{area=\"nonheap\"})",
-          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "JVM Memory Usage",
+      "title": "gRPC Request Rate",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -455,8 +454,8 @@
       },
       "yaxes": [
         {
-          "format": "decbytes",
-          "label": null,
+          "format": "short",
+          "label": "request/s",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -568,8 +567,8 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
-      "fill": 0,
-      "fillGradient": 6,
+      "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 9,
         "w": 12,
@@ -577,7 +576,7 @@
         "y": 30
       },
       "hiddenSeries": false,
-      "id": 17,
+      "id": 35,
       "legend": {
         "avg": false,
         "current": false,
@@ -603,13 +602,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "jvm_threads_live_threads",
-          "legendFormat": "live threads",
+          "expr": "sum(jvm_memory_used_bytes{area=\"heap\"})",
           "refId": "A"
         },
         {
-          "expr": "jvm_threads_daemon_threads",
-          "legendFormat": "daemon threads",
+          "expr": "sum(jvm_memory_used_bytes{area=\"nonheap\"})",
           "refId": "B"
         }
       ],
@@ -617,7 +614,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "JVM Thread",
+      "title": "JVM Memory Usage",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -633,7 +630,7 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "format": "decbytes",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -749,16 +746,16 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
+      "fill": 0,
+      "fillGradient": 6,
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 12,
-        "x": 12,
+        "x": 0,
         "y": 39
       },
       "hiddenSeries": false,
-      "id": 39,
+      "id": 17,
       "legend": {
         "avg": false,
         "current": false,
@@ -784,15 +781,21 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(grpc_response_time_seconds_count[10s])",
+          "expr": "jvm_threads_live_threads",
+          "legendFormat": "live threads",
           "refId": "A"
+        },
+        {
+          "expr": "jvm_threads_daemon_threads",
+          "legendFormat": "daemon threads",
+          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "gRPC Request Rate",
+      "title": "JVM Thread",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -809,7 +812,7 @@
       "yaxes": [
         {
           "format": "short",
-          "label": "request/s",
+          "label": null,
           "logBase": 1,
           "max": null,
           "min": null,
@@ -830,7 +833,7 @@
       }
     }
   ],
-  "refresh": false,
+  "refresh": "5s",
   "revision": "1.0",
   "schemaVersion": 21,
   "style": "dark",
@@ -870,5 +873,5 @@
   "timezone": "",
   "title": "vmr-chat",
   "uid": "e1NTOU5Mz",
-  "version": 11
+  "version": 7
 }

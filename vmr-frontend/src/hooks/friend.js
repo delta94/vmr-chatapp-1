@@ -20,7 +20,8 @@ export function useFriendList() {
           lastMsgSender: x.getLastMessageSender(),
           lastMsgType: x.getLastMessageType(),
           lastMsgTimestamp: x.getLastMessageTimestamp(),
-          numNotifications: x.getNumUnreadMessage()
+          numNotifications: x.getNumUnreadMessage(),
+          status: x.getFriendStatus()
         }
       })));
 

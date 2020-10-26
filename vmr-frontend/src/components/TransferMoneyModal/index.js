@@ -14,6 +14,7 @@ import useWindowSize from "../../hooks/window";
 import {useBalance} from "../../hooks/wallet";
 
 import "./TransferMoneyModal.css";
+import NewLineText from "../NewLineText";
 
 const {ErrorCode} = require('../../proto/vmr/common_pb');
 const {Title} = Typography;
@@ -69,10 +70,15 @@ export default function TransferMoneyModal(props) {
   };
 
   let checkAmount = async (rule, value) => {
-    if (value < 1000) {
+    console.log(value);
+    if (value === null || value === '') {
+      throw new Error('Vui lòng nhập số tiền');
+    } else if (isNaN(value)) {
+      throw new Error('Vui lòng nhập số tiền hợp lệ');
+    } else if (value < 1000) {
       throw new Error('Số tiền chuyển phải từ 1000đ trở lên');
     } else if (value > balance) {
-      throw new Error('Số tiền không được vượt quá balance')
+      throw new Error('Số dư không đủ')
     } else if (Math.round(value) !== value) {
       throw new Error('Số tiền không được là số lẻ');
     }
@@ -80,9 +86,18 @@ export default function TransferMoneyModal(props) {
 
   let handleFieldChange = (changedFields, allFields) => {
     let amountValue = allFields.amount;
+    let message = allFields.message;
+
+    if (!message || message.length === 0) {
+      setValid(false);
+      return;
+    }
+
     if (isNaN(amountValue)) {
       setValid(false);
-    } else if (Math.round(amountValue) !== amountValue || amountValue < 1000 || amountValue > balance) {
+    } else if (Math.round(amountValue) !== amountValue
+      || amountValue < 1000
+      || amountValue > balance) {
       setValid(false);
     } else {
       setValid(true);
@@ -186,12 +201,13 @@ export default function TransferMoneyModal(props) {
             {moneyFormat(balance)} VNĐ
           </Form.Item>
           <Form.Item label={"Nhập số tiền"} name="amount"
-                     rules={[{required: true, message: 'Vui lòng nhập số tiền'}, {validator: checkAmount}]}>
+                     rules={[{validator: checkAmount}]}>
             <InputNumber className="left-input" formatter={value => moneyFormat(value)}/>
           </Form.Item>
           <Form.Item name="message" label={"Nhập lời nhắn"}
                      rules={[{required: true, message: 'Vui lòng nhập lời nhắn'}]}>
-            <TextArea className="left-input"/>
+            <TextArea className="left-input"
+                      maxLength={250}/>
           </Form.Item>
         </Form>
       </div>
@@ -205,7 +221,7 @@ export default function TransferMoneyModal(props) {
             {moneyFormat(amount)} VNĐ
           </Form.Item>
           <Form.Item label={"Lời nhắn"}>
-            {message}
+            <NewLineText text={message}/>
           </Form.Item>
           <Form.Item name="password" label={"Xác thực mật khẩu"}>
             <Password/>
@@ -224,11 +240,11 @@ export default function TransferMoneyModal(props) {
             </Row>
             <Row className="status-row">
               <Col span={12}>Số tiền trừ:</Col>
-              <Col span={12}>{amount} VNĐ</Col>
+              <Col span={12}>{moneyFormat(amount)} VNĐ</Col>
             </Row>
             <Row className="status-row">
               <Col span={12}>Số dư còn lại:</Col>
-              <Col span={12}>{balance} VNĐ</Col>
+              <Col span={12}>{moneyFormat(balance)} VNĐ</Col>
             </Row>
           </Col>
         </Row>
@@ -249,7 +265,8 @@ export default function TransferMoneyModal(props) {
             </Row>
             <Row className="status-row">
               <Col span={12}>Số dư còn lại:</Col>
-              <Col span={12}>{balance} VNĐ</Col>
+              <Col span={12}>{moneyFormat(balance)
+              } VNĐ</Col>
             </Row>
             <Row className="status-row">
               <Col span={12}>Lý do:</Col>

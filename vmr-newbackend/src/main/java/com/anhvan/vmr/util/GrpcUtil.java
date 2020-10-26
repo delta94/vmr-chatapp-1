@@ -20,6 +20,9 @@ public class GrpcUtil {
     if (status.equals("REMOVED")) {
       return Friend.FriendStatus.REMOVED;
     }
+    if (status.equals("UNFRIENDED")) {
+      return Friend.FriendStatus.UNFRIENDED;
+    }
     return Friend.FriendStatus.FRIEND;
   }
 

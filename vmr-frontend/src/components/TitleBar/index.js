@@ -1,6 +1,6 @@
 import React from 'react';
 import ToolbarButton from "../ToolbarButton";
-import {CaretLeftOutlined, MoreOutlined} from "@ant-design/icons";
+import {CaretLeftOutlined} from "@ant-design/icons";
 import Toolbar from "../Toolbar";
 import {useOpenSideBar} from "../../hooks/ui";
 import useWindowSize from "../../hooks/window";
@@ -25,9 +25,7 @@ export default function TitleBar(props) {
     <Toolbar
       title={title}
       className="chat-title-bar"
-      rightItems={[
-        <ToolbarButton key="info" icon={<MoreOutlined/>} type="top-bar-btn"/>
-      ]}
+      rightItems={[]}
       leftItems={leftItems}
     />
   );

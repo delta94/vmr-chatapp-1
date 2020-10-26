@@ -12,6 +12,10 @@
   border: 1px solid #7ecc59;
 }
 
+.history-item .message {
+  word-wrap: break-word;
+}
+
 .history-item:hover {
   cursor: pointer;
 }

@@ -2193,7 +2193,8 @@ proto.vmr.FriendStatus = {
   WAITING: 1,
   NOT_ANSWER: 2,
   NOTHING: 3,
-  REMOVED: 4
+  REMOVED: 4,
+  UNFRIENDED: 5
 };
 
 goog.object.extend(exports, proto.vmr);

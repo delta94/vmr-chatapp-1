@@ -68,6 +68,7 @@ enum FriendStatus {
   NOT_ANSWER = 2;
   NOTHING = 3;
   REMOVED = 4;
+  UNFRIENDED = 5;
 }
 
 // Clear unread message

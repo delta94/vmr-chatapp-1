@@ -174,7 +174,8 @@ public class GrpcFriendServiceImpl extends FriendServiceImplBase {
                           .setName(usr.getName())
                           .setUsername(usr.getUsername())
                           .setOnline(webSocketService.checkOnline(usr.getId()))
-                          .setNumUnreadMessage(usr.getNumUnreadMessage());
+                          .setNumUnreadMessage(usr.getNumUnreadMessage())
+                          .setFriendStatus(GrpcUtil.string2FriendStatus(usr.getFriendStatus()));
 
                   if (usr.getLastMessage() != null) {
                     friendInfoBuidler

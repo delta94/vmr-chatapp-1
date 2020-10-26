@@ -9,7 +9,7 @@ create table users
     username     varchar(20) not null unique,
     password     varchar(60) not null,
     name         varchar(45) not null,
-    balance      bigint      not null default 10000000,
+    balance      bigint      not null default 0,
     last_updated bigint      not null,
     fulltext (username, name)
 );
@@ -17,9 +17,9 @@ create table users
 create table friends
 (
     id                 bigint primary key auto_increment,
-    user_id            bigint                                                not null,
-    friend_id          bigint                                                not null,
-    status             enum ('ACCEPTED', 'WAITING', 'NOT_ANSWER', 'REMOVED') not null,
+    user_id            bigint                                                              not null,
+    friend_id          bigint                                                              not null,
+    status             enum ('ACCEPTED', 'WAITING', 'NOT_ANSWER', 'REMOVED', 'UNFRIENDED') not null,
     last_message_id    bigint,
     num_unread_message int default 0,
     foreign key (user_id) references users (id),
@@ -57,33 +57,33 @@ create table messages
 
 create table account_logs
 (
-    id       bigint primary key auto_increment,
+    id          bigint primary key auto_increment,
     user_id     bigint                       not null,
     transfer_id bigint                       not null,
-    type     enum ('TRANSFER', 'RECEIVE') not null,
+    type        enum ('TRANSFER', 'RECEIVE') not null,
     foreign key (user_id) references users (id),
     foreign key (transfer_id) references transfers (id)
 );
 
 set @pw = '$2a$05$oaUZlei0KVo9hWwG.0mpqebMwvGcHlaM7.Kgrpf10ncG7A36xvMGu';
 
-insert into users (id, username, name, password, last_updated)
+insert into users (id, username, name, password, last_updated, balance)
 values (1, 'danganhvan', 'Đặng Anh Văn', @pw,
-        UNIX_TIMESTAMP()),
+        UNIX_TIMESTAMP(), 1000000),
        (2, 'dangduymanh', 'Đặng Duy Mạnh', @pw,
-        UNIX_TIMESTAMP()),
+        UNIX_TIMESTAMP(), 1000000),
        (3, 'phamanhtuan', 'Phạm Anh Tuấn', @pw,
-        UNIX_TIMESTAMP()),
+        UNIX_TIMESTAMP(), 1000000),
        (4, 'lengocphuong', 'Lê Ngọc Phương', @pw,
-        UNIX_TIMESTAMP()),
+        UNIX_TIMESTAMP(), 1000000),
        (5, 'nguyenvannam', 'Nguyễn Văn Nam', @pw,
-        UNIX_TIMESTAMP()),
+        UNIX_TIMESTAMP(), 1000000),
        (6, 'nguyenthithuylinh', 'Nguyen Thi Thuy Linh', @pw,
-        UNIX_TIMESTAMP()),
+        UNIX_TIMESTAMP(), 1000000),
        (7, 'dangphuongthao', 'Đặng Phương Thảo', @pw,
-        UNIX_TIMESTAMP()),
+        UNIX_TIMESTAMP(), 1000000),
        (8, 'dangtunglam', 'Đặng Tùng Lâm', @pw,
-        UNIX_TIMESTAMP());
+        UNIX_TIMESTAMP(), 1000000);
 
 insert into friends (user_id, friend_id, status)
 values (1, 2, 'ACCEPTED'),
@@ -106,7 +106,7 @@ begin
     set x = 9;
     loop_label:
     loop
-        if x > 1000 then
+        if x > 100 then
             leave loop_label;
         end if;
         insert into users(id, username, name, password, last_updated)

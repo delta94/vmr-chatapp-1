@@ -4,6 +4,7 @@ import './Message.css';
 import {Col, Row} from "antd";
 import {CheckCircleFilled, DollarCircleFilled} from '@ant-design/icons';
 import {moneyFormat} from "../../util/string-util";
+import NewLineText from "../NewLineText";
 
 export default function Message(props) {
   const {
@@ -38,7 +39,8 @@ export default function Message(props) {
         {
           !transfer &&
           <div className="bubble" title={friendlyTimestamp}>
-            {data.message}
+            {/*{data.message}*/}
+            <NewLineText text={data.message}/>
           </div>
         }
         {
@@ -46,8 +48,14 @@ export default function Message(props) {
           <div className="bubble transfer" title={friendlyTimestamp}>
             <Row gutter={[8, 8]}>
               <Col span={4}><CheckCircleFilled style={{fontSize: '30px'}}/></Col>
-              <Col span={20}>Chuyển <span className={'amount'}>{moneyFormat(Number(msgGroup[1]))}</span> VNĐ
-                <br/><span className={'msg'}>{msgGroup[2]}</span>
+              <Col span={20}>
+                <div>
+                  Chuyển <span className={'amount'}>
+                {moneyFormat(Number(msgGroup[1]))}</span> VNĐ
+                </div>
+                <div className={'msg'}>
+                  <NewLineText text={msgGroup[2]}/>
+                </div>
               </Col>
             </Row>
           </div>
@@ -57,8 +65,14 @@ export default function Message(props) {
           <div className="bubble receive" title={friendlyTimestamp}>
             <Row gutter={[8, 8]}>
               <Col span={4}><DollarCircleFilled style={{fontSize: '30px'}}/></Col>
-              <Col span={20}>Chuyển cho bạn <span className={'amount'}>{moneyFormat(Number(msgGroup[1]))}</span> VNĐ
-                <br/><span className={'msg'}>{msgGroup[2]}</span>
+              <Col span={20}>
+                <div>
+                  Chuyển cho bạn <span className={'amount'}>
+                {moneyFormat(Number(msgGroup[1]))}</span> VNĐ
+                </div>
+                <div className={'msg'}>
+                  <NewLineText text={msgGroup[2]}/>
+                </div>
               </Col>
             </Row>
           </div>

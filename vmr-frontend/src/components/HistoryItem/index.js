@@ -5,6 +5,7 @@ import UserAvatar from '../UserAvatar';
 import {moneyFormat, timestampSecond2String} from '../../util/string-util';
 import {useSelector} from 'react-redux';
 import {getUserInfo} from "../../service/friend";
+import NewLineText from "../NewLineText";
 
 const {HistoryResponse} = require('../../proto/vmr/wallet_pb');
 
@@ -44,7 +45,7 @@ export default function HistoryItem(props) {
             <Col xs={24} md={18}>
               <p className={'content'}>{msg} {friendName}</p>
               <p className={'time'}>{timestampSecond2String(timestamp)}</p>
-              <p className={'message'}>{message}</p>
+              <NewLineText text={message}/>
             </Col>
             <Col xs={24} md={6} className={'money-col'}>
               <span className={'amount'}>{sign} {moneyFormat(amount)} VNĐ</span>

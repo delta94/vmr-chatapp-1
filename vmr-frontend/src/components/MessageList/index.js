@@ -14,6 +14,10 @@ import {Empty} from "antd";
 import './MessageList.css';
 import LoadingArea from "../LoadingArea";
 import EmptyPage from "../EmptyPage";
+import ChatAvatar from "../ChatAvatar";
+
+
+const {FriendStatus} = require('../../proto/vmr/friend_pb');
 
 function MessageListInternal(props) {
   let {receiverId} = props;
@@ -24,6 +28,7 @@ function MessageListInternal(props) {
   let currentFriendId = useSelector(state => state.friends.currentFriendId);
   let chatMessages = useSelector(state => state.chat.messages[receiverId]);
   let receiver = useSelector(state => state.friends.friends[receiverId]);
+  console.log(receiver.status);
 
   // Dispatch
   let dispatch = useDispatch();
@@ -73,7 +78,6 @@ function MessageListInternal(props) {
     let current = msgList.current;
     let oldLength = messages.length;
     let {clientHeight, scrollHeight} = current;
-    console.log(clientHeight, scrollHeight);
     if (clientHeight >= scrollHeight) {
       getMessageList(receiverId, oldLength).then((data) => {
         updateMessageList(data, receiverId);
@@ -157,16 +161,17 @@ function MessageListInternal(props) {
 
   return (
     <div className="message-list" onFocus={clearChatNotifications}>
-      <TitleBar title={receiver.name}/>
+      <TitleBar title={receiver.name} avatar={<ChatAvatar name={receiver.name}/>}/>
 
       <div className="message-list-container" ref={msgList} onScroll={msgScrollHandle}>
         {messages.length > 0 && renderMessageNew(messages)}
-        {!msgLoading && messages.length === 0 && <Empty description={<span>Chat với {receiver.name} ngay!</span>}/>}
+        {!msgLoading && messages.length === 0 && <Empty description={<span>Bạn và {receiver.name} chưa có tin nhắn nào!</span>}/>}
         {msgLoading && messages.length === 0 && <LoadingArea/>}
         <div ref={endOfMsgList} style={{height: '0px'}}/>
       </div>
 
       <Compose
+        disable={receiver.status !== FriendStatus.FRIEND}
         rightItems={[
           <ToolbarButton
             key="transfer"
@@ -186,12 +191,14 @@ function MessageListInternal(props) {
         inputRef={inputRef}
       />
 
-      <TransferMoneyModal
+      {(receiver.status === FriendStatus.FRIEND) &&
+      < TransferMoneyModal
         receiverId={receiver.id}
         active={moneyTransferActive}
         setActive={setMoneyTransferActive}
         receiverName={receiver.name}
       />
+      }
     </div>
   );
 }

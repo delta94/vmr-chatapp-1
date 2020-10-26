@@ -25,16 +25,16 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
       "select users.id, users.username, users.name, friends.status "
           + "from users "
           + "inner join friends on users.id = friends.friend_id "
-          + "where friends.user_id = ? and friends.status != 'REMOVED'";
+          + "where friends.user_id = ? and friends.status != 'REMOVED' and friends.status != 'UNFRIENDED'";
 
   public static final String GET_FRIENDS_WITH_MESSAGE_STMT =
       "select users.id, users.username, users.name, messages.message as last_message, "
           + "messages.sender_id as last_message_sender, messages.type as last_message_type, "
-          + "messages.send_time as last_message_timestamp, friends.num_unread_message "
+          + "messages.send_time as last_message_timestamp, friends.num_unread_message, friends.status "
           + "from users inner join friends "
           + "on users.id = friends.friend_id "
           + "left join messages on messages.id = friends.last_message_id "
-          + "where friends.user_id = ? and friends.status='ACCEPTED'";
+          + "where friends.user_id = ? and (friends.status='ACCEPTED' or friends.status='UNFRIENDED')";
 
   public static final String ACCEPT_FRIEND =
       "update friends set status='ACCEPTED' where user_id=? and friend_id=?";
@@ -49,7 +49,7 @@ public class FriendDatabaseServiceImpl implements FriendDatabaseService {
       "update friends set status=? where user_id=? and friend_id=?";
 
   public static final String REMOVE_FRIEND_STMT =
-      "update friends set status='REMOVED' where user_id=? and friend_id=?";
+      "update friends set status='UNFRIENDED' where user_id=? and friend_id=?";
 
   public static final String CHECK_FRIEND_STATUS_STMT =
       "select status from friends where user_id=? and friend_id=?";

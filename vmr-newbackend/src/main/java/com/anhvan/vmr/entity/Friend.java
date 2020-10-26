@@ -18,7 +18,8 @@ public class Friend {
     NOT_ANSWER,
     ACCEPTED,
     NOTHING,
-    REMOVED
+    REMOVED,
+    UNFRIENDED
   }
 
   private long id;
