@@ -103,8 +103,11 @@ function SearchListItem(props) {
     history.push('/t/' + item.getId());
   }
 
-  let button = <Button type="primary" className="friend-modal-button" onClick={handleAddFriend}><PlusOutlined/>Kết
-    bạn</Button>;
+  let button = (
+    <Button type="primary" className="friend-modal-button" onClick={handleAddFriend}>
+      <PlusOutlined/>Kết bạn
+    </Button>
+  );
 
   let friendStatus = item.getFriendStatus();
   if (acceptSucceeded || friendStatus === FriendStatus.FRIEND) {
