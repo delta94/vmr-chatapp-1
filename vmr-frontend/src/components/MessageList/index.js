@@ -165,7 +165,8 @@ function MessageListInternal(props) {
 
       <div className="message-list-container" ref={msgList} onScroll={msgScrollHandle}>
         {messages.length > 0 && renderMessageNew(messages)}
-        {!msgLoading && messages.length === 0 && <Empty description={<span>Bạn và {receiver.name} chưa có tin nhắn nào!</span>}/>}
+        {!msgLoading && messages.length === 0 &&
+        <Empty description={<span>Bạn và {receiver.name} chưa có tin nhắn nào!</span>}/>}
         {msgLoading && messages.length === 0 && <LoadingArea/>}
         <div ref={endOfMsgList} style={{height: '0px'}}/>
       </div>
@@ -191,13 +192,14 @@ function MessageListInternal(props) {
         inputRef={inputRef}
       />
 
-      {(receiver.status === FriendStatus.FRIEND) &&
-      < TransferMoneyModal
-        receiverId={receiver.id}
-        active={moneyTransferActive}
-        setActive={setMoneyTransferActive}
-        receiverName={receiver.name}
-      />
+      {
+        (receiver.status === FriendStatus.FRIEND) &&
+        < TransferMoneyModal
+          receiverId={receiver.id}
+          active={moneyTransferActive}
+          setActive={setMoneyTransferActive}
+          receiverName={receiver.name}
+        />
       }
     </div>
   );

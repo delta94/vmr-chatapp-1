@@ -7,6 +7,7 @@ import {getUserId} from "../../util/auth-util";
 import ChatAvatar from "../ChatAvatar";
 
 const {useHistory} = require('react-router-dom');
+const {FriendStatus} = require('../../proto/vmr/friend_pb');
 
 export default function ConversationListItem(props) {
   let history = useHistory();
@@ -56,7 +57,7 @@ export default function ConversationListItem(props) {
 
   return (
     <div className={className} onClick={clickHandle}>
-      <ChatAvatar name={friend.name} onlineStatus={online}/>
+      <ChatAvatar name={friend.name} onlineStatus={online && friend.status === FriendStatus.FRIEND}/>
       <div className="conversation-info" style={{paddingLeft: "10px"}}>
         <h1 className="conversation-title">{friend.name} <Badge size="small" count={friend.numNotifications}/></h1>
         <p className={textClassName}>{textMsg}</p>
