@@ -6,7 +6,8 @@
   - [3. Demo](#3-demo)
   - [4. Kiến trúc ứng dụng](#4-kiến-trúc-ứng-dụng)
   - [5. Thiết kế](#5-thiết-kế)
-  - [6. Slide trình bày](#6-slide-trình-bày)
+  - [6. Benmark](#6-benmark)
+  - [7. Slide trình bày](#7-slide-trình-bày)
 
 ![VMR CHAT](report/img/demo/thumnail.gif)
 
@@ -68,6 +69,10 @@ Chi tiết tại [architechture](./report/doc/architechture.md)
 - [Sequence diagrams](report/doc/sequence-diagrams.md)
 - [Cache design](report/doc/cache-design.md)
 
-## 6. Slide trình bày
+## 6. Benmark
+
+Chi tiết tại [bemark](./vmr-benmark/benmark.md)
+
+## 7. Slide trình bày
 
 - Xem chi tiết tại [đây](https://docs.google.com/presentation/d/1U3-c4uA41YDkuKFxvouv5NcHEuowjYQbiQFb-z1BKkw/edit?usp=sharing)
