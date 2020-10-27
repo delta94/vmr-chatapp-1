@@ -62,6 +62,9 @@ public class FriendCacheServiceImpl implements FriendCacheService {
         () -> {
           try {
             RMap<Long, Friend> friendMap = redissonClient.getMap(getUserFriendsKey(userId));
+            if (friendMap.isEmpty()) {
+              friendMap.expire(cacheConfig.getTimeToLive(), TimeUnit.SECONDS);
+            }
             friendMap.put(friend.getId(), friend);
             cachePromise.complete();
           } catch (Exception e) {

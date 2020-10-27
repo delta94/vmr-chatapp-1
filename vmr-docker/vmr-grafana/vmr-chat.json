@@ -148,13 +148,14 @@
       "hiddenSeries": false,
       "id": 25,
       "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
         "min": false,
         "show": true,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
@@ -173,6 +174,7 @@
       "targets": [
         {
           "expr": "histogram_quantile(0.99, rate(vertx_http_server_responseTime_seconds_bucket[10m]))",
+          "legendFormat": "{{method}}",
           "refId": "A"
         }
       ],
@@ -234,13 +236,14 @@
       "hiddenSeries": false,
       "id": 31,
       "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
         "min": false,
         "show": true,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
@@ -259,6 +262,7 @@
       "targets": [
         {
           "expr": "histogram_quantile(0.99, rate(database_query_time_seconds_bucket[10m]))",
+          "legendFormat": "{{method}}",
           "refId": "A"
         }
       ],
@@ -320,13 +324,14 @@
       "hiddenSeries": false,
       "id": 33,
       "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
         "min": false,
         "show": true,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
@@ -345,6 +350,7 @@
       "targets": [
         {
           "expr": "histogram_quantile(0.99, rate(cache_query_time_seconds_bucket[10m]))",
+          "legendFormat": "{{method}}",
           "refId": "A"
         }
       ],
@@ -406,13 +412,15 @@
       "hiddenSeries": false,
       "id": 39,
       "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
         "min": false,
+        "rightSide": false,
         "show": true,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
@@ -431,6 +439,7 @@
       "targets": [
         {
           "expr": "rate(grpc_response_time_seconds_count[10s])",
+          "legendFormat": "{{method}}",
           "refId": "A"
         }
       ],
@@ -438,7 +447,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "gRPC Request Rate",
+      "title": "gRPC Request Throughput",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -492,13 +501,14 @@
       "hiddenSeries": false,
       "id": 21,
       "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
         "min": false,
         "show": true,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
@@ -517,6 +527,7 @@
       "targets": [
         {
           "expr": "rate(vertx_http_server_requestCount_total[5m])",
+          "legendFormat": "{{method}}",
           "refId": "A"
         }
       ],
@@ -524,7 +535,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "HTTP Request Rate",
+      "title": "HTTP Request Throughput",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -578,13 +589,14 @@
       "hiddenSeries": false,
       "id": 35,
       "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
         "min": false,
         "show": true,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
@@ -603,10 +615,12 @@
       "targets": [
         {
           "expr": "sum(jvm_memory_used_bytes{area=\"heap\"})",
+          "legendFormat": "heap",
           "refId": "A"
         },
         {
           "expr": "sum(jvm_memory_used_bytes{area=\"nonheap\"})",
+          "legendFormat": "nonheap",
           "refId": "B"
         }
       ],
@@ -692,7 +706,8 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(jvm_gc_pause_seconds_sum[1m])/rate(jvm_gc_pause_seconds_count[1m])",
+          "expr": "rate(jvm_gc_pause_seconds_sum[5m])/rate(jvm_gc_pause_seconds_count[5m])",
+          "legendFormat": "{{action}}",
           "refId": "A"
         },
         {
@@ -873,5 +888,5 @@
   "timezone": "",
   "title": "vmr-chat",
   "uid": "e1NTOU5Mz",
-  "version": 7
+  "version": 10
 }
