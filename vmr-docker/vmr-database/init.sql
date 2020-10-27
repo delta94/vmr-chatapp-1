@@ -86,7 +86,11 @@ values (1, 'danganhvan', 'Đặng Anh Văn', @pw,
         UNIX_TIMESTAMP(), 1000000),
        (9, 'vovanduc', 'Võ Văn Đức', @pw,
         UNIX_TIMESTAMP(), 1000000),
-       (9, 'nguyenphuan', 'Nguyễn Phú An', @pw,
+       (10, 'nguyenphuan', 'Nguyễn Phú An', @pw,
+        UNIX_TIMESTAMP(), 1000000),
+       (11, 'nguyenthuhuong', 'Nguyễn Thu Hương', @pw,
+        UNIX_TIMESTAMP(), 1000000),
+       (12, 'lethanhdat', 'Lê Thành Đạt', @pw,
         UNIX_TIMESTAMP(), 1000000);
 
 insert into friends (user_id, friend_id, status)
@@ -107,7 +111,7 @@ delimiter $$
 create procedure fake_user()
 begin
     declare x int;
-    set x = 9;
+    set x = 13;
     loop_label:
     loop
         if x > 100 then
@@ -120,4 +124,4 @@ begin
 end;
 $$
 
-call fake_user();
+-- call fake_user();

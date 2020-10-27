@@ -164,12 +164,14 @@ public class FriendCacheServiceImplTest {
     RMap<Long, Friend> friendMap = Mockito.mock(RMap.class);
     Mockito.when(redissonClient.<Long, Friend>getMap("vmr:user:1:friends")).thenReturn(friendMap);
     Mockito.when(friendMap.isExists()).thenReturn(true);
+    Friend f = Mockito.mock(Friend.class);
+    Mockito.when(friendMap.get(2L)).thenReturn(f);
 
     friendCacheService
         .removeFriend(1, 2)
         .onComplete(
             ar -> {
-              Mockito.verify(friendMap).remove(2L);
+              Mockito.verify(friendMap).put(ArgumentMatchers.anyLong(), ArgumentMatchers.any());
               testContext.completeNow();
             });
   }
