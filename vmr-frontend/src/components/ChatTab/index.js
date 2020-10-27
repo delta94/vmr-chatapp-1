@@ -11,9 +11,8 @@ export default function ChatTab() {
     let value = event.target.value.toLowerCase();
     setFFriendsId(Object.keys(friends).filter(x => {
       let friend = friends[x];
-      console.log(friend);
-      console.log(friend.name, friend.username);
-      return friend.name.toLowerCase().includes(value) || friend.username.toLowerCase().includes(value);
+      return friend.name.toLowerCase().includes(value)
+        || friend.username.toLowerCase().includes(value);
     }));
   };
 

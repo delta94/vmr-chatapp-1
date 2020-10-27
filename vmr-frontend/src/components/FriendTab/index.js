@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {getFriendList, setFriendStatus} from "../../service/friend";
-import ConversationSearch from "../FriendSearch";
+import FriendSearch from "../FriendSearch";
 import {Avatar, Button, List, Menu, Dropdown} from "antd";
 import {CloseOutlined} from "@ant-design/icons";
 import {getColor} from "../../util/ui-util";
@@ -16,6 +16,7 @@ const {FriendStatus} = require('../../proto/vmr/friend_pb');
 
 export default function FriendTab() {
   let [friendList, setFriendList] = useState([]);
+  let [filteredFriend, setFilteredFriend] = useState([]);
 
   let friendReloadFlag = useSelector(state => state.ui.friendReloadFlag);
 
@@ -28,11 +29,20 @@ export default function FriendTab() {
     });
   }, [friendReloadFlag]);
 
+  let filter = event => {
+    let value = event.target.value.toLowerCase();
+    setFilteredFriend(friendList.filter(friend => {
+      return friend.getName().toLowerCase().includes(value)
+        || friend.getUsername().toLowerCase().includes(value);
+    }));
+  };
+
+
   return (
     <div className="conversation-list-scroll">
-      <ConversationSearch/>
+      <FriendSearch onFilter={filter}/>
       <List
-        dataSource={friendList}
+        dataSource={(filteredFriend.length > 0) ? filteredFriend : friendList}
         renderItem={item => <FriendListItem item={item}/>}
       >
       </List>

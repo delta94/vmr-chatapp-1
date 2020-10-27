@@ -61,4 +61,14 @@ public class CacheModule {
     return new FriendCacheServiceWithTrackerImpl(
         redissonClient, workerService, cacheConfig, trackerService);
   }
+
+  @Provides
+  @Singleton
+  HistoryCacheService provideHistoryCacheService(
+      RedissonClient redissonClient,
+      AsyncWorkerService workerService,
+      CacheConfig cacheConfig,
+      TrackerService trackerService) {
+    return new HistoryCacheServiceImpl(redissonClient, workerService, cacheConfig, trackerService);
+  }
 }

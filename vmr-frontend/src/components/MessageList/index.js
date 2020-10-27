@@ -28,7 +28,6 @@ function MessageListInternal(props) {
   let currentFriendId = useSelector(state => state.friends.currentFriendId);
   let chatMessages = useSelector(state => state.chat.messages[receiverId]);
   let receiver = useSelector(state => state.friends.friends[receiverId]);
-  console.log(receiver.status);
 
   // Dispatch
   let dispatch = useDispatch();
