@@ -31,7 +31,8 @@ function RegisterPage() {
 
   let submitForm = (formData) => {
     let {username, fullname, password} = formData;
-
+    username = username.trim();
+    fullname = fullname.trim();
     register(username, fullname, password).then(() => {
       history.push('/');
     }).catch(errorData => {

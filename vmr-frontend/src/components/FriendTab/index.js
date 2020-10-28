@@ -147,7 +147,7 @@ function FriendListItem(props) {
       </Dropdown>
     );
   }
-
+  console.log(item.getName());
   return (
     <List.Item key={item.getId()} className="friend-tab-item">
       <List.Item.Meta

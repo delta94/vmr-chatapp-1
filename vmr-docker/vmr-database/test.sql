@@ -1,6 +1,8 @@
 use vmrchat;
 
-select sum(balance) from users;
+select sum(balance), count(*) from users;
+
+select * from users;
 
 select count(*) from transfers;
 
